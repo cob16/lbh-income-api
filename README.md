@@ -1,24 +1,15 @@
-# README
+# LBH Income API
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+## Setup
 
-Things you may want to cover:
+```
+$ make build
+```
 
-* Ruby version
+## Development
 
-* System dependencies
+To serve the application, run the following and visit [http://localhost:3000](http://localhost:3000)
 
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+```
+$ make serve
+```
