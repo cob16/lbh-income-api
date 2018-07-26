@@ -11,3 +11,6 @@ bundle:
 
 test:
 	docker-compose run --rm app rspec
+
+shell:
+	docker-compose exec app /bin/bash
