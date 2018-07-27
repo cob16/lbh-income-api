@@ -23,10 +23,13 @@ $ make test
 If you're TDDing code, it can sometimes be faster to boot up the app container once, then run tests within it. That way you don't have to start the docker container every time you run tests:
 
 ```sh
+# start the docker container
 $ make serve
-# in a separate tab
+
+# in a separate tab, run this to get a shell within the docker container
 $ make shell
-# after every change
+
+# run rspec after every change in the docker container shell
 $ rspec
 ```
 
