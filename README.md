@@ -34,3 +34,15 @@ $ rspec
 ```
 
 The above is useful because you can TDD your change and manually test through the browser without having to restart anything.
+
+## Connection to Universal Housing
+
+Universal Housing configuration is given through environment variables, for example using development details:
+
+- UH_DATABASE_NAME=StubUH
+- UH_DATABASE_USERNAME=sa
+- UH_DATABASE_PASSWORD=Rooty-Tooty
+- UH_DATABASE_HOST=universal_housing
+- UH_DATABASE_PORT=1433
+
+When developing locally, the docker compose configuration assumes this project is checked out in the same directory as `LBHTenancyAPI`, so the StubUniversalHousing Dockerfile can be reused.

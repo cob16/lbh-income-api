@@ -3,7 +3,21 @@ services:
   app:
     build: .
     command: rails s
+    environment:
+      - UH_DATABASE_NAME=StubUH
+      - UH_DATABASE_USERNAME=sa
+      - UH_DATABASE_PASSWORD=Rooty-Tooty
+      - UH_DATABASE_HOST=universal_housing
+      - UH_DATABASE_PORT=1433
     ports:
       - 3000:3000
+    links:
+      - universal_housing
     volumes:
       - .:/app
+  universal_housing:
+    build:
+      dockerfile: StubUniversalHousing/Dockerfile
+      context: ../LBHTenancyAPI
+    ports:
+      - 1433:1433
