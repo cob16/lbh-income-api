@@ -1,0 +1,16 @@
+default: &default
+  adapter: sqlserver
+  host: <%= ENV.fetch('UH_DATABASE_HOST') %>
+  port: <%= ENV.fetch('UH_DATABASE_PORT') %>
+  database: <%= ENV.fetch('UH_DATABASE_NAME') %>
+  username: <%= ENV.fetch('UH_DATABASE_USERNAME') %>
+  password: <%= ENV.fetch('UH_DATABASE_PASSWORD') %>
+
+development:
+  <<: *default
+
+test:
+  <<: *default
+
+production:
+  <<: *default
