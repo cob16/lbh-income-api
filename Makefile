@@ -8,3 +8,9 @@ serve:
 bundle:
 	docker-compose run --rm app bundle
 	docker-compose build
+
+test:
+	docker-compose run --rm app rspec
+
+shell:
+	docker-compose exec app /bin/bash
