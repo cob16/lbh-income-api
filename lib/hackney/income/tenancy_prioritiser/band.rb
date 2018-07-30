@@ -2,9 +2,11 @@ module Hackney
   module Income
     class TenancyPrioritiser
       class Band
-        def execute(criteria:)
+        def initialize(criteria)
           @criteria = criteria
+        end
 
+        def execute
           return :green if maintaining_agreement?
           return :red if red?
           return :amber if amber?

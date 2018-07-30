@@ -2,8 +2,9 @@ require 'rails_helper'
 
 describe Hackney::Income::TenancyPrioritiser::Band do
   let(:criteria) { Hackney::Income::TenancyPrioritiser::StubCriteria.new }
+  let(:band_assigner) { described_class.new(criteria) }
 
-  subject { described_class.new.execute(criteria: criteria) }
+  subject { band_assigner.execute }
 
   context 'maintaining an agreement' do
     it 'will assign green while an active agreement is maintained regardless of other factors' do

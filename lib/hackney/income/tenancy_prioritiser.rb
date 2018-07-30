@@ -4,26 +4,35 @@ module Hackney
       AMBER_SCORE_THRESHOLD = 150
       RED_SCORE_THRESHOLD = 500
 
-      def initialize(tenancy:, transactions:, weightings:)
-        @criteria = Hackney::Income::TenancyPrioritiser::Criteria.new(tenancy, transactions)
+      def initialize(criteria:, weightings:)
+        @criteria = criteria
         @weightings = weightings
       end
 
-      def score_adjusted_band
-        band = assign_priority_band
-        score = assign_priority_score
-
-        return :amber if band == :green && score > AMBER_SCORE_THRESHOLD && !@criteria.active_agreement?
-        return :red if band != :green && score > RED_SCORE_THRESHOLD
-        band
+      def priority_score
+        score_assigner.execute
       end
 
-      def assign_priority_band
-        Hackney::Income::TenancyPrioritiser::Band.new.execute(criteria: @criteria)
+      def priority_band
+        computed_priority_band.tap do |band|
+          return :green if band == :green && @criteria.active_agreement?
+          return :amber if band == :green && priority_score > AMBER_SCORE_THRESHOLD
+          return :red if band == :amber && priority_score > RED_SCORE_THRESHOLD
+        end
       end
 
-      def assign_priority_score
-        Hackney::Income::TenancyPrioritiser::Score.new(@criteria, @weightings).execute
+      private
+
+      def computed_priority_band
+        band_assigner.execute
+      end
+
+      def score_assigner
+        Hackney::Income::TenancyPrioritiser::Score.new(@criteria, @weightings)
+      end
+
+      def band_assigner
+        Hackney::Income::TenancyPrioritiser::Band.new(@criteria)
       end
     end
   end
