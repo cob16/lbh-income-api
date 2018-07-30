@@ -45,4 +45,4 @@ Universal Housing configuration is given through environment variables, for exam
 - UH_DATABASE_HOST=universal_housing
 - UH_DATABASE_PORT=1433
 
-When developing locally, the docker compose configuration assumes this project is checked out in the same directory as `LBHTenancyAPI`, so the StubUniversalHousing Dockerfile can be reused.
+When developing locally, the docker compose configuration assumes that the [Universal Housing simulator](https://github.com/LBHackney-IT/lbh-universal-housing-simulator) is checked out in the same directory as this.
