@@ -105,4 +105,32 @@ describe Hackney::Income::TenancyPrioritiser::UniversalHousingCriteria do
       end
     end
   end
+
+  describe '#active_agreement?' do
+    context 'when the tenant has no arrears agreements' do
+      it 'should be false' do
+        expect(subject.active_agreement?).to be(false)
+      end
+    end
+
+    context 'when the tenant has an active arrears agreement' do
+      before do
+        Hackney::UniversalHousing::Models::Arag.create(tag_ref: tenancy_ref, arag_status: '200')
+      end
+
+      it 'should be true' do
+        expect(subject.active_agreement?).to be(true)
+      end
+    end
+
+    context 'when the tenant has a breached arrears agreement' do
+      before do
+        Hackney::UniversalHousing::Models::Arag.create(tag_ref: tenancy_ref, arag_status: '600')
+      end
+
+      it 'should be false' do
+        expect(subject.active_agreement?).to be(false)
+      end
+    end
+  end
 end

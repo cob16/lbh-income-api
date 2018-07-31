@@ -36,10 +36,17 @@ module Hackney
           day_difference(Date.today, last_payment.post_date)
         end
 
+        def active_agreement?
+          Hackney::UniversalHousing::Models::Arag.where(tag_ref: tenancy_ref, arag_status: ACTIVE_ARREARS_AGREEMENT_STATUS).any?
+        end
+
         private
 
         PAYMENT_TRANSACTION_TYPE = 'RPY'.freeze
         private_constant :PAYMENT_TRANSACTION_TYPE
+
+        ACTIVE_ARREARS_AGREEMENT_STATUS = '200'.freeze
+        private_constant :ACTIVE_ARREARS_AGREEMENT_STATUS
 
         attr_reader :tenancy_ref
 
