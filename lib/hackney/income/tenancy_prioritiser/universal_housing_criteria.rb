@@ -44,6 +44,13 @@ module Hackney
           Hackney::UniversalHousing::Models::Arag.where(tag_ref: tenancy_ref, arag_status: BREACHED_ARREARS_AGREEMENT_STATUS).count
         end
 
+        def nosp_served?
+          Hackney::UniversalHousing::Models::Araction
+            .where(tag_ref: tenancy_ref, action_code: NOSP_ACTION_DIARY_CODE)
+            .where('action_date >= ?', Date.today - 1.year)
+            .any?
+        end
+
         private
 
         PAYMENT_TRANSACTION_TYPE = 'RPY'.freeze
@@ -54,6 +61,9 @@ module Hackney
 
         BREACHED_ARREARS_AGREEMENT_STATUS = '300'.freeze
         private_constant :BREACHED_ARREARS_AGREEMENT_STATUS
+
+        NOSP_ACTION_DIARY_CODE = 'NTS'.freeze
+        private_constant :NOSP_ACTION_DIARY_CODE
 
         attr_reader :tenancy_ref
 
