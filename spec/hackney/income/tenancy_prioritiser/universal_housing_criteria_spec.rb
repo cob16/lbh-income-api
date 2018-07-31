@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 describe Hackney::Income::TenancyPrioritiser::UniversalHousingCriteria do
-  subject { described_class.for_tenancy(tenancy_ref) }
+  subject(:criteria) { described_class.for_tenancy(tenancy_ref) }
 
   let(:tenancy_ref) { '000015/01' }
   let(:current_balance) { Faker::Number.decimal.to_f }
@@ -10,31 +10,29 @@ describe Hackney::Income::TenancyPrioritiser::UniversalHousingCriteria do
     Hackney::UniversalHousing::Models::Tenagree.create(tag_ref: tenancy_ref, cur_bal: current_balance)
   end
 
-  it 'should be a criteria object' do
-    expect(subject).to be_instance_of(described_class)
-  end
+  it { is_expected.to be_instance_of(described_class) }
 
   describe '#balance' do
+    subject { criteria.balance }
+
     it 'should return the current balance of a tenancy' do
-      expect(subject.balance).to eq(current_balance)
+      expect(subject).to eq(current_balance)
     end
   end
 
   describe '#days_in_arrears' do
+    subject { criteria.days_in_arrears }
+
     context 'when the tenancy is not in arrears' do
       let(:current_balance) { -50.00 }
 
-      it 'should return zero' do
-        expect(subject.days_in_arrears).to be_zero
-      end
+      it { is_expected.to be_zero }
     end
 
     context 'when the tenancy has paid off their balance perfectly' do
       let(:current_balance) { 0.0 }
 
-      it 'should return zero' do
-        expect(subject.days_in_arrears).to be_zero
-      end
+      it { is_expected.to be_zero }
     end
 
     context 'when the tenancy has been in arrears for a week' do
@@ -46,7 +44,7 @@ describe Hackney::Income::TenancyPrioritiser::UniversalHousingCriteria do
       end
 
       it 'should return the difference between now and the first date it was in arrears' do
-        expect(subject.days_in_arrears).to eq(7)
+        expect(subject).to eq(7)
       end
     end
 
@@ -59,7 +57,7 @@ describe Hackney::Income::TenancyPrioritiser::UniversalHousingCriteria do
       end
 
       it 'should return the difference between now and the first date it was in arrears' do
-        expect(subject.days_in_arrears).to eq(14)
+        expect(subject).to eq(14)
       end
     end
 
@@ -72,16 +70,16 @@ describe Hackney::Income::TenancyPrioritiser::UniversalHousingCriteria do
       end
 
       it 'should return the first date' do
-        expect(subject.days_in_arrears).to eq(30)
+        expect(subject).to eq(30)
       end
     end
   end
 
   describe '#days_since_last_payment' do
+    subject { criteria.days_since_last_payment }
+
     context 'when the tenant has never paid' do
-      it 'should return nil' do
-        expect(subject.days_since_last_payment).to be_nil
-      end
+      it { is_expected.to be_nil }
     end
 
     context 'when the tenant paid two days ago' do
@@ -89,9 +87,7 @@ describe Hackney::Income::TenancyPrioritiser::UniversalHousingCriteria do
         Hackney::UniversalHousing::Models::Rtrans.create(tag_ref: tenancy_ref, trans_type: 'RPY', post_date: Date.today - 2.days, batchid: rand(1..100000))
       end
 
-      it 'should return 2' do
-        expect(subject.days_since_last_payment).to eq(2)
-      end
+      it { is_expected.to eq(2) }
     end
 
     context 'when the tenant paid five days ago, and rent was issued two days ago' do
@@ -100,17 +96,15 @@ describe Hackney::Income::TenancyPrioritiser::UniversalHousingCriteria do
         Hackney::UniversalHousing::Models::Rtrans.create(tag_ref: tenancy_ref, trans_type: 'RPY', post_date: Date.today - 5.days, batchid: rand(1..100000))
       end
 
-      it 'should return 5' do
-        expect(subject.days_since_last_payment).to eq(5)
-      end
+      it { is_expected.to eq(5) }
     end
   end
 
   describe '#active_agreement?' do
+    subject { criteria.active_agreement? }
+
     context 'when the tenant has no arrears agreements' do
-      it 'should be false' do
-        expect(subject.active_agreement?).to be(false)
-      end
+      it { is_expected.to be(false) }
     end
 
     context 'when the tenant has an active arrears agreement' do
@@ -118,9 +112,7 @@ describe Hackney::Income::TenancyPrioritiser::UniversalHousingCriteria do
         Hackney::UniversalHousing::Models::Arag.create(tag_ref: tenancy_ref, arag_status: '200')
       end
 
-      it 'should be true' do
-        expect(subject.active_agreement?).to be(true)
-      end
+      it { is_expected.to be(true) }
     end
 
     context 'when the tenant has a breached arrears agreement' do
@@ -128,17 +120,15 @@ describe Hackney::Income::TenancyPrioritiser::UniversalHousingCriteria do
         Hackney::UniversalHousing::Models::Arag.create(tag_ref: tenancy_ref, arag_status: '300')
       end
 
-      it 'should be false' do
-        expect(subject.active_agreement?).to be(false)
-      end
+      it { is_expected.to be(false) }
     end
   end
 
   describe '#number_of_broken_agreements' do
+    subject { criteria.number_of_broken_agreements }
+
     context 'when the tenant has no arrears agreements' do
-      it 'should be zero' do
-        expect(subject.number_of_broken_agreements).to be_zero
-      end
+      it { is_expected.to be_zero }
     end
 
     context 'when the tenant has an active arrears agreement' do
@@ -146,9 +136,7 @@ describe Hackney::Income::TenancyPrioritiser::UniversalHousingCriteria do
         Hackney::UniversalHousing::Models::Arag.create(tag_ref: tenancy_ref, arag_status: '200')
       end
 
-      it 'should be zero' do
-        expect(subject.number_of_broken_agreements).to be_zero
-      end
+      it { is_expected.to be_zero }
     end
 
     context 'when the tenant has a number of broken arrears agreement' do
@@ -161,16 +149,16 @@ describe Hackney::Income::TenancyPrioritiser::UniversalHousingCriteria do
       end
 
       it 'should be equal the number of broken agreements' do
-        expect(subject.number_of_broken_agreements).to eq(broken_agreements_count)
+        expect(subject).to eq(broken_agreements_count)
       end
     end
   end
 
   describe 'nosp_served?' do
+    subject { criteria.nosp_served? }
+
     context 'when a tenant does not have a nosp' do
-      it 'should be false' do
-        expect(subject.nosp_served?).to be(false)
-      end
+      it { is_expected.to be(false) }
     end
 
     context 'when a tenant had a nosp served recently' do
@@ -178,9 +166,7 @@ describe Hackney::Income::TenancyPrioritiser::UniversalHousingCriteria do
         Hackney::UniversalHousing::Models::Araction.create(tag_ref: tenancy_ref, action_code: 'NTS', action_date: Date.today)
       end
 
-      it 'should be true' do
-        expect(subject.nosp_served?).to be(true)
-      end
+      it { is_expected.to be(true) }
     end
 
     context 'when a tenant had a nosp served a year ago' do
@@ -188,9 +174,7 @@ describe Hackney::Income::TenancyPrioritiser::UniversalHousingCriteria do
         Hackney::UniversalHousing::Models::Araction.create(tag_ref: tenancy_ref, action_code: 'NTS', action_date: Date.today - 1.year)
       end
 
-      it 'should be true' do
-        expect(subject.nosp_served?).to be(true)
-      end
+      it { is_expected.to be(true) }
     end
 
     context 'when a tenant had a nosp served over a year ago' do
@@ -198,17 +182,15 @@ describe Hackney::Income::TenancyPrioritiser::UniversalHousingCriteria do
         Hackney::UniversalHousing::Models::Araction.create(tag_ref: tenancy_ref, action_code: 'NTS', action_date: Date.today - 1.year - 1.day)
       end
 
-      it 'should be false' do
-        expect(subject.nosp_served?).to be(false)
-      end
+      it { is_expected.to be(false) }
     end
   end
 
   describe 'active_nosp?' do
+    subject { criteria.active_nosp? }
+
     context 'when a tenant does not have a nosp' do
-      it 'should be false' do
-        expect(subject.active_nosp?).to be(false)
-      end
+      it { is_expected.to be(false) }
     end
 
     context 'when a tenant had a nosp served recently' do
@@ -216,9 +198,7 @@ describe Hackney::Income::TenancyPrioritiser::UniversalHousingCriteria do
         Hackney::UniversalHousing::Models::Araction.create(tag_ref: tenancy_ref, action_code: 'NTS', action_date: Date.today)
       end
 
-      it 'should be true' do
-        expect(subject.active_nosp?).to be(true)
-      end
+      it { is_expected.to be(true) }
     end
 
     context 'when a tenant had a nosp served a month ago' do
@@ -226,9 +206,7 @@ describe Hackney::Income::TenancyPrioritiser::UniversalHousingCriteria do
         Hackney::UniversalHousing::Models::Araction.create(tag_ref: tenancy_ref, action_code: 'NTS', action_date: Date.today - 1.month)
       end
 
-      it 'should be true' do
-        expect(subject.active_nosp?).to be(true)
-      end
+      it { is_expected.to be(true) }
     end
 
     context 'when a tenant had a nosp served over a month ago' do
@@ -236,9 +214,7 @@ describe Hackney::Income::TenancyPrioritiser::UniversalHousingCriteria do
         Hackney::UniversalHousing::Models::Araction.create(tag_ref: tenancy_ref, action_code: 'NTS', action_date: Date.today - 1.month - 1.day)
       end
 
-      it 'should be false' do
-        expect(subject.active_nosp?).to be(false)
-      end
+      it { is_expected.to be(false) }
     end
   end
 end
