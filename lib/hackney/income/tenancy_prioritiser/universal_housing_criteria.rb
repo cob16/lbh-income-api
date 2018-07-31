@@ -29,7 +29,17 @@ module Hackney
           day_difference(Date.today, transactions.last.post_date)
         end
 
+        def days_since_last_payment
+          last_payment = Hackney::UniversalHousing::Models::Rtrans.order(post_date: :desc).where(tag_ref: tenancy_ref, trans_type: PAYMENT_TRANSACTION_TYPE).first
+          return nil if last_payment.nil?
+
+          day_difference(Date.today, last_payment.post_date)
+        end
+
         private
+
+        PAYMENT_TRANSACTION_TYPE = 'RPY'.freeze
+        private_constant :PAYMENT_TRANSACTION_TYPE
 
         attr_reader :tenancy_ref
 

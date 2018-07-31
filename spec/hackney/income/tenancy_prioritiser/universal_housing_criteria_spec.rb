@@ -76,4 +76,33 @@ describe Hackney::Income::TenancyPrioritiser::UniversalHousingCriteria do
       end
     end
   end
+
+  describe '#days_since_last_payment' do
+    context 'when the tenant has never paid' do
+      it 'should return nil' do
+        expect(subject.days_since_last_payment).to be_nil
+      end
+    end
+
+    context 'when the tenant paid two days ago' do
+      before do
+        Hackney::UniversalHousing::Models::Rtrans.create(tag_ref: tenancy_ref, trans_type: 'RPY', post_date: Date.today - 2.days, batchid: rand(1..100000))
+      end
+
+      it 'should return 2' do
+        expect(subject.days_since_last_payment).to eq(2)
+      end
+    end
+
+    context 'when the tenant paid five days ago, and rent was issued two days ago' do
+      before do
+        Hackney::UniversalHousing::Models::Rtrans.create(tag_ref: tenancy_ref, trans_type: 'RNT', post_date: Date.today - 2.days, batchid: rand(1..100000))
+        Hackney::UniversalHousing::Models::Rtrans.create(tag_ref: tenancy_ref, trans_type: 'RPY', post_date: Date.today - 5.days, batchid: rand(1..100000))
+      end
+
+      it 'should return 5' do
+        expect(subject.days_since_last_payment).to eq(5)
+      end
+    end
+  end
 end
