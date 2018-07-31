@@ -40,6 +40,10 @@ module Hackney
           Hackney::UniversalHousing::Models::Arag.where(tag_ref: tenancy_ref, arag_status: ACTIVE_ARREARS_AGREEMENT_STATUS).any?
         end
 
+        def number_of_broken_agreements
+          Hackney::UniversalHousing::Models::Arag.where(tag_ref: tenancy_ref, arag_status: BREACHED_ARREARS_AGREEMENT_STATUS).count
+        end
+
         private
 
         PAYMENT_TRANSACTION_TYPE = 'RPY'.freeze
@@ -47,6 +51,9 @@ module Hackney
 
         ACTIVE_ARREARS_AGREEMENT_STATUS = '200'.freeze
         private_constant :ACTIVE_ARREARS_AGREEMENT_STATUS
+
+        BREACHED_ARREARS_AGREEMENT_STATUS = '300'.freeze
+        private_constant :BREACHED_ARREARS_AGREEMENT_STATUS
 
         attr_reader :tenancy_ref
 

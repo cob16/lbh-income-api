@@ -125,11 +125,43 @@ describe Hackney::Income::TenancyPrioritiser::UniversalHousingCriteria do
 
     context 'when the tenant has a breached arrears agreement' do
       before do
-        Hackney::UniversalHousing::Models::Arag.create(tag_ref: tenancy_ref, arag_status: '600')
+        Hackney::UniversalHousing::Models::Arag.create(tag_ref: tenancy_ref, arag_status: '300')
       end
 
       it 'should be false' do
         expect(subject.active_agreement?).to be(false)
+      end
+    end
+  end
+
+  describe '#number_of_broken_agreements' do
+    context 'when the tenant has no arrears agreements' do
+      it 'should be zero' do
+        expect(subject.number_of_broken_agreements).to be_zero
+      end
+    end
+
+    context 'when the tenant has an active arrears agreement' do
+      before do
+        Hackney::UniversalHousing::Models::Arag.create(tag_ref: tenancy_ref, arag_status: '200')
+      end
+
+      it 'should be zero' do
+        expect(subject.number_of_broken_agreements).to be_zero
+      end
+    end
+
+    context 'when the tenant has a number of broken arrears agreement' do
+      let(:broken_agreements_count) { Faker::Number.number(2).to_i }
+
+      before do
+        broken_agreements_count.times do
+          Hackney::UniversalHousing::Models::Arag.create(arag_ref: Faker::IDNumber.valid, tag_ref: tenancy_ref, arag_status: '300')
+        end
+      end
+
+      it 'should be equal the number of broken agreements' do
+        expect(subject.number_of_broken_agreements).to eq(broken_agreements_count)
       end
     end
   end
