@@ -3,6 +3,6 @@ class UniversalHousingRecord < ApplicationRecord
   establish_connection UNIVERSAL_HOUSING_CONFIG
 
   def readonly?
-    true
+    not Rails.env.test?
   end
 end
