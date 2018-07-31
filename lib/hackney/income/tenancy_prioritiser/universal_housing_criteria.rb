@@ -58,6 +58,20 @@ module Hackney
             .any?
         end
 
+        def payment_amount_delta
+          payments = Hackney::UniversalHousing::Models::Rtrans.order(post_date: :desc).where(tag_ref: tenancy_ref, trans_type: PAYMENT_TRANSACTION_TYPE)
+          return nil if payments.count < 3
+
+          (payments[0].real_value - payments[1].real_value) - (payments[1].real_value - payments[2].real_value)
+        end
+
+        def payment_date_delta
+          payments = Hackney::UniversalHousing::Models::Rtrans.order(post_date: :desc).where(tag_ref: tenancy_ref, trans_type: PAYMENT_TRANSACTION_TYPE)
+          return nil if payments.count < 3
+
+          day_difference(payments[0].post_date, payments[1].post_date) - day_difference(payments[1].post_date, payments[2].post_date)
+        end
+
         private
 
         PAYMENT_TRANSACTION_TYPE = 'RPY'.freeze

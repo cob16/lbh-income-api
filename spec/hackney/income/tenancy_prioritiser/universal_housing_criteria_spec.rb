@@ -217,4 +217,102 @@ describe Hackney::Income::TenancyPrioritiser::UniversalHousingCriteria do
       it { is_expected.to be(false) }
     end
   end
+
+  describe '#payment_amount_delta' do
+    subject { criteria.payment_amount_delta }
+
+    context 'when a tenant has made no payments' do
+      it { is_expected.to be(nil) }
+    end
+
+    context 'when a tenant has made one payment' do
+      before do
+        Hackney::UniversalHousing::Models::Rtrans.create(tag_ref: tenancy_ref, trans_type: 'RPY', batchid: rand(1..100000))
+      end
+
+      it { is_expected.to be(nil) }
+    end
+
+    context 'when a tenant has made two payments' do
+      before do
+        Hackney::UniversalHousing::Models::Rtrans.create(tag_ref: tenancy_ref, trans_type: 'RPY', batchid: rand(1..100000))
+        Hackney::UniversalHousing::Models::Rtrans.create(tag_ref: tenancy_ref, trans_type: 'RPY', batchid: rand(1..100000))
+      end
+
+      it { is_expected.to be(nil) }
+    end
+
+    context 'when a tenant has made three payments of fluctuating amounts' do
+      before do
+        Hackney::UniversalHousing::Models::Rtrans.create(tag_ref: tenancy_ref, trans_type: 'RPY', real_value: -25.0, batchid: rand(1..100000))
+        Hackney::UniversalHousing::Models::Rtrans.create(tag_ref: tenancy_ref, trans_type: 'RPY', real_value: -75.0, batchid: rand(1..100000))
+        Hackney::UniversalHousing::Models::Rtrans.create(tag_ref: tenancy_ref, trans_type: 'RPY', real_value: -75.0, batchid: rand(1..100000))
+      end
+
+      it 'should return the delta between payments' do
+        expect(subject).to eq(50.0)
+      end
+    end
+
+    context 'when a tenant has made three payments of the same amount' do
+      before do
+        Hackney::UniversalHousing::Models::Rtrans.create(tag_ref: tenancy_ref, trans_type: 'RPY', real_value: -50.0, batchid: rand(1..100000))
+        Hackney::UniversalHousing::Models::Rtrans.create(tag_ref: tenancy_ref, trans_type: 'RPY', real_value: -50.0, batchid: rand(1..100000))
+        Hackney::UniversalHousing::Models::Rtrans.create(tag_ref: tenancy_ref, trans_type: 'RPY', real_value: -50.0, batchid: rand(1..100000))
+      end
+
+      it 'should return the delta between payments' do
+        expect(subject).to eq(0.0)
+      end
+    end
+  end
+
+  describe '#payment_date_delta' do
+    subject { criteria.payment_date_delta }
+
+    context 'when a tenant has made no payments' do
+      it { is_expected.to be(nil) }
+    end
+
+    context 'when a tenant has made one payment' do
+      before do
+        Hackney::UniversalHousing::Models::Rtrans.create(tag_ref: tenancy_ref, trans_type: 'RPY', batchid: rand(1..100000))
+      end
+
+      it { is_expected.to be(nil) }
+    end
+
+    context 'when a tenant has made two payments' do
+      before do
+        Hackney::UniversalHousing::Models::Rtrans.create(tag_ref: tenancy_ref, trans_type: 'RPY', batchid: rand(1..100000))
+        Hackney::UniversalHousing::Models::Rtrans.create(tag_ref: tenancy_ref, trans_type: 'RPY', batchid: rand(1..100000))
+      end
+
+      it { is_expected.to be(nil) }
+    end
+
+    context 'when a tenant has made three payments on fluctuating days' do
+      before do
+        Hackney::UniversalHousing::Models::Rtrans.create(tag_ref: tenancy_ref, trans_type: 'RPY', post_date: Date.today, batchid: rand(1..100000))
+        Hackney::UniversalHousing::Models::Rtrans.create(tag_ref: tenancy_ref, trans_type: 'RPY', post_date: Date.today - 15.days, batchid: rand(1..100000))
+        Hackney::UniversalHousing::Models::Rtrans.create(tag_ref: tenancy_ref, trans_type: 'RPY', post_date: Date.today - 25.days, batchid: rand(1..100000))
+      end
+
+      it 'should return the delta between payment dates' do
+        expect(subject).to eq(5)
+      end
+    end
+
+    context 'when a tenant has made three payments an equal amount of time apart' do
+      before do
+        Hackney::UniversalHousing::Models::Rtrans.create(tag_ref: tenancy_ref, trans_type: 'RPY', post_date: Date.today - 10.days, batchid: rand(1..100000))
+        Hackney::UniversalHousing::Models::Rtrans.create(tag_ref: tenancy_ref, trans_type: 'RPY', post_date: Date.today - 10.days, batchid: rand(1..100000))
+        Hackney::UniversalHousing::Models::Rtrans.create(tag_ref: tenancy_ref, trans_type: 'RPY', post_date: Date.today - 10.days, batchid: rand(1..100000))
+      end
+
+      it 'should return the delta between payment dates' do
+        expect(subject).to be_zero
+      end
+    end
+  end
 end
