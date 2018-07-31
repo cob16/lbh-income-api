@@ -51,6 +51,13 @@ module Hackney
             .any?
         end
 
+        def active_nosp?
+          Hackney::UniversalHousing::Models::Araction
+            .where(tag_ref: tenancy_ref, action_code: NOSP_ACTION_DIARY_CODE)
+            .where('action_date >= ?', Date.today - 1.month)
+            .any?
+        end
+
         private
 
         PAYMENT_TRANSACTION_TYPE = 'RPY'.freeze

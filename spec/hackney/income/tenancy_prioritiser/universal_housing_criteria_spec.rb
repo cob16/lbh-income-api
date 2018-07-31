@@ -203,4 +203,42 @@ describe Hackney::Income::TenancyPrioritiser::UniversalHousingCriteria do
       end
     end
   end
+
+  describe 'active_nosp?' do
+    context 'when a tenant does not have a nosp' do
+      it 'should be false' do
+        expect(subject.active_nosp?).to be(false)
+      end
+    end
+
+    context 'when a tenant had a nosp served recently' do
+      before do
+        Hackney::UniversalHousing::Models::Araction.create(tag_ref: tenancy_ref, action_code: 'NTS', action_date: Date.today)
+      end
+
+      it 'should be true' do
+        expect(subject.active_nosp?).to be(true)
+      end
+    end
+
+    context 'when a tenant had a nosp served a month ago' do
+      before do
+        Hackney::UniversalHousing::Models::Araction.create(tag_ref: tenancy_ref, action_code: 'NTS', action_date: Date.today - 1.month)
+      end
+
+      it 'should be true' do
+        expect(subject.active_nosp?).to be(true)
+      end
+    end
+
+    context 'when a tenant had a nosp served over a month ago' do
+      before do
+        Hackney::UniversalHousing::Models::Araction.create(tag_ref: tenancy_ref, action_code: 'NTS', action_date: Date.today - 1.month - 1.day)
+      end
+
+      it 'should be false' do
+        expect(subject.active_nosp?).to be(false)
+      end
+    end
+  end
 end
