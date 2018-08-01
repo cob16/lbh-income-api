@@ -72,6 +72,11 @@ module Hackney
           day_difference(payments[0].post_date, payments[1].post_date) - day_difference(payments[1].post_date, payments[2].post_date)
         end
 
+        # FIXME: implementation needs confirming, will return to later
+        def broken_court_order?
+          false
+        end
+
         private
 
         PAYMENT_TRANSACTION_TYPE = 'RPY'.freeze

@@ -315,4 +315,32 @@ describe Hackney::Income::TenancyPrioritiser::UniversalHousingCriteria do
       end
     end
   end
+
+  xdescribe '#broken_court_order?' do
+    context 'when the tenant has no court ordered agreements' do
+      it 'should be false' do
+        expect(subject.broken_court_order?).to be(false)
+      end
+    end
+
+    context 'when the tenant has an informal breached agreement' do
+      before do
+        Hackney::UniversalHousing::Models::Arag.create(tag_ref: tenancy_ref, arag_status: '300')
+      end
+
+      it 'should be false' do
+        expect(subject.broken_court_order?).to be(false)
+      end
+    end
+
+    context 'when the tenant has an breached court-ordered agreement' do
+      before do
+        Hackney::UniversalHousing::Models::Arag.create(tag_ref: tenancy_ref, arag_status: '300')
+      end
+
+      it 'should be true' do
+        expect(subject.broken_court_order?).to be(true)
+      end
+    end
+  end
 end
