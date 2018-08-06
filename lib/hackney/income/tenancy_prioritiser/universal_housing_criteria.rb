@@ -2,43 +2,53 @@ module Hackney
   module Income
     class TenancyPrioritiser
       class UniversalHousingCriteria
-        def self.sql_client
-          TinyTds::Client.new(
-            username: ENV['UH_DATABASE_USERNAME'],
-            password: ENV['UH_DATABASE_PASSWORD'],
-            host: ENV['UH_DATABASE_HOST'],
-            port: ENV['UH_DATABASE_PORT'],
-            database: ENV['UH_DATABASE_NAME']
-          )
-        end
+        def self.for_tenancy(universal_housing_client, tenancy_ref)
+          sql = <<-SQL
+            DECLARE @TenancyRef VARCHAR(60) = '#{tenancy_ref}'
+            DECLARE @ActiveArrearsAgreementStatus VARCHAR(60) = '#{ACTIVE_ARREARS_AGREEMENT_STATUS}'
+            DECLARE @BreachedArrearsAgreementStatus VARCHAR(60) = '#{BREACHED_ARREARS_AGREEMENT_STATUS}'
+            DECLARE @NospActionDiaryCode VARCHAR(60) = '#{NOSP_ACTION_DIARY_CODE}'
 
-        def self.for_tenancy(tenancy_ref)
-          query = sql_client.execute("
-            DECLARE @CurrentBalance numeric(9, 2) = (SELECT cur_bal FROM [dbo].[tenagree] WHERE tag_ref = '#{tenancy_ref}')
-            DECLARE @LastPaymentDate SMALLDATETIME = (SELECT post_date FROM [dbo].[rtrans] WHERE tag_ref = '#{tenancy_ref}' AND trans_type = '#{PAYMENT_TRANSACTION_TYPE}' ORDER BY post_date DESC OFFSET 0 ROWS FETCH NEXT 1 ROW ONLY)
-            DECLARE @RemainingTransactions INT = (SELECT COUNT(*) FROM [dbo].[rtrans] WHERE tag_ref = '#{tenancy_ref}')
-            DECLARE @ActiveAgreementsCount INT = (SELECT COUNT(*) FROM [dbo].[arag] WHERE tag_ref = '#{tenancy_ref}' AND arag_status = '#{ACTIVE_ARREARS_AGREEMENT_STATUS}')
-            DECLARE @BreachedAgreementsCount INT = (SELECT COUNT(*) FROM [dbo].[arag] WHERE tag_ref = '#{tenancy_ref}' AND arag_status = '#{BREACHED_ARREARS_AGREEMENT_STATUS}')
-            DECLARE @NospsInLastYear INT = (SELECT COUNT(*) FROM araction WHERE tag_ref = '#{tenancy_ref}' AND action_code = '#{NOSP_ACTION_DIARY_CODE}' AND action_date >= CONVERT(date, DATEADD(year, -1, GETDATE())))
-            DECLARE @NospsInLastMonth INT = (SELECT COUNT(*) FROM araction WHERE tag_ref = '#{tenancy_ref}' AND action_code = '#{NOSP_ACTION_DIARY_CODE}' AND action_date >= CONVERT(date, DATEADD(month, -1, GETDATE())))
+            DECLARE @PaymentTypes table(payment_type varchar(3))
+            INSERT INTO @PaymentTypes VALUES ('RBA'), ('RBP'), ('RBR'), ('RCI'), ('RCO'), ('RCP'), ('RDD'), ('RDN'), ('RDP'), ('RDR'), ('RDS'), ('RDT'), ('REF'), ('RHA'), ('RHB'), ('RIT'), ('RML'), ('RPD'), ('RPO'), ('RPY'), ('RQP'), ('RRC'), ('RRP'), ('RSO'), ('RTM'), ('RUC'), ('RWA')
+            DECLARE @CurrentBalance numeric(9, 2) = (SELECT cur_bal FROM [dbo].[tenagree] WHERE tag_ref = @TenancyRef)
+            DECLARE @LastPaymentDate SMALLDATETIME = (
+              SELECT post_date FROM (
+                SELECT ROW_NUMBER() OVER (ORDER BY post_date DESC) AS row, post_date
+                FROM [dbo].[rtrans]
+                WHERE tag_ref = @TenancyRef
+                AND trans_type IN (SELECT payment_type FROM @PaymentTypes)
+              ) t
+              WHERE row = 1
+            )
+            DECLARE @RemainingTransactions INT = (SELECT COUNT(*) FROM [dbo].[rtrans] WHERE tag_ref = @TenancyRef)
+            DECLARE @ActiveAgreementsCount INT = (SELECT COUNT(*) FROM [dbo].[arag] WHERE tag_ref = @TenancyRef AND arag_status = @ActiveArrearsAgreementStatus)
+            DECLARE @BreachedAgreementsCount INT = (SELECT COUNT(*) FROM [dbo].[arag] WHERE tag_ref = @TenancyRef AND arag_status = @BreachedArrearsAgreementStatus)
+            DECLARE @NospsInLastYear INT = (SELECT COUNT(*) FROM araction WHERE tag_ref = @TenancyRef AND action_code = @NospActionDiaryCode AND action_date >= CONVERT(date, DATEADD(year, -1, GETDATE())))
+            DECLARE @NospsInLastMonth INT = (SELECT COUNT(*) FROM araction WHERE tag_ref = @TenancyRef AND action_code = @NospActionDiaryCode AND action_date >= CONVERT(date, DATEADD(month, -1, GETDATE())))
             DECLARE @NextBalance numeric(9, 2) = @CurrentBalance
-            DECLARE @Offset INT = 0
+            DECLARE @CurrentTransactionRow INT = 1
             DECLARE @LastTransactionDate SMALLDATETIME = GETDATE()
             WHILE (@NextBalance > 0 AND @RemainingTransactions > 0)
             BEGIN
               SELECT @NextBalance = @NextBalance - real_value, @LastTransactionDate = post_date
-              FROM rtrans WHERE tag_ref = '#{tenancy_ref}' ORDER BY post_date DESC OFFSET @Offset ROWS FETCH NEXT 1 ROW ONLY
+              FROM (
+                SELECT ROW_NUMBER() OVER (ORDER BY post_date DESC) as row, real_value, post_date
+                FROM rtrans
+                WHERE tag_ref = @TenancyRef
+              ) t
+              WHERE row = @CurrentTransactionRow
 
               SET @RemainingTransactions = @RemainingTransactions - 1
-              SET @Offset = @Offset + 1
+              SET @CurrentTransactionRow = @CurrentTransactionRow + 1
             END
 
-            DECLARE @Payment1Value numeric(9, 2) = (SELECT real_value FROM rtrans WHERE trans_type = '#{PAYMENT_TRANSACTION_TYPE}' ORDER BY post_date DESC OFFSET 0 ROWS FETCH NEXT 1 ROW ONLY)
-            DECLARE @Payment1Date SMALLDATETIME = (SELECT post_date FROM rtrans WHERE trans_type = '#{PAYMENT_TRANSACTION_TYPE}' ORDER BY post_date DESC OFFSET 0 ROWS FETCH NEXT 1 ROW ONLY)
-            DECLARE @Payment2Value numeric(9, 2) = (SELECT real_value FROM rtrans WHERE trans_type = '#{PAYMENT_TRANSACTION_TYPE}' ORDER BY post_date DESC OFFSET 1 ROWS FETCH NEXT 1 ROW ONLY)
-            DECLARE @Payment2Date SMALLDATETIME = (SELECT post_date FROM rtrans WHERE trans_type = '#{PAYMENT_TRANSACTION_TYPE}' ORDER BY post_date DESC OFFSET 1 ROWS FETCH NEXT 1 ROW ONLY)
-            DECLARE @Payment3Value numeric(9, 2) = (SELECT real_value FROM rtrans WHERE trans_type = '#{PAYMENT_TRANSACTION_TYPE}' ORDER BY post_date DESC OFFSET 2 ROWS FETCH NEXT 1 ROW ONLY)
-            DECLARE @Payment3Date SMALLDATETIME = (SELECT post_date FROM rtrans WHERE trans_type = '#{PAYMENT_TRANSACTION_TYPE}' ORDER BY post_date DESC OFFSET 2 ROWS FETCH NEXT 1 ROW ONLY)
+            DECLARE @Payment1Value numeric(9, 2) = (SELECT real_value FROM (SELECT ROW_NUMBER() OVER(ORDER BY post_date DESC) as row, real_value FROM rtrans WHERE tag_ref = @TenancyRef AND trans_type IN (SELECT * FROM @PaymentTypes)) t WHERE row = 1)
+            DECLARE @Payment1Date SMALLDATETIME = (SELECT post_date FROM (SELECT ROW_NUMBER() OVER(ORDER BY post_date DESC) as row, post_date FROM rtrans WHERE tag_ref = @TenancyRef AND trans_type IN (SELECT * FROM @PaymentTypes)) t WHERE row = 1)
+            DECLARE @Payment2Value numeric(9, 2) = (SELECT real_value FROM (SELECT ROW_NUMBER() OVER(ORDER BY post_date DESC) as row, real_value FROM rtrans WHERE tag_ref = @TenancyRef AND trans_type IN (SELECT * FROM @PaymentTypes)) t WHERE row = 2)
+            DECLARE @Payment2Date SMALLDATETIME = (SELECT post_date FROM (SELECT ROW_NUMBER() OVER(ORDER BY post_date DESC) as row, post_date FROM rtrans WHERE tag_ref = @TenancyRef AND trans_type IN (SELECT * FROM @PaymentTypes)) t WHERE row = 2)
+            DECLARE @Payment3Value numeric(9, 2) = (SELECT real_value FROM (SELECT ROW_NUMBER() OVER(ORDER BY post_date DESC) as row, real_value FROM rtrans WHERE tag_ref = @TenancyRef AND trans_type IN (SELECT * FROM @PaymentTypes)) t WHERE row = 3)
+            DECLARE @Payment3Date SMALLDATETIME = (SELECT post_date FROM (SELECT ROW_NUMBER() OVER(ORDER BY post_date DESC) as row, post_date FROM rtrans WHERE tag_ref = @TenancyRef AND trans_type IN (SELECT * FROM @PaymentTypes)) t WHERE row = 3)
 
             SELECT
               @CurrentBalance as current_balance,
@@ -54,7 +64,9 @@ module Hackney
               @Payment2Date as payment_2_date,
               @Payment3Value as payment_3_value,
               @Payment3Date as payment_3_date;
-          ")
+          SQL
+
+          query = universal_housing_client.execute(sql)
           attributes = query.each(first: true).first
           query.do
 
@@ -125,9 +137,6 @@ module Hackney
         end
 
         private
-
-        PAYMENT_TRANSACTION_TYPE = 'RPY'.freeze
-        private_constant :PAYMENT_TRANSACTION_TYPE
 
         ACTIVE_ARREARS_AGREEMENT_STATUS = '200'.freeze
         private_constant :ACTIVE_ARREARS_AGREEMENT_STATUS

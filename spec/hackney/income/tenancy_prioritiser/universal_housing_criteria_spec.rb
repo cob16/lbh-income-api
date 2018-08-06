@@ -1,30 +1,21 @@
 require 'rails_helper'
 
 describe Hackney::Income::TenancyPrioritiser::UniversalHousingCriteria do
-  subject(:criteria) { described_class.for_tenancy(tenancy_ref) }
+  subject(:criteria) { described_class.for_tenancy(universal_housing_client, tenancy_ref) }
+  let(:universal_housing_client) { Hackney::UniversalHousing::Client.connection }
 
   let(:tenancy_ref) { '000015/01' }
   let(:current_balance) { Faker::Number.decimal.to_f }
-
-  let(:sql_client) do
-    TinyTds::Client.new(
-      username: ENV['UH_DATABASE_USERNAME'],
-      password: ENV['UH_DATABASE_PASSWORD'],
-      host: ENV['UH_DATABASE_HOST'],
-      port: ENV['UH_DATABASE_PORT'],
-      database: ENV['UH_DATABASE_NAME']
-    )
-  end
 
   before do
     create_tenancy_agreement(tenancy_ref: tenancy_ref, current_balance: current_balance)
   end
 
   after do
-    sql_client.execute('TRUNCATE TABLE [dbo].[tenagree]').do
-    sql_client.execute('TRUNCATE TABLE [dbo].[rtrans]').do
-    sql_client.execute('TRUNCATE TABLE [dbo].[arag]').do
-    sql_client.execute('TRUNCATE TABLE [dbo].[araction]').do
+    universal_housing_client.execute('TRUNCATE TABLE [dbo].[tenagree]').do
+    universal_housing_client.execute('TRUNCATE TABLE [dbo].[rtrans]').do
+    universal_housing_client.execute('TRUNCATE TABLE [dbo].[arag]').do
+    universal_housing_client.execute('TRUNCATE TABLE [dbo].[araction]').do
   end
 
   it { is_expected.to be_instance_of(described_class) }
@@ -336,18 +327,18 @@ describe Hackney::Income::TenancyPrioritiser::UniversalHousingCriteria do
   end
 
   def create_tenancy_agreement(tenancy_ref:, current_balance:)
-    sql_client.execute("INSERT [dbo].[tenagree] (tag_ref, cur_bal) VALUES ('#{tenancy_ref}', #{current_balance})").do
+    universal_housing_client.execute("INSERT [dbo].[tenagree] (tag_ref, cur_bal) VALUES ('#{tenancy_ref}', #{current_balance})").do
   end
 
   def create_transaction(tenancy_ref:, amount: 0.0, date: Date.today, type: '')
-    sql_client.execute("INSERT [dbo].[rtrans] (tag_ref, real_value, post_date, trans_type, batchid) VALUES ('#{tenancy_ref}', '#{amount}', '#{date}', '#{type}', #{rand(1..100000)})").do
+    universal_housing_client.execute("INSERT [dbo].[rtrans] (tag_ref, real_value, post_date, trans_type, batchid) VALUES ('#{tenancy_ref}', '#{amount}', '#{date}', '#{type}', #{rand(1..100000)})").do
   end
 
   def create_arrears_agreement(tenancy_ref:, status:)
-    sql_client.execute("INSERT [dbo].[arag] (arag_ref, tag_ref, arag_status) VALUES ('#{Faker::IDNumber.valid}', '#{tenancy_ref}', '#{status}')").do
+    universal_housing_client.execute("INSERT [dbo].[arag] (arag_ref, tag_ref, arag_status) VALUES ('#{Faker::IDNumber.valid}', '#{tenancy_ref}', '#{status}')").do
   end
 
   def create_action(tenancy_ref:, code:, date:)
-    sql_client.execute("INSERT [dbo].[araction] (tag_ref, action_code, action_date) VALUES ('#{tenancy_ref}', '#{code}', '#{date}')").do
+    universal_housing_client.execute("INSERT [dbo].[araction] (tag_ref, action_code, action_date) VALUES ('#{tenancy_ref}', '#{code}', '#{date}')").do
   end
 end
