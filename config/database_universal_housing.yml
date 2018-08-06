@@ -1,0 +1,16 @@
+default: &default
+  username: <%= ENV['UH_DATABASE_USERNAME'] %>
+  password: <%= ENV['UH_DATABASE_PASSWORD'] %>
+  host: <%= ENV['UH_DATABASE_HOST'] %>
+  port: <%= ENV['UH_DATABASE_PORT'] %>
+  database: <%= ENV['UH_DATABASE_NAME'] %>
+  timeout: 30
+
+development:
+  <<: *default
+
+test:
+  <<: *default
+
+production:
+  <<: *default
