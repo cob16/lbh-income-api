@@ -41,6 +41,9 @@ module Hackney
         end
 
         def days_since_last_payment
+          # FIXME: not sure why this is sometimes nil, but previously unaccounted for
+          return 0 if @criteria.days_since_last_payment.nil?
+
           weeks_since_last_payment = @criteria.days_since_last_payment / 7
           weighting = @weightings.days_since_last_payment * weeks_since_last_payment
 
