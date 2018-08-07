@@ -5,7 +5,6 @@ describe Hackney::Income::DangerousViewMyCases do
   let(:tenancy_refs) { [tenancy_attributes.fetch(:ref)] }
   let(:tenancy_priority_band) { Faker::Internet.slug }
   let(:tenancy_priority_score) { Faker::Number.number(5).to_i }
-  let(:stored_tenancy_gateway) {  }
 
   let(:tenancy_api_gateway) do
     TenancyApiGatewayDouble.new({
@@ -13,20 +12,20 @@ describe Hackney::Income::DangerousViewMyCases do
     })
   end
 
-  let(:stored_tenancy_gateway) do
+  let(:stored_tenancies_gateway) do
     StoredTenancyGatewayDouble.new({
       tenancy_refs.first => { tenancy_ref: tenancy_refs.first, priority_band: tenancy_priority_band, priority_score: tenancy_priority_score }
     })
   end
 
-  let(:use_case) do
+  let(:view_my_cases) do
     described_class.new(
       tenancy_api_gateway: tenancy_api_gateway,
-      stored_tenancy_gateway: stored_tenancy_gateway,
+      stored_tenancies_gateway: stored_tenancies_gateway,
     )
   end
 
-  subject { use_case.execute(tenancy_refs) }
+  subject { view_my_cases.execute(tenancy_refs) }
 
   context 'when given no tenancy refs' do
     let(:tenancy_api_gateway) { double(get_tenancies_by_refs: []) }
@@ -75,7 +74,7 @@ describe Hackney::Income::DangerousViewMyCases do
       })
     end
 
-    let(:stored_tenancy_gateway) do
+    let(:stored_tenancies_gateway) do
       StoredTenancyGatewayDouble.new({
         '123/01' => { tenancy_ref: '123/01', priority_band: 'green', priority_score: 12412 },
         '456/01' => { tenancy_ref: '456/01', priority_band: 'red', priority_score: 35663 },

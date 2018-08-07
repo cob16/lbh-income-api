@@ -1,14 +1,14 @@
 module Hackney
   module Income
     class DangerousViewMyCases
-      def initialize(tenancy_api_gateway:, stored_tenancy_gateway:)
+      def initialize(tenancy_api_gateway:, stored_tenancies_gateway:)
         @tenancy_api_gateway = tenancy_api_gateway
-        @stored_tenancy_gateway = stored_tenancy_gateway
+        @stored_tenancies_gateway = stored_tenancies_gateway
       end
 
       def execute(tenancy_refs)
         full_tenancies = @tenancy_api_gateway.get_tenancies_by_refs(tenancy_refs)
-        stored_tenancies = @stored_tenancy_gateway.get_tenancies_by_refs(tenancy_refs)
+        stored_tenancies = @stored_tenancies_gateway.get_tenancies_by_refs(tenancy_refs)
 
         full_tenancies.map do |tenancy, index|
           stored_tenancy = stored_tenancies.find { |t| t.fetch(:tenancy_ref) == tenancy.fetch(:ref) }
