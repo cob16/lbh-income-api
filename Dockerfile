@@ -13,4 +13,5 @@ RUN bundle check || bundle install
 
 COPY . /app
 EXPOSE 3000
+
 CMD rails s
