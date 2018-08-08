@@ -25,6 +25,7 @@ gem 'puma', '~> 3.7'
 # gem 'rack-cors'
 
 gem 'tiny_tds'
+gem 'rest-client'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
@@ -33,6 +34,7 @@ group :development, :test do
   gem 'rspec-rails'
   gem 'rspec-its'
   gem 'faker'
+  gem 'webmock'
 end
 
 group :development do
