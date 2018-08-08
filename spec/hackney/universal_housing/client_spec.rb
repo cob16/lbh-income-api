@@ -3,11 +3,11 @@ require 'rails_helper'
 describe Hackney::UniversalHousing::Client do
   subject { described_class.connection }
 
-  it 'connects using environmental configuration' do
-    expect(subject).to be_active
+  it 'to be a Sequel database instance' do
+    expect(subject).to be_a(Sequel::TinyTDS::Database)
   end
 
-  it 'to be a TinyTds instance' do
-    expect(subject).to be_a(TinyTds::Client)
+  it 'can execute queries against the database' do
+    expect(subject.table_exists?('tenagree')).to be(true)
   end
 end
