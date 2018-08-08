@@ -16,6 +16,6 @@ services:
     volumes:
       - .:/app
   universal_housing:
-    build: ../universal-housing-simulator
+    image: 775052747630.dkr.ecr.eu-west-2.amazonaws.com/hackney/universal-housing-simulator:latest
     ports:
       - 1433:1433
