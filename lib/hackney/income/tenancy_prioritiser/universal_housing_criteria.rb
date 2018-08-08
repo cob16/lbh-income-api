@@ -5,9 +5,9 @@ module Hackney
         def self.for_tenancy(universal_housing_client, tenancy_ref)
           sql = <<-SQL
             DECLARE @TenancyRef VARCHAR(60) = '#{tenancy_ref}'
-            DECLARE @ActiveArrearsAgreementStatus VARCHAR(60) = '#{ACTIVE_ARREARS_AGREEMENT_STATUS}'
-            DECLARE @BreachedArrearsAgreementStatus VARCHAR(60) = '#{BREACHED_ARREARS_AGREEMENT_STATUS}'
-            DECLARE @NospActionDiaryCode VARCHAR(60) = '#{NOSP_ACTION_DIARY_CODE}'
+            DECLARE @ActiveArrearsAgreementStatus VARCHAR(60) = '#{Hackney::Income::ACTIVE_ARREARS_AGREEMENT_STATUS}'
+            DECLARE @BreachedArrearsAgreementStatus VARCHAR(60) = '#{Hackney::Income::BREACHED_ARREARS_AGREEMENT_STATUS}'
+            DECLARE @NospActionDiaryCode VARCHAR(60) = '#{Hackney::Income::NOSP_ACTION_DIARY_CODE}'
 
             DECLARE @PaymentTypes table(payment_type varchar(3))
             INSERT INTO @PaymentTypes VALUES ('RBA'), ('RBP'), ('RBR'), ('RCI'), ('RCO'), ('RCP'), ('RDD'), ('RDN'), ('RDP'), ('RDR'), ('RDS'), ('RDT'), ('REF'), ('RHA'), ('RHB'), ('RIT'), ('RML'), ('RPD'), ('RPO'), ('RPY'), ('RQP'), ('RRC'), ('RRP'), ('RSO'), ('RTM'), ('RUC'), ('RWA')
@@ -137,15 +137,6 @@ module Hackney
         end
 
         private
-
-        ACTIVE_ARREARS_AGREEMENT_STATUS = '200'.freeze
-        private_constant :ACTIVE_ARREARS_AGREEMENT_STATUS
-
-        BREACHED_ARREARS_AGREEMENT_STATUS = '300'.freeze
-        private_constant :BREACHED_ARREARS_AGREEMENT_STATUS
-
-        NOSP_ACTION_DIARY_CODE = 'NTS'.freeze
-        private_constant :NOSP_ACTION_DIARY_CODE
 
         attr_reader :tenancy_ref, :attributes
 
