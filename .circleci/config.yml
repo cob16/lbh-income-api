@@ -19,9 +19,6 @@ jobs:
       - run:
           name: Run tests
           command: docker-compose exec app rspec
-      - run:
-          name: Check homepage
-          command: docker-compose exec app curl --fail localhost:3000
 
   staging_release:
     machine: true
