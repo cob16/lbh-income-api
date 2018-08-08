@@ -25,13 +25,14 @@ gem 'puma', '~> 3.7'
 # gem 'rack-cors'
 
 gem 'tiny_tds'
-gem 'activerecord-sqlserver-adapter'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
 
   gem 'rspec-rails'
+  gem 'rspec-its'
+  gem 'faker'
 end
 
 group :development do

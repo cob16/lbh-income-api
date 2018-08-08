@@ -1,10 +1,10 @@
 default: &default
-  adapter: sqlserver
-  host: <%= ENV.fetch('UH_DATABASE_HOST') %>
-  port: <%= ENV.fetch('UH_DATABASE_PORT') %>
-  database: <%= ENV.fetch('UH_DATABASE_NAME') %>
-  username: <%= ENV.fetch('UH_DATABASE_USERNAME') %>
-  password: <%= ENV.fetch('UH_DATABASE_PASSWORD') %>
+  username: <%= ENV['UH_DATABASE_USERNAME'] %>
+  password: <%= ENV['UH_DATABASE_PASSWORD'] %>
+  host: <%= ENV['UH_DATABASE_HOST'] %>
+  port: <%= ENV['UH_DATABASE_PORT'] %>
+  database: <%= ENV['UH_DATABASE_NAME'] %>
+  timeout: 30
 
 development:
   <<: *default
