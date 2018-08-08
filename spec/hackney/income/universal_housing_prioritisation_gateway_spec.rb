@@ -22,7 +22,7 @@ describe Hackney::Income::UniversalHousingPrioritisationGateway do
     it 'should determine universal housing criteria' do
       expect(Hackney::Income::TenancyPrioritiser::UniversalHousingCriteria)
         .to receive(:for_tenancy)
-        .with(an_instance_of(TinyTds::Client), tenancy_ref)
+        .with(an_instance_of(Sequel::TinyTDS::Database), tenancy_ref)
 
       subject.priorities_for_tenancy(tenancy_ref)
     end

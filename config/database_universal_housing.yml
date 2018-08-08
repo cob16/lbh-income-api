@@ -1,4 +1,5 @@
 default: &default
+  adapter: 'tinytds'
   username: <%= ENV['UH_DATABASE_USERNAME'] %>
   password: <%= ENV['UH_DATABASE_PASSWORD'] %>
   host: <%= ENV['UH_DATABASE_HOST'] %>

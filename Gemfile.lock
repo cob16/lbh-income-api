@@ -139,6 +139,7 @@ GEM
     rspec-support (3.7.1)
     ruby_dep (1.5.0)
     safe_yaml (1.0.4)
+    sequel (5.11.0)
     spring (2.0.2)
       activesupport (>= 4.2)
     spring-watcher-listen (2.0.1)
@@ -180,6 +181,7 @@ DEPENDENCIES
   rest-client
   rspec-its
   rspec-rails
+  sequel
   spring
   spring-watcher-listen (~> 2.0.0)
   sqlite3

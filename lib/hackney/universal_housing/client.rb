@@ -3,14 +3,7 @@ module Hackney
     class Client
       class << self
         def connection
-          TinyTds::Client.new(
-            username: configuration.fetch(:username),
-            password: configuration.fetch(:password),
-            host: configuration.fetch(:host),
-            port: configuration.fetch(:port),
-            database: configuration.fetch(:database),
-            timeout: configuration.fetch(:timeout)
-          )
+          Sequel.connect(configuration)
         end
 
         private

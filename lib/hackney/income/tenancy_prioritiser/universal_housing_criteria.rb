@@ -4,10 +4,10 @@ module Hackney
       class UniversalHousingCriteria
         def self.for_tenancy(universal_housing_client, tenancy_ref)
           sql = <<-SQL
-            DECLARE @TenancyRef VARCHAR(60) = '#{tenancy_ref}'
-            DECLARE @ActiveArrearsAgreementStatus VARCHAR(60) = '#{Hackney::Income::ACTIVE_ARREARS_AGREEMENT_STATUS}'
-            DECLARE @BreachedArrearsAgreementStatus VARCHAR(60) = '#{Hackney::Income::BREACHED_ARREARS_AGREEMENT_STATUS}'
-            DECLARE @NospActionDiaryCode VARCHAR(60) = '#{Hackney::Income::NOSP_ACTION_DIARY_CODE}'
+            DECLARE @TenancyRef VARCHAR(60) = ?
+            DECLARE @ActiveArrearsAgreementStatus VARCHAR(60) = ?
+            DECLARE @BreachedArrearsAgreementStatus VARCHAR(60) = ?
+            DECLARE @NospActionDiaryCode VARCHAR(60) = ?
             DECLARE @PaymentTypes table(payment_type varchar(3))
             INSERT INTO @PaymentTypes VALUES ('RBA'), ('RBP'), ('RBR'), ('RCI'), ('RCO'), ('RCP'), ('RDD'), ('RDN'), ('RDP'), ('RDR'), ('RDS'), ('RDT'), ('REF'), ('RHA'), ('RHB'), ('RIT'), ('RML'), ('RPD'), ('RPO'), ('RPY'), ('RQP'), ('RRC'), ('RRP'), ('RSO'), ('RTM'), ('RUC'), ('RWA')
 
@@ -66,11 +66,15 @@ module Hackney
               @Payment3Date as payment_3_date;
           SQL
 
-          query = universal_housing_client.execute(sql)
-          attributes = query.each(first: true).first
-          query.do
+          attributes = universal_housing_client[
+            sql,
+            tenancy_ref,
+            Hackney::Income::ACTIVE_ARREARS_AGREEMENT_STATUS,
+            Hackney::Income::BREACHED_ARREARS_AGREEMENT_STATUS,
+            Hackney::Income::NOSP_ACTION_DIARY_CODE
+          ]
 
-          new(tenancy_ref, attributes.symbolize_keys)
+          new(tenancy_ref, attributes.first.symbolize_keys)
         end
 
         def initialize(tenancy_ref, attributes)
