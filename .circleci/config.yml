@@ -57,7 +57,7 @@ jobs:
             docker push $ECR_IMAGE_URL:staging
       - run:
           name: Force new deployment
-          command: ecs-deploy --region $AWS_REGION --cluster $ECS_STAGING_CLUSTER --service-name $ECS_STAGING_APP_NAME --image $ECR_IMAGE_URL:staging --timeout 1800
+          command: ecs-deploy --region $AWS_REGION --cluster $ECS_STAGING_CLUSTER --service-name $ECS_STAGING_APP_NAME --image $ECR_IMAGE_URL:staging --timeout 18000
 
 workflows:
   version: 2
