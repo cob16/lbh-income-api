@@ -11,7 +11,7 @@ RUN wget ftp://ftp.freetds.org/pub/freetds/stable/freetds-1.00.27.tar.gz && \
 COPY Gemfile Gemfile.lock ./
 RUN bundle check || bundle install
 
-COPY . /app
-EXPOSE 3000
+# COPY . /app
+# EXPOSE 3000
 
 CMD rails s
