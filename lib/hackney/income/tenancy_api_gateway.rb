@@ -3,6 +3,7 @@ module Hackney
     class TenancyApiGateway
       def initialize(host:, key:)
         @host = host
+        @key = key
       end
 
       def get_tenancies_by_refs(refs)
