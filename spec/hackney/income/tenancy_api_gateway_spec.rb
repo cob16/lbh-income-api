@@ -1,23 +1,23 @@
 require 'rails_helper'
 
 describe Hackney::Income::TenancyApiGateway do
-  let(:gateway) { described_class.new(host: 'https://example.com') }
+  let(:gateway) { described_class.new(host: 'https://example.com', key: 'skeleton') }
 
   context 'when retrieving tenancies' do
     subject { gateway.get_tenancies_by_refs(refs) }
 
     context 'and using a different host' do
-      let(:gateway) { described_class.new(host: 'https://other.com') }
+      let(:gateway) { described_class.new(host: 'https://other.com', key: 'skeleton') }
       let(:refs) { %w(123) }
 
       before do
-        stub_request(:get, "https://other.com/api/v1/tenancies?tenancy_refs%5B%5D=123")
+        stub_request(:get, "https://other.com/tenancies?tenancy_refs%5B%5D=123")
           .to_return(body: { 'tenancies' => [example_tenancy] }.to_json)
       end
 
       it 'should use the host' do
         subject
-        expect(WebMock).to have_requested(:get, 'https://other.com/api/v1/tenancies?tenancy_refs%5B%5D=123').once
+        expect(WebMock).to have_requested(:get, 'https://other.com/tenancies?tenancy_refs%5B%5D=123').once
       end
     end
 
@@ -33,7 +33,7 @@ describe Hackney::Income::TenancyApiGateway do
       let(:refs) { %w(000015/01) }
 
       before do
-        stub_request(:get, "https://example.com/api/v1/tenancies?tenancy_refs%5B%5D=000015/01")
+        stub_request(:get, "https://example.com/tenancies?tenancy_refs%5B%5D=000015/01")
           .to_return(body: { 'tenancies' => [example_tenancy] }.to_json)
       end
 
@@ -59,7 +59,7 @@ describe Hackney::Income::TenancyApiGateway do
       let(:refs) { %w(000017/01) }
 
       before do
-        stub_request(:get, "https://example.com/api/v1/tenancies?tenancy_refs%5B%5D=000017/01")
+        stub_request(:get, "https://example.com/tenancies?tenancy_refs%5B%5D=000017/01")
           .to_return(body: { 'tenancies' => [example_tenancy_with_nils] }.to_json)
       end
 
@@ -78,7 +78,7 @@ describe Hackney::Income::TenancyApiGateway do
       let(:refs) { %w(000015/01 000017/01) }
 
       before do
-        stub_request(:get, "https://example.com/api/v1/tenancies?tenancy_refs%5B%5D=000017/01&tenancy_refs%5B%5D=000015/01")
+        stub_request(:get, "https://example.com/tenancies?tenancy_refs%5B%5D=000017/01&tenancy_refs%5B%5D=000015/01")
           .to_return(body: { 'tenancies' => [example_tenancy, example_tenancy_with_nils] }.to_json)
       end
 
