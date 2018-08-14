@@ -8,7 +8,11 @@ module Hackney
       def get_tenancies_by_refs(refs)
         return [] if refs.empty?
 
-        response = RestClient.get("#{@host}/api/v1/tenancies", params: { tenancy_refs: convert_to_params_array(refs) })
+        response = RestClient.get(
+          "#{@host}/tenancies",
+          'x-api-key' => @key,
+          params: { tenancy_refs: convert_to_params_array(refs) }
+        )
         body = JSON.load(response.body)
 
         body['tenancies'].map do |tenancy|
