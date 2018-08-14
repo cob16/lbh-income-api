@@ -59,6 +59,41 @@ jobs:
           name: Force new deployment
           command: ecs-deploy --region $AWS_REGION --cluster $ECS_STAGING_CLUSTER --service-name $ECS_STAGING_APP_NAME --image $ECR_IMAGE_URL:staging --timeout 32000
 
+  production_release:
+    machine: true
+    steps:
+      - checkout
+      - run:
+          name: Install AWS CLI
+          command: pip install awscli --upgrade --user
+      - run:
+          name: Install jq
+          command: |
+            sudo apt-get update
+            sudo apt-get install jq
+      - run:
+          name: Install ecs-deploy
+          command: |
+            curl https://raw.githubusercontent.com/silinternational/ecs-deploy/master/ecs-deploy | sudo tee /usr/bin/ecs-deploy
+            sudo chmod +x /usr/bin/ecs-deploy
+      - run:
+          name: Login to ECR
+          command: aws ecr get-login --region $AWS_REGION --no-include-email | sh
+      - run:
+          name: Build new application Docker image
+          command: docker build --tag hackney/apps/income-api .
+      - run:
+          name: Tag new image for staging release
+          command: |
+            docker tag hackney/apps/income-api:latest $ECR_IMAGE_URL:production
+      - run:
+          name: Release new image to ECR
+          command: |
+            docker push $ECR_IMAGE_URL:production
+      - run:
+          name: Force new deployment
+          command: ecs-deploy --region $AWS_REGION --cluster $ECS_PRODUCTION_CLUSTER --service-name $ECS_PRODUCTION_APP_NAME --image $ECR_IMAGE_URL:production --timeout 32000
+
 workflows:
   version: 2
   continuous_delivery:
@@ -70,3 +105,10 @@ workflows:
           # filters:
           #   branches:
           #     only: master
+      - permit_production_release:
+          type: approval
+          requires:
+            - staging_release
+      - production_release:
+          requires:
+            - permit_production_release
