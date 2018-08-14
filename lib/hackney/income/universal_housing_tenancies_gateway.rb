@@ -2,7 +2,11 @@ module Hackney
   module Income
     class UniversalHousingTenanciesGateway
       def tenancies_in_arrears
-        database[:tenagree].where { cur_bal > 0 }.map(:tag_ref).map(&:strip)
+        tenancy_refs = []
+        query = database.execute('SELECT tag_ref FROM tenagree WHERE cur_bal > 0')
+        query.each { |record| tenancy_refs << record.fetch('tag_ref').strip }
+        query.do
+        tenancy_refs
       end
 
       private
