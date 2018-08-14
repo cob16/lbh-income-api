@@ -1,7 +1,7 @@
 module Hackney
   module Income
     class TenancyApiGateway
-      def initialize(host:)
+      def initialize(host:, key:)
         @host = host
       end
 
