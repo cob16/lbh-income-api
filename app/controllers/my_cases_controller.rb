@@ -13,7 +13,7 @@ class MyCasesController < ApplicationController
 
   def view_my_cases
     Hackney::Income::DangerousViewMyCases.new(
-      tenancy_api_gateway: Hackney::Income::TenancyApiGateway.new(host: 'http://tenancy_api'),
+      tenancy_api_gateway: Hackney::Income::TenancyApiGateway.new(host: ENV['INCOME_COLLECTION_API_HOST'], key: ENV['INCOME_COLLECTION_API_KEY']),
       stored_tenancies_gateway: Hackney::Income::StoredTenanciesGateway.new
     )
   end
