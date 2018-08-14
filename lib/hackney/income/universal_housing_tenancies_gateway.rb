@@ -8,7 +8,10 @@ module Hackney
       private
 
       def database
-        Hackney::UniversalHousing::Client.connection
+        Hackney::UniversalHousing::Client.connection.tap do |db|
+          db.extension :identifier_mangling
+          db.identifier_input_method = db.identifier_output_method = nil
+        end
       end
     end
   end
