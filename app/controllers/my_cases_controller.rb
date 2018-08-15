@@ -5,8 +5,13 @@ class MyCasesController < ApplicationController
   end
 
   def sync
-    sync = Hackney::Income::DangerousSyncCases.new(prioritisation_gateway: Hackney::Income::UniversalHousingPrioritisationGateway.new, uh_tenancies_gateway: Hackney::Income::UniversalHousingTenanciesGateway.new, stored_tenancies_gateway: Hackney::Income::StoredTenanciesGateway.new)
+    sync = Hackney::Income::DangerousSyncCases.new(
+      prioritisation_gateway: Hackney::Income::UniversalHousingPrioritisationGateway.new,
+      uh_tenancies_gateway: Hackney::Income::UniversalHousingTenanciesGateway.new,
+      stored_tenancies_gateway: Hackney::Income::StoredTenanciesGateway.new
+    )
     sync.execute
+    render json: { success: true }
   end
 
   private
