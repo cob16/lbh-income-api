@@ -12,18 +12,11 @@ class MyCasesController < ApplicationController
   private
 
   def view_my_cases_use_case
-    Hackney::Income::DangerousViewMyCases.new(
-      tenancy_api_gateway: Hackney::Income::TenancyApiGateway.new(host: ENV['INCOME_COLLECTION_API_HOST'], key: ENV['INCOME_COLLECTION_API_KEY']),
-      stored_tenancies_gateway: Hackney::Income::StoredTenanciesGateway.new
-    )
+    income_use_case_factory.view_my_cases
   end
 
   def sync_cases_use_case
-    Hackney::Income::DangerousSyncCases.new(
-      prioritisation_gateway: Hackney::Income::UniversalHousingPrioritisationGateway.new,
-      uh_tenancies_gateway: Hackney::Income::HardcodedTenanciesGateway.new,
-      stored_tenancies_gateway: Hackney::Income::StoredTenanciesGateway.new
-    )
+    income_use_case_factory.sync_cases
   end
 
   def random_tenancy_refs
