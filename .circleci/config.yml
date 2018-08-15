@@ -102,9 +102,9 @@ workflows:
       - staging_release:
           requires:
             - check
-          # filters:
-          #   branches:
-          #     only: master
+          filters:
+            branches:
+              only: master
       - permit_production_release:
           type: approval
           requires:
