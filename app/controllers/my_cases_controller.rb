@@ -1,24 +1,27 @@
 class MyCasesController < ApplicationController
   def index
-    cases = view_my_cases.execute(random_tenancy_refs)
+    cases = view_my_cases_use_case.execute(random_tenancy_refs)
     render json: cases
   end
 
   def sync
-    sync = Hackney::Income::DangerousSyncCases.new(
-      prioritisation_gateway: Hackney::Income::UniversalHousingPrioritisationGateway.new,
-      uh_tenancies_gateway: Hackney::Income::UniversalHousingTenanciesGateway.new,
-      stored_tenancies_gateway: Hackney::Income::StoredTenanciesGateway.new
-    )
-    sync.execute
+    sync_cases_use_case.execute
     render json: { success: true }
   end
 
   private
 
-  def view_my_cases
+  def view_my_cases_use_case
     Hackney::Income::DangerousViewMyCases.new(
       tenancy_api_gateway: Hackney::Income::TenancyApiGateway.new(host: ENV['INCOME_COLLECTION_API_HOST'], key: ENV['INCOME_COLLECTION_API_KEY']),
+      stored_tenancies_gateway: Hackney::Income::StoredTenanciesGateway.new
+    )
+  end
+
+  def sync_cases_use_case
+    Hackney::Income::DangerousSyncCases.new(
+      prioritisation_gateway: Hackney::Income::UniversalHousingPrioritisationGateway.new,
+      uh_tenancies_gateway: Hackney::Income::UniversalHousingTenanciesGateway.new,
       stored_tenancies_gateway: Hackney::Income::StoredTenanciesGateway.new
     )
   end
