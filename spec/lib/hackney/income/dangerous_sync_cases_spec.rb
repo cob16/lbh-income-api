@@ -1,4 +1,4 @@
-require 'rails_helper'
+require_relative '../../../../lib/hackney/income/dangerous_sync_cases'
 
 describe Hackney::Income::DangerousSyncCases do
   let(:uh_tenancies_gateway) { double(tenancies_in_arrears: []) }

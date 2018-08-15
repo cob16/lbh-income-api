@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe Hackney::Income::UniversalHousingPrioritisationGateway do
+describe Hackney::Income::UniversalHousingPrioritisationGateway, universal: true do
   subject do
     described_class.new
   end

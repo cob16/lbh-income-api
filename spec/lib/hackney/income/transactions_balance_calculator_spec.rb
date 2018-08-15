@@ -1,4 +1,5 @@
-require 'rails_helper'
+require_relative '../../../../lib/hackney/income/transactions_balance_calculator'
+require 'active_support/core_ext/numeric/time'
 
 describe Hackney::Income::TransactionsBalanceCalculator do
   let(:current_balance) { Faker::Number.decimal(2).to_f }
