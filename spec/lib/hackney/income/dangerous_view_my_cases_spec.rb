@@ -1,4 +1,4 @@
-require 'rails_helper'
+require_relative '../../../../lib/hackney/income/dangerous_view_my_cases'
 
 describe Hackney::Income::DangerousViewMyCases do
   let(:tenancy_attributes) { random_tenancy_attributes }

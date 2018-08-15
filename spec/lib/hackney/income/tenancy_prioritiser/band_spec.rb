@@ -1,4 +1,5 @@
-require 'rails_helper'
+require_relative '../../../../../lib/hackney/income/tenancy_prioritiser/band'
+require_relative '../../../../../lib/hackney/income/tenancy_prioritiser/stub_criteria'
 
 describe Hackney::Income::TenancyPrioritiser::Band do
   let(:criteria) { Hackney::Income::TenancyPrioritiser::StubCriteria.new }
