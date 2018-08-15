@@ -11,7 +11,7 @@ module Hackney
 
         response = RestClient.get(
           "#{@host}/tenancies",
-          'x-api-key' => @api_key,
+          'x-api-key' => @key,
           params: { tenancy_refs: convert_to_params_array(refs) }
         )
         body = JSON.load(response.body)
