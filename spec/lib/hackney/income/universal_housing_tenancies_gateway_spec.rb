@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe Hackney::Income::UniversalHousingTenanciesGateway do
+describe Hackney::Income::UniversalHousingTenanciesGateway, universal: true do
   let(:gateway) { described_class.new }
 
   after { truncate_uh_tables }

@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe Hackney::Income::TenancyPrioritiser::UniversalHousingCriteria do
+describe Hackney::Income::TenancyPrioritiser::UniversalHousingCriteria, universal: true do
   subject(:criteria) { described_class.for_tenancy(universal_housing_client, tenancy_ref) }
   let(:universal_housing_client) { Hackney::UniversalHousing::Client.connection }
 
