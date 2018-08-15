@@ -11,8 +11,11 @@ describe Hackney::Income::TenancyApiGateway do
       let(:refs) { %w(123) }
 
       before do
-        stub_request(:get, "https://other.com/tenancies?tenancy_refs%5B%5D=123")
-          .to_return(body: { 'tenancies' => [example_tenancy] }.to_json)
+        stub_request(:get, "https://other.com/tenancies?tenancy_refs%5B%5D=123").with(
+          headers: { 'x-api-key' => 'skeleton' }
+        ).to_return(
+          body: { 'tenancies' => [example_tenancy] }.to_json
+        )
       end
 
       it 'should use the host' do
@@ -33,8 +36,11 @@ describe Hackney::Income::TenancyApiGateway do
       let(:refs) { %w(000015/01) }
 
       before do
-        stub_request(:get, "https://example.com/tenancies?tenancy_refs%5B%5D=000015/01")
-          .to_return(body: { 'tenancies' => [example_tenancy] }.to_json)
+        stub_request(:get, "https://example.com/tenancies?tenancy_refs%5B%5D=000015/01").with(
+          headers: { 'x-api-key' => 'skeleton' }
+        ).to_return(
+          body: { 'tenancies' => [example_tenancy] }.to_json
+        )
       end
 
       it 'should give basic details on that tenancy' do
