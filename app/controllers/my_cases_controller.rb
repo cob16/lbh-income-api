@@ -21,7 +21,7 @@ class MyCasesController < ApplicationController
   def sync_cases_use_case
     Hackney::Income::DangerousSyncCases.new(
       prioritisation_gateway: Hackney::Income::UniversalHousingPrioritisationGateway.new,
-      uh_tenancies_gateway: Hackney::Income::UniversalHousingTenanciesGateway.new,
+      uh_tenancies_gateway: Hackney::Income::HardcodedTenanciesGateway.new,
       stored_tenancies_gateway: Hackney::Income::StoredTenanciesGateway.new
     )
   end
