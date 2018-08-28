@@ -10,7 +10,8 @@ module Hackney
 
         def perform
           sync_cases.execute
-        rescue
+        rescue => e
+          Rails.logger.error("Caught error: #{e}")
         ensure
           self.class.enqueue_next
         end
