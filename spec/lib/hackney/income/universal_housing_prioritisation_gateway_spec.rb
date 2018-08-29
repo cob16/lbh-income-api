@@ -15,8 +15,13 @@ describe Hackney::Income::UniversalHousingPrioritisationGateway, universal: true
       allow_any_instance_of(Hackney::Income::TenancyPrioritiser).to receive(:priority_band).and_return(priority_band)
     end
 
-    it 'should return the priority scores of that tenancy' do
-      expect(subject.priorities_for_tenancy(tenancy_ref)).to eq(priority_score: priority_score, priority_band: priority_band)
+    it 'should return the priority scores and criteria of that tenancy' do
+      expect(subject.priorities_for_tenancy(tenancy_ref)).to include(
+        priority_score: priority_score,
+        priority_band: priority_band,
+        criteria: an_instance_of(Hackney::Income::TenancyPrioritiser::UniversalHousingCriteria),
+        weightings: an_instance_of(Hackney::Income::TenancyPrioritiser::PriorityWeightings)
+      )
     end
 
     it 'should determine universal housing criteria' do
