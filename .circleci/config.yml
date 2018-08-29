@@ -17,6 +17,9 @@ jobs:
           name: Spin up docker instances
           command: docker-compose up -d ; sleep 20
       - run:
+          name: Run migrations
+          command: docker-compose exec app rails db:migrate RAILS_ENV=test
+      - run:
           name: Run tests
           command: docker-compose exec app rspec
 
