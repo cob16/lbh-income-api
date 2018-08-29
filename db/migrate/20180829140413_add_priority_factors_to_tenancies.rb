@@ -12,11 +12,11 @@ class AddPriorityFactorsToTenancies < ActiveRecord::Migration[5.1]
     add_column :tenancies, :active_nosp_contribution, :decimal
 
     add_column :tenancies, :balance, :decimal
-    add_column :tenancies, :days_in_arrears, :decimal
-    add_column :tenancies, :days_since_last_payment, :decimal
+    add_column :tenancies, :days_in_arrears, :integer
+    add_column :tenancies, :days_since_last_payment, :integer
     add_column :tenancies, :payment_amount_delta, :decimal
-    add_column :tenancies, :payment_date_delta, :decimal
-    add_column :tenancies, :number_of_broken_agreements, :decimal
+    add_column :tenancies, :payment_date_delta, :integer
+    add_column :tenancies, :number_of_broken_agreements, :integer
     add_column :tenancies, :active_agreement, :boolean
     add_column :tenancies, :broken_court_order, :boolean
     add_column :tenancies, :nosp_served, :boolean
