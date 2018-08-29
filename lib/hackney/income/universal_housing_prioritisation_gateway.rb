@@ -7,7 +7,7 @@ module Hackney
         weightings = Hackney::Income::TenancyPrioritiser::PriorityWeightings.new
         prioritiser = Hackney::Income::TenancyPrioritiser.new(criteria: criteria, weightings: weightings)
 
-        { priority_score: prioritiser.priority_score, priority_band: prioritiser.priority_band }
+        { priority_score: prioritiser.priority_score, priority_band: prioritiser.priority_band, criteria: criteria }
       end
     end
   end
