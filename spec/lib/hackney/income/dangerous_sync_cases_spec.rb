@@ -35,7 +35,9 @@ describe Hackney::Income::DangerousSyncCases do
         expect(stored_tenancies_gateway).to receive(:store_tenancy).with(
           tenancy_ref: '000009/01',
           priority_band: :green,
-          priority_score: 1000
+          priority_score: 1000,
+          criteria: an_instance_of(Hackney::Income::TenancyPrioritiser::StubCriteria),
+          weightings: an_instance_of(Hackney::Income::TenancyPrioritiser::PriorityWeightings)
         )
 
         subject
@@ -54,7 +56,9 @@ describe Hackney::Income::DangerousSyncCases do
         expect(stored_tenancies_gateway).to receive(:store_tenancy).with(
           tenancy_ref: '000010/01',
           priority_band: :red,
-          priority_score: 5000
+          priority_score: 5000,
+          criteria: an_instance_of(Hackney::Income::TenancyPrioritiser::StubCriteria),
+          weightings: an_instance_of(Hackney::Income::TenancyPrioritiser::PriorityWeightings)
         )
 
         subject
@@ -78,19 +82,25 @@ describe Hackney::Income::DangerousSyncCases do
         expect(stored_tenancies_gateway).to receive(:store_tenancy).with(
           tenancy_ref: '000010/01',
           priority_band: :red,
-          priority_score: 300
+          priority_score: 300,
+          criteria: an_instance_of(Hackney::Income::TenancyPrioritiser::StubCriteria),
+          weightings: an_instance_of(Hackney::Income::TenancyPrioritiser::PriorityWeightings)
         )
 
         expect(stored_tenancies_gateway).to receive(:store_tenancy).with(
           tenancy_ref: '000011/01',
           priority_band: :green,
-          priority_score: 100
+          priority_score: 100,
+          criteria: an_instance_of(Hackney::Income::TenancyPrioritiser::StubCriteria),
+          weightings: an_instance_of(Hackney::Income::TenancyPrioritiser::PriorityWeightings)
         )
 
         expect(stored_tenancies_gateway).to receive(:store_tenancy).with(
           tenancy_ref: '000012/01',
           priority_band: :amber,
-          priority_score: 200
+          priority_score: 200,
+          criteria: an_instance_of(Hackney::Income::TenancyPrioritiser::StubCriteria),
+          weightings: an_instance_of(Hackney::Income::TenancyPrioritiser::PriorityWeightings)
         )
 
         subject
@@ -107,7 +117,9 @@ class PrioritisationGatewayDouble
   def priorities_for_tenancy(tenancy_ref)
     {
       priority_score: @tenancy_refs_to_scores.dig(tenancy_ref, :priority_score),
-      priority_band: @tenancy_refs_to_scores.dig(tenancy_ref, :priority_band)
+      priority_band: @tenancy_refs_to_scores.dig(tenancy_ref, :priority_band),
+      criteria: Hackney::Income::TenancyPrioritiser::StubCriteria.new,
+      weightings: Hackney::Income::TenancyPrioritiser::PriorityWeightings.new
     }
   end
 end
