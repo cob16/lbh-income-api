@@ -19,7 +19,8 @@ describe Hackney::Income::UniversalHousingPrioritisationGateway, universal: true
       expect(subject.priorities_for_tenancy(tenancy_ref)).to include(
         priority_score: priority_score,
         priority_band: priority_band,
-        criteria: an_instance_of(Hackney::Income::TenancyPrioritiser::UniversalHousingCriteria)
+        criteria: an_instance_of(Hackney::Income::TenancyPrioritiser::UniversalHousingCriteria),
+        weightings: an_instance_of(Hackney::Income::TenancyPrioritiser::PriorityWeightings)
       )
     end
 
