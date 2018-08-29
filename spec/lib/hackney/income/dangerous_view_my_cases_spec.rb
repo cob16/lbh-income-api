@@ -2,6 +2,7 @@ require_relative '../../../../lib/hackney/income/dangerous_view_my_cases'
 
 describe Hackney::Income::DangerousViewMyCases do
   let(:tenancy_attributes) { random_tenancy_attributes }
+  let(:tenancy_priority_factors) { random_tenancy_priority_factors }
   let(:tenancy_refs) { [tenancy_attributes.fetch(:ref)] }
   let(:tenancy_priority_band) { Faker::Internet.slug }
   let(:tenancy_priority_score) { Faker::Number.number(5).to_i }
@@ -14,7 +15,7 @@ describe Hackney::Income::DangerousViewMyCases do
 
   let(:stored_tenancies_gateway) do
     StoredTenancyGatewayDouble.new({
-      tenancy_refs.first => { tenancy_ref: tenancy_refs.first, priority_band: tenancy_priority_band, priority_score: tenancy_priority_score }
+      tenancy_refs.first => { tenancy_ref: tenancy_refs.first, priority_band: tenancy_priority_band, priority_score: tenancy_priority_score }.merge(tenancy_priority_factors)
     })
   end
 
@@ -50,7 +51,29 @@ describe Hackney::Income::DangerousViewMyCases do
           name: tenancy_attributes.dig(:primary_contact, :name),
           short_address: tenancy_attributes.dig(:primary_contact, :short_address),
           postcode: tenancy_attributes.dig(:primary_contact, :postcode),
-        }
+        },
+
+        balance_contribution: tenancy_priority_factors.fetch(:balance_contribution),
+        days_in_arrears_contribution: tenancy_priority_factors.fetch(:days_in_arrears_contribution),
+        days_since_last_payment_contribution: tenancy_priority_factors.fetch(:days_since_last_payment_contribution),
+        payment_amount_delta_contribution: tenancy_priority_factors.fetch(:payment_amount_delta_contribution),
+        payment_date_delta_contribution: tenancy_priority_factors.fetch(:payment_date_delta_contribution),
+        number_of_broken_agreements_contribution: tenancy_priority_factors.fetch(:number_of_broken_agreements_contribution),
+        active_agreement_contribution: tenancy_priority_factors.fetch(:active_agreement_contribution),
+        broken_court_order_contribution: tenancy_priority_factors.fetch(:broken_court_order_contribution),
+        nosp_served_contribution: tenancy_priority_factors.fetch(:nosp_served_contribution),
+        active_nosp_contribution: tenancy_priority_factors.fetch(:active_nosp_contribution),
+
+        balance: tenancy_priority_factors.fetch(:balance),
+        days_in_arrears: tenancy_priority_factors.fetch(:days_in_arrears),
+        days_since_last_payment: tenancy_priority_factors.fetch(:days_since_last_payment),
+        payment_amount_delta: tenancy_priority_factors.fetch(:payment_amount_delta),
+        payment_date_delta: tenancy_priority_factors.fetch(:payment_date_delta),
+        number_of_broken_agreements: tenancy_priority_factors.fetch(:number_of_broken_agreements),
+        active_agreement: tenancy_priority_factors.fetch(:active_agreement),
+        broken_court_order: tenancy_priority_factors.fetch(:broken_court_order),
+        nosp_served: tenancy_priority_factors.fetch(:nosp_served),
+        active_nosp: tenancy_priority_factors.fetch(:active_nosp)
       ))
     end
 
@@ -76,9 +99,9 @@ describe Hackney::Income::DangerousViewMyCases do
 
     let(:stored_tenancies_gateway) do
       StoredTenancyGatewayDouble.new({
-        '123/01' => { tenancy_ref: '123/01', priority_band: 'green', priority_score: 12412 },
-        '456/01' => { tenancy_ref: '456/01', priority_band: 'red', priority_score: 35663 },
-        '789/01' => { tenancy_ref: '789/01', priority_band: 'amber', priority_score: 23124 }
+        '123/01' => { tenancy_ref: '123/01', priority_band: 'green', priority_score: 12412 }.merge(random_tenancy_attributes('123/01')).merge(random_tenancy_priority_factors),
+        '456/01' => { tenancy_ref: '456/01', priority_band: 'red', priority_score: 35663 }.merge(random_tenancy_attributes('456/01')).merge(random_tenancy_priority_factors),
+        '789/01' => { tenancy_ref: '789/01', priority_band: 'amber', priority_score: 23124 }.merge(random_tenancy_attributes('789/01')).merge(random_tenancy_priority_factors)
       })
     end
 
@@ -100,6 +123,32 @@ describe Hackney::Income::DangerousViewMyCases do
         priority_score: 23124
       ))
     end
+  end
+
+  def random_tenancy_priority_factors
+    {
+      balance_contribution: Faker::Number.number(5),
+      days_in_arrears_contribution: Faker::Number.number(5),
+      days_since_last_payment_contribution: Faker::Number.number(5),
+      payment_amount_delta_contribution: Faker::Number.number(5),
+      payment_date_delta_contribution: Faker::Number.number(5),
+      number_of_broken_agreements_contribution: Faker::Number.number(5),
+      active_agreement_contribution: Faker::Number.number(5),
+      broken_court_order_contribution: Faker::Number.number(5),
+      nosp_served_contribution: Faker::Number.number(5),
+      active_nosp_contribution: Faker::Number.number(5),
+
+      balance: Faker::Commerce.price,
+      days_in_arrears: Faker::Number.number(2),
+      days_since_last_payment: Faker::Number.number(2),
+      payment_amount_delta: Faker::Number.number(4),
+      payment_date_delta: Faker::Number.number(1),
+      number_of_broken_agreements: Faker::Number.number(1),
+      active_agreement: Faker::Number.between(0, 1),
+      broken_court_order: Faker::Number.between(0, 1),
+      nosp_served: Faker::Number.between(0, 1),
+      active_nosp: Faker::Number.between(0, 1)
+    }
   end
 
   def random_tenancy_attributes(tenancy_ref = nil)
