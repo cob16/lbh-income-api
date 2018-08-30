@@ -8,14 +8,15 @@ module Hackney
 
       def tenancies_in_arrears
         query = database[:tenagree]
-          .left_join(:property, prop_ref: :prop_ref)
-          .where { Sequel[:tenagree][:cur_bal] > 0 }
 
         if @restrict_patches
-          query = query.where(Sequel[:property][:arr_patch] => @permitted_patches)
+          query = query
+            .left_join(:property, prop_ref: :prop_ref)
+            .where(Sequel[:property][:arr_patch] => @permitted_patches)
         end
 
         query
+          .where { Sequel[:tenagree][:cur_bal] > 0 }
           .select { Sequel[:tenagree][:tag_ref].as(:tag_ref) }
           .map { |record| record[:tag_ref].strip }
       end
