@@ -1,4 +1,8 @@
 class ApplicationJob < ActiveJob::Base
+  def income_use_case_factory
+    @income_use_case_factory ||= Hackney::Income::UseCaseFactory.new
+  end
+
   class << self
     def enqueue_next
       unless already_queued_for_next_run?

@@ -9,19 +9,11 @@ module Hackney
         end
 
         def perform
-          sync_cases.execute
+          income_use_case_factory.sync_cases.execute
         rescue => e
           Rails.logger.error("Caught error: #{e}")
         ensure
           self.class.enqueue_next
-        end
-
-        def sync_cases
-          Hackney::Income::DangerousSyncCases.new(
-            prioritisation_gateway: Hackney::Income::UniversalHousingPrioritisationGateway.new,
-            uh_tenancies_gateway: Hackney::Income::UniversalHousingTenanciesGateway.new,
-            stored_tenancies_gateway: Hackney::Income::StoredTenanciesGateway.new
-          )
         end
       end
     end
