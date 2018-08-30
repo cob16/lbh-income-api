@@ -31,5 +31,7 @@ module App
     config.api_only = true
 
     config.eager_load_paths << Rails.root.join('lib')
+
+    config.active_job.queue_adapter = :delayed_job
   end
 end
