@@ -14,7 +14,10 @@ module Hackney
       def sync_cases
         Hackney::Income::DangerousSyncCases.new(
           prioritisation_gateway: Hackney::Income::UniversalHousingPrioritisationGateway.new,
-          uh_tenancies_gateway: Hackney::Income::HardcodedTenanciesGateway.new,
+          uh_tenancies_gateway: Hackney::Income::UniversalHousingTenanciesGateway.new(
+            restrict_patches: ENV.fetch('RESTRICT_PATCHES', false),
+            patches: ENV.fetch('PERMITTED_PATCHES', [])
+          ),
           stored_tenancies_gateway: Hackney::Income::StoredTenanciesGateway.new
         )
       end

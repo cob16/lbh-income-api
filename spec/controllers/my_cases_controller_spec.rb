@@ -44,7 +44,7 @@ describe MyCasesController do
     it 'should create the sync tenancies use case' do
       expect(Hackney::Income::DangerousSyncCases).to receive(:new).with(
         prioritisation_gateway: instance_of(Hackney::Income::UniversalHousingPrioritisationGateway),
-        uh_tenancies_gateway: instance_of(Hackney::Income::HardcodedTenanciesGateway),
+        uh_tenancies_gateway: instance_of(Hackney::Income::UniversalHousingTenanciesGateway),
         stored_tenancies_gateway: instance_of(Hackney::Income::StoredTenanciesGateway)
       ).and_call_original
 
