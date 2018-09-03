@@ -1,3 +1,6 @@
+require 'uri'
+require 'net/http'
+
 module Hackney
   module Income
     class TenancyApiGateway
