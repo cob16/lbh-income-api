@@ -20,6 +20,6 @@ class MyCasesController < ApplicationController
   end
 
   def random_tenancy_refs
-    Hackney::Income::Models::Tenancy.first(100).map { |t| t.tenancy_ref }
+    Hackney::Income::Models::Tenancy.first(20).map { |t| t.tenancy_ref }
   end
 end
