@@ -9,12 +9,14 @@ module Hackney
       def get_tenancies_by_refs(refs)
         return [] if refs.empty?
 
-        response = RestClient.get(
-          "#{@host}/tenancies",
-          'x-api-key' => @key,
-          params: { tenancy_refs: convert_to_params_array(refs) }
-        )
-        body = JSON.load(response.body)
+        uri = URI("#{@host}/tenancies?#{params_list('tenancy_refs', refs)}")
+
+        req = Net::HTTP::Get.new(uri)
+        req['X-Api-Key'] = @key
+
+        res = Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) { |http| http.request(req) }
+
+        body = JSON.load(res.body)
 
         body['tenancies'].map do |tenancy|
           action_missing = tenancy.dig('latest_action', 'code').nil?
@@ -39,8 +41,10 @@ module Hackney
 
       private
 
-      def convert_to_params_array(refs)
-        RestClient::ParamsArray.new(refs.map.with_index(0) { |e, i| [i.to_s, e] }.to_a)
+      def params_list(key, values)
+        values.each_with_index.map do |value, index|
+          "#{key}[#{index}]=#{value}"
+        end.join('&')
       end
     end
   end

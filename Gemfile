@@ -27,7 +27,6 @@ gem 'puma', '~> 3.7'
 gem 'mysql2'
 gem 'sequel'
 gem 'tiny_tds'
-gem 'rest-client'
 
 gem 'delayed_job'
 gem 'delayed_job_active_record'
