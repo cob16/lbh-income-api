@@ -2,7 +2,6 @@ version: '3.1'
 services:
   app:
     build: .
-    command: rails s
     environment:
       - UH_DATABASE_NAME=uhsimulator
       - UH_DATABASE_USERNAME=sa
