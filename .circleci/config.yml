@@ -12,7 +12,9 @@ jobs:
           command: aws ecr get-login --region $AWS_REGION --no-include-email | sh
       - run:
           name: Build projects
-          command: docker-compose build --build-arg RAILS_ENV=test
+          command: |
+            docker-compose build --build-arg RAILS_ENV=test app
+            docker-compose build universal_housing
       - run:
           name: Spin up docker instances
           command: docker-compose up -d ; sleep 20
