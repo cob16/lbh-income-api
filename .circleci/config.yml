@@ -13,17 +13,13 @@ jobs:
       - run:
           name: Build projects
           command: |
-            docker-compose build --build-arg RAILS_ENV=test app
-            docker-compose build universal_housing
-      - run:
-          name: Spin up docker instances
-          command: docker-compose up -d ; sleep 20
+            docker-compose build
       - run:
           name: Run migrations
-          command: docker-compose exec app rails db:migrate RAILS_ENV=test
+          command: docker-compose run -e RAILS_ENV=test --rm app rails db:migrate
       - run:
           name: Run tests
-          command: docker-compose exec app rspec
+          command: docker-compose run -e RAILS_ENV=test --rm app rspec
 
   staging_release:
     machine: true
