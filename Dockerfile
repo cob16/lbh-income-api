@@ -14,4 +14,4 @@ RUN bundle check || bundle install
 COPY . /app
 EXPOSE 3000
 
-CMD ["sh", "-c", "rake jobs:work ; rails s"]
+CMD rails s
