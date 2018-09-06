@@ -28,6 +28,7 @@ gem 'mysql2'
 gem 'sequel'
 gem 'tiny_tds'
 
+gem 'daemons'
 gem 'delayed_job'
 gem 'delayed_job_active_record'
 
