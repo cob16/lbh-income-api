@@ -45,7 +45,7 @@ jobs:
           command: aws ecr get-login --region $AWS_REGION --no-include-email | sh
       - run:
           name: Build new application Docker image
-          command: docker build --tag hackney/apps/income-api .
+          command: docker build --build-arg RAILS_ENV=staging --tag hackney/apps/income-api .
       - run:
           name: Tag new image for staging release
           command: |
@@ -84,7 +84,7 @@ jobs:
           command: aws ecr get-login --region $AWS_REGION --no-include-email | sh
       - run:
           name: Build new application Docker image
-          command: docker build --tag hackney/apps/income-api .
+          command: docker build --build-arg RAILS_ENV=production --tag hackney/apps/income-api .
       - run:
           name: Tag new image for staging release
           command: |
