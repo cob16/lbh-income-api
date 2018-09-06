@@ -12,16 +12,14 @@ jobs:
           command: aws ecr get-login --region $AWS_REGION --no-include-email | sh
       - run:
           name: Build projects
-          command: docker-compose build
-      - run:
-          name: Spin up docker instances
-          command: docker-compose up -d ; sleep 20
+          command: |
+            docker-compose build
       - run:
           name: Run migrations
-          command: docker-compose exec app rails db:migrate RAILS_ENV=test
+          command: docker-compose run -e RAILS_ENV=test --rm app rails db:migrate
       - run:
           name: Run tests
-          command: docker-compose exec app rspec
+          command: docker-compose run -e RAILS_ENV=test --rm app rspec
 
   staging_release:
     machine: true
@@ -45,7 +43,7 @@ jobs:
           command: aws ecr get-login --region $AWS_REGION --no-include-email | sh
       - run:
           name: Build new application Docker image
-          command: docker build --tag hackney/apps/income-api .
+          command: docker build --build-arg RAILS_ENV=staging --tag hackney/apps/income-api .
       - run:
           name: Tag new image for staging release
           command: |
@@ -106,7 +104,7 @@ jobs:
           command: aws ecr get-login --region $AWS_REGION --no-include-email | sh
       - run:
           name: Build new application Docker image
-          command: docker build --tag hackney/apps/income-api .
+          command: docker build --build-arg RAILS_ENV=production --tag hackney/apps/income-api .
       - run:
           name: Tag new image for production release
           command: |
