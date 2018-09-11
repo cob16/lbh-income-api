@@ -56,24 +56,24 @@ jobs:
             docker push $ECR_IMAGE_URL:$CIRCLE_SHA1
             docker push $ECR_IMAGE_URL:latest
             docker push $ECR_IMAGE_URL:staging
-      - run:
-          name: Build new worker Docker image
-          command: docker build --tag hackney/apps/income-api-worker .
-      - run:
-          name: Tag new worker image for staging release
-          command: |
-            docker tag hackney/apps/income-api-worker:latest $ECR_WORKER_IMAGE_URL:$CIRCLE_SHA1
-            docker tag hackney/apps/income-api-worker:latest $ECR_WORKER_IMAGE_URL:latest
-            docker tag hackney/apps/income-api-worker:latest $ECR_WORKER_IMAGE_URL:staging
-      - run:
-          name: Release new worker image to ECR
-          command: |
-            docker push $ECR_WORKER_IMAGE_URL:$CIRCLE_SHA1
-            docker push $ECR_WORKER_IMAGE_URL:latest
-            docker push $ECR_WORKER_IMAGE_URL:staging
-      - run:
-          name: Force new worker deployment
-          command: ecs-deploy --region $AWS_REGION --cluster $ECS_STAGING_CLUSTER --service-name $ECS_STAGING_WORKER_NAME --image $ECR_WORKER_IMAGE_URL:staging --timeout $ECS_DEPLOY_TIMEOUT
+      # - run:
+      #     name: Build new worker Docker image
+      #     command: docker build --tag hackney/apps/income-api-worker .
+      # - run:
+      #     name: Tag new worker image for staging release
+      #     command: |
+      #       docker tag hackney/apps/income-api-worker:latest $ECR_WORKER_IMAGE_URL:$CIRCLE_SHA1
+      #       docker tag hackney/apps/income-api-worker:latest $ECR_WORKER_IMAGE_URL:latest
+      #       docker tag hackney/apps/income-api-worker:latest $ECR_WORKER_IMAGE_URL:staging
+      # - run:
+      #     name: Release new worker image to ECR
+      #     command: |
+      #       docker push $ECR_WORKER_IMAGE_URL:$CIRCLE_SHA1
+      #       docker push $ECR_WORKER_IMAGE_URL:latest
+      #       docker push $ECR_WORKER_IMAGE_URL:staging
+      # - run:
+      #     name: Force new worker deployment
+      #     command: ecs-deploy --region $AWS_REGION --cluster $ECS_STAGING_CLUSTER --service-name $ECS_STAGING_WORKER_NAME --image $ECR_WORKER_IMAGE_URL:staging --timeout $ECS_DEPLOY_TIMEOUT
       - run:
           name: Force new application deployment
           command: ecs-deploy --region $AWS_REGION --cluster $ECS_STAGING_CLUSTER --service-name $ECS_STAGING_APP_NAME --image $ECR_IMAGE_URL:staging --timeout $ECS_DEPLOY_TIMEOUT
@@ -109,24 +109,24 @@ jobs:
           name: Release new image to ECR
           command: |
             docker push $ECR_IMAGE_URL:production
-      - run:
-          name: Build new worker Docker image
-          command: docker build --tag hackney/apps/income-api-worker .
-      - run:
-          name: Tag new worker image for production release
-          command: |
-            docker tag hackney/apps/income-api-worker:latest $ECR_WORKER_IMAGE_URL:$CIRCLE_SHA1
-            docker tag hackney/apps/income-api-worker:latest $ECR_WORKER_IMAGE_URL:latest
-            docker tag hackney/apps/income-api-worker:latest $ECR_WORKER_IMAGE_URL:production
-      - run:
-          name: Release new worker image to ECR
-          command: |
-            docker push $ECR_WORKER_IMAGE_URL:$CIRCLE_SHA1
-            docker push $ECR_WORKER_IMAGE_URL:latest
-            docker push $ECR_WORKER_IMAGE_URL:production
-      - run:
-          name: Force new worker deployment
-          command: ecs-deploy --region $AWS_REGION --cluster $ECS_PRODUCTION_CLUSTER --service-name $ECS_PRODUCTION_WORKER_NAME --image $ECR_WORKER_IMAGE_URL:production --timeout $ECS_DEPLOY_TIMEOUT
+      # - run:
+      #     name: Build new worker Docker image
+      #     command: docker build --tag hackney/apps/income-api-worker .
+      # - run:
+      #     name: Tag new worker image for production release
+      #     command: |
+      #       docker tag hackney/apps/income-api-worker:latest $ECR_WORKER_IMAGE_URL:$CIRCLE_SHA1
+      #       docker tag hackney/apps/income-api-worker:latest $ECR_WORKER_IMAGE_URL:latest
+      #       docker tag hackney/apps/income-api-worker:latest $ECR_WORKER_IMAGE_URL:production
+      # - run:
+      #     name: Release new worker image to ECR
+      #     command: |
+      #       docker push $ECR_WORKER_IMAGE_URL:$CIRCLE_SHA1
+      #       docker push $ECR_WORKER_IMAGE_URL:latest
+      #       docker push $ECR_WORKER_IMAGE_URL:production
+      # - run:
+      #     name: Force new worker deployment
+      #     command: ecs-deploy --region $AWS_REGION --cluster $ECS_PRODUCTION_CLUSTER --service-name $ECS_PRODUCTION_WORKER_NAME --image $ECR_WORKER_IMAGE_URL:production --timeout $ECS_DEPLOY_TIMEOUT
       - run:
           name: Force new application deployment
           command: ecs-deploy --region $AWS_REGION --cluster $ECS_PRODUCTION_CLUSTER --service-name $ECS_PRODUCTION_APP_NAME --image $ECR_IMAGE_URL:production --timeout $ECS_DEPLOY_TIMEOUT
