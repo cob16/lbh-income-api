@@ -57,10 +57,6 @@ jobs:
             docker push $ECR_IMAGE_URL:latest
             docker push $ECR_IMAGE_URL:staging
       - run:
-          name: Run migrations
-          command: |
-            docker run -e DATABASE_URL=$STAGING_DATABASE_URL --rm hackney/apps/income-api:latest rails db:migrate
-      - run:
           name: Build new worker Docker image
           command: docker build --tag hackney/apps/income-api-worker .
       - run:
@@ -113,10 +109,6 @@ jobs:
           name: Release new image to ECR
           command: |
             docker push $ECR_IMAGE_URL:production
-      - run:
-          name: Run migrations
-          command: |
-            docker run -e DATABASE_URL=$PRODUCTION_DATABASE_URL --rm hackney/apps/income-api:latest rails db:migrate
       - run:
           name: Build new worker Docker image
           command: docker build --tag hackney/apps/income-api-worker .
