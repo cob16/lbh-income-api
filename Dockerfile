@@ -18,4 +18,4 @@ RUN bundle check || bundle install
 COPY . /app
 EXPOSE 3000
 
-CMD rails s
+CMD ["sh", "-c", "rails db:migrate ; rails s"]
