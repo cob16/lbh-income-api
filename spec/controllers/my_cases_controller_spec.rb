@@ -16,26 +16,54 @@ describe MyCasesController do
         get :index
       end
 
-      it 'should call the view tenancies use case' do
-        expect_any_instance_of(Hackney::Income::DangerousViewMyCases)
-          .to receive(:execute)
-          .and_return([])
+      context 'with no tenancy refs' do
+        it 'should call the view tenancies use case with none' do
+          expect_any_instance_of(Hackney::Income::DangerousViewMyCases)
+            .to receive(:execute)
+            .with([])
+            .and_return([])
 
-        get :index
+          get :index
+        end
+
+        it 'should respond with no results' do
+          allow_any_instance_of(Hackney::Income::DangerousViewMyCases)
+            .to receive(:execute)
+            .and_return([])
+
+          get :index
+
+          expect(response.body).to eq([].to_json)
+        end
       end
 
-      it 'should respond with the results of the view tenancies use case' do
-        expected_result = [{
-          Faker::GreekPhilosophers.name => Faker::GreekPhilosophers.quote
-        }]
+      context 'with tenancy refs' do
+        let(:tenancy_refs) do
+          Array.new(Faker::Number.number(2).to_i).map { Faker::Code.isbn }
+        end
 
-        allow_any_instance_of(Hackney::Income::DangerousViewMyCases)
-          .to receive(:execute)
-          .and_return(expected_result)
+        it 'should call the view tenancies use case with the given tenancy refs' do
+          expect_any_instance_of(Hackney::Income::DangerousViewMyCases)
+            .to receive(:execute)
+            .with(tenancy_refs)
+            .and_return([])
 
-        get :index
+          get :index, params: { tenancy_refs: tenancy_refs }
+        end
 
-        expect(response.body).to eq(expected_result.to_json)
+        it 'should respond with the results of the view tenancies use case' do
+          expected_result = [{
+            Faker::GreekPhilosophers.name => Faker::GreekPhilosophers.quote
+          }]
+
+          allow_any_instance_of(Hackney::Income::DangerousViewMyCases)
+            .to receive(:execute)
+            .and_return(expected_result)
+
+          get :index
+
+          expect(response.body).to eq(expected_result.to_json)
+        end
       end
     end
   end
