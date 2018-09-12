@@ -1,4 +1,4 @@
-require_relative '../../../../lib/hackney/income/dangerous_view_my_cases'
+require 'rails_helper'
 
 describe Hackney::Income::DangerousViewMyCases do
   let(:tenancy_attributes) { random_tenancy_attributes }
@@ -123,6 +123,34 @@ describe Hackney::Income::DangerousViewMyCases do
         priority_score: 23124
       ))
     end
+
+    context 'and one hasn\'t had data synced' do
+      let(:stored_tenancies_gateway) do
+        StoredTenancyGatewayDouble.new({
+          '123/01' => { tenancy_ref: '123/01', priority_band: 'green', priority_score: 12412 }.merge(random_tenancy_attributes('123/01')).merge(random_tenancy_priority_factors),
+        })
+      end
+
+      it 'should skip the unsaved tenancy' do
+        expect(subject.count).to eq(1)
+        expect(subject).to include(a_hash_including(ref: '123/01'))
+      end
+
+      it 'should log a warning' do
+        expect(Rails.logger).to receive(:warn).with('Tenancy has not been synced and can\'t be requested: "789/01"')
+        subject
+      end
+    end
+
+    context 'and neither has been synced' do
+      let(:stored_tenancies_gateway) { StoredTenancyGatewayDouble.new({}) }
+
+      it 'should log two warnings' do
+        expect(Rails.logger).to receive(:warn).with('Tenancy has not been synced and can\'t be requested: "123/01"')
+        expect(Rails.logger).to receive(:warn).with('Tenancy has not been synced and can\'t be requested: "789/01"')
+        subject
+      end
+    end
   end
 
   def random_tenancy_priority_factors
@@ -186,9 +214,7 @@ describe Hackney::Income::DangerousViewMyCases do
     end
 
     def get_tenancies_by_refs(refs)
-      refs.map do |ref|
-        @stored_tenancies_attributes.fetch(ref)
-      end
+      refs.map { |ref| @stored_tenancies_attributes[ref] }.compact
     end
   end
 end
