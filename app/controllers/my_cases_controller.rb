@@ -1,12 +1,12 @@
 class MyCasesController < ApplicationController
   def index
-    cases = income_use_case_factory.view_my_cases.execute(
+    response = income_use_case_factory.view_my_cases.execute(
       user_id: params.fetch(:user_id).to_i,
       page_number: params.fetch(:page_number).to_i,
       number_per_page: params.fetch(:number_per_page).to_i
     )
 
-    render json: cases
+    render json: response
   end
 
   def sync

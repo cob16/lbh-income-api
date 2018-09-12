@@ -330,4 +330,54 @@ describe Hackney::Income::StoredTenanciesGateway do
       end
     end
   end
+
+  context 'when counting the number of pages of tenancies for a user' do
+    let(:user_id) { Faker::Number.number(2).to_i }
+    subject { gateway.number_of_pages_for_user(user_id: user_id, number_per_page: number_per_page) }
+
+    context 'and the user has ten tenancies' do
+      before { 10.times { create_tenancy(user_id: user_id) } }
+
+      context 'and the number per page is five' do
+        let(:number_per_page) { 5 }
+        it { is_expected.to eq(2) }
+      end
+    end
+
+    context 'and the user has nine tenancies' do
+      before { 9.times { create_tenancy(user_id: user_id) } }
+
+      context 'and the number per page is five' do
+        let(:number_per_page) { 5 }
+        it { is_expected.to eq(2) }
+      end
+    end
+
+    context 'and the user has twelve tenancies' do
+      before { 12.times { create_tenancy(user_id: user_id) } }
+
+      context 'and the number per page is three' do
+        let(:number_per_page) { 3 }
+        it { is_expected.to eq(4) }
+      end
+    end
+
+    context 'and the user is not the only assignee' do
+      let(:other_user_id) { Faker::Number.number(3).to_i }
+
+      before do
+        6.times { create_tenancy(user_id: user_id) }
+        6.times { create_tenancy(user_id: other_user_id) }
+      end
+
+      context 'and the number per page is three' do
+        let(:number_per_page) { 3 }
+        it { is_expected.to eq(2) }
+      end
+    end
+  end
+
+  def create_tenancy(user_id: nil)
+    Hackney::Income::Models::Tenancy.create(assigned_user_id: user_id)
+  end
 end

@@ -36,7 +36,7 @@ describe Hackney::Income::DangerousViewMyCases do
 
   context 'when the stored tenancies gateway responds with no tenancies' do
     it 'should return nothing' do
-      expect(subject).to eq([])
+      expect(subject.cases).to eq([])
     end
   end
 
@@ -54,7 +54,7 @@ describe Hackney::Income::DangerousViewMyCases do
 
     context 'and full tenancy details can NOT be found' do
       it 'should ignore the tenancy' do
-        expect(subject).to eq([])
+        expect(subject.cases).to eq([])
       end
     end
 
@@ -67,8 +67,8 @@ describe Hackney::Income::DangerousViewMyCases do
       end
 
       it 'should return full details for the correct tenancy' do
-        expect(subject.count).to eq(1)
-        expect(subject).to include(a_hash_including(
+        expect(subject.cases.count).to eq(1)
+        expect(subject.cases).to include(a_hash_including(
           ref: tenancy_attributes.fetch(:ref),
           priority_score: tenancy_priority_score,
           priority_band: tenancy_priority_band,
@@ -109,6 +109,20 @@ describe Hackney::Income::DangerousViewMyCases do
           active_nosp: tenancy_priority_factors.fetch(:active_nosp)
         ))
       end
+    end
+  end
+
+  context 'counting the number of pages of tenancies for a user' do
+    let(:number_of_pages) { Faker::Number.number(3).to_i }
+
+    it 'should consult the stored tenancies gateway' do
+      expect(stored_tenancies_gateway).to receive(:number_of_pages_for_user).with(user_id: user_id, number_per_page: number_per_page).and_call_original
+      subject
+    end
+
+    it 'should return what the stored tenancies gateway does' do
+      allow(stored_tenancies_gateway).to receive(:number_of_pages_for_user).and_return(number_of_pages)
+      expect(subject.number_of_pages).to eq(number_of_pages)
     end
   end
 
@@ -173,5 +187,7 @@ describe Hackney::Income::DangerousViewMyCases do
     def get_tenancies_for_user(user_id:, page_number:, number_per_page:)
       @stored_tenancies_attributes.values
     end
+
+    def number_of_pages_for_user(user_id:, number_per_page:); end
   end
 end

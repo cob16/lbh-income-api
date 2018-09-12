@@ -15,7 +15,7 @@ describe MyCasesController do
 
         allow_any_instance_of(Hackney::Income::DangerousViewMyCases)
           .to receive(:execute)
-          .and_return([])
+          .and_return({ cases: [], number_per_page: 1 })
 
         get :index, params: { user_id: user_id, page_number: page_number, number_per_page: number_per_page }
       end
@@ -24,15 +24,16 @@ describe MyCasesController do
         expect_any_instance_of(Hackney::Income::DangerousViewMyCases)
           .to receive(:execute)
           .with(user_id: user_id, page_number: page_number, number_per_page: number_per_page)
-          .and_return([])
+          .and_return({ cases: [], number_per_page: 1 })
 
         get :index, params: { user_id: user_id, page_number: page_number, number_per_page: number_per_page }
       end
 
       it 'should respond with the results of the view my cases use case' do
-        expected_result = [{
-          Faker::GreekPhilosophers.name => Faker::GreekPhilosophers.quote
-        }]
+        expected_result = {
+          cases: [Faker::GreekPhilosophers.quote],
+          number_per_page: 10
+        }
 
         allow_any_instance_of(Hackney::Income::DangerousViewMyCases)
           .to receive(:execute)
@@ -55,7 +56,7 @@ describe MyCasesController do
 
       allow_any_instance_of(Hackney::Income::DangerousSyncCases)
         .to receive(:execute)
-        .and_return([])
+        .and_return({ cases: [], number_per_page: 1 })
 
       get :sync
     end
@@ -63,7 +64,7 @@ describe MyCasesController do
     it 'should call the sync tenancies use case' do
       expect_any_instance_of(Hackney::Income::DangerousSyncCases)
         .to receive(:execute)
-        .and_return([])
+        .and_return({ cases: [], number_per_page: 1 })
 
       get :sync
     end
@@ -71,7 +72,7 @@ describe MyCasesController do
     it 'should respond with { success: true }' do
       allow_any_instance_of(Hackney::Income::DangerousSyncCases)
         .to receive(:execute)
-        .and_return([])
+        .and_return({ cases: [], number_per_page: 1 })
 
       get :sync
 

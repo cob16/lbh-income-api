@@ -47,6 +47,11 @@ module Hackney
         query.map(&method(:build_tenancy_list_item))
       end
 
+      def number_of_pages_for_user(user_id:, number_per_page:)
+        user_cases = Hackney::Income::Models::Tenancy.where(assigned_user_id: user_id)
+        (user_cases.count.to_f / number_per_page).ceil
+      end
+
       private
 
       def by_band_then_score
