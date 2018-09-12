@@ -1,23 +1,11 @@
 require 'rails_helper'
 
 describe Hackney::Income::DangerousViewMyCases do
-  let(:tenancy_attributes) { random_tenancy_attributes }
-  let(:tenancy_priority_factors) { random_tenancy_priority_factors }
-  let(:tenancy_refs) { [tenancy_attributes.fetch(:ref)] }
-  let(:tenancy_priority_band) { Faker::Internet.slug }
-  let(:tenancy_priority_score) { Faker::Number.number(5).to_i }
-
-  let(:tenancy_api_gateway) do
-    TenancyApiGatewayDouble.new({
-      tenancy_attributes.fetch(:ref) => tenancy_attributes
-    })
-  end
-
-  let(:stored_tenancies_gateway) do
-    StoredTenancyGatewayDouble.new({
-      tenancy_refs.first => { tenancy_ref: tenancy_refs.first, priority_band: tenancy_priority_band, priority_score: tenancy_priority_score }.merge(tenancy_priority_factors)
-    })
-  end
+  let(:user_id) { Faker::Number.number(2).to_i }
+  let(:page_number) { Faker::Number.number(2).to_i }
+  let(:number_per_page) { Faker::Number.number(2).to_i }
+  let(:tenancy_api_gateway) { TenancyApiGatewayDouble.new({}) }
+  let(:stored_tenancies_gateway) { StoredTenancyGatewayDouble.new({}) }
 
   let(:view_my_cases) do
     described_class.new(
@@ -26,129 +14,100 @@ describe Hackney::Income::DangerousViewMyCases do
     )
   end
 
-  subject { view_my_cases.execute(tenancy_refs) }
+  subject { view_my_cases.execute(user_id: user_id, page_number: page_number, number_per_page: number_per_page) }
 
-  context 'when given no tenancy refs' do
-    let(:tenancy_api_gateway) { double(get_tenancies_by_refs: []) }
+  it 'should pass the correct user id into the stored tenancy gateway' do
+    expect(stored_tenancies_gateway)
+      .to receive(:get_tenancies_for_user)
+      .with(a_hash_including(user_id: user_id))
+      .and_call_original
 
+    subject
+  end
+
+  it 'should pass the correct page number and number per page into the stored tenancy gateway' do
+    expect(stored_tenancies_gateway)
+      .to receive(:get_tenancies_for_user)
+      .with(a_hash_including(page_number: page_number, number_per_page: number_per_page))
+      .and_call_original
+
+    subject
+  end
+
+  context 'when the stored tenancies gateway responds with no tenancies' do
     it 'should return nothing' do
       expect(subject).to eq([])
     end
   end
 
-  context 'when given a single tenancy ref' do
-    it 'should return details for that tenancy' do
-      expect(subject.count).to eq(1)
-      expect(subject).to include(a_hash_including(
-        ref: tenancy_attributes.fetch(:ref),
-        current_balance: tenancy_attributes.fetch(:current_balance),
-        current_arrears_agreement_status: tenancy_attributes.fetch(:current_arrears_agreement_status),
-        latest_action: {
-          code: tenancy_attributes.dig(:latest_action, :code),
-          date: tenancy_attributes.dig(:latest_action, :date),
-        },
-        primary_contact: {
-          name: tenancy_attributes.dig(:primary_contact, :name),
-          short_address: tenancy_attributes.dig(:primary_contact, :short_address),
-          postcode: tenancy_attributes.dig(:primary_contact, :postcode),
-        },
-
-        balance_contribution: tenancy_priority_factors.fetch(:balance_contribution),
-        days_in_arrears_contribution: tenancy_priority_factors.fetch(:days_in_arrears_contribution),
-        days_since_last_payment_contribution: tenancy_priority_factors.fetch(:days_since_last_payment_contribution),
-        payment_amount_delta_contribution: tenancy_priority_factors.fetch(:payment_amount_delta_contribution),
-        payment_date_delta_contribution: tenancy_priority_factors.fetch(:payment_date_delta_contribution),
-        number_of_broken_agreements_contribution: tenancy_priority_factors.fetch(:number_of_broken_agreements_contribution),
-        active_agreement_contribution: tenancy_priority_factors.fetch(:active_agreement_contribution),
-        broken_court_order_contribution: tenancy_priority_factors.fetch(:broken_court_order_contribution),
-        nosp_served_contribution: tenancy_priority_factors.fetch(:nosp_served_contribution),
-        active_nosp_contribution: tenancy_priority_factors.fetch(:active_nosp_contribution),
-
-        balance: tenancy_priority_factors.fetch(:balance),
-        days_in_arrears: tenancy_priority_factors.fetch(:days_in_arrears),
-        days_since_last_payment: tenancy_priority_factors.fetch(:days_since_last_payment),
-        payment_amount_delta: tenancy_priority_factors.fetch(:payment_amount_delta),
-        payment_date_delta: tenancy_priority_factors.fetch(:payment_date_delta),
-        number_of_broken_agreements: tenancy_priority_factors.fetch(:number_of_broken_agreements),
-        active_agreement: tenancy_priority_factors.fetch(:active_agreement),
-        broken_court_order: tenancy_priority_factors.fetch(:broken_court_order),
-        nosp_served: tenancy_priority_factors.fetch(:nosp_served),
-        active_nosp: tenancy_priority_factors.fetch(:active_nosp)
-      ))
-    end
-
-    it 'should return priorities for that tenancy' do
-      expect(subject.count).to eq(1)
-      expect(subject).to include(a_hash_including(
-        priority_score: tenancy_priority_score,
-        priority_band: tenancy_priority_band
-      ))
-    end
-  end
-
-  context 'when given two tenancy refs' do
-    let(:tenancy_refs) { ['123/01', '789/01'] }
-
-    let(:tenancy_api_gateway) do
-      TenancyApiGatewayDouble.new({
-        '123/01' => random_tenancy_attributes('123/01'),
-        '456/01' => random_tenancy_attributes('456/01'),
-        '789/01' => random_tenancy_attributes('789/01')
-      })
-    end
-
+  context 'when the stored tenancies gateway responds with a tenancy' do
+    let(:tenancy_attributes) { random_tenancy_attributes }
+    let(:other_tenancy_attributes) { random_tenancy_attributes }
+    let(:tenancy_priority_factors) { random_tenancy_priority_factors }
+    let(:tenancy_priority_band) { Faker::Internet.slug }
+    let(:tenancy_priority_score) { Faker::Number.number(5).to_i }
     let(:stored_tenancies_gateway) do
       StoredTenancyGatewayDouble.new({
-        '123/01' => { tenancy_ref: '123/01', priority_band: 'green', priority_score: 12412 }.merge(random_tenancy_attributes('123/01')).merge(random_tenancy_priority_factors),
-        '456/01' => { tenancy_ref: '456/01', priority_band: 'red', priority_score: 35663 }.merge(random_tenancy_attributes('456/01')).merge(random_tenancy_priority_factors),
-        '789/01' => { tenancy_ref: '789/01', priority_band: 'amber', priority_score: 23124 }.merge(random_tenancy_attributes('789/01')).merge(random_tenancy_priority_factors)
+        tenancy_attributes.fetch(:ref) => { tenancy_ref: tenancy_attributes.fetch(:ref), priority_band: tenancy_priority_band, priority_score: tenancy_priority_score }.merge(tenancy_priority_factors)
       })
     end
 
-    it 'should only return details for those tenancies' do
-      expect(subject.count).to eq(2)
-      expect(subject.map { |t| t.fetch(:ref) }).to eq(['123/01', '789/01'])
+    context 'and full tenancy details can NOT be found' do
+      it 'should ignore the tenancy' do
+        expect(subject).to eq([])
+      end
     end
 
-    it 'should match priorities to the correct tenancies' do
-      expect(subject).to include(a_hash_including(
-        ref: '123/01',
-        priority_band: 'green',
-        priority_score: 12412
-      ))
-
-      expect(subject).to include(a_hash_including(
-        ref: '789/01',
-        priority_band: 'amber',
-        priority_score: 23124
-      ))
-    end
-
-    context 'and one hasn\'t had data synced' do
-      let(:stored_tenancies_gateway) do
-        StoredTenancyGatewayDouble.new({
-          '123/01' => { tenancy_ref: '123/01', priority_band: 'green', priority_score: 12412 }.merge(random_tenancy_attributes('123/01')).merge(random_tenancy_priority_factors),
+    context 'and full tenancy details can be found' do
+      let(:tenancy_api_gateway) do
+        TenancyApiGatewayDouble.new({
+          other_tenancy_attributes.fetch(:ref) => other_tenancy_attributes,
+          tenancy_attributes.fetch(:ref) => tenancy_attributes
         })
       end
 
-      it 'should skip the unsaved tenancy' do
+      it 'should return full details for the correct tenancy' do
         expect(subject.count).to eq(1)
-        expect(subject).to include(a_hash_including(ref: '123/01'))
-      end
+        expect(subject).to include(a_hash_including(
+          ref: tenancy_attributes.fetch(:ref),
+          priority_score: tenancy_priority_score,
+          priority_band: tenancy_priority_band,
+          current_balance: tenancy_attributes.fetch(:current_balance),
+          current_arrears_agreement_status: tenancy_attributes.fetch(:current_arrears_agreement_status),
 
-      it 'should log a warning' do
-        expect(Rails.logger).to receive(:warn).with('Tenancy has not been synced and can\'t be requested: "789/01"')
-        subject
-      end
-    end
+          latest_action: {
+            code: tenancy_attributes.dig(:latest_action, :code),
+            date: tenancy_attributes.dig(:latest_action, :date),
+          },
 
-    context 'and neither has been synced' do
-      let(:stored_tenancies_gateway) { StoredTenancyGatewayDouble.new({}) }
+          primary_contact: {
+            name: tenancy_attributes.dig(:primary_contact, :name),
+            short_address: tenancy_attributes.dig(:primary_contact, :short_address),
+            postcode: tenancy_attributes.dig(:primary_contact, :postcode),
+          },
 
-      it 'should log two warnings' do
-        expect(Rails.logger).to receive(:warn).with('Tenancy has not been synced and can\'t be requested: "123/01"')
-        expect(Rails.logger).to receive(:warn).with('Tenancy has not been synced and can\'t be requested: "789/01"')
-        subject
+          balance_contribution: tenancy_priority_factors.fetch(:balance_contribution),
+          days_in_arrears_contribution: tenancy_priority_factors.fetch(:days_in_arrears_contribution),
+          days_since_last_payment_contribution: tenancy_priority_factors.fetch(:days_since_last_payment_contribution),
+          payment_amount_delta_contribution: tenancy_priority_factors.fetch(:payment_amount_delta_contribution),
+          payment_date_delta_contribution: tenancy_priority_factors.fetch(:payment_date_delta_contribution),
+          number_of_broken_agreements_contribution: tenancy_priority_factors.fetch(:number_of_broken_agreements_contribution),
+          active_agreement_contribution: tenancy_priority_factors.fetch(:active_agreement_contribution),
+          broken_court_order_contribution: tenancy_priority_factors.fetch(:broken_court_order_contribution),
+          nosp_served_contribution: tenancy_priority_factors.fetch(:nosp_served_contribution),
+          active_nosp_contribution: tenancy_priority_factors.fetch(:active_nosp_contribution),
+
+          balance: tenancy_priority_factors.fetch(:balance),
+          days_in_arrears: tenancy_priority_factors.fetch(:days_in_arrears),
+          days_since_last_payment: tenancy_priority_factors.fetch(:days_since_last_payment),
+          payment_amount_delta: tenancy_priority_factors.fetch(:payment_amount_delta),
+          payment_date_delta: tenancy_priority_factors.fetch(:payment_date_delta),
+          number_of_broken_agreements: tenancy_priority_factors.fetch(:number_of_broken_agreements),
+          active_agreement: tenancy_priority_factors.fetch(:active_agreement),
+          broken_court_order: tenancy_priority_factors.fetch(:broken_court_order),
+          nosp_served: tenancy_priority_factors.fetch(:nosp_served),
+          active_nosp: tenancy_priority_factors.fetch(:active_nosp)
+        ))
       end
     end
   end
@@ -202,9 +161,7 @@ describe Hackney::Income::DangerousViewMyCases do
     end
 
     def get_tenancies_by_refs(refs)
-      refs.map do |ref|
-        @tenancies_attributes.fetch(ref)
-      end
+      refs.map { |ref| @tenancies_attributes[ref] }.compact
     end
   end
 
@@ -213,8 +170,8 @@ describe Hackney::Income::DangerousViewMyCases do
       @stored_tenancies_attributes = stored_tenancies_attributes
     end
 
-    def get_tenancies_by_refs(refs)
-      refs.map { |ref| @stored_tenancies_attributes[ref] }.compact
+    def get_tenancies_for_user(user_id:, page_number:, number_per_page:)
+      @stored_tenancies_attributes.values
     end
   end
 end

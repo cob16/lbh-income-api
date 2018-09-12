@@ -6,16 +6,14 @@ module Hackney
         @stored_tenancies_gateway = stored_tenancies_gateway
       end
 
-      def execute(tenancy_refs)
-        full_tenancies = @tenancy_api_gateway.get_tenancies_by_refs(tenancy_refs)
-        stored_tenancies = @stored_tenancies_gateway.get_tenancies_by_refs(tenancy_refs)
+      def execute(user_id:, page_number:, number_per_page:)
+        stored_tenancies = @stored_tenancies_gateway.get_tenancies_for_user(user_id: user_id, page_number: page_number, number_per_page: number_per_page)
+        stored_tenancy_refs = stored_tenancies.map { |t| t.fetch(:tenancy_ref) }
+        full_tenancies = @tenancy_api_gateway.get_tenancies_by_refs(stored_tenancy_refs)
 
-        full_tenancies.map do |tenancy|
-          stored_tenancy = stored_tenancies.find { |t| t.fetch(:tenancy_ref) == tenancy.fetch(:ref) }
-          if stored_tenancy.nil?
-            Rails.logger.warn("Tenancy has not been synced and can't be requested: \"#{tenancy.fetch(:ref)}\"")
-            next
-          end
+        stored_tenancies.map do |stored_tenancy|
+          tenancy = full_tenancies.find { |t| t.fetch(:ref) == stored_tenancy.fetch(:tenancy_ref) }
+          next if tenancy.nil?
 
           {
             ref: tenancy.fetch(:ref),

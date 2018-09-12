@@ -35,36 +35,60 @@ module Hackney
         )
       end
 
-      def get_tenancies_by_refs(refs)
-        Hackney::Income::Models::Tenancy.where('tenancy_ref in (?)', refs).map do |model|
-          {
-            tenancy_ref: model.tenancy_ref,
-            priority_band: model.priority_band,
-            priority_score: model.priority_score,
+      def get_tenancies_for_user(user_id:, page_number: nil, number_per_page: nil)
+        query = Hackney::Income::Models::Tenancy
+          .where(assigned_user_id: user_id)
+          .order(by_band_then_score)
 
-            balance_contribution: model.balance_contribution,
-            days_in_arrears_contribution: model.days_in_arrears_contribution,
-            days_since_last_payment_contribution: model.days_since_last_payment_contribution,
-            payment_amount_delta_contribution: model.payment_amount_delta_contribution,
-            payment_date_delta_contribution: model.payment_date_delta_contribution,
-            number_of_broken_agreements_contribution: model.number_of_broken_agreements_contribution,
-            active_agreement_contribution: model.active_agreement_contribution,
-            broken_court_order_contribution: model.broken_court_order_contribution,
-            nosp_served_contribution: model.nosp_served_contribution,
-            active_nosp_contribution: model.active_nosp_contribution,
-
-            balance: model.balance,
-            days_in_arrears: model.days_in_arrears,
-            days_since_last_payment: model.days_since_last_payment,
-            payment_amount_delta: model.payment_amount_delta,
-            payment_date_delta: model.payment_date_delta,
-            number_of_broken_agreements: model.number_of_broken_agreements,
-            active_agreement: model.active_agreement,
-            broken_court_order: model.broken_court_order,
-            nosp_served: model.nosp_served,
-            active_nosp: model.active_nosp
-          }
+        if page_number.present? && number_per_page.present?
+          query = query.offset((page_number - 1) * number_per_page).limit(number_per_page)
         end
+
+        query.map(&method(:build_tenancy_list_item))
+      end
+
+      private
+
+      def by_band_then_score
+        "
+        (
+          CASE priority_band
+            WHEN 'red' THEN 1
+            WHEN 'amber' THEN 2
+            WHEN 'green' THEN 3
+          END
+        ), priority_score DESC
+        "
+      end
+
+      def build_tenancy_list_item(model)
+        {
+          tenancy_ref: model.tenancy_ref,
+          priority_band: model.priority_band,
+          priority_score: model.priority_score,
+
+          balance_contribution: model.balance_contribution,
+          days_in_arrears_contribution: model.days_in_arrears_contribution,
+          days_since_last_payment_contribution: model.days_since_last_payment_contribution,
+          payment_amount_delta_contribution: model.payment_amount_delta_contribution,
+          payment_date_delta_contribution: model.payment_date_delta_contribution,
+          number_of_broken_agreements_contribution: model.number_of_broken_agreements_contribution,
+          active_agreement_contribution: model.active_agreement_contribution,
+          broken_court_order_contribution: model.broken_court_order_contribution,
+          nosp_served_contribution: model.nosp_served_contribution,
+          active_nosp_contribution: model.active_nosp_contribution,
+
+          balance: model.balance,
+          days_in_arrears: model.days_in_arrears,
+          days_since_last_payment: model.days_since_last_payment,
+          payment_amount_delta: model.payment_amount_delta,
+          payment_date_delta: model.payment_date_delta,
+          number_of_broken_agreements: model.number_of_broken_agreements,
+          active_agreement: model.active_agreement,
+          broken_court_order: model.broken_court_order,
+          nosp_served: model.nosp_served,
+          active_nosp: model.active_nosp
+        }
       end
     end
   end
