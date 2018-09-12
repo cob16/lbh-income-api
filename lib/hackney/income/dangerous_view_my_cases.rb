@@ -10,8 +10,12 @@ module Hackney
         full_tenancies = @tenancy_api_gateway.get_tenancies_by_refs(tenancy_refs)
         stored_tenancies = @stored_tenancies_gateway.get_tenancies_by_refs(tenancy_refs)
 
-        full_tenancies.map do |tenancy, index|
+        full_tenancies.map do |tenancy|
           stored_tenancy = stored_tenancies.find { |t| t.fetch(:tenancy_ref) == tenancy.fetch(:ref) }
+          if stored_tenancy.nil?
+            Rails.logger.warn("Tenancy has not been synced and can't be requested: \"#{tenancy.fetch(:ref)}\"")
+            next
+          end
 
           {
             ref: tenancy.fetch(:ref),
@@ -51,7 +55,7 @@ module Hackney
             nosp_served: stored_tenancy.fetch(:nosp_served),
             active_nosp: stored_tenancy.fetch(:active_nosp)
           }
-        end
+        end.compact
       end
     end
   end
