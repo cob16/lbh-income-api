@@ -126,6 +126,13 @@ describe Hackney::Income::DangerousViewMyCases do
     end
   end
 
+  it 'should be serialisable as valid JSON' do
+    loaded_json = JSON.load(subject.to_json)
+
+    expect(loaded_json.fetch('cases')).to be_a(Array)
+    expect(loaded_json.fetch('number_of_pages')).to be_an(Integer)
+  end
+
   def random_tenancy_priority_factors
     {
       balance_contribution: Faker::Number.number(5),
@@ -188,6 +195,8 @@ describe Hackney::Income::DangerousViewMyCases do
       @stored_tenancies_attributes.values
     end
 
-    def number_of_pages_for_user(user_id:, number_per_page:); end
+    def number_of_pages_for_user(user_id:, number_per_page:)
+      @stored_tenancies_attributes.keys.count
+    end
   end
 end
