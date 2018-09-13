@@ -21,6 +21,10 @@ module Hackney
           stored_tenancies_gateway: Hackney::Income::StoredTenanciesGateway.new
         )
       end
+
+      def find_or_create_user
+        Hackney::Income::FindOrCreateUser.new(users_gateway: Hackney::Income::SqlUsersGateway.new)
+      end
     end
   end
 end
