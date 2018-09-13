@@ -1,61 +1,70 @@
 module Hackney
   module Income
     class DangerousViewMyCases
+      Response = Struct.new(:cases, :number_of_pages)
+
       def initialize(tenancy_api_gateway:, stored_tenancies_gateway:)
         @tenancy_api_gateway = tenancy_api_gateway
         @stored_tenancies_gateway = stored_tenancies_gateway
       end
 
-      def execute(tenancy_refs)
-        full_tenancies = @tenancy_api_gateway.get_tenancies_by_refs(tenancy_refs)
-        stored_tenancies = @stored_tenancies_gateway.get_tenancies_by_refs(tenancy_refs)
+      def execute(user_id:, page_number:, number_per_page:)
+        number_of_pages_for_user = @stored_tenancies_gateway.number_of_pages_for_user(user_id: user_id, number_per_page: number_per_page)
+        assigned_tenancies = @stored_tenancies_gateway.get_tenancies_for_user(user_id: user_id, page_number: page_number, number_per_page: number_per_page)
+        assigned_tenancy_refs = assigned_tenancies.map { |t| t.fetch(:tenancy_ref) }
+        full_tenancies = @tenancy_api_gateway.get_tenancies_by_refs(assigned_tenancy_refs)
 
-        full_tenancies.map do |tenancy|
-          stored_tenancy = stored_tenancies.find { |t| t.fetch(:tenancy_ref) == tenancy.fetch(:ref) }
-          if stored_tenancy.nil?
-            Rails.logger.warn("Tenancy has not been synced and can't be requested: \"#{tenancy.fetch(:ref)}\"")
-            next
-          end
+        cases = assigned_tenancies.map do |assigned_tenancy|
+          tenancy = full_tenancies.find { |t| t.fetch(:ref) == assigned_tenancy.fetch(:tenancy_ref) }
+          next if tenancy.nil?
 
-          {
-            ref: tenancy.fetch(:ref),
-            current_balance: tenancy.fetch(:current_balance),
-            current_arrears_agreement_status: tenancy.fetch(:current_arrears_agreement_status),
-            latest_action: {
-              code: tenancy.dig(:latest_action, :code),
-              date: tenancy.dig(:latest_action, :date),
-            },
-            primary_contact: {
-              name: tenancy.dig(:primary_contact, :name),
-              short_address: tenancy.dig(:primary_contact, :short_address),
-              postcode: tenancy.dig(:primary_contact, :postcode),
-            },
-            priority_band: stored_tenancy.fetch(:priority_band),
-            priority_score: stored_tenancy.fetch(:priority_score),
-
-            balance_contribution: stored_tenancy.fetch(:balance_contribution),
-            days_in_arrears_contribution: stored_tenancy.fetch(:days_in_arrears_contribution),
-            days_since_last_payment_contribution: stored_tenancy.fetch(:days_since_last_payment_contribution),
-            payment_amount_delta_contribution: stored_tenancy.fetch(:payment_amount_delta_contribution),
-            payment_date_delta_contribution: stored_tenancy.fetch(:payment_date_delta_contribution),
-            number_of_broken_agreements_contribution: stored_tenancy.fetch(:number_of_broken_agreements_contribution),
-            active_agreement_contribution: stored_tenancy.fetch(:active_agreement_contribution),
-            broken_court_order_contribution: stored_tenancy.fetch(:broken_court_order_contribution),
-            nosp_served_contribution: stored_tenancy.fetch(:nosp_served_contribution),
-            active_nosp_contribution: stored_tenancy.fetch(:active_nosp_contribution),
-
-            balance: stored_tenancy.fetch(:balance),
-            days_in_arrears: stored_tenancy.fetch(:days_in_arrears),
-            days_since_last_payment: stored_tenancy.fetch(:days_since_last_payment),
-            payment_amount_delta: stored_tenancy.fetch(:payment_amount_delta),
-            payment_date_delta: stored_tenancy.fetch(:payment_date_delta),
-            number_of_broken_agreements: stored_tenancy.fetch(:number_of_broken_agreements),
-            active_agreement: stored_tenancy.fetch(:active_agreement),
-            broken_court_order: stored_tenancy.fetch(:broken_court_order),
-            nosp_served: stored_tenancy.fetch(:nosp_served),
-            active_nosp: stored_tenancy.fetch(:active_nosp)
-          }
+          build_tenancy_list_item(tenancy, assigned_tenancy)
         end.compact
+
+        Response.new(cases, number_of_pages_for_user)
+      end
+
+      private
+
+      def build_tenancy_list_item(tenancy, assigned_tenancy)
+        {
+          ref: tenancy.fetch(:ref),
+          current_balance: tenancy.fetch(:current_balance),
+          current_arrears_agreement_status: tenancy.fetch(:current_arrears_agreement_status),
+          latest_action: {
+            code: tenancy.dig(:latest_action, :code),
+            date: tenancy.dig(:latest_action, :date),
+          },
+          primary_contact: {
+            name: tenancy.dig(:primary_contact, :name),
+            short_address: tenancy.dig(:primary_contact, :short_address),
+            postcode: tenancy.dig(:primary_contact, :postcode),
+          },
+          priority_band: assigned_tenancy.fetch(:priority_band),
+          priority_score: assigned_tenancy.fetch(:priority_score),
+
+          balance_contribution: assigned_tenancy.fetch(:balance_contribution),
+          days_in_arrears_contribution: assigned_tenancy.fetch(:days_in_arrears_contribution),
+          days_since_last_payment_contribution: assigned_tenancy.fetch(:days_since_last_payment_contribution),
+          payment_amount_delta_contribution: assigned_tenancy.fetch(:payment_amount_delta_contribution),
+          payment_date_delta_contribution: assigned_tenancy.fetch(:payment_date_delta_contribution),
+          number_of_broken_agreements_contribution: assigned_tenancy.fetch(:number_of_broken_agreements_contribution),
+          active_agreement_contribution: assigned_tenancy.fetch(:active_agreement_contribution),
+          broken_court_order_contribution: assigned_tenancy.fetch(:broken_court_order_contribution),
+          nosp_served_contribution: assigned_tenancy.fetch(:nosp_served_contribution),
+          active_nosp_contribution: assigned_tenancy.fetch(:active_nosp_contribution),
+
+          balance: assigned_tenancy.fetch(:balance),
+          days_in_arrears: assigned_tenancy.fetch(:days_in_arrears),
+          days_since_last_payment: assigned_tenancy.fetch(:days_since_last_payment),
+          payment_amount_delta: assigned_tenancy.fetch(:payment_amount_delta),
+          payment_date_delta: assigned_tenancy.fetch(:payment_date_delta),
+          number_of_broken_agreements: assigned_tenancy.fetch(:number_of_broken_agreements),
+          active_agreement: assigned_tenancy.fetch(:active_agreement),
+          broken_court_order: assigned_tenancy.fetch(:broken_court_order),
+          nosp_served: assigned_tenancy.fetch(:nosp_served),
+          active_nosp: assigned_tenancy.fetch(:active_nosp)
+        }
       end
     end
   end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180828112331) do
+ActiveRecord::Schema.define(version: 20180912114134) do
 
   create_table "delayed_jobs", force: :cascade do |t|
     t.integer "priority", default: 0, null: false
@@ -33,6 +33,33 @@ ActiveRecord::Schema.define(version: 20180828112331) do
     t.decimal "priority_score"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.decimal "balance_contribution"
+    t.decimal "days_in_arrears_contribution"
+    t.decimal "days_since_last_payment_contribution"
+    t.decimal "payment_amount_delta_contribution"
+    t.decimal "payment_date_delta_contribution"
+    t.decimal "number_of_broken_agreements_contribution"
+    t.decimal "active_agreement_contribution"
+    t.decimal "broken_court_order_contribution"
+    t.decimal "nosp_served_contribution"
+    t.decimal "active_nosp_contribution"
+    t.decimal "balance"
+    t.integer "days_in_arrears"
+    t.integer "days_since_last_payment"
+    t.decimal "payment_amount_delta"
+    t.integer "payment_date_delta"
+    t.integer "number_of_broken_agreements"
+    t.boolean "active_agreement"
+    t.boolean "broken_court_order"
+    t.boolean "nosp_served"
+    t.boolean "active_nosp"
+    t.string "current_arrears_agreement_status"
+    t.string "latest_action_code"
+    t.string "latest_action_date"
+    t.string "primary_contact_name"
+    t.string "primary_contact_short_address"
+    t.string "primary_contact_postcode"
+    t.integer "assigned_user_id"
   end
 
 end
