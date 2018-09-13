@@ -13,6 +13,12 @@ describe UsersController do
     }
   end
 
+  let(:rando_id) { Faker::Number.number(2) }
+
+  before do
+    stub_const('Hackney::Income::FindOrCreateUser', Hackney::Income::StubFindOrCreateUser)
+  end
+
   context 'when receiving valid params' do
     it 'should pass the correct params to the use case' do
       expect_any_instance_of(Hackney::Income::FindOrCreateUser).to receive(:execute).with(
@@ -24,8 +30,7 @@ describe UsersController do
         last_name: params.fetch(:last_name),
         provider_permissions: params.fetch(:provider_permissions)
       ).and_return(
-        provider_uid: params.fetch(:provider_uid),
-        provider: params.fetch(:provider),
+        id: rando_id,
         name: params.fetch(:name),
         email: params.fetch(:email),
         first_name: params.fetch(:first_name),
@@ -37,11 +42,28 @@ describe UsersController do
     end
 
     it 'should return the response as json' do
+      expect_any_instance_of(Hackney::Income::FindOrCreateUser).to receive(:execute).with(
+        provider_uid: params.fetch(:provider_uid),
+        provider: params.fetch(:provider),
+        name: params.fetch(:name),
+        email: params.fetch(:email),
+        first_name: params.fetch(:first_name),
+        last_name: params.fetch(:last_name),
+        provider_permissions: params.fetch(:provider_permissions)
+      ).and_return(
+        id: rando_id,
+        name: params.fetch(:name),
+        email: params.fetch(:email),
+        first_name: params.fetch(:first_name),
+        last_name: params.fetch(:last_name),
+        provider_permissions: params.fetch(:provider_permissions)
+      )
+
       get :create, params: params
 
       expect(response.body).to eq(
         {
-          id: 1,
+          id: rando_id,
           name: params.fetch(:name),
           email: params.fetch(:email),
           first_name: params.fetch(:first_name),
