@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180912114134) do
+ActiveRecord::Schema.define(version: 20180913132800) do
 
   create_table "delayed_jobs", force: :cascade do |t|
     t.integer "priority", default: 0, null: false
@@ -60,6 +60,17 @@ ActiveRecord::Schema.define(version: 20180912114134) do
     t.string "primary_contact_short_address"
     t.string "primary_contact_postcode"
     t.integer "assigned_user_id"
+    t.index ["assigned_user_id"], name: "index_tenancies_on_assigned_user_id"
+  end
+
+  create_table "users", force: :cascade do |t|
+    t.string "provider_uid"
+    t.string "provider"
+    t.string "name"
+    t.string "email"
+    t.string "first_name"
+    t.string "last_name"
+    t.string "provider_permissions"
   end
 
 end
