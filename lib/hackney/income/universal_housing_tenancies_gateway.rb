@@ -17,6 +17,7 @@ module Hackney
 
         query
           .where { Sequel[:tenagree][:cur_bal] > 0 }
+          .where(Sequel[:tenagree][:terminated].cast(:integer) => 0)
           .select { Sequel[:tenagree][:tag_ref].as(:tag_ref) }
           .map { |record| record[:tag_ref].strip }
       end
