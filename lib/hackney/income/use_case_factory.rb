@@ -18,7 +18,8 @@ module Hackney
             restrict_patches: ENV.fetch('RESTRICT_PATCHES', false),
             patches: ENV.fetch('PERMITTED_PATCHES', [])
           ),
-          stored_tenancies_gateway: Hackney::Income::StoredTenanciesGateway.new
+          stored_tenancies_gateway: Hackney::Income::StoredTenanciesGateway.new,
+          assign_tenancy_to_user: Hackney::Income::AssignTenancyToUser.new(user_assignment_gateway: Hackney::Income::SqlUsersGateway.new)
         )
       end
 

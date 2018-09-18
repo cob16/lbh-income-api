@@ -4,12 +4,14 @@ describe Hackney::Income::DangerousSyncCases do
   let(:uh_tenancies_gateway) { double(tenancies_in_arrears: []) }
   let(:stored_tenancies_gateway) { double(store_tenancy: nil) }
   let(:prioritisation_gateway) { PrioritisationGatewayDouble.new }
+  let(:assign_tenancy_to_user) { AssignTenancyToUserDouble.new }
 
   let(:sync_cases) do
     described_class.new(
       prioritisation_gateway: prioritisation_gateway,
       uh_tenancies_gateway: uh_tenancies_gateway,
-      stored_tenancies_gateway: stored_tenancies_gateway
+      stored_tenancies_gateway: stored_tenancies_gateway,
+      assign_tenancy_to_user: assign_tenancy_to_user
     )
   end
 
@@ -40,6 +42,8 @@ describe Hackney::Income::DangerousSyncCases do
           weightings: an_instance_of(Hackney::Income::TenancyPrioritiser::PriorityWeightings)
         )
 
+        expect(assign_tenancy_to_user).to receive(:assign)
+
         subject
       end
     end
@@ -60,6 +64,8 @@ describe Hackney::Income::DangerousSyncCases do
           criteria: an_instance_of(Hackney::Income::TenancyPrioritiser::StubCriteria),
           weightings: an_instance_of(Hackney::Income::TenancyPrioritiser::PriorityWeightings)
         )
+
+        expect(assign_tenancy_to_user).to receive(:assign)
 
         subject
       end
@@ -103,6 +109,8 @@ describe Hackney::Income::DangerousSyncCases do
           weightings: an_instance_of(Hackney::Income::TenancyPrioritiser::PriorityWeightings)
         )
 
+        expect(assign_tenancy_to_user).to receive(:assign).exactly(3).times
+
         subject
       end
     end
@@ -121,5 +129,10 @@ class PrioritisationGatewayDouble
       criteria: Hackney::Income::TenancyPrioritiser::StubCriteria.new,
       weightings: Hackney::Income::TenancyPrioritiser::PriorityWeightings.new
     }
+  end
+end
+
+class AssignTenancyToUserDouble
+  def assign(tenancy:)
   end
 end
