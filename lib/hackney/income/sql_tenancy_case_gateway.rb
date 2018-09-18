@@ -19,7 +19,9 @@ module Hackney
       end
 
       def assign_to_next_available_user(tenancy:)
-        tenancy.assigned_user = next_available_user_for(band: tenancy.priority_band)
+        return nil if !['red', 'amber', 'green'].include?(tenancy.priority_band)
+
+        tenancy.assigned_user = next_available_user_for(band: tenancy.priority_band) || Hackney::Income::Models::User.all.first
         tenancy.save
         tenancy.assigned_user_id
       end

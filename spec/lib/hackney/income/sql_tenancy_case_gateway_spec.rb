@@ -90,18 +90,26 @@ describe Hackney::Income::SqlTenancyCaseGateway do
       let!(:user2) { Hackney::Income::Models::User.create!(name: Faker::Name.name) }
 
       let!(:unassigned_green) { create_assigned_tenancy_model(band: 'green', user: nil) }
+      let!(:second_unassigned_green) { create_assigned_tenancy_model(band: 'green', user: nil) }
       let!(:unassigned_amber) { create_assigned_tenancy_model(band: 'amber', user: nil) }
       let!(:second_unassigned_amber) { create_assigned_tenancy_model(band: 'amber', user: nil) }
       let!(:unassigned_red) { create_assigned_tenancy_model(band: 'red', user: nil) }
       let!(:unassigned_case) { create_assigned_tenancy_model(band: 'error', user: nil) }
+
+      context 'when no cases have been assigned' do
+        it 'should assign to the first user in the list' do
+          expect(subject.assign_to_next_available_user(tenancy: unassigned_green)).to eq(user1.id)
+          expect(unassigned_green.assigned_user).to eq(user1)
+        end
+      end
 
       context 'assigning a case which has a band that has a clear next user' do
         it 'should assign it to the user who is next able to take on a green case' do
           2.times { create_assigned_tenancy_model(band: 'green', user: user1) }
           1.times { create_assigned_tenancy_model(band: 'green', user: user2) }
 
-          expect(subject.assign_to_next_available_user(tenancy: unassigned_green)).to eq(user2.id)
-          expect(unassigned_green.assigned_user).to eq(user2)
+          expect(subject.assign_to_next_available_user(tenancy: second_unassigned_green)).to eq(user2.id)
+          expect(second_unassigned_green.assigned_user).to eq(user2)
         end
 
         it 'should assign it to the user at the top of the list if there is no clear choice' do
