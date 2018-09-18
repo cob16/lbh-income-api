@@ -11,21 +11,21 @@ module Hackney
             DECLARE @PaymentTypes table(payment_type varchar(3))
             INSERT INTO @PaymentTypes VALUES ('RBA'), ('RBP'), ('RBR'), ('RCI'), ('RCO'), ('RCP'), ('RDD'), ('RDN'), ('RDP'), ('RDR'), ('RDS'), ('RDT'), ('REF'), ('RHA'), ('RHB'), ('RIT'), ('RML'), ('RPD'), ('RPO'), ('RPY'), ('RQP'), ('RRC'), ('RRP'), ('RSO'), ('RTM'), ('RUC'), ('RWA')
 
-            DECLARE @CurrentBalance NUMERIC(9, 2) = (SELECT cur_bal FROM [dbo].[tenagree] WHERE tag_ref = @TenancyRef)
+            DECLARE @CurrentBalance NUMERIC(9, 2) = (SELECT cur_bal FROM [dbo].[tenagree] WITH (NOLOCK) WHERE tag_ref = @TenancyRef)
             DECLARE @LastPaymentDate SMALLDATETIME = (
               SELECT post_date FROM (
                 SELECT ROW_NUMBER() OVER (ORDER BY post_date DESC) AS row, post_date
-                FROM [dbo].[rtrans]
+                FROM [dbo].[rtrans] WITH (NOLOCK)
                 WHERE tag_ref = @TenancyRef
                 AND trans_type IN (SELECT payment_type FROM @PaymentTypes)
               ) t
               WHERE row = 1
             )
-            DECLARE @RemainingTransactions INT = (SELECT COUNT(*) FROM [dbo].[rtrans] WHERE tag_ref = @TenancyRef)
-            DECLARE @ActiveAgreementsCount INT = (SELECT COUNT(*) FROM [dbo].[arag] WHERE tag_ref = @TenancyRef AND arag_status = @ActiveArrearsAgreementStatus)
-            DECLARE @BreachedAgreementsCount INT = (SELECT COUNT(*) FROM [dbo].[arag] WHERE tag_ref = @TenancyRef AND arag_status = @BreachedArrearsAgreementStatus)
-            DECLARE @NospsInLastYear INT = (SELECT COUNT(*) FROM araction WHERE tag_ref = @TenancyRef AND action_code = @NospActionDiaryCode AND action_date >= CONVERT(date, DATEADD(year, -1, GETDATE())))
-            DECLARE @NospsInLastMonth INT = (SELECT COUNT(*) FROM araction WHERE tag_ref = @TenancyRef AND action_code = @NospActionDiaryCode AND action_date >= CONVERT(date, DATEADD(month, -1, GETDATE())))
+            DECLARE @RemainingTransactions INT = (SELECT COUNT(*) FROM [dbo].[rtrans] WITH (NOLOCK) WHERE tag_ref = @TenancyRef)
+            DECLARE @ActiveAgreementsCount INT = (SELECT COUNT(*) FROM [dbo].[arag] WITH (NOLOCK) WHERE tag_ref = @TenancyRef AND arag_status = @ActiveArrearsAgreementStatus)
+            DECLARE @BreachedAgreementsCount INT = (SELECT COUNT(*) FROM [dbo].[arag] WITH (NOLOCK) WHERE tag_ref = @TenancyRef AND arag_status = @BreachedArrearsAgreementStatus)
+            DECLARE @NospsInLastYear INT = (SELECT COUNT(*) FROM araction WITH (NOLOCK) WHERE tag_ref = @TenancyRef AND action_code = @NospActionDiaryCode AND action_date >= CONVERT(date, DATEADD(year, -1, GETDATE())))
+            DECLARE @NospsInLastMonth INT = (SELECT COUNT(*) FROM araction WITH (NOLOCK) WHERE tag_ref = @TenancyRef AND action_code = @NospActionDiaryCode AND action_date >= CONVERT(date, DATEADD(month, -1, GETDATE())))
             DECLARE @NextBalance NUMERIC(9, 2) = @CurrentBalance
             DECLARE @CurrentTransactionRow INT = 1
             DECLARE @LastTransactionDate SMALLDATETIME = GETDATE()
@@ -34,7 +34,7 @@ module Hackney
               SELECT @NextBalance = @NextBalance - real_value, @LastTransactionDate = post_date
               FROM (
                 SELECT ROW_NUMBER() OVER (ORDER BY post_date DESC) as row, real_value, post_date
-                FROM rtrans
+                FROM rtrans WITH (NOLOCK)
                 WHERE tag_ref = @TenancyRef
               ) t
               WHERE row = @CurrentTransactionRow
@@ -43,12 +43,12 @@ module Hackney
               SET @CurrentTransactionRow = @CurrentTransactionRow + 1
             END
 
-            DECLARE @Payment1Value NUMERIC(9, 2) = (SELECT real_value FROM (SELECT ROW_NUMBER() OVER(ORDER BY post_date DESC) as row, real_value FROM rtrans WHERE tag_ref = @TenancyRef AND trans_type IN (SELECT * FROM @PaymentTypes)) t WHERE row = 1)
-            DECLARE @Payment1Date SMALLDATETIME = (SELECT post_date FROM (SELECT ROW_NUMBER() OVER(ORDER BY post_date DESC) as row, post_date FROM rtrans WHERE tag_ref = @TenancyRef AND trans_type IN (SELECT * FROM @PaymentTypes)) t WHERE row = 1)
-            DECLARE @Payment2Value NUMERIC(9, 2) = (SELECT real_value FROM (SELECT ROW_NUMBER() OVER(ORDER BY post_date DESC) as row, real_value FROM rtrans WHERE tag_ref = @TenancyRef AND trans_type IN (SELECT * FROM @PaymentTypes)) t WHERE row = 2)
-            DECLARE @Payment2Date SMALLDATETIME = (SELECT post_date FROM (SELECT ROW_NUMBER() OVER(ORDER BY post_date DESC) as row, post_date FROM rtrans WHERE tag_ref = @TenancyRef AND trans_type IN (SELECT * FROM @PaymentTypes)) t WHERE row = 2)
-            DECLARE @Payment3Value NUMERIC(9, 2) = (SELECT real_value FROM (SELECT ROW_NUMBER() OVER(ORDER BY post_date DESC) as row, real_value FROM rtrans WHERE tag_ref = @TenancyRef AND trans_type IN (SELECT * FROM @PaymentTypes)) t WHERE row = 3)
-            DECLARE @Payment3Date SMALLDATETIME = (SELECT post_date FROM (SELECT ROW_NUMBER() OVER(ORDER BY post_date DESC) as row, post_date FROM rtrans WHERE tag_ref = @TenancyRef AND trans_type IN (SELECT * FROM @PaymentTypes)) t WHERE row = 3)
+            DECLARE @Payment1Value NUMERIC(9, 2) = (SELECT real_value FROM (SELECT ROW_NUMBER() OVER(ORDER BY post_date DESC) as row, real_value FROM rtrans WITH (NOLOCK) WHERE tag_ref = @TenancyRef AND trans_type IN (SELECT * FROM @PaymentTypes)) t WHERE row = 1)
+            DECLARE @Payment1Date SMALLDATETIME = (SELECT post_date FROM (SELECT ROW_NUMBER() OVER(ORDER BY post_date DESC) as row, post_date FROM rtrans WITH (NOLOCK) WHERE tag_ref = @TenancyRef AND trans_type IN (SELECT * FROM @PaymentTypes)) t WHERE row = 1)
+            DECLARE @Payment2Value NUMERIC(9, 2) = (SELECT real_value FROM (SELECT ROW_NUMBER() OVER(ORDER BY post_date DESC) as row, real_value FROM rtrans WITH (NOLOCK) WHERE tag_ref = @TenancyRef AND trans_type IN (SELECT * FROM @PaymentTypes)) t WHERE row = 2)
+            DECLARE @Payment2Date SMALLDATETIME = (SELECT post_date FROM (SELECT ROW_NUMBER() OVER(ORDER BY post_date DESC) as row, post_date FROM rtrans WITH (NOLOCK) WHERE tag_ref = @TenancyRef AND trans_type IN (SELECT * FROM @PaymentTypes)) t WHERE row = 2)
+            DECLARE @Payment3Value NUMERIC(9, 2) = (SELECT real_value FROM (SELECT ROW_NUMBER() OVER(ORDER BY post_date DESC) as row, real_value FROM rtrans WITH (NOLOCK) WHERE tag_ref = @TenancyRef AND trans_type IN (SELECT * FROM @PaymentTypes)) t WHERE row = 3)
+            DECLARE @Payment3Date SMALLDATETIME = (SELECT post_date FROM (SELECT ROW_NUMBER() OVER(ORDER BY post_date DESC) as row, post_date FROM rtrans WITH (NOLOCK) WHERE tag_ref = @TenancyRef AND trans_type IN (SELECT * FROM @PaymentTypes)) t WHERE row = 3)
 
             SELECT
               @CurrentBalance as current_balance,
