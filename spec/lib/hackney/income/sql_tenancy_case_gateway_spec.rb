@@ -89,30 +89,25 @@ describe Hackney::Income::SqlTenancyCaseGateway do
       let!(:user1) { Hackney::Income::Models::User.create!(name: Faker::Name.name) }
       let!(:user2) { Hackney::Income::Models::User.create!(name: Faker::Name.name) }
 
-      # create a pool of unassigned cases
       let!(:unassigned_green) { create_assigned_tenancy_model(band: 'green', user: nil) }
       let!(:unassigned_amber) { create_assigned_tenancy_model(band: 'amber', user: nil) }
       let!(:second_unassigned_amber) { create_assigned_tenancy_model(band: 'amber', user: nil) }
       let!(:unassigned_red) { create_assigned_tenancy_model(band: 'red', user: nil) }
       let!(:unassigned_case) { create_assigned_tenancy_model(band: 'error', user: nil) }
 
-      # assign cases to users to set up current 'workloads'
-      let!(:user1_green_case1) { create_assigned_tenancy_model(band: 'green', user: user1) }
-      let!(:user1_green_case2) { create_assigned_tenancy_model(band: 'green', user: user1) }
-      let!(:user2_green_case1) { create_assigned_tenancy_model(band: 'green', user: user2) }
-      let!(:user1_amber_case1) { create_assigned_tenancy_model(band: 'amber', user: user1) }
-      let!(:user2_amber_case1) { create_assigned_tenancy_model(band: 'amber', user: user2) }
-      let!(:user1_red_case1) { create_assigned_tenancy_model(band: 'red', user: user1) }
-      let!(:user1_red_case2) { create_assigned_tenancy_model(band: 'red', user: user1) }
-      let!(:user2_red_case1) { create_assigned_tenancy_model(band: 'red', user: user2) }
-
       context 'assigning a case which has a band that has a clear next user' do
         it 'should assign it to the user who is next able to take on a green case' do
+          2.times { create_assigned_tenancy_model(band: 'green', user: user1) }
+          1.times { create_assigned_tenancy_model(band: 'green', user: user2) }
+
           expect(subject.assign_to_next_available_user(tenancy: unassigned_green)).to eq(user2.id)
           expect(unassigned_green.assigned_user).to eq(user2)
         end
 
         it 'should assign it to the user at the top of the list if there is no clear choice' do
+          1.times { create_assigned_tenancy_model(band: 'amber', user: user1) }
+          1.times { create_assigned_tenancy_model(band: 'amber', user: user2) }
+
           expect(subject.assign_to_next_available_user(tenancy: unassigned_amber)).to eq(user1.id)
           expect(unassigned_amber.assigned_user).to eq(user1)
 
@@ -121,6 +116,9 @@ describe Hackney::Income::SqlTenancyCaseGateway do
         end
 
         it 'should behave the same way for each band' do
+          2.times { create_assigned_tenancy_model(band: 'red', user: user1) }
+          1.times { create_assigned_tenancy_model(band: 'red', user: user2) }
+
           expect(subject.assign_to_next_available_user(tenancy: unassigned_red)).to eq(user2.id)
           expect(unassigned_red.assigned_user).to eq(user2)
         end
