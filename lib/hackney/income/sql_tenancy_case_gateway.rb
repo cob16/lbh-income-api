@@ -28,11 +28,11 @@ module Hackney
 
       def next_available_user_for(band:)
         Hackney::Income::Models::User
-        .left_joins(:tenancies)
-        .group('users.id')
-        .where('tenancies.priority_band = ?', band)
-        .order('COUNT(tenancies.id) ASC')
-        .first
+          .left_joins(:tenancies)
+          .group('users.id')
+          .where('tenancies.priority_band = ?', band)
+          .order('COUNT(tenancies.id) ASC')
+          .first
       end
     end
   end
