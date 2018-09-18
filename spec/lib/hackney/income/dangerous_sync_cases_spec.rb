@@ -4,7 +4,7 @@ describe Hackney::Income::DangerousSyncCases do
   let(:uh_tenancies_gateway) { double(tenancies_in_arrears: []) }
   let(:stored_tenancies_gateway) { double(store_tenancy: nil) }
   let(:prioritisation_gateway) { PrioritisationGatewayDouble.new }
-  let(:assign_tenancy_to_user) { AssignTenancyToUserDouble.new }
+  let(:assign_tenancy_to_user) { double(assign_tenancy_to_user: nil) }
 
   let(:sync_cases) do
     described_class.new(
@@ -129,10 +129,5 @@ class PrioritisationGatewayDouble
       criteria: Hackney::Income::TenancyPrioritiser::StubCriteria.new,
       weightings: Hackney::Income::TenancyPrioritiser::PriorityWeightings.new
     }
-  end
-end
-
-class AssignTenancyToUserDouble
-  def assign(tenancy:)
   end
 end
