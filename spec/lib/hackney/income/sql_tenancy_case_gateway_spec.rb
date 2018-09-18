@@ -89,20 +89,22 @@ describe Hackney::Income::SqlTenancyCaseGateway do
       let!(:user1) { Hackney::Income::Models::User.create!(name: Faker::Name.name) }
       let!(:user2) { Hackney::Income::Models::User.create!(name: Faker::Name.name) }
 
+      # create a pool of unassigned cases
       let!(:unassigned_green) { create_assigned_tenancy_model(band: 'green', user: nil) }
       let!(:unassigned_amber) { create_assigned_tenancy_model(band: 'amber', user: nil) }
+      let!(:second_unassigned_amber) { create_assigned_tenancy_model(band: 'amber', user: nil) }
       let!(:unassigned_red) { create_assigned_tenancy_model(band: 'red', user: nil) }
       let!(:unassigned_case) { create_assigned_tenancy_model(band: 'error', user: nil) }
-      let!(:second_unassigned_amber) { create_assigned_tenancy_model(band: 'amber', user: nil) }
-      let!(:u1c1) { create_assigned_tenancy_model(band: 'green', user: user1) }
-      let!(:u1c2) { create_assigned_tenancy_model(band: 'green', user: user1) }
-      let!(:u2c1) { create_assigned_tenancy_model(band: 'green', user: user2) }
-      let!(:u1amber1) { create_assigned_tenancy_model(band: 'amber', user: user1) }
-      let!(:u2amber1) { create_assigned_tenancy_model(band: 'amber', user: user2) }
-      let!(:u1red1) { create_assigned_tenancy_model(band: 'red', user: user1) }
-      let!(:u1red2) { create_assigned_tenancy_model(band: 'red', user: user1) }
-      let!(:u2red1) { create_assigned_tenancy_model(band: 'red', user: user2) }
 
+      # assign cases to users to set up current 'workloads'
+      let!(:user1_green_case1) { create_assigned_tenancy_model(band: 'green', user: user1) }
+      let!(:user1_green_case2) { create_assigned_tenancy_model(band: 'green', user: user1) }
+      let!(:user2_green_case1) { create_assigned_tenancy_model(band: 'green', user: user2) }
+      let!(:user1_amber_case1) { create_assigned_tenancy_model(band: 'amber', user: user1) }
+      let!(:user2_amber_case1) { create_assigned_tenancy_model(band: 'amber', user: user2) }
+      let!(:user1_red_case1) { create_assigned_tenancy_model(band: 'red', user: user1) }
+      let!(:user1_red_case2) { create_assigned_tenancy_model(band: 'red', user: user1) }
+      let!(:user2_red_case1) { create_assigned_tenancy_model(band: 'red', user: user2) }
 
       context 'assigning a case which has a band that has a clear next user' do
         it 'should assign it to the user who is next able to take on a green case' do
@@ -145,14 +147,11 @@ describe Hackney::Income::SqlTenancyCaseGateway do
   end
 
   def create_assigned_tenancy_model(band:, user:)
-    tenancy = Hackney::Income::Models::Tenancy.new.tap do |t|
-      t.tenancy_ref = Faker::Lorem.characters(5)
-      t.priority_band = band
-      t.priority_score = Faker::Lorem.characters(5)
-      t.assigned_user = user
-    end
-
-    tenancy.save
-    tenancy
+    Hackney::Income::Models::Tenancy.create!(
+      tenancy_ref: Faker::Lorem.characters(5),
+      priority_band: band,
+      priority_score: Faker::Lorem.characters(5),
+      assigned_user: user
+    )
   end
 end
