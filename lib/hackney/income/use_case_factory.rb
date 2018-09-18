@@ -22,8 +22,13 @@ module Hackney
       def sync_case_priority
         Hackney::Income::SyncCasePriority.new(
           prioritisation_gateway: prioritisation_gateway,
-          stored_tenancies_gateway: stored_tenancies_gateway
+          stored_tenancies_gateway: stored_tenancies_gateway,
+          assign_tenancy_to_user: assign_tenancy_to_user
         )
+      end
+
+      def assign_tenancy_to_user
+        Hackney::Income::AssignTenancyToUser.new(user_assignment_gateway: users_gateway)
       end
 
       private

@@ -41,8 +41,6 @@ describe Hackney::Income::DangerousSyncCases do
         expect(background_job_gateway).to receive(:schedule_case_priority_sync).with(tenancy_ref: '000011/01')
         expect(background_job_gateway).to receive(:schedule_case_priority_sync).with(tenancy_ref: '000012/01')
 
-        expect(assign_tenancy_to_user).to receive(:assign).exactly(3).times
-
         subject
       end
     end
