@@ -1,8 +1,8 @@
 require 'rails_helper'
 
 describe Hackney::Income::AssignTenancyToUser do
-  let!(:user1) { Hackney::Income::Models::User.create(name: Faker::Name.name) }
-  let!(:user2) { Hackney::Income::Models::User.create(name: Faker::Name.name) }
+  let!(:user1) { Hackney::Income::Models::User.create!(name: Faker::Name.name) }
+  let!(:user2) { Hackney::Income::Models::User.create!(name: Faker::Name.name) }
   let!(:assigned_tenancy) { create_assigned_tenancy_model(band: 'green', user: user2) }
   let!(:unassigned_tenancy) { create_assigned_tenancy_model(band: 'green', user: nil) }
 
@@ -32,14 +32,11 @@ describe Hackney::Income::AssignTenancyToUser do
   end
 
   def create_assigned_tenancy_model(band:, user:)
-    tenancy = Hackney::Income::Models::Tenancy.new.tap do |t|
-      t.tenancy_ref = Faker::Lorem.characters(5)
-      t.priority_band = band
-      t.priority_score = Faker::Lorem.characters(5)
-      t.assigned_user = user
-    end
-
-    tenancy.save
-    tenancy
+    Hackney::Income::Models::Tenancy.create!(
+      tenancy_ref: Faker::Lorem.characters(5),
+      priority_band: band,
+      priority_score: Faker::Lorem.characters(5),
+      assigned_user: user
+    )
   end
 end
