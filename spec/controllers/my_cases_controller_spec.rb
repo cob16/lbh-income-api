@@ -51,7 +51,8 @@ describe MyCasesController do
       expect(Hackney::Income::DangerousSyncCases).to receive(:new).with(
         prioritisation_gateway: instance_of(Hackney::Income::UniversalHousingPrioritisationGateway),
         uh_tenancies_gateway: instance_of(Hackney::Income::UniversalHousingTenanciesGateway),
-        stored_tenancies_gateway: instance_of(Hackney::Income::StoredTenanciesGateway)
+        stored_tenancies_gateway: instance_of(Hackney::Income::StoredTenanciesGateway),
+        assign_tenancy_to_user: instance_of(Hackney::Income::AssignTenancyToUser)
       ).and_call_original
 
       allow_any_instance_of(Hackney::Income::DangerousSyncCases)
