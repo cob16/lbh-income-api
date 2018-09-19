@@ -36,38 +36,17 @@ describe Hackney::Income::StoredTenanciesGateway do
 
       it 'should create the tenancy' do
         store_tenancy
-        expect(created_tenancy).to have_attributes(
-          tenancy_ref: attributes.fetch(:tenancy_ref),
-          priority_band: attributes.fetch(:priority_band),
-          priority_score: attributes.fetch(:priority_score),
+        expect(created_tenancy).to have_attributes(expected_serialised_tenancy(attributes))
+      end
 
-          balance_contribution: score_calculator.balance,
-          days_in_arrears_contribution: score_calculator.days_in_arrears,
-          days_since_last_payment_contribution: score_calculator.days_since_last_payment,
-          payment_amount_delta_contribution: score_calculator.payment_amount_delta,
-          payment_date_delta_contribution: score_calculator.payment_date_delta,
-          number_of_broken_agreements_contribution: score_calculator.number_of_broken_agreements,
-          active_agreement_contribution: score_calculator.active_agreement,
-          broken_court_order_contribution: score_calculator.broken_court_order,
-          nosp_served_contribution: score_calculator.nosp_served,
-          active_nosp_contribution: score_calculator.active_nosp,
-
-          balance: attributes.fetch(:criteria).balance,
-          days_in_arrears: attributes.fetch(:criteria).days_in_arrears,
-          days_since_last_payment: attributes.fetch(:criteria).days_since_last_payment,
-          payment_amount_delta: attributes.fetch(:criteria).payment_amount_delta,
-          payment_date_delta: attributes.fetch(:criteria).payment_date_delta,
-          number_of_broken_agreements: attributes.fetch(:criteria).number_of_broken_agreements,
-          active_agreement: attributes.fetch(:criteria).active_agreement?,
-          broken_court_order: attributes.fetch(:criteria).broken_court_order?,
-          nosp_served: attributes.fetch(:criteria).nosp_served?,
-          active_nosp: attributes.fetch(:criteria).active_nosp?
-        )
+      # FIXME: shouldn't return AR models from gateways
+      it 'should return the tenancy' do
+        expect(store_tenancy).to eq(created_tenancy)
       end
     end
 
     context 'and the tenancy already exists' do
-      before do
+      let!(:pre_existing_tenancy) do
         Hackney::Income::Models::Tenancy.create!(
           tenancy_ref: attributes.fetch(:tenancy_ref),
           priority_band: attributes.fetch(:priority_band),
@@ -101,38 +80,17 @@ describe Hackney::Income::StoredTenanciesGateway do
 
       it 'should update the tenancy' do
         store_tenancy
-        expect(stored_tenancy).to have_attributes(
-          tenancy_ref: attributes.fetch(:tenancy_ref),
-          priority_band: attributes.fetch(:priority_band),
-          priority_score: attributes.fetch(:priority_score),
-
-          balance_contribution: score_calculator.balance,
-          days_in_arrears_contribution: score_calculator.days_in_arrears,
-          days_since_last_payment_contribution: score_calculator.days_since_last_payment,
-          payment_amount_delta_contribution: score_calculator.payment_amount_delta,
-          payment_date_delta_contribution: score_calculator.payment_date_delta,
-          number_of_broken_agreements_contribution: score_calculator.number_of_broken_agreements,
-          active_agreement_contribution: score_calculator.active_agreement,
-          broken_court_order_contribution: score_calculator.broken_court_order,
-          nosp_served_contribution: score_calculator.nosp_served,
-          active_nosp_contribution: score_calculator.active_nosp,
-
-          balance: attributes.fetch(:criteria).balance,
-          days_in_arrears: attributes.fetch(:criteria).days_in_arrears,
-          days_since_last_payment: attributes.fetch(:criteria).days_since_last_payment,
-          payment_amount_delta: attributes.fetch(:criteria).payment_amount_delta,
-          payment_date_delta: attributes.fetch(:criteria).payment_date_delta,
-          number_of_broken_agreements: attributes.fetch(:criteria).number_of_broken_agreements,
-          active_agreement: attributes.fetch(:criteria).active_agreement?,
-          broken_court_order: attributes.fetch(:criteria).broken_court_order?,
-          nosp_served: attributes.fetch(:criteria).nosp_served?,
-          active_nosp: attributes.fetch(:criteria).active_nosp?
-        )
+        expect(stored_tenancy).to have_attributes(expected_serialised_tenancy(attributes))
       end
 
       it 'should not create a new tenancy' do
         store_tenancy
         expect(Hackney::Income::Models::Tenancy.count).to eq(1)
+      end
+
+      # FIXME: shouldn't return AR models from gateways
+      it 'should return the tenancy' do
+        expect(store_tenancy).to eq(pre_existing_tenancy)
       end
     end
   end
@@ -198,33 +156,7 @@ describe Hackney::Income::StoredTenanciesGateway do
 
       it 'should include the tenancy\'s ref, band and score' do
         expect(subject.count).to eq(1)
-        expect(subject).to include(a_hash_including(
-          tenancy_ref: attributes.fetch(:tenancy_ref),
-          priority_band: attributes.fetch(:priority_band),
-          priority_score: attributes.fetch(:priority_score),
-
-          balance_contribution: score_calculator.balance,
-          days_in_arrears_contribution: score_calculator.days_in_arrears,
-          days_since_last_payment_contribution: score_calculator.days_since_last_payment,
-          payment_amount_delta_contribution: score_calculator.payment_amount_delta,
-          payment_date_delta_contribution: score_calculator.payment_date_delta,
-          number_of_broken_agreements_contribution: score_calculator.number_of_broken_agreements,
-          active_agreement_contribution: score_calculator.active_agreement,
-          broken_court_order_contribution: score_calculator.broken_court_order,
-          nosp_served_contribution: score_calculator.nosp_served,
-          active_nosp_contribution: score_calculator.active_nosp,
-
-          balance: attributes.fetch(:criteria).balance,
-          days_in_arrears: attributes.fetch(:criteria).days_in_arrears,
-          days_since_last_payment: attributes.fetch(:criteria).days_since_last_payment,
-          payment_amount_delta: attributes.fetch(:criteria).payment_amount_delta,
-          payment_date_delta: attributes.fetch(:criteria).payment_date_delta,
-          number_of_broken_agreements: attributes.fetch(:criteria).number_of_broken_agreements,
-          active_agreement: attributes.fetch(:criteria).active_agreement?,
-          broken_court_order: attributes.fetch(:criteria).broken_court_order?,
-          nosp_served: attributes.fetch(:criteria).nosp_served?,
-          active_nosp: attributes.fetch(:criteria).active_nosp?
-        ))
+        expect(subject).to include(a_hash_including(expected_serialised_tenancy(attributes)))
       end
     end
 
@@ -379,5 +311,35 @@ describe Hackney::Income::StoredTenanciesGateway do
 
   def create_tenancy(user_id: nil)
     Hackney::Income::Models::Tenancy.create(assigned_user_id: user_id)
+  end
+
+  def expected_serialised_tenancy(attributes)
+    {
+      tenancy_ref: attributes.fetch(:tenancy_ref),
+      priority_band: attributes.fetch(:priority_band),
+      priority_score: attributes.fetch(:priority_score),
+
+      balance_contribution: score_calculator.balance,
+      days_in_arrears_contribution: score_calculator.days_in_arrears,
+      days_since_last_payment_contribution: score_calculator.days_since_last_payment,
+      payment_amount_delta_contribution: score_calculator.payment_amount_delta,
+      payment_date_delta_contribution: score_calculator.payment_date_delta,
+      number_of_broken_agreements_contribution: score_calculator.number_of_broken_agreements,
+      active_agreement_contribution: score_calculator.active_agreement,
+      broken_court_order_contribution: score_calculator.broken_court_order,
+      nosp_served_contribution: score_calculator.nosp_served,
+      active_nosp_contribution: score_calculator.active_nosp,
+
+      balance: attributes.fetch(:criteria).balance,
+      days_in_arrears: attributes.fetch(:criteria).days_in_arrears,
+      days_since_last_payment: attributes.fetch(:criteria).days_since_last_payment,
+      payment_amount_delta: attributes.fetch(:criteria).payment_amount_delta,
+      payment_date_delta: attributes.fetch(:criteria).payment_date_delta,
+      number_of_broken_agreements: attributes.fetch(:criteria).number_of_broken_agreements,
+      active_agreement: attributes.fetch(:criteria).active_agreement?,
+      broken_court_order: attributes.fetch(:criteria).broken_court_order?,
+      nosp_served: attributes.fetch(:criteria).nosp_served?,
+      active_nosp: attributes.fetch(:criteria).active_nosp?
+    }
   end
 end
