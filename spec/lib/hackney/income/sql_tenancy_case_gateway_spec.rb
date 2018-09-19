@@ -137,6 +137,36 @@ describe Hackney::Income::SqlTenancyCaseGateway do
         expect(unassigned_case.assigned_user).to be_nil
       end
     end
+
+    context 'when assigning several cases' do
+      context 'and they are all in the same band' do
+        it 'should assign them evenly' do
+          user_a = Hackney::Income::Models::User.create!
+          user_b = Hackney::Income::Models::User.create!
+          user_c = Hackney::Income::Models::User.create!
+          user_d = Hackney::Income::Models::User.create!
+          user_e = Hackney::Income::Models::User.create!
+
+          tenancy_a = Hackney::Income::Models::Tenancy.create!(priority_band: :red)
+          tenancy_b = Hackney::Income::Models::Tenancy.create!(priority_band: :red)
+          tenancy_c = Hackney::Income::Models::Tenancy.create!(priority_band: :red)
+          tenancy_d = Hackney::Income::Models::Tenancy.create!(priority_band: :red)
+          tenancy_e = Hackney::Income::Models::Tenancy.create!(priority_band: :red)
+
+          subject.assign_to_next_available_user(tenancy: tenancy_a)
+          subject.assign_to_next_available_user(tenancy: tenancy_b)
+          subject.assign_to_next_available_user(tenancy: tenancy_c)
+          subject.assign_to_next_available_user(tenancy: tenancy_d)
+          subject.assign_to_next_available_user(tenancy: tenancy_e)
+
+          expect(user_a.tenancies.count).to eq(1)
+          expect(user_b.tenancies.count).to eq(1)
+          expect(user_c.tenancies.count).to eq(1)
+          expect(user_d.tenancies.count).to eq(1)
+          expect(user_e.tenancies.count).to eq(1)
+        end
+      end
+    end
   end
 
   def persist_new_tenancy
