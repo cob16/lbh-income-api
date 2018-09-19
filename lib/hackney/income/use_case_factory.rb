@@ -28,7 +28,7 @@ module Hackney
       end
 
       def assign_tenancy_to_user
-        Hackney::Income::AssignTenancyToUser.new(user_assignment_gateway: users_gateway)
+        Hackney::Income::AssignTenancyToUser.new(user_assignment_gateway: user_assignment_gateway)
       end
 
       private
@@ -43,6 +43,10 @@ module Hackney
 
       def users_gateway
         Hackney::Income::SqlUsersGateway.new
+      end
+
+      def user_assignment_gateway
+        Hackney::Income::SqlTenancyCaseGateway.new
       end
 
       def uh_tenancies_gateway
