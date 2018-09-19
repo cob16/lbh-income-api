@@ -39,22 +39,14 @@ describe Hackney::Income::StoredTenanciesGateway do
         expect(created_tenancy).to have_attributes(expected_serialised_tenancy(attributes))
       end
 
-          balance: attributes.fetch(:criteria).balance,
-          days_in_arrears: attributes.fetch(:criteria).days_in_arrears,
-          days_since_last_payment: attributes.fetch(:criteria).days_since_last_payment,
-          payment_amount_delta: attributes.fetch(:criteria).payment_amount_delta,
-          payment_date_delta: attributes.fetch(:criteria).payment_date_delta,
-          number_of_broken_agreements: attributes.fetch(:criteria).number_of_broken_agreements,
-          active_agreement: attributes.fetch(:criteria).active_agreement?,
-          broken_court_order: attributes.fetch(:criteria).broken_court_order?,
-          nosp_served: attributes.fetch(:criteria).nosp_served?,
-          active_nosp: attributes.fetch(:criteria).active_nosp?
-        )
+      # FIXME: shouldn't return AR models from gateways
+      it 'should return the tenancy' do
+        expect(store_tenancy).to eq(created_tenancy)
       end
     end
 
     context 'and the tenancy already exists' do
-      before do
+      let!(:pre_existing_tenancy) do
         Hackney::Income::Models::Tenancy.create!(
           tenancy_ref: attributes.fetch(:tenancy_ref),
           priority_band: attributes.fetch(:priority_band),
@@ -94,6 +86,11 @@ describe Hackney::Income::StoredTenanciesGateway do
       it 'should not create a new tenancy' do
         store_tenancy
         expect(Hackney::Income::Models::Tenancy.count).to eq(1)
+      end
+
+      # FIXME: shouldn't return AR models from gateways
+      it 'should return the tenancy' do
+        expect(store_tenancy).to eq(pre_existing_tenancy)
       end
     end
   end
