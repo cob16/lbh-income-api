@@ -17,12 +17,15 @@ module Hackney
 
         query
           .where { Sequel[:tenagree][:cur_bal] > 0 }
+          .where(Sequel[:tenagree][:tenure] => SECURE_TENURE_TYPE)
           .where(Sequel[:tenagree][:terminated].cast(:integer) => 0)
           .select { Sequel[:tenagree][:tag_ref].as(:tag_ref) }
           .map { |record| record[:tag_ref].strip }
       end
 
       private
+
+      SECURE_TENURE_TYPE = 'SEC'.freeze
 
       def database
         Hackney::UniversalHousing::Client.connection.tap do |db|
