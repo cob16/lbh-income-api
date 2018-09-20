@@ -51,6 +51,22 @@ describe Hackney::Income::UniversalHousingTenanciesGateway, universal: true do
       end
     end
 
+    context 'when there is a tenancy in arrears which is a Secure tenancy' do
+      before { create_uh_tenancy_agreement(tenancy_ref: '000001/01', current_balance: 100.00, tenure_type: 'SEC') }
+
+      it 'should return the tenancy' do
+        expect(subject).to eq(['000001/01'])
+      end
+    end
+
+    context 'when there is a tenancy in arrears which is NOT a Secure tenancy' do
+      before { create_uh_tenancy_agreement(tenancy_ref: '000001/01', current_balance: 100.00, tenure_type: 'HEY') }
+
+      it 'should return nothing' do
+        expect(subject).to eq([])
+      end
+    end
+
     context 'when patches are restricted' do
       context 'and a list of acceptable patches is given' do
         let(:gateway) { described_class.new(restrict_patches: true, patches: ['X01', 'Y01', 'Z01']) }
