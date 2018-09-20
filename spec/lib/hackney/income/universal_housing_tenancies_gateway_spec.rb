@@ -78,7 +78,7 @@ describe Hackney::Income::UniversalHousingTenanciesGateway, universal: true do
         end
       end
 
-      context 'when no list of acceptable patches is given' do
+      context 'but no list of acceptable patches is given' do
         let(:gateway) { described_class.new(restrict_patches: true) }
 
         before do
