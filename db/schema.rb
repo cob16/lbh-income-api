@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180913132800) do
+ActiveRecord::Schema.define(version: 20180927140212) do
 
   create_table "delayed_jobs", force: :cascade do |t|
     t.integer "priority", default: 0, null: false
@@ -30,7 +30,7 @@ ActiveRecord::Schema.define(version: 20180913132800) do
   create_table "tenancies", force: :cascade do |t|
     t.string "tenancy_ref"
     t.string "priority_band"
-    t.decimal "priority_score"
+    t.integer "priority_score"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.decimal "balance_contribution"
@@ -53,12 +53,6 @@ ActiveRecord::Schema.define(version: 20180913132800) do
     t.boolean "broken_court_order"
     t.boolean "nosp_served"
     t.boolean "active_nosp"
-    t.string "current_arrears_agreement_status"
-    t.string "latest_action_code"
-    t.string "latest_action_date"
-    t.string "primary_contact_name"
-    t.string "primary_contact_short_address"
-    t.string "primary_contact_postcode"
     t.integer "assigned_user_id"
     t.index ["assigned_user_id"], name: "index_tenancies_on_assigned_user_id"
   end
@@ -71,6 +65,7 @@ ActiveRecord::Schema.define(version: 20180913132800) do
     t.string "first_name"
     t.string "last_name"
     t.string "provider_permissions"
+    t.integer "role", default: 0
   end
 
 end

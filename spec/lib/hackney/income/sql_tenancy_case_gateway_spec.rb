@@ -86,8 +86,9 @@ describe Hackney::Income::SqlTenancyCaseGateway do
     end
 
     context 'when auto assigning users to cases' do
-      let!(:user1) { Hackney::Income::Models::User.create!(name: Faker::Name.name) }
-      let!(:user2) { Hackney::Income::Models::User.create!(name: Faker::Name.name) }
+      let!(:user1) { Hackney::Income::Models::User.create!(name: Faker::Name.name, role: 1) }
+      let!(:user2) { Hackney::Income::Models::User.create!(name: Faker::Name.name, role: 1) }
+      let!(:user3) { Hackney::Income::Models::User.create!(name: Faker::Name.name, role: 0) }
 
       let!(:unassigned_green) { create_assigned_tenancy_model(band: 'green', user: nil) }
       let!(:second_unassigned_green) { create_assigned_tenancy_model(band: 'green', user: nil) }
@@ -97,7 +98,7 @@ describe Hackney::Income::SqlTenancyCaseGateway do
       let!(:unassigned_case) { create_assigned_tenancy_model(band: 'error', user: nil) }
 
       context 'when no cases have been assigned' do
-        it 'should assign to the first user in the list' do
+        it 'should assign to the first eligible user in the list' do
           expect(subject.assign_to_next_available_user(tenancy: unassigned_green)).to eq(user1.id)
           expect(unassigned_green.assigned_user).to eq(user1)
         end
@@ -140,30 +141,34 @@ describe Hackney::Income::SqlTenancyCaseGateway do
 
     context 'when assigning several cases' do
       context 'and they are all in the same band' do
-        it 'should assign them evenly' do
-          user_a = Hackney::Income::Models::User.create!
-          user_b = Hackney::Income::Models::User.create!
-          user_c = Hackney::Income::Models::User.create!
-          user_d = Hackney::Income::Models::User.create!
-          user_e = Hackney::Income::Models::User.create!
+        it 'should assign them evenly to eligible users' do
+          user_a = Hackney::Income::Models::User.create!(role: 1)
+          user_b = Hackney::Income::Models::User.create!(role: 1)
+          user_c = Hackney::Income::Models::User.create!(role: 1)
+          user_d = Hackney::Income::Models::User.create!(role: 1)
+          user_e = Hackney::Income::Models::User.create!(role: 1)
+          user_f = Hackney::Income::Models::User.create!(role: 0)
 
           tenancy_a = Hackney::Income::Models::Tenancy.create!(priority_band: :red)
           tenancy_b = Hackney::Income::Models::Tenancy.create!(priority_band: :red)
           tenancy_c = Hackney::Income::Models::Tenancy.create!(priority_band: :red)
           tenancy_d = Hackney::Income::Models::Tenancy.create!(priority_band: :red)
           tenancy_e = Hackney::Income::Models::Tenancy.create!(priority_band: :red)
+          tenancy_f = Hackney::Income::Models::Tenancy.create!(priority_band: :red)
 
           subject.assign_to_next_available_user(tenancy: tenancy_a)
           subject.assign_to_next_available_user(tenancy: tenancy_b)
           subject.assign_to_next_available_user(tenancy: tenancy_c)
           subject.assign_to_next_available_user(tenancy: tenancy_d)
           subject.assign_to_next_available_user(tenancy: tenancy_e)
+          subject.assign_to_next_available_user(tenancy: tenancy_f)
 
-          expect(user_a.tenancies.count).to eq(1)
+          expect(user_a.tenancies.count).to eq(2)
           expect(user_b.tenancies.count).to eq(1)
           expect(user_c.tenancies.count).to eq(1)
           expect(user_d.tenancies.count).to eq(1)
           expect(user_e.tenancies.count).to eq(1)
+          expect(user_f.tenancies.count).to eq(0)
         end
       end
     end

@@ -32,7 +32,7 @@ module Hackney
         Hackney::Income::Models::User
           .left_joins(:tenancies)
           .group('users.id')
-          .where('tenancies.id IS NULL OR tenancies.priority_band = ?', band)
+          .where('users.role = 1 AND tenancies.id IS NULL OR tenancies.priority_band = ?', band)
           .order('COUNT(tenancies.id) ASC')
           .first
       end
