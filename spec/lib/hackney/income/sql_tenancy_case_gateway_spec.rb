@@ -86,9 +86,9 @@ describe Hackney::Income::SqlTenancyCaseGateway do
     end
 
     context 'when auto assigning users to cases' do
-      let!(:user1) { Hackney::Income::Models::User.create!(name: Faker::Name.name, role: 1) }
-      let!(:user2) { Hackney::Income::Models::User.create!(name: Faker::Name.name, role: 1) }
-      let!(:user3) { Hackney::Income::Models::User.create!(name: Faker::Name.name, role: 0) }
+      let!(:user1) { Hackney::Income::Models::User.create!(name: Faker::Name.name, role: :credit_controller) }
+      let!(:user2) { Hackney::Income::Models::User.create!(name: Faker::Name.name, role: :credit_controller) }
+      let!(:user3) { Hackney::Income::Models::User.create!(name: Faker::Name.name, role: :base_user) }
 
       let!(:unassigned_green) { create_assigned_tenancy_model(band: 'green', user: nil) }
       let!(:second_unassigned_green) { create_assigned_tenancy_model(band: 'green', user: nil) }
@@ -142,12 +142,12 @@ describe Hackney::Income::SqlTenancyCaseGateway do
     context 'when assigning several cases' do
       context 'and they are all in the same band' do
         it 'should assign them evenly to eligible users' do
-          user_a = Hackney::Income::Models::User.create!(role: 1)
-          user_b = Hackney::Income::Models::User.create!(role: 1)
-          user_c = Hackney::Income::Models::User.create!(role: 1)
-          user_d = Hackney::Income::Models::User.create!(role: 1)
-          user_e = Hackney::Income::Models::User.create!(role: 1)
-          user_f = Hackney::Income::Models::User.create!(role: 0)
+          user_a = Hackney::Income::Models::User.create!(role: :credit_controller)
+          user_b = Hackney::Income::Models::User.create!(role: :credit_controller)
+          user_c = Hackney::Income::Models::User.create!(role: :credit_controller)
+          user_d = Hackney::Income::Models::User.create!(role: :credit_controller)
+          user_e = Hackney::Income::Models::User.create!(role: :credit_controller)
+          user_f = Hackney::Income::Models::User.create!(role: :base_user)
 
           tenancy_a = Hackney::Income::Models::Tenancy.create!(priority_band: :red)
           tenancy_b = Hackney::Income::Models::Tenancy.create!(priority_band: :red)
