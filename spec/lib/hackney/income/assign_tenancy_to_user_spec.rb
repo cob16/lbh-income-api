@@ -1,8 +1,8 @@
 require 'rails_helper'
 
 describe Hackney::Income::AssignTenancyToUser do
-  let!(:user1) { Hackney::Income::Models::User.create!(name: Faker::Name.name) }
-  let!(:user2) { Hackney::Income::Models::User.create!(name: Faker::Name.name) }
+  let!(:user1) { Hackney::Income::Models::User.create!(name: Faker::Name.name, role: :credit_controller) }
+  let!(:user2) { Hackney::Income::Models::User.create!(name: Faker::Name.name, role: :credit_controller) }
   let!(:assigned_tenancy) { create_assigned_tenancy_model(band: 'green', user: user2) }
   let!(:unassigned_tenancy) { create_assigned_tenancy_model(band: 'green', user: nil) }
 
