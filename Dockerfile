@@ -3,6 +3,8 @@ ARG RAILS_ENV=development
 FROM ruby:2.5.1
 WORKDIR /app
 
+ENV RUBY_THREAD_VM_STACK_SIZE=5000000
+
 RUN wget ftp://ftp.freetds.org/pub/freetds/stable/freetds-1.00.27.tar.gz && \
   tar -xzf freetds-1.00.27.tar.gz && \
   cd freetds-1.00.27 && \
