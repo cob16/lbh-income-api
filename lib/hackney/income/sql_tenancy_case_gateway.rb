@@ -33,6 +33,8 @@ module Hackney
           { id: u.id, count: Hackney::Income::Models::Tenancy.where("tenancies.assigned_user_id = '#{u.id}' AND tenancies.priority_band = '#{band}'").count }
         end
 
+        return Hackney::Income::Models::User.where(role: :credit_controller).first if counts.empty?
+
         Hackney::Income::Models::User.find_by(id: counts.min_by { |r| r[:count] }[:id])
       end
     end
