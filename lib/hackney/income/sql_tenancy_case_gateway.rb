@@ -30,7 +30,7 @@ module Hackney
 
       def next_available_user_for(band:)
         counts = Hackney::Income::Models::User.where(role: :credit_controller).all.map do |u|
-          { id: u.id, count: Hackney::Income::Models::Tenancy.where("tenancies.assigned_user_id = '#{u.id}' AND tenancies.priority_band = '#{band}'").count }
+          { id: u.id, count: Hackney::Income::Models::Tenancy.where(assigned_user_id: u.id, priority_band: band).count }
         end
 
         return Hackney::Income::Models::User.where(role: :credit_controller).first if counts.empty?
