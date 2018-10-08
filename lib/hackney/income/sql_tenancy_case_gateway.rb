@@ -19,7 +19,7 @@ module Hackney
       end
 
       def assign_to_next_available_user(tenancy:)
-        return nil if !['red', 'amber', 'green'].include?(tenancy.priority_band)
+        return nil if !PRIORITY_BANDS.include?(tenancy.priority_band)
 
         tenancy.assigned_user = next_available_user_for(band: tenancy.priority_band)
         tenancy.save
@@ -35,6 +35,8 @@ module Hackney
 
         Hackney::Income::Models::User.find_by(id: counts.min_by { |r| r[:count] }[:id])
       end
+
+      PRIORITY_BANDS = ['red', 'amber', 'green'].freeze
     end
   end
 end
