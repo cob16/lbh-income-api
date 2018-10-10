@@ -11,7 +11,7 @@ describe Hackney::Income::SqlPauseTenancyGateway do
 
   context 'set pause status' do
     context ' when the tenancy does not exist' do
-      it 'should raise an exception' do
+      it 'should raise an exception containing the tenancy ref' do
         expect { subject.set_paused_status(tenancy_ref: 'does_not_exist', status: true) }
           .to raise_error
           .with_message(/does_not_exist/)
