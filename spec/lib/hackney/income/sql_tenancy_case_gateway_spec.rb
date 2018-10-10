@@ -187,14 +187,6 @@ describe Hackney::Income::SqlTenancyCaseGateway do
     Hackney::Income::Models::Tenancy.create!(tenancy_ref: tenancy.tenancy_ref)
   end
 
-  def create_tenancy_model
-    Hackney::Income::Models::Tenancy.new.tap do |t|
-      t.tenancy_ref = Faker::Lorem.characters(5)
-      t.priority_band = Faker::Lorem.characters(5)
-      t.priority_score = Faker::Lorem.characters(5)
-    end
-  end
-
   def create_assigned_tenancy_model(band:, user:)
     Hackney::Income::Models::Tenancy.create!(
       tenancy_ref: Faker::Lorem.characters(5),

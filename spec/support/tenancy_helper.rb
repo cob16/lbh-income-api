@@ -63,4 +63,12 @@ module TenancyHelper
       description: 'this tenant is in arrears!'
     )
   end
+
+  def create_tenancy_model
+    Hackney::Income::Models::Tenancy.new.tap do |t|
+      t.tenancy_ref = Faker::Lorem.characters(5)
+      t.priority_band = Faker::Lorem.characters(5)
+      t.priority_score = Faker::Lorem.characters(5)
+    end
+  end
 end

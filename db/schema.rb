@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180927140212) do
+ActiveRecord::Schema.define(version: 20181010141355) do
 
   create_table "delayed_jobs", force: :cascade do |t|
     t.integer "priority", default: 0, null: false
@@ -54,6 +54,7 @@ ActiveRecord::Schema.define(version: 20180927140212) do
     t.boolean "nosp_served"
     t.boolean "active_nosp"
     t.integer "assigned_user_id"
+    t.boolean "pause_status", default: false
     t.index ["assigned_user_id"], name: "index_tenancies_on_assigned_user_id"
   end
 
