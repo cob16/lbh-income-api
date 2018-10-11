@@ -25,7 +25,7 @@ describe TenanciesController do
         status: params1.fetch(:status).to_s
       ).and_return(nil)
 
-      post :update, params: params1
+      patch :update, params: params1
     end
 
     it 'should return a 200 response' do
@@ -34,7 +34,7 @@ describe TenanciesController do
         status: params2.fetch(:status).to_s
       ).and_return(nil)
 
-      post :update, params: params2
+      patch :update, params: params2
 
       expect(response.status).to eq(200)
     end
@@ -47,7 +47,7 @@ describe TenanciesController do
 
     it 'should return an exception detailing the unknown tenancy ref' do
       expect {
-        post :update, params: params1
+        patch :update, params: params1
       }.to raise_error.with_message(
         /#{params1.fetch(:tenancy_ref)}/
       )
@@ -68,7 +68,7 @@ describe TenanciesController do
 
   def assert_incomplete_params(params_hash)
     expect {
-      post :update, params: params_hash
+      patch :update, params: params_hash
     }.to raise_error ActionController::ParameterMissing
   end
 end
