@@ -5,6 +5,6 @@ class TenanciesController < ApplicationController
       status: params.fetch(:status)
     )
 
-    render :json, :status => 200 if result.nil?
+    render head: :no_content
   end
 end
