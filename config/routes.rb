@@ -3,6 +3,6 @@ Rails.application.routes.draw do
     get '/my-cases', to: 'my_cases#index'
     get '/sync-cases', to: 'my_cases#sync'
     post '/users/find-or-create', to: 'users#create'
-    patch '/tenancies/set-pause-status', to: 'tenancies#update'
+    patch '/tenancies/:tenancy_ref', to: 'tenancies#update'
   end
 end

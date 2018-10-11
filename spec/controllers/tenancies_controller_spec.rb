@@ -1,16 +1,16 @@
 require 'rails_helper'
 
-describe TenanciesController do
+describe TenanciesController, type: :controller do
   let(:params1) do
     {
       tenancy_ref: Faker::Lorem.characters(8),
-      status: true
+      is_paused: true
     }
   end
   let(:params2) do
     {
       tenancy_ref: Faker::Lorem.characters(8),
-      status: false
+      is_paused: false
     }
   end
 
@@ -22,7 +22,7 @@ describe TenanciesController do
     it 'should pass the correct params to the use case' do
       expect_any_instance_of(Hackney::Income::SetTenancyPausedStatus).to receive(:execute).with(
         tenancy_ref: params1.fetch(:tenancy_ref),
-        status: params1.fetch(:status).to_s
+        status: params1.fetch(:is_paused).to_s
       ).and_return(nil)
 
       patch :update, params: params1
@@ -31,12 +31,12 @@ describe TenanciesController do
     it 'should return a 200 response' do
       expect_any_instance_of(Hackney::Income::SetTenancyPausedStatus).to receive(:execute).with(
         tenancy_ref: params2.fetch(:tenancy_ref),
-        status: params2.fetch(:status).to_s
+        status: params2.fetch(:is_paused).to_s
       ).and_return(nil)
 
       patch :update, params: params2
 
-      expect(response.status).to eq(200)
+      expect(response.status).to eq(204)
     end
   end
 
@@ -57,12 +57,8 @@ describe TenanciesController do
   context 'when receiving a request missing params' do
     it 'should return a 400 - bad request' do
       assert_incomplete_params({
-          tenancy_ref: Faker::Lorem.characters(8),
-        })
-
-      assert_incomplete_params({
-          status: true
-        })
+        tenancy_ref: Faker::Lorem.characters(8)
+      })
     end
   end
 
