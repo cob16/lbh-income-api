@@ -54,7 +54,7 @@ ActiveRecord::Schema.define(version: 20181010141355) do
     t.boolean "nosp_served"
     t.boolean "active_nosp"
     t.integer "assigned_user_id"
-    t.boolean "pause_status", default: false
+    t.boolean "is_paused", default: false
     t.index ["assigned_user_id"], name: "index_tenancies_on_assigned_user_id"
   end
 

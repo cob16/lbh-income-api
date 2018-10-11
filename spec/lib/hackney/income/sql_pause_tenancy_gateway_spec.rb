@@ -19,13 +19,13 @@ describe Hackney::Income::SqlPauseTenancyGateway do
     end
 
     it 'should default to unpaused' do
-      expect(tenancy_1.paused?).to be(false)
+      expect(tenancy_1.is_paused?).to be(false)
     end
 
     it 'should update with the given status' do
       subject.set_paused_status(tenancy_ref: tenancy_1.tenancy_ref, status: true)
 
-      expect(Hackney::Income::Models::Tenancy.find_by(tenancy_ref: tenancy_1.tenancy_ref).paused?).to be(true)
+      expect(Hackney::Income::Models::Tenancy.find_by(tenancy_ref: tenancy_1.tenancy_ref).is_paused?).to be(true)
     end
   end
 end
