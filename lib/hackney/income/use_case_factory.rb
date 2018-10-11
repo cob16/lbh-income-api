@@ -19,6 +19,10 @@ module Hackney
         Hackney::Income::FindOrCreateUser.new(users_gateway: users_gateway)
       end
 
+      def set_tenancy_paused_status
+        Hackney::Income::SetTenancyPausedStatus.new(gateway: sql_pause_tenancy_gateway)
+      end
+
       def sync_case_priority
         Hackney::Income::SyncCasePriority.new(
           prioritisation_gateway: prioritisation_gateway,
@@ -35,6 +39,10 @@ module Hackney
 
       def prioritisation_gateway
         Hackney::Income::UniversalHousingPrioritisationGateway.new
+      end
+
+      def sql_pause_tenancy_gateway
+          Hackney::Income::SqlPauseTenancyGateway.new
       end
 
       def stored_tenancies_gateway
