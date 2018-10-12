@@ -268,7 +268,8 @@ describe Hackney::Income::StoredTenanciesGateway do
     subject { gateway.number_of_pages_for_user(user_id: user_id, number_per_page: number_per_page) }
 
     context 'and the user has ten tenancies' do
-      before { 10.times { create_tenancy(user_id: user_id) } }
+      before { 10.times { create_tenancy(user_id: user_id, balance: 1) } }
+      before { 10.times { create_tenancy(user_id: user_id, balance: -1) } }
 
       context 'and the number per page is five' do
         let(:number_per_page) { 5 }
@@ -309,8 +310,8 @@ describe Hackney::Income::StoredTenanciesGateway do
     end
   end
 
-  def create_tenancy(user_id: nil)
-    Hackney::Income::Models::Tenancy.create(assigned_user_id: user_id)
+  def create_tenancy(user_id: nil, balance: 1)
+    Hackney::Income::Models::Tenancy.create(assigned_user_id: user_id, balance: balance)
   end
 
   def expected_serialised_tenancy(attributes)
