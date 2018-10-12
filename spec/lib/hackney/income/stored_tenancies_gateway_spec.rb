@@ -267,9 +267,11 @@ describe Hackney::Income::StoredTenanciesGateway do
     let(:user_id) { Faker::Number.number(2).to_i }
     subject { gateway.number_of_pages_for_user(user_id: user_id, number_per_page: number_per_page) }
 
-    context 'and the user has ten tenancies' do
-      before { 10.times { create_tenancy(user_id: user_id, balance: 1) } }
-      before { 10.times { create_tenancy(user_id: user_id, balance: -1) } }
+    context 'and the user has ten tenancies in arrears, and ten not in arrears' do
+      before do
+        10.times { create_tenancy(user_id: user_id, balance: 1) }
+        10.times { create_tenancy(user_id: user_id, balance: -1) }
+      end
 
       context 'and the number per page is five' do
         let(:number_per_page) { 5 }
