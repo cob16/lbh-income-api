@@ -178,7 +178,8 @@ describe Hackney::Income::StoredTenanciesGateway do
               assigned_user_id: user_id,
               tenancy_ref: attributes.fetch(:tenancy_ref),
               priority_band: attributes.fetch(:priority_band),
-              priority_score: attributes.fetch(:priority_score)
+              priority_score: attributes.fetch(:priority_score),
+              balance: 1
             )
           end
         end
@@ -198,12 +199,12 @@ describe Hackney::Income::StoredTenanciesGateway do
         context 'and the cases are assigned different bands and scores' do
           let(:multiple_attributes) do
             [
-              { tenancy_ref: Faker::Internet.slug, priority_band: 'red', priority_score: 1 },
-              { tenancy_ref: Faker::Internet.slug, priority_band: 'green', priority_score: 50 },
-              { tenancy_ref: Faker::Internet.slug, priority_band: 'amber', priority_score: 100 },
-              { tenancy_ref: Faker::Internet.slug, priority_band: 'green', priority_score: 100 },
-              { tenancy_ref: Faker::Internet.slug, priority_band: 'red', priority_score: 101 },
-              { tenancy_ref: Faker::Internet.slug, priority_band: 'amber', priority_score: 200 }
+              { tenancy_ref: Faker::Internet.slug, priority_band: 'red', priority_score: 1, balance: 1},
+              { tenancy_ref: Faker::Internet.slug, priority_band: 'green', priority_score: 50, balance: 1},
+              { tenancy_ref: Faker::Internet.slug, priority_band: 'amber', priority_score: 100, balance: 1 },
+              { tenancy_ref: Faker::Internet.slug, priority_band: 'green', priority_score: 100, balance: 1 },
+              { tenancy_ref: Faker::Internet.slug, priority_band: 'red', priority_score: 101, balance: 1 },
+              { tenancy_ref: Faker::Internet.slug, priority_band: 'amber', priority_score: 200, balance: 1 }
             ]
           end
 
@@ -252,9 +253,9 @@ describe Hackney::Income::StoredTenanciesGateway do
 
     context 'and tenancies exist which aren\'t assigned to the user' do
       before do
-        Hackney::Income::Models::Tenancy.create!(assigned_user_id: user_id)
-        Hackney::Income::Models::Tenancy.create!(assigned_user_id: other_user_id)
-        Hackney::Income::Models::Tenancy.create!(assigned_user_id: user_id)
+        Hackney::Income::Models::Tenancy.create!(assigned_user_id: user_id, balance: 1)
+        Hackney::Income::Models::Tenancy.create!(assigned_user_id: other_user_id, balance: 1)
+        Hackney::Income::Models::Tenancy.create!(assigned_user_id: user_id, balance: 1)
       end
 
       it 'should only return the user\'s tenancies' do

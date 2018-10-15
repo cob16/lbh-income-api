@@ -39,7 +39,7 @@ module Hackney
 
       def get_tenancies_for_user(user_id:, page_number: nil, number_per_page: nil)
         query = Hackney::Income::Models::Tenancy
-          .where(assigned_user_id: user_id)
+          .where('tenancies.assigned_user_id = ? AND tenancies.balance > 0', user_id)
           .order(by_band_then_score)
 
         if page_number.present? && number_per_page.present?
