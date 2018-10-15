@@ -1,6 +1,6 @@
-ARG RAILS_ENV=development
-
 FROM ruby:2.5.1
+
+ARG RAILS_ENV=development
 WORKDIR /app
 
 ENV RUBY_THREAD_VM_STACK_SIZE=5000000
