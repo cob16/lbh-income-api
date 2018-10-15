@@ -17,7 +17,6 @@ module Hackney
         cases = assigned_tenancies.map do |assigned_tenancy|
           tenancy = full_tenancies.find { |t| t.fetch(:ref) == assigned_tenancy.fetch(:tenancy_ref) }
           next if tenancy.nil?
-          next if assigned_tenancy.fetch(:balance) < 0
 
           build_tenancy_list_item(tenancy, assigned_tenancy)
         end.compact

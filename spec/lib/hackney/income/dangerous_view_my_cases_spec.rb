@@ -48,8 +48,7 @@ describe Hackney::Income::DangerousViewMyCases do
     let(:tenancy_priority_score) { Faker::Number.number(5).to_i }
     let(:stored_tenancies_gateway) do
       StoredTenancyGatewayDouble.new({
-        tenancy_attributes.fetch(:ref) => { tenancy_ref: tenancy_attributes.fetch(:ref), priority_band: tenancy_priority_band, priority_score: tenancy_priority_score, current_balance: tenancy_attributes.fetch(:current_balance) }.merge(tenancy_priority_factors),
-        'not-in-arrears' => { tenancy_ref: 'not-in-arrears', priority_band: tenancy_priority_band, priority_score: tenancy_priority_score }.merge(tenancy_priority_factors).merge(balance: -200.00)
+        tenancy_attributes.fetch(:ref) => { tenancy_ref: tenancy_attributes.fetch(:ref), priority_band: tenancy_priority_band, priority_score: tenancy_priority_score }.merge(tenancy_priority_factors),
       })
     end
 
@@ -64,7 +63,6 @@ describe Hackney::Income::DangerousViewMyCases do
         TenancyApiGatewayDouble.new({
           other_tenancy_attributes.fetch(:ref) => other_tenancy_attributes,
           tenancy_attributes.fetch(:ref) => tenancy_attributes,
-          'not-in-arrears' => tenancy_attributes.merge(ref: 'not-in-arrears')
         })
       end
 
