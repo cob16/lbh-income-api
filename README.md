@@ -18,7 +18,8 @@ We employ a variant of Clean Architecture, borrowing from [Made Tech Flavoured C
 
 ### Setup
 
-1. Get a team member to add you to our AWS organisation, download the CLI tools, and login using them.
+1. Clone the following repo (private sorry) into your parent directory.
+    * https://github.com/LBHackney-IT/lbh-universal-housing-simulator
 2. Install [Docker][docker-download].
 3. Clone this repository.
 4. Run `make build`.
