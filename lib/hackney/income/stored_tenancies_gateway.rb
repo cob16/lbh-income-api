@@ -38,9 +38,7 @@ module Hackney
       end
 
       def get_tenancies_for_user(user_id:, page_number: nil, number_per_page: nil)
-        query = Hackney::Income::Models::Tenancy
-          .where(assigned_user_id: user_id)
-          .order(by_band_then_score)
+        query = cases_for(user_id).order(by_band_then_score)
 
         if page_number.present? && number_per_page.present?
           query = query.offset((page_number - 1) * number_per_page).limit(number_per_page)
@@ -50,11 +48,14 @@ module Hackney
       end
 
       def number_of_pages_for_user(user_id:, number_per_page:)
-        user_cases = Hackney::Income::Models::Tenancy.where(assigned_user_id: user_id)
-        (user_cases.count.to_f / number_per_page).ceil
+        (cases_for(user_id).count.to_f / number_per_page).ceil
       end
 
       private
+
+      def cases_for(user_id)
+        Hackney::Income::Models::Tenancy.where('tenancies.assigned_user_id = ? AND tenancies.balance > 0', user_id)
+      end
 
       def by_band_then_score
         "
