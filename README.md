@@ -54,13 +54,15 @@ The above is useful because you can TDD your change and manually test through th
 
 ### Release
 
+![Circle CI Workflow Example](docs/circle_ci_workflow.png)
+
 We use a pull request workflow, where changes are made on a branch and approved by one or more other maintainers before the developer can merge into `master`.
 
 Then we have an automated four step deployment process, which runs in CircleCI.
 
 1. Automated tests (RSpec) and linting (Rubocop) are run to ensure the release is of good quality.
 2. The app is deployed to staging automatically, where we check our latest changes work well.
-3. We manually confirm a production deployment once we're happy with our changes in staging.
+3. We manually confirm a production deployment in the CircleCI workflow once we're happy with our changes in staging.
 4. The app is deployed to production.
 
 ### Connection to Universal Housing
