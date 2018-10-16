@@ -79,17 +79,22 @@ We use a [Universal Housing simulator][github-uh-simulator] to run automated tes
 
 ## Contacts
 
-- Rashmi Shetty, Development Manager at London Borough of Hackney (rashmi.shetty@hackney.gov.uk)
-- Vlad Atamanyuk, Junior Developer at London Borough of Hackney (vladyslav.atamanyuk@hackney.gov.uk)
-- Mark Rosel, Lead Engineer at [Made Tech][made-tech] (mark.rosel@madetech.com)
-- Steven Leighton, Engineer at [Made Tech][made-tech] (steven@madetech.com)
-- Cormac Brady, Engineer at [Made Tech][made-tech] (cormac@madetech.com)
-- Jeff Pinkham, Engineer at [Made Tech][made-tech] (jeff@madetech.com)
+### Active Maintainers
+
+- **Rashmi Shetty**, Development Manager at London Borough of Hackney (rashmi.shetty@hackney.gov.uk)
+- **Vlad Atamanyuk**, Junior Developer at London Borough of Hackney (vladyslav.atamanyuk@hackney.gov.uk)
+- **Mark Rosel**, Lead Engineer at [Made Tech][made-tech] (mark.rosel@madetech.com)
+- **Steven Leighton**, Engineer at [Made Tech][made-tech] (steven@madetech.com)
+- **Cormac Brady**, Engineer at [Made Tech][made-tech] (cormac@madetech.com)
+- **Jeff Pinkham**, Engineer at [Made Tech][made-tech] (jeff@madetech.com)
 - Elena Vilimaite, Engineer at [Made Tech][made-tech] (elena@madetech.com)
-- Richard Foster, Lead Engineer at [Made Tech][made-tech] (richard@madetech.com)
-- Luke Morton, Director at [Made Tech][made-tech] (luke@madetech.com)
-- Dennis Robinson, Delivery Lead at London Borough of Hackney (dennis.robinson@hackney.gov.uk)
-- Soraya Clarke, Delivery Manager at London Borough of Hackney (soraya.clarke@hackney.gov.uk)
+
+### Other Contacts
+
+- **Richard Foster**, Lead Engineer at [Made Tech][made-tech] (richard@madetech.com)
+- **Luke Morton**, Director at [Made Tech][made-tech] (luke@madetech.com)
+- **Dennis Robinson**, Delivery Lead at London Borough of Hackney (dennis.robinson@hackney.gov.uk)
+- **Soraya Clarke**, Delivery Manager at London Borough of Hackney (soraya.clarke@hackney.gov.uk)
 
 [github-uh-simulator]: https://github.com/LBHackney-IT/lbh-universal-housing-simulator
 [github-ics]: https://github.com/LBHackney-IT/LBH-IncomeCollection
