@@ -18,9 +18,10 @@ We employ a variant of Clean Architecture, borrowing from [Made Tech Flavoured C
 
 ### Setup
 
-1. Install [Docker][docker-download].
-2. Clone this repository.
-3. Run `make build`.
+1. Get a team member to add you to our AWS organisation, download the CLI tools, and login using them.
+2. Install [Docker][docker-download].
+3. Clone this repository.
+4. Run `make build`.
 
 ### Development
 
@@ -72,7 +73,7 @@ Universal Housing configuration is given through environment variables, for exam
 - UH_DATABASE_HOST=universal_housing
 - UH_DATABASE_PORT=1433
 
-When developing locally, the Docker Compose configuration assumes you have access to ECR, where the latest [Universal Housing simulator][github-uh-simulator] Docker image is hosted.
+We use a [Universal Housing simulator][github-uh-simulator] to run automated tests against, mirroring the structure of the legacy Universal Housing database. This is distributed as a (currently private) Docker image, hosted on AWS ECR (Elastic Container Registry), which this project's Docker Compose configuration depends on.
 
 ## Contacts
 
