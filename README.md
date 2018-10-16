@@ -18,8 +18,7 @@ We employ a variant of Clean Architecture, borrowing from [Made Tech Flavoured C
 
 ### Setup
 
-1. Clone the following repo (private sorry) into your parent directory.
-    * https://github.com/LBHackney-IT/lbh-universal-housing-simulator
+1. Clone the [Universal Housing Simulator][github-uh-simulator] (private sorry) into your parent directory.
 2. Install [Docker][docker-download].
 3. Clone this repository.
 4. Run `make build`.
@@ -76,7 +75,7 @@ Universal Housing configuration is given through environment variables, for exam
 - UH_DATABASE_HOST=universal_housing
 - UH_DATABASE_PORT=1433
 
-We use a [Universal Housing simulator][github-uh-simulator] to run automated tests against, mirroring the structure of the legacy Universal Housing database. This is distributed as a (currently private) Docker image, hosted on AWS ECR (Elastic Container Registry), which this project's Docker Compose configuration depends on.
+We use a [Universal Housing simulator][github-uh-simulator] to run automated tests against, mirroring the structure of the legacy Universal Housing database.
 
 ## Contacts
 
