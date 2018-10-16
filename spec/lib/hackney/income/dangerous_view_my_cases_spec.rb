@@ -48,7 +48,7 @@ describe Hackney::Income::DangerousViewMyCases do
     let(:tenancy_priority_score) { Faker::Number.number(5).to_i }
     let(:stored_tenancies_gateway) do
       StoredTenancyGatewayDouble.new({
-        tenancy_attributes.fetch(:ref) => { tenancy_ref: tenancy_attributes.fetch(:ref), priority_band: tenancy_priority_band, priority_score: tenancy_priority_score }.merge(tenancy_priority_factors),
+        tenancy_attributes.fetch(:ref) => { tenancy_ref: tenancy_attributes.fetch(:ref), priority_band: tenancy_priority_band, priority_score: tenancy_priority_score }.merge(tenancy_priority_factors)
       })
     end
 
@@ -62,7 +62,7 @@ describe Hackney::Income::DangerousViewMyCases do
       let(:tenancy_api_gateway) do
         TenancyApiGatewayDouble.new({
           other_tenancy_attributes.fetch(:ref) => other_tenancy_attributes,
-          tenancy_attributes.fetch(:ref) => tenancy_attributes,
+          tenancy_attributes.fetch(:ref) => tenancy_attributes
         })
       end
 
