@@ -1,10 +1,12 @@
+# frozen_string_literal: true
+
 module Hackney
   module Income
     class StoredTenanciesGateway
       def store_tenancy(tenancy_ref:, priority_band:, priority_score:, criteria:, weightings:)
         score_calculator = Hackney::Income::TenancyPrioritiser::Score.new(
           criteria,
-          weightings,
+          weightings
         )
 
         Hackney::Income::Models::Tenancy.find_or_create_by(tenancy_ref: tenancy_ref).tap do |tenancy|
@@ -37,24 +39,28 @@ module Hackney
         end
       end
 
-      def get_tenancies_for_user(user_id:, page_number: nil, number_per_page: nil)
-        query = cases_for(user_id).order(by_band_then_score)
+      def get_tenancies_for_user(user_id:, page_number: nil, number_per_page: nil, is_paused: nil)
+        query = cases_for(user_id, is_paused)
 
         if page_number.present? && number_per_page.present?
           query = query.offset((page_number - 1) * number_per_page).limit(number_per_page)
         end
 
-        query.map(&method(:build_tenancy_list_item))
+        query.order(by_band_then_score).map(&method(:build_tenancy_list_item))
       end
 
-      def number_of_pages_for_user(user_id:, number_per_page:)
-        (cases_for(user_id).count.to_f / number_per_page).ceil
+      def number_of_pages_for_user(user_id:, number_per_page:, is_paused: nil)
+        (cases_for(user_id, is_paused).count.to_f / number_per_page).ceil
       end
 
       private
 
-      def cases_for(user_id)
-        Hackney::Income::Models::Tenancy.where('tenancies.assigned_user_id = ? AND tenancies.balance > 0', user_id)
+      def cases_for(user_id, is_paused)
+        query = Hackney::Income::Models::Tenancy.where('tenancies.assigned_user_id = ? AND tenancies.balance > 0', user_id)
+        unless is_paused.nil?
+          query = query.where(is_paused: is_paused)
+        end
+        query
       end
 
       def by_band_then_score
