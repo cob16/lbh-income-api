@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
 describe Hackney::Income::StoredTenanciesGateway do
@@ -15,11 +17,11 @@ describe Hackney::Income::StoredTenanciesGateway do
     end
 
     let(:score_calculator) do
-       Hackney::Income::TenancyPrioritiser::Score.new(
-         attributes.fetch(:criteria),
-         attributes.fetch(:weightings),
-       )
-     end
+      Hackney::Income::TenancyPrioritiser::Score.new(
+        attributes.fetch(:criteria),
+        attributes.fetch(:weightings)
+      )
+    end
 
     subject(:store_tenancy) do
       gateway.store_tenancy(
@@ -189,18 +191,18 @@ describe Hackney::Income::StoredTenanciesGateway do
 
           multiple_attributes.each do |attributes|
             expect(subject).to include(a_hash_including(
-              tenancy_ref: attributes.fetch(:tenancy_ref),
-              priority_band: attributes.fetch(:priority_band),
-              priority_score: attributes.fetch(:priority_score)
-            ))
+                                         tenancy_ref: attributes.fetch(:tenancy_ref),
+                                         priority_band: attributes.fetch(:priority_band),
+                                         priority_score: attributes.fetch(:priority_score)
+                                       ))
           end
         end
 
         context 'and the cases are assigned different bands and scores' do
           let(:multiple_attributes) do
             [
-              { tenancy_ref: Faker::Internet.slug, priority_band: 'red', priority_score: 1, balance: 1},
-              { tenancy_ref: Faker::Internet.slug, priority_band: 'green', priority_score: 50, balance: 1},
+              { tenancy_ref: Faker::Internet.slug, priority_band: 'red', priority_score: 1, balance: 1 },
+              { tenancy_ref: Faker::Internet.slug, priority_band: 'green', priority_score: 50, balance: 1 },
               { tenancy_ref: Faker::Internet.slug, priority_band: 'amber', priority_score: 100, balance: 1 },
               { tenancy_ref: Faker::Internet.slug, priority_band: 'green', priority_score: 100, balance: 1 },
               { tenancy_ref: Faker::Internet.slug, priority_band: 'red', priority_score: 101, balance: 1 },
@@ -313,8 +315,88 @@ describe Hackney::Income::StoredTenanciesGateway do
     end
   end
 
-  def create_tenancy(user_id: nil, balance: 1)
-    Hackney::Income::Models::Tenancy.create(assigned_user_id: user_id, balance: balance)
+  context 'there are paused and paused tenancies' do
+    let(:is_paused) { nil }
+    let(:user_id) { Faker::Number.number(2).to_i }
+
+    before do
+      10.times do
+        create_tenancy(user_id: user_id, balance: 40, is_paused: true)
+      end
+      15.times do
+        create_tenancy(user_id: user_id, balance: 40, is_paused: false)
+      end
+    end
+
+    context 'when we call get_tenancies_for_user' do
+      let(:is_paused) { nil }
+      subject do
+        gateway.get_tenancies_for_user(
+          user_id: user_id,
+          page_number: 1,
+          number_per_page: 25,
+          is_paused: is_paused
+        )
+      end
+
+      it 'should return all tenancies' do
+        expect(subject.count).to eq(25)
+      end
+
+      context 'when and is_paused is set true' do
+        let(:is_paused) { true }
+
+        it 'should only return only paused tenancies' do
+          expect(subject.count).to eq(10)
+        end
+      end
+
+      context 'and is_paused is set false' do
+        let(:is_paused) { false }
+
+        it 'should only return unpaused tenancies' do
+          expect(subject.count).to eq(15)
+        end
+      end
+    end
+
+    context 'when we call number_of_pages_for_user' do
+      subject do
+        gateway.number_of_pages_for_user(
+          user_id: user_id,
+          number_per_page: 5,
+          is_paused: is_paused
+        )
+      end
+
+      context 'and is_paused is set false' do
+        let(:is_paused) { false }
+
+        it 'should show the number pages of of paused cases' do
+          expect(subject).to eq(3)
+        end
+      end
+
+      context 'and is_paused is set true' do
+        let(:is_paused) { true }
+
+        it 'should show the number pages of of paused cases' do
+          expect(subject).to eq(2)
+        end
+      end
+
+      context 'and is_paused is not set' do
+        let(:is_paused) { nil }
+
+        it 'should show the number pages of of paused cases' do
+          expect(subject).to eq(5)
+        end
+      end
+    end
+  end
+
+  def create_tenancy(user_id: nil, balance: 1, is_paused: false)
+    Hackney::Income::Models::Tenancy.create(assigned_user_id: user_id, balance: balance, is_paused: is_paused)
   end
 
   def expected_serialised_tenancy(attributes)
