@@ -8,9 +8,22 @@ module Hackney
         @stored_tenancies_gateway = stored_tenancies_gateway
       end
 
-      def execute(user_id:, page_number:, number_per_page:)
-        number_of_pages_for_user = @stored_tenancies_gateway.number_of_pages_for_user(user_id: user_id, number_per_page: number_per_page)
-        assigned_tenancies = @stored_tenancies_gateway.get_tenancies_for_user(user_id: user_id, page_number: page_number, number_per_page: number_per_page)
+      def execute(user_id:, page_number:, number_per_page:, is_paused: nil)
+        number_of_pages_for_user = @stored_tenancies_gateway.number_of_pages_for_user(
+          user_id: user_id,
+          number_per_page: number_per_page,
+          is_paused: is_paused
+        )
+        return Response.new([], 0) if number_of_pages_for_user.zero?
+
+        assigned_tenancies = @stored_tenancies_gateway.get_tenancies_for_user(
+          user_id: user_id,
+          page_number: page_number,
+          number_per_page: number_per_page,
+          is_paused: is_paused
+        )
+        return Response.new([], number_of_pages_for_user) if assigned_tenancies.length.zero?
+
         assigned_tenancy_refs = assigned_tenancies.map { |t| t.fetch(:tenancy_ref) }
         full_tenancies = @tenancy_api_gateway.get_tenancies_by_refs(assigned_tenancy_refs)
 
@@ -33,12 +46,12 @@ module Hackney
           current_arrears_agreement_status: tenancy.fetch(:current_arrears_agreement_status),
           latest_action: {
             code: tenancy.dig(:latest_action, :code),
-            date: tenancy.dig(:latest_action, :date),
+            date: tenancy.dig(:latest_action, :date)
           },
           primary_contact: {
             name: tenancy.dig(:primary_contact, :name),
             short_address: tenancy.dig(:primary_contact, :short_address),
-            postcode: tenancy.dig(:primary_contact, :postcode),
+            postcode: tenancy.dig(:primary_contact, :postcode)
           },
           priority_band: assigned_tenancy.fetch(:priority_band),
           priority_score: assigned_tenancy.fetch(:priority_score),
