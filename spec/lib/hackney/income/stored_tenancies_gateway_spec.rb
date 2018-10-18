@@ -319,11 +319,15 @@ describe Hackney::Income::StoredTenanciesGateway do
     let(:is_paused) { nil }
     let(:user_id) { Faker::Number.number(2).to_i }
 
+    let(:num_paused_cases) { Faker::Number.between(1, 10) }
+    let(:num_active_cases) { Faker::Number.between(1, 20) }
+    let(:num_pages) { Faker::Number.between(1, 5) }
+
     before do
-      10.times do
+      num_paused_cases.times do
         create_tenancy(user_id: user_id, balance: 40, is_paused: true)
       end
-      15.times do
+      num_active_cases.times do
         create_tenancy(user_id: user_id, balance: 40, is_paused: false)
       end
     end
@@ -334,20 +338,20 @@ describe Hackney::Income::StoredTenanciesGateway do
         gateway.get_tenancies_for_user(
           user_id: user_id,
           page_number: 1,
-          number_per_page: 25,
+          number_per_page: 50,
           is_paused: is_paused
         )
       end
 
       it 'should return all tenancies' do
-        expect(subject.count).to eq(25)
+        expect(subject.count).to eq(num_paused_cases + num_active_cases)
       end
 
       context 'when and is_paused is set true' do
         let(:is_paused) { true }
 
         it 'should only return only paused tenancies' do
-          expect(subject.count).to eq(10)
+          expect(subject.count).to eq(num_paused_cases)
         end
       end
 
@@ -355,7 +359,7 @@ describe Hackney::Income::StoredTenanciesGateway do
         let(:is_paused) { false }
 
         it 'should only return unpaused tenancies' do
-          expect(subject.count).to eq(15)
+          expect(subject.count).to eq(num_active_cases)
         end
       end
     end
@@ -364,7 +368,7 @@ describe Hackney::Income::StoredTenanciesGateway do
       subject do
         gateway.number_of_pages_for_user(
           user_id: user_id,
-          number_per_page: 5,
+          number_per_page: num_pages,
           is_paused: is_paused
         )
       end
@@ -373,7 +377,7 @@ describe Hackney::Income::StoredTenanciesGateway do
         let(:is_paused) { false }
 
         it 'should show the number pages of of paused cases' do
-          expect(subject).to eq(3)
+          expect(subject).to eq(expected_num_pages(num_active_cases, num_pages))
         end
       end
 
@@ -381,7 +385,7 @@ describe Hackney::Income::StoredTenanciesGateway do
         let(:is_paused) { true }
 
         it 'should show the number pages of of paused cases' do
-          expect(subject).to eq(2)
+          expect(subject).to eq(expected_num_pages(num_paused_cases, num_pages))
         end
       end
 
@@ -389,10 +393,14 @@ describe Hackney::Income::StoredTenanciesGateway do
         let(:is_paused) { nil }
 
         it 'should show the number pages of of paused cases' do
-          expect(subject).to eq(5)
+          expect(subject).to eq(expected_num_pages((num_paused_cases + num_active_cases), num_pages))
         end
       end
     end
+  end
+
+  def expected_num_pages(items, number_per_page)
+    (items.to_f / number_per_page).ceil
   end
 
   def create_tenancy(user_id: nil, balance: 1, is_paused: false)
