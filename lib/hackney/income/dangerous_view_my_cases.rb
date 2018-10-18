@@ -22,7 +22,6 @@ module Hackney
           number_per_page: number_per_page,
           is_paused: is_paused
         )
-        return Response.new([], number_of_pages_for_user) if assigned_tenancies.length.zero?
 
         assigned_tenancy_refs = assigned_tenancies.map { |t| t.fetch(:tenancy_ref) }
         full_tenancies = @tenancy_api_gateway.get_tenancies_by_refs(assigned_tenancy_refs)
