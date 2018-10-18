@@ -1,26 +1,29 @@
-class MyCasesController < ApplicationController
-  before_action :sanitize_params
+# frozen_string_literal: true
 
+class MyCasesController < ApplicationController
   REQUIRED_INDEX_PARAMS = %i[user_id page_number number_per_page].freeze
 
   def index
     response = income_use_case_factory.view_my_cases.execute(
-      user_id: view_my_cases_params[:user_id].to_i,
-      page_number: view_my_cases_params[:page_number].to_i,
-      number_per_page: view_my_cases_params[:number_per_page].to_i,
-      is_paused: view_my_cases_params[:is_paused]
+      user_id: my_cases_params[:user_id],
+      page_number: my_cases_params[:page_number],
+      number_per_page: my_cases_params[:number_per_page],
+      is_paused: my_cases_params[:is_paused]
     )
 
     render json: response
   end
 
-  def view_my_cases_params
+  def my_cases_params
     params.require(REQUIRED_INDEX_PARAMS)
-    params.permit(REQUIRED_INDEX_PARAMS + [:is_paused])
-  end
+    allowed_params = params.permit(REQUIRED_INDEX_PARAMS + [:is_paused])
 
-  def sanitize_params
-    params[:is_paused] = ActiveModel::Type::Boolean.new.cast(params[:is_paused])
+    allowed_params[:user_id] = allowed_params[:user_id].to_i
+    allowed_params[:page_number] = allowed_params[:page_number].to_i
+    allowed_params[:number_per_page] = allowed_params[:number_per_page].to_i
+    allowed_params[:is_paused] = ActiveModel::Type::Boolean.new.cast(allowed_params[:is_paused])
+
+    allowed_params
   end
 
   def sync
