@@ -2,6 +2,15 @@ require 'rails_helper'
 
 describe MyCasesController do
   describe '#index' do
+    let(:view_my_cases_instance) { instance_double(Hackney::Income::DangerousViewMyCases) }
+
+    before do
+      allow(Hackney::Income::DangerousViewMyCases).to receive(:new).with(
+        tenancy_api_gateway: instance_of(Hackney::Income::TenancyApiGateway),
+        stored_tenancies_gateway: instance_of(Hackney::Income::StoredTenanciesGateway)
+      ).and_return(view_my_cases_instance)
+    end
+
     it 'throws exception when required params not supplied' do
       expect { get :index }.to raise_error(ActionController::ParameterMissing)
     end
@@ -12,12 +21,7 @@ describe MyCasesController do
       let(:number_per_page) { Faker::Number.number(2).to_i }
 
       it 'should create the view my cases use case' do
-        expect(Hackney::Income::DangerousViewMyCases).to receive(:new).with(
-          tenancy_api_gateway: instance_of(Hackney::Income::TenancyApiGateway),
-          stored_tenancies_gateway: instance_of(Hackney::Income::StoredTenanciesGateway)
-        ).and_call_original
-
-        allow_any_instance_of(Hackney::Income::DangerousViewMyCases)
+        allow(view_my_cases_instance)
           .to receive(:execute)
           .and_return(cases: [], number_per_page: 1)
 
@@ -25,7 +29,7 @@ describe MyCasesController do
       end
 
       it 'should call the view my cases use case with the given user_id, page_number and number_per_page' do
-        expect_any_instance_of(Hackney::Income::DangerousViewMyCases)
+        allow(view_my_cases_instance)
           .to receive(:execute)
           .with(user_id: user_id, page_number: page_number, number_per_page: number_per_page, is_paused: nil)
           .and_return(cases: [], number_per_page: 1)
@@ -39,7 +43,7 @@ describe MyCasesController do
           number_per_page: 10
         }
 
-        allow_any_instance_of(Hackney::Income::DangerousViewMyCases)
+        allow(view_my_cases_instance)
           .to receive(:execute)
           .and_return(expected_result)
 
@@ -54,7 +58,7 @@ describe MyCasesController do
           number_per_page: number_per_page
         }
 
-        allow_any_instance_of(Hackney::Income::DangerousViewMyCases)
+        allow(view_my_cases_instance)
           .to receive(:execute)
           .with(user_id: user_id, page_number: page_number, number_per_page: number_per_page, is_paused: false)
           .and_return(expected_result)
