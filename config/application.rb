@@ -1,14 +1,15 @@
 require_relative 'boot'
+require_relative 'feature_toggle'
 
-require "rails"
+require 'rails'
 # Pick the frameworks you want:
-require "active_model/railtie"
-require "active_job/railtie"
-require "active_record/railtie"
-require "action_controller/railtie"
-require "action_mailer/railtie"
-require "action_view/railtie"
-require "action_cable/engine"
+require 'active_model/railtie'
+require 'active_job/railtie'
+require 'active_record/railtie'
+require 'action_controller/railtie'
+require 'action_mailer/railtie'
+require 'action_view/railtie'
+require 'action_cable/engine'
 # require "sprockets/railtie"
 # require "rails/test_unit/railtie"
 
@@ -18,6 +19,8 @@ Bundler.require(*Rails.groups)
 
 module App
   class Application < Rails::Application
+    include FeatureToggle
+
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 5.1
 
@@ -33,5 +36,7 @@ module App
     config.eager_load_paths << Rails.root.join('lib')
 
     config.active_job.queue_adapter = :delayed_job
+
+    config.run_tenancy_sync_jobs = feature_toggle('ENABLE_TENANCY_SYNC')
   end
 end
