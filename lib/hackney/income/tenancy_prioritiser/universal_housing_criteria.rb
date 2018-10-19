@@ -21,7 +21,7 @@ module Hackney
               ) t
               WHERE row = 1
             )
-            DECLARE @RemainingTransactions INT = (SELECT COUNT(*) FROM [dbo].[rtrans] WITH (NOLOCK) WHERE tag_ref = @TenancyRef)
+            DECLARE @RemainingTransactions INT = (SELECT COUNT(*) FROM [dbo].[rtrans] WITH (NOLOCK) WHERE tag_ref = @TenancyRef AND post_date > DATEADD(year,-1,GETDATE()))
             DECLARE @ActiveAgreementsCount INT = (SELECT COUNT(*) FROM [dbo].[arag] WITH (NOLOCK) WHERE tag_ref = @TenancyRef AND arag_status = @ActiveArrearsAgreementStatus)
             DECLARE @BreachedAgreementsCount INT = (SELECT COUNT(*) FROM [dbo].[arag] WITH (NOLOCK) WHERE tag_ref = @TenancyRef AND arag_status = @BreachedArrearsAgreementStatus)
             DECLARE @NospsInLastYear INT = (SELECT COUNT(*) FROM araction WITH (NOLOCK) WHERE tag_ref = @TenancyRef AND action_code = @NospActionDiaryCode AND action_date >= CONVERT(date, DATEADD(year, -1, GETDATE())))
