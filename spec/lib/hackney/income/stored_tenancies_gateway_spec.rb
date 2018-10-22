@@ -325,10 +325,10 @@ describe Hackney::Income::StoredTenanciesGateway do
 
     before do
       num_paused_cases.times do
-        create_tenancy(user_id: user_id, balance: 40, is_paused: true)
+        create_tenancy(user_id: user_id, balance: 40, is_paused_until: Faker::Date.forward(1))
       end
       num_active_cases.times do
-        create_tenancy(user_id: user_id, balance: 40, is_paused: false)
+        create_tenancy(user_id: user_id, balance: 40)
       end
     end
 
@@ -403,8 +403,8 @@ describe Hackney::Income::StoredTenanciesGateway do
     (items.to_f / number_per_page).ceil
   end
 
-  def create_tenancy(user_id: nil, balance: 1, is_paused: false)
-    Hackney::Income::Models::Tenancy.create(assigned_user_id: user_id, balance: balance, is_paused: is_paused)
+  def create_tenancy(user_id: nil, balance: 1, is_paused_until: nil)
+    Hackney::Income::Models::Tenancy.create(assigned_user_id: user_id, balance: balance, is_paused_until: is_paused_until)
   end
 
   def expected_serialised_tenancy(attributes)
