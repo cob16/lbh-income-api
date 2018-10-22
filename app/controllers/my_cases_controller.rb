@@ -1,12 +1,29 @@
+# frozen_string_literal: true
+
 class MyCasesController < ApplicationController
+  REQUIRED_INDEX_PARAMS = %i[user_id page_number number_per_page].freeze
+
   def index
     response = income_use_case_factory.view_my_cases.execute(
-      user_id: params.fetch(:user_id).to_i,
-      page_number: params.fetch(:page_number).to_i,
-      number_per_page: params.fetch(:number_per_page).to_i
+      user_id: my_cases_params[:user_id],
+      page_number: my_cases_params[:page_number],
+      number_per_page: my_cases_params[:number_per_page],
+      is_paused: my_cases_params[:is_paused]
     )
 
     render json: response
+  end
+
+  def my_cases_params
+    params.require(REQUIRED_INDEX_PARAMS)
+    allowed_params = params.permit(REQUIRED_INDEX_PARAMS + [:is_paused])
+
+    allowed_params[:user_id] = allowed_params[:user_id].to_i
+    allowed_params[:page_number] = allowed_params[:page_number].to_i
+    allowed_params[:number_per_page] = allowed_params[:number_per_page].to_i
+    allowed_params[:is_paused] = ActiveModel::Type::Boolean.new.cast(allowed_params[:is_paused])
+
+    allowed_params
   end
 
   def sync
