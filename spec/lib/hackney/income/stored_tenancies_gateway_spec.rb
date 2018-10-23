@@ -319,16 +319,19 @@ describe Hackney::Income::StoredTenanciesGateway do
     let(:is_paused) { nil }
     let(:user_id) { Faker::Number.number(2).to_i }
 
-    let(:num_paused_cases) { Faker::Number.between(1, 10) }
-    let(:num_active_cases) { Faker::Number.between(1, 20) }
+    let(:num_paused_cases) { Faker::Number.between(2, 10) }
+    let(:num_active_cases) { Faker::Number.between(2, 20) }
     let(:num_pages) { Faker::Number.between(1, 5) }
 
     before do
       num_paused_cases.times do
         create_tenancy(user_id: user_id, balance: 40, is_paused_until: Faker::Date.forward(1))
       end
-      num_active_cases.times do
+      (num_active_cases - 2).times do
         create_tenancy(user_id: user_id, balance: 40)
+      end
+      2.times do
+        create_tenancy(user_id: user_id, balance: 40, is_paused_until: Faker::Date.backward(1))
       end
     end
 
