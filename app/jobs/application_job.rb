@@ -3,6 +3,10 @@ class ApplicationJob < ActiveJob::Base
     @income_use_case_factory ||= Hackney::Income::UseCaseFactory.new
   end
 
+  def run_tenancy_sync_jobs?
+    Rails.application.config.run_tenancy_sync_jobs
+  end
+
   class << self
     def enqueue_next
       unless already_queued_for_next_run?
