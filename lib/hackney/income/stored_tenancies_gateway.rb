@@ -56,11 +56,16 @@ module Hackney
       private
 
       def cases_for(user_id, is_paused)
-        query = Hackney::Income::Models::Tenancy.where('tenancies.assigned_user_id = ? AND tenancies.balance > 0', user_id)
-        unless is_paused.nil?
-          query = query.where("is_paused_until >= ?", Date.today)
-        # else
-        #   query = query.where("is_paused_until < ?", Date.today)
+        query = Hackney::Income::Models::Tenancy.where('
+          tenancies.assigned_user_id = ? AND
+          tenancies.balance > 0', user_id)
+
+        return query if is_paused.nil?
+
+        if is_paused
+          query = query.where('is_paused_until >= ?', Date.today)
+        else
+          query = query.where('is_paused_until < ? OR is_paused_until is null', Date.today)
         end
         query
       end
