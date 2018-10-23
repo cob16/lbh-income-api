@@ -22,6 +22,10 @@ describe Hackney::Income::SetTenancyPausedStatus do
         expect { subject.execute(tenancy_ref: tenancy_ref, until_date: future_date) }.to raise_error
           .with_message(/#{tenancy_ref}/)
       end
+      it 'should not catch the exception raised' do
+        expect { subject.execute(tenancy_ref: tenancy_ref, until_date: 'future_date') }.to raise_error
+          .with_message(/invalid date/)
+      end
     end
   end
 end
@@ -32,6 +36,8 @@ class PauseGatewayDouble
   end
 
   def set_paused_until(tenancy_ref:, until_date:)
+    DateTime.parse(until_date)
     raise "Raised on #{tenancy_ref}" if @raise
+    # raise "Raised on #{tenancy_ref}" if @raise
   end
 end
