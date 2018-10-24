@@ -40,7 +40,7 @@ module Hackney
       end
 
       def get_tenancies_for_user(user_id:, page_number: nil, number_per_page: nil, is_paused: nil)
-        query = cases_for(user_id, is_paused)
+        query = tenancy_filtered_by_paused_state_for(user_id, is_paused)
 
         if page_number.present? && number_per_page.present?
           query = query.offset((page_number - 1) * number_per_page).limit(number_per_page)
@@ -50,12 +50,12 @@ module Hackney
       end
 
       def number_of_pages_for_user(user_id:, number_per_page:, is_paused: nil)
-        (cases_for(user_id, is_paused).count.to_f / number_per_page).ceil
+        (tenancy_filtered_by_paused_state_for(user_id, is_paused).count.to_f / number_per_page).ceil
       end
 
       private
 
-      def cases_for(user_id, is_paused)
+      def tenancy_filtered_by_paused_state_for(user_id, is_paused)
         query = Hackney::Income::Models::Tenancy.where('
           tenancies.assigned_user_id = ? AND
           tenancies.balance > 0', user_id)
