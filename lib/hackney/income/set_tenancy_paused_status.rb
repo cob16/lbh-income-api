@@ -5,8 +5,8 @@ module Hackney
         @gateway = gateway
       end
 
-      def execute(tenancy_ref:, status:)
-        @gateway.set_paused_status(tenancy_ref: tenancy_ref, status: status)
+      def execute(tenancy_ref:, until_date:)
+        @gateway.set_paused_until(tenancy_ref: tenancy_ref, until_date: until_date)
       end
     end
   end
