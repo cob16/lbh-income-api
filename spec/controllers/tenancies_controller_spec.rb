@@ -1,38 +1,46 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
 describe TenanciesController, type: :controller do
-  let(:params1) do
+  let(:paused_parms) do
     {
       tenancy_ref: Faker::Lorem.characters(8),
-      is_paused: true
+      is_paused_until: Faker::Date.forward(23).to_s
     }
   end
   let(:params2) do
     {
       tenancy_ref: Faker::Lorem.characters(8),
-      is_paused: false
+      is_paused_until: Faker::Date.backward(23).to_s
     }
   end
 
   before do
-    stub_const('Hackney::Income::SetTenancyPausedStatus', StubSetTenancyPausedStatus)
+    stub_const('Hackney::Income::SqlPauseTenancyGateway', StubSqlPauseTenancyGateway)
+  end
+
+  it 'should be acessable from /' do
+    assert_generates '/api/v1/tenancies/1234', controller: 'tenancies', action: 'update', tenancy_ref: 1234
   end
 
   context 'when receiving valid params' do
     it 'should pass the correct params to the use case' do
       expect_any_instance_of(Hackney::Income::SetTenancyPausedStatus).to receive(:execute).with(
-        tenancy_ref: params1.fetch(:tenancy_ref),
-        status: params1.fetch(:is_paused).to_s
-      ).and_return(nil)
+        tenancy_ref: paused_parms.fetch(:tenancy_ref),
+        until_date: paused_parms[:is_paused_until]
+      ).and_call_original
 
-      patch :update, params: params1
+      patch :update, params: paused_parms
+
+      expect(response.status).to eq(204)
     end
 
     it 'should return a 200 response' do
       expect_any_instance_of(Hackney::Income::SetTenancyPausedStatus).to receive(:execute).with(
         tenancy_ref: params2.fetch(:tenancy_ref),
-        status: params2.fetch(:is_paused).to_s
-      ).and_return(nil)
+        until_date: params2.fetch(:is_paused_until).to_s
+      ).and_call_original
 
       patch :update, params: params2
 
@@ -46,38 +54,37 @@ describe TenanciesController, type: :controller do
     end
 
     it 'should return an exception detailing the unknown tenancy ref' do
-      expect {
-        patch :update, params: params1
-      }.to raise_error.with_message(
-        /#{params1.fetch(:tenancy_ref)}/
+      expect do
+        patch :update, params: paused_parms
+      end.to raise_error.with_message(
+        /#{paused_parms.fetch(:tenancy_ref)}/
       )
     end
   end
 
   context 'when receiving a request missing params' do
     it 'should return a 400 - bad request' do
-      assert_incomplete_params({
+      assert_incomplete_params(
         tenancy_ref: Faker::Lorem.characters(8)
-      })
+      )
     end
   end
 
   def assert_incomplete_params(params_hash)
-    expect {
+    expect do
       patch :update, params: params_hash
-    }.to raise_error ActionController::ParameterMissing
+    end.to raise_error ActionController::ParameterMissing
   end
 end
 
 class StubSetUnknownTenancyPausedStatus
   def initialize(gateway:); end
 
-  def execute(tenancy_ref:, status:)
+  def execute(tenancy_ref:, until_date:)
     raise "Raised on #{tenancy_ref}"
   end
 end
 
-class StubSetTenancyPausedStatus
-  def initialize(gateway:); end
-  def execute(tenancy_ref:, status:); end
+class StubSqlPauseTenancyGateway
+  def set_paused_until(tenancy_ref:, until_date:); end
 end
