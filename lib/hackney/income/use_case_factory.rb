@@ -42,7 +42,7 @@ module Hackney
       end
 
       def sql_pause_tenancy_gateway
-          Hackney::Income::SqlPauseTenancyGateway.new
+        Hackney::Income::SqlPauseTenancyGateway.new
       end
 
       def stored_tenancies_gateway

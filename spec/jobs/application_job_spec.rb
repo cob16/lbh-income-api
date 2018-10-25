@@ -8,7 +8,7 @@ describe ApplicationJob do
       it 'should not schedule again' do
         subject.set(wait_until: subject.next_run_time).perform_later
 
-        expect { subject.enqueue_next }.to_not change { Delayed::Job.count }
+        expect { subject.enqueue_next }.to_not(change { Delayed::Job.count })
       end
     end
 

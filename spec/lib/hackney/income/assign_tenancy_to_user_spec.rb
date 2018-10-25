@@ -7,7 +7,7 @@ describe Hackney::Income::AssignTenancyToUser do
   let!(:unassigned_tenancy) { create_assigned_tenancy_model(band: 'green', user: nil) }
 
   let(:gateway) { double('UserAssignmentGateway') }
-  subject { described_class.new(user_assignment_gateway: gateway)}
+  subject { described_class.new(user_assignment_gateway: gateway) }
 
   before do
     allow(gateway).to receive(:assign_to_next_available_user).with(tenancy: unassigned_tenancy).and_return(user1.id)

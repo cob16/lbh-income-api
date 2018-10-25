@@ -92,6 +92,7 @@ module Hackney
 
         def days_since_last_payment
           return nil if attributes.fetch(:last_payment_date).nil?
+
           day_difference(Date.today, attributes.fetch(:last_payment_date))
         end
 

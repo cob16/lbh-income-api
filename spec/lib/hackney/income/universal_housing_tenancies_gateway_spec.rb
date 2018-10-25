@@ -18,7 +18,7 @@ describe Hackney::Income::UniversalHousingTenanciesGateway, universal: true do
       before { create_uh_tenancy_agreement(tenancy_ref: '000001/01', current_balance: 50.00) }
 
       it 'should return that tenancy' do
-        expect(subject).to eq(['000001/01'])
+        expect(subject).to eq(%w[000001/01])
       end
     end
 
@@ -39,7 +39,7 @@ describe Hackney::Income::UniversalHousingTenanciesGateway, universal: true do
       end
 
       it 'should return the two in arrears' do
-        expect(subject).to eq(['000002/01', '000004/01'])
+        expect(subject).to eq(%w[000002/01 000004/01])
       end
     end
 
@@ -55,7 +55,7 @@ describe Hackney::Income::UniversalHousingTenanciesGateway, universal: true do
       before { create_uh_tenancy_agreement(tenancy_ref: '000001/01', current_balance: 100.00, tenure_type: 'SEC') }
 
       it 'should return the tenancy' do
-        expect(subject).to eq(['000001/01'])
+        expect(subject).to eq(%w[000001/01])
       end
     end
 
@@ -69,7 +69,7 @@ describe Hackney::Income::UniversalHousingTenanciesGateway, universal: true do
 
     context 'when patches are restricted' do
       context 'and a list of acceptable patches is given' do
-        let(:gateway) { described_class.new(restrict_patches: true, patches: ['X01', 'Y01', 'Z01']) }
+        let(:gateway) { described_class.new(restrict_patches: true, patches: %w[X01 Y01 Z01]) }
 
         context 'and a tenancy is not in an accepted patch' do
           before do
@@ -89,7 +89,7 @@ describe Hackney::Income::UniversalHousingTenanciesGateway, universal: true do
           end
 
           it 'should include the tenancy' do
-            expect(subject).to eq(['00001/01'])
+            expect(subject).to eq(%w[00001/01])
           end
         end
       end

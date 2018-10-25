@@ -10,6 +10,7 @@ module Hackney
           return :green if maintaining_agreement?
           return :red if red?
           return :amber if amber?
+
           :green
         end
 

@@ -157,7 +157,7 @@ describe Hackney::Income::DangerousViewMyCases do
   end
 
   it 'should be serialisable as valid JSON' do
-    loaded_json = JSON.load(subject.to_json)
+    loaded_json = JSON.parse(subject.to_json)
 
     expect(loaded_json.fetch('cases')).to be_a(Array)
     expect(loaded_json.fetch('number_of_pages')).to be_an(Integer)
