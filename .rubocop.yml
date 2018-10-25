@@ -79,3 +79,6 @@ Style/MultilineTernaryOperator:
 
 Style/BlockDelimiters:
   Enabled: false
+
+Style/ConditionalAssignment:
+  Enabled: false
