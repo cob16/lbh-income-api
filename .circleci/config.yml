@@ -20,6 +20,9 @@ jobs:
       - run:
           name: Run tests
           command: docker-compose run -e RAILS_ENV=test --rm app rspec
+      - run:
+          name: Run linting
+          command: docker-compose run --rm app rubocop
 
   staging_release:
     machine: true
