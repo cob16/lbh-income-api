@@ -1,0 +1,81 @@
+AllCops:
+  Exclude:
+    - bin/bundle
+    - bin/rake
+    - bin/rails
+    - bin/setup
+    - bin/spring
+    - bin/update
+    - db/migrate/20180828112331_create_delayed_jobs.rb
+    - db/schema.rb
+    - vendor/**/*
+    - bin/stack_test.rb
+
+Layout/IndentArray:
+  Enabled: false
+
+Layout/IndentHash:
+  Enabled: false
+
+Layout/MultilineMethodCallIndentation:
+  Enabled: false
+
+Lint/UnusedMethodArgument:
+  Enabled: false
+
+Metrics/AbcSize:
+  Enabled: false
+
+Metrics/BlockLength:
+  Enabled: false
+
+Metrics/ClassLength:
+  Enabled: false
+
+Metrics/LineLength:
+  Enabled: false
+
+Metrics/MethodLength:
+  Enabled: false
+
+Metrics/ParameterLists:
+  Enabled: false
+
+Naming/AccessorMethodName:
+  Enabled: false
+
+Style/BlockComments:
+  Enabled: false
+
+Style/Documentation:
+  Enabled: false
+
+Style/FrozenStringLiteralComment:
+  Enabled: false
+
+Metrics/CyclomaticComplexity:
+  Enabled: false
+
+Metrics/PerceivedComplexity:
+  Enabled: false
+
+Performance/RedundantBlockCall:
+  Enabled: false
+
+Style/RescueStandardError:
+  Enabled: false
+
+Style/MultilineBlockChain:
+  Enabled: false
+
+Style/NumericPredicate:
+  Enabled: false
+
+Layout/EmptyLineAfterGuardClause:
+  Enabled: false
+
+Style/MultilineTernaryOperator:
+  Enabled: false
+
+Style/BlockDelimiters:
+  Enabled: false
