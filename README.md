@@ -25,11 +25,15 @@ We employ a variant of Clean Architecture, borrowing from [Made Tech Flavoured C
 
 ### Development
 
+#### Serving the app locally
+
 To serve the application, run the following and visit [http://localhost:3000](http://localhost:3000).
 
 ```sh
 $ make serve
 ```
+
+#### Testing
 
 To run tests:
 
@@ -51,6 +55,20 @@ $ rspec
 ```
 
 The above is useful because you can TDD your change and manually test through the browser without having to restart anything.
+
+#### Linting
+
+"Linters" run static analysis on code to ensure it meets style standards. We use [Rubocop][rubocop] on this project with a permissive configuration.
+
+```
+$ make lint
+```
+
+You can use the following to ensure your changes are deployable, in that they are passing the automated test suite and have no code style issues.
+
+```
+$ make check
+```
 
 ### Release
 
@@ -102,3 +120,4 @@ We use a [Universal Housing simulator][github-uh-simulator] to run automated tes
 [docker-download]: https://www.docker.com/products/docker-desktop
 [mt-ca]: https://github.com/madetech/clean-architecture
 [made-tech]: https://madetech.com/
+[rubocop]: https://github.com/rubocop-hq/rubocop
