@@ -4,5 +4,5 @@ if defined?(Rails::Server)
 
   Delayed::Worker.logger = ActiveSupport::Logger.new(STDOUT)
 
-  JobScheduler.enqueue_jobs if Rails.env.staging? or Rails.env.production?
+  JobScheduler.enqueue_jobs if Rails.env.staging? || Rails.env.production?
 end

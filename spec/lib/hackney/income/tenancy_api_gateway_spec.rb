@@ -8,10 +8,10 @@ describe Hackney::Income::TenancyApiGateway do
 
     context 'and using a different host' do
       let(:gateway) { described_class.new(host: 'https://other.com', key: 'skeleton') }
-      let(:refs) { %w(123) }
+      let(:refs) { %w[123] }
 
       before do
-        stub_request(:get, "https://other.com/tenancies?tenancy_refs%5B%5D=123").with(
+        stub_request(:get, 'https://other.com/tenancies?tenancy_refs%5B%5D=123').with(
           headers: { 'x-api-key' => 'skeleton' }
         ).to_return(
           body: { 'tenancies' => [example_tenancy] }.to_json
@@ -33,10 +33,10 @@ describe Hackney::Income::TenancyApiGateway do
     end
 
     context 'and the tenancy has a ref' do
-      let(:refs) { %w(000015/01) }
+      let(:refs) { %w[000015/01] }
 
       before do
-        stub_request(:get, "https://example.com/tenancies?tenancy_refs%5B%5D=000015/01").with(
+        stub_request(:get, 'https://example.com/tenancies?tenancy_refs%5B%5D=000015/01').with(
           headers: { 'x-api-key' => 'skeleton' }
         ).to_return(
           body: { 'tenancies' => [example_tenancy] }.to_json
@@ -62,10 +62,10 @@ describe Hackney::Income::TenancyApiGateway do
     end
 
     context 'and the tenancy has nil values' do
-      let(:refs) { %w(000017/01) }
+      let(:refs) { %w[000017/01] }
 
       before do
-        stub_request(:get, "https://example.com/tenancies?tenancy_refs%5B%5D=000017/01")
+        stub_request(:get, 'https://example.com/tenancies?tenancy_refs%5B%5D=000017/01')
           .to_return(body: { 'tenancies' => [example_tenancy_with_nils] }.to_json)
       end
 
@@ -81,10 +81,10 @@ describe Hackney::Income::TenancyApiGateway do
     end
 
     context 'and two tenancy refs are given' do
-      let(:refs) { %w(000015/01 000017/01) }
+      let(:refs) { %w[000015/01 000017/01] }
 
       before do
-        stub_request(:get, "https://example.com/tenancies?tenancy_refs%5B%5D=000017/01&tenancy_refs%5B%5D=000015/01")
+        stub_request(:get, 'https://example.com/tenancies?tenancy_refs%5B%5D=000017/01&tenancy_refs%5B%5D=000015/01')
           .to_return(body: { 'tenancies' => [example_tenancy, example_tenancy_with_nils] }.to_json)
       end
 

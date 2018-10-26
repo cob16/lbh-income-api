@@ -19,7 +19,7 @@ module Hackney
 
         res = Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) { |http| http.request(req) }
 
-        body = JSON.load(res.body)
+        body = JSON.parse(res.body)
 
         body['tenancies'].map do |tenancy|
           action_missing = tenancy.dig('latest_action', 'code').nil?

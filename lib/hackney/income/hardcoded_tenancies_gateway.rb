@@ -6,7 +6,7 @@ module Hackney
       def tenancies_in_arrears
         ENV.fetch('HARDCODED_TENANCIES').split(',')
       rescue KeyError
-        raise HardcodedTenanciesUndefinedError.new
+        raise HardcodedTenanciesUndefinedError
       end
     end
   end

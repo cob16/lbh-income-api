@@ -5,6 +5,6 @@ class TenanciesController < ApplicationController
       until_date: params.fetch(:is_paused_until)
     )
 
-    return head(:no_content)
+    head(:no_content)
   end
 end

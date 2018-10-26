@@ -14,3 +14,9 @@ test:
 
 shell:
 	docker-compose exec app /bin/bash
+
+lint:
+	docker-compose run --rm app rubocop
+
+check: lint test
+	echo 'Deployable!'

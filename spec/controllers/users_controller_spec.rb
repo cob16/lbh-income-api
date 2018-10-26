@@ -6,10 +6,10 @@ describe UsersController do
       provider_uid: Faker::Lorem.characters(10),
       provider: Faker::Lorem.word,
       name: Faker::Name.name,
-      email: Faker::Internet::email,
+      email: Faker::Internet.email,
       first_name: Faker::Name.first_name,
       last_name: Faker::Name.last_name,
-      provider_permissions: Faker::Lorem.characters(4),
+      provider_permissions: Faker::Lorem.characters(4)
     }
   end
 
@@ -76,68 +76,68 @@ describe UsersController do
 
   context 'when receiving a request missing params' do
     it 'should return a 400 - bad request' do
-      assert_incomplete_params({
-          provider_uid: Faker::Lorem.characters(10),
-          provider: Faker::Lorem.word,
-          name: Faker::Name.name,
-          email: Faker::Internet::email,
-          first_name: Faker::Name.first_name,
-          last_name: Faker::Name.last_name,
-        })
+      assert_incomplete_params(
+        provider_uid: Faker::Lorem.characters(10),
+        provider: Faker::Lorem.word,
+        name: Faker::Name.name,
+        email: Faker::Internet.email,
+        first_name: Faker::Name.first_name,
+        last_name: Faker::Name.last_name
+      )
 
-      assert_incomplete_params({
-          provider: Faker::Lorem.word,
-          name: Faker::Name.name,
-          email: Faker::Internet::email,
-          first_name: Faker::Name.first_name,
-          last_name: Faker::Name.last_name,
-          provider_permissions: Faker::Lorem.characters(4)
-        })
+      assert_incomplete_params(
+        provider: Faker::Lorem.word,
+        name: Faker::Name.name,
+        email: Faker::Internet.email,
+        first_name: Faker::Name.first_name,
+        last_name: Faker::Name.last_name,
+        provider_permissions: Faker::Lorem.characters(4)
+      )
 
-      assert_incomplete_params({
-          provider_uid: Faker::Lorem.characters(10),
-          name: Faker::Name.name,
-          email: Faker::Internet::email,
-          first_name: Faker::Name.first_name,
-          last_name: Faker::Name.last_name,
-          provider_permissions: Faker::Lorem.characters(4)
-        })
+      assert_incomplete_params(
+        provider_uid: Faker::Lorem.characters(10),
+        name: Faker::Name.name,
+        email: Faker::Internet.email,
+        first_name: Faker::Name.first_name,
+        last_name: Faker::Name.last_name,
+        provider_permissions: Faker::Lorem.characters(4)
+      )
 
-      assert_incomplete_params({
-          provider_uid: Faker::Lorem.characters(10),
-          provider: Faker::Lorem.word,
-          email: Faker::Internet::email,
-          first_name: Faker::Name.first_name,
-          last_name: Faker::Name.last_name,
-          provider_permissions: Faker::Lorem.characters(4)
-        })
+      assert_incomplete_params(
+        provider_uid: Faker::Lorem.characters(10),
+        provider: Faker::Lorem.word,
+        email: Faker::Internet.email,
+        first_name: Faker::Name.first_name,
+        last_name: Faker::Name.last_name,
+        provider_permissions: Faker::Lorem.characters(4)
+      )
 
-      assert_incomplete_params({
-          provider_uid: Faker::Lorem.characters(10),
-          provider: Faker::Lorem.word,
-          name: Faker::Name.name,
-          first_name: Faker::Name.first_name,
-          last_name: Faker::Name.last_name,
-          provider_permissions: Faker::Lorem.characters(4)
-        })
+      assert_incomplete_params(
+        provider_uid: Faker::Lorem.characters(10),
+        provider: Faker::Lorem.word,
+        name: Faker::Name.name,
+        first_name: Faker::Name.first_name,
+        last_name: Faker::Name.last_name,
+        provider_permissions: Faker::Lorem.characters(4)
+      )
 
-      assert_incomplete_params({
-          provider_uid: Faker::Lorem.characters(10),
-          provider: Faker::Lorem.word,
-          name: Faker::Name.name,
-          email: Faker::Internet::email,
-          last_name: Faker::Name.last_name,
-          provider_permissions: Faker::Lorem.characters(4)
-        })
+      assert_incomplete_params(
+        provider_uid: Faker::Lorem.characters(10),
+        provider: Faker::Lorem.word,
+        name: Faker::Name.name,
+        email: Faker::Internet.email,
+        last_name: Faker::Name.last_name,
+        provider_permissions: Faker::Lorem.characters(4)
+      )
 
-      assert_incomplete_params({
-          provider_uid: Faker::Lorem.characters(10),
-          provider: Faker::Lorem.word,
-          name: Faker::Name.name,
-          email: Faker::Internet::email,
-          first_name: Faker::Name.first_name,
-          provider_permissions: Faker::Lorem.characters(4)
-        })
+      assert_incomplete_params(
+        provider_uid: Faker::Lorem.characters(10),
+        provider: Faker::Lorem.word,
+        name: Faker::Name.name,
+        email: Faker::Internet.email,
+        first_name: Faker::Name.first_name,
+        provider_permissions: Faker::Lorem.characters(4)
+      )
     end
   end
 

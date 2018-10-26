@@ -52,11 +52,13 @@ module Hackney
 
         def payment_amount_delta
           return 0 if @criteria.payment_amount_delta.nil?
+
           @criteria.payment_amount_delta * @weightings.payment_amount_delta
         end
 
         def payment_date_delta
           return 0 if @criteria.payment_date_delta.nil?
+
           @criteria.payment_date_delta.abs * @weightings.payment_date_delta
         end
 

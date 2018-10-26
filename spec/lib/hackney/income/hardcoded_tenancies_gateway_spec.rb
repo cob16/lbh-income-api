@@ -23,7 +23,7 @@ describe Hackney::Income::HardcodedTenanciesGateway do
 
     context 'when hardcoded tenancies not set in ENV' do
       it 'should raise error' do
-        expect{subject}.to raise_error(Hackney::Income::HardcodedTenanciesUndefinedError)
+        expect { subject }.to raise_error(Hackney::Income::HardcodedTenanciesUndefinedError)
       end
     end
   end

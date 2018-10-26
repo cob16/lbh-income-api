@@ -4,7 +4,7 @@ module UniversalHousingHelper
   end
 
   def create_uh_transaction(tenancy_ref:, amount: 0.0, date: Date.today, type: '')
-    Hackney::UniversalHousing::Client.connection[:rtrans].insert(tag_ref: tenancy_ref, real_value: amount, post_date: date, trans_type: type, batchid: rand(1..100000))
+    Hackney::UniversalHousing::Client.connection[:rtrans].insert(tag_ref: tenancy_ref, real_value: amount, post_date: date, trans_type: type, batchid: rand(1..100_000))
   end
 
   def create_uh_arrears_agreement(tenancy_ref:, status:)
