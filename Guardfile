@@ -1,4 +1,9 @@
-guard :rspec, cmd: 'bundle exec rspec' do
+guard :rubocop, cli: '-a' do
+  watch(/.+\.rb$/)
+  watch(%r{(?:.+/)?\.rubocop(?:_todo)?\.yml$}) { |m| File.dirname(m[0]) }
+end
+
+guard :rspec, cmd: 'bundle exec rspec --order random' do
   require 'guard/rspec/dsl'
   dsl = Guard::RSpec::Dsl.new(self)
 
@@ -29,9 +34,5 @@ guard :rspec, cmd: 'bundle exec rspec' do
   watch(rails.spec_helper)     { rspec.spec_dir }
   watch(rails.routes)          { "#{rspec.spec_dir}/routing" }
   watch(rails.app_controller)  { "#{rspec.spec_dir}/controllers" }
-end
-
-guard :rubocop, cli: '-a' do
-  watch(/.+\.rb$/)
-  watch(%r{(?:.+/)?\.rubocop(?:_todo)?\.yml$}) { |m| File.dirname(m[0]) }
+  watch(%r{^lib/(.+)\.rb$}) { |m| "spec/lib/#{m[1]}_spec.rb" }
 end
