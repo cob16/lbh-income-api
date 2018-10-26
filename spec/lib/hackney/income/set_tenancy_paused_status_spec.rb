@@ -36,8 +36,7 @@ class PauseGatewayDouble
   end
 
   def set_paused_until(tenancy_ref:, until_date:)
-    DateTime.parse(until_date)
+    Date.parse(until_date)
     raise "Raised on #{tenancy_ref}" if @raise
-    # raise "Raised on #{tenancy_ref}" if @raise
   end
 end
