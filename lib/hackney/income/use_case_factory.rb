@@ -31,11 +31,22 @@ module Hackney
         )
       end
 
+      def migrate_patch_to_lcw
+        Hackney::Income::MigratePatchToLcw.new(
+          legal_cases_gateway: legal_cases_gateway,
+          user_assignment_gateway: user_assignment_gateway
+        )
+      end
+
       def assign_tenancy_to_user
         Hackney::Income::AssignTenancyToUser.new(user_assignment_gateway: user_assignment_gateway)
       end
 
       private
+
+      def legal_cases_gateway
+        Hackney::Income::SqlLegalCasesGateway.new
+      end
 
       def prioritisation_gateway
         Hackney::Income::UniversalHousingPrioritisationGateway.new
