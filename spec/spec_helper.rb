@@ -98,4 +98,5 @@ RSpec.configure do |config|
   # as the one that triggered the failure.
   Kernel.srand config.seed
 =end
+  config.after(:suite) { Brakeman.run app_path: ".", summary: true }
 end
