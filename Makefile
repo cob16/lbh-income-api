@@ -35,3 +35,6 @@ lint:
 .PHONY: check
 check: lint test
 	echo 'Deployable!'
+
+guard:
+	docker-compose exec app guard
