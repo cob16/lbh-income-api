@@ -37,4 +37,4 @@ check: lint test
 	echo 'Deployable!'
 
 guard:
-	docker-compose exec app guard
+	docker-compose run --rm app guard
