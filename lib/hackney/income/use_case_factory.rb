@@ -25,6 +25,12 @@ module Hackney
         )
       end
 
+      def send_email
+        Hackney::Income::SendEmail.new(
+          notification_gateway: notifications_gateway,
+        )
+      end
+
       def set_tenancy_paused_status
         Hackney::Income::SetTenancyPausedStatus.new(gateway: sql_pause_tenancy_gateway)
       end

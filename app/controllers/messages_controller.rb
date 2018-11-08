@@ -7,6 +7,16 @@ class MessagesController < ApplicationController
       reference: params.fetch(:reference),
       variables: JSON.parse(params.fetch(:personalisation))
     )
+    end
+
+  def send_email
+    income_use_case_factory.send_email.execute(
+      tenancy_ref: 'what?',
+      template_id: params.fetch(:template_id),
+      recipient: params.fetch(:email_address),
+      reference: params.fetch(:reference),
+      variables: JSON.parse(params.fetch(:personalisation))
+    )
   end
 
 end

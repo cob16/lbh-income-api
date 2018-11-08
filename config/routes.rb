@@ -5,5 +5,6 @@ Rails.application.routes.draw do
     post '/users/find-or-create', to: 'users#create'
     patch '/tenancies/:tenancy_ref', to: 'tenancies#update'
     post '/messages/send_sms', to: 'messages#send_sms'
+    post '/messages/send_email', to: 'messages#send_email'
   end
 end
