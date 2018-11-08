@@ -19,6 +19,12 @@ module Hackney
         Hackney::Income::FindOrCreateUser.new(users_gateway: users_gateway)
       end
 
+      def send_sms
+        Hackney::Income::SendSms.new(
+          notification_gateway: notifications_gateway,
+        )
+      end
+
       def set_tenancy_paused_status
         Hackney::Income::SetTenancyPausedStatus.new(gateway: sql_pause_tenancy_gateway)
       end
@@ -43,6 +49,16 @@ module Hackney
       end
 
       private
+
+      def notifications_gateway
+        byebug
+        Hackney::Income::GovNotifyGateway.new(
+          sms_sender_id: ENV['GOV_NOTIFY_SENDER_ID'],
+          # api_key: ENV['GOV_NOTIFY_API_KEY'],
+          # api_host: ENV['INCOME_COLLECTION_API_HOST'],
+          api_key: ENV['GOV_NOTIFY_API_KEY']
+        )
+      end
 
       def legal_cases_gateway
         Hackney::Income::SqlLegalCasesGateway.new
