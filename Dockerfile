@@ -3,7 +3,8 @@ FROM ruby:2.5.1
 ARG RAILS_ENV=development
 WORKDIR /app
 
-ENV RUBY_THREAD_VM_STACK_SIZE=5000000
+# 50 MB stack needed in sync worker thread
+ENV RUBY_THREAD_VM_STACK_SIZE=50000000
 
 RUN wget ftp://ftp.freetds.org/pub/freetds/stable/freetds-1.00.27.tar.gz && \
   tar -xzf freetds-1.00.27.tar.gz && \
