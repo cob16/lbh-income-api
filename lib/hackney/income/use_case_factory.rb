@@ -57,7 +57,6 @@ module Hackney
       private
 
       def notifications_gateway
-        byebug
         Hackney::Income::GovNotifyGateway.new(
           sms_sender_id: ENV['GOV_NOTIFY_SENDER_ID'],
           # api_key: ENV['GOV_NOTIFY_API_KEY'],

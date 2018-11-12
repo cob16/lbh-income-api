@@ -5,7 +5,7 @@ class MessagesController < ApplicationController
       template_id: params.fetch(:template_id),
       phone_number: params.fetch(:phone_number),
       reference: params.fetch(:reference),
-      variables: JSON.parse(params.fetch(:personalisation))
+      variables: params.fetch(:variables)
     )
     end
 
@@ -15,7 +15,7 @@ class MessagesController < ApplicationController
       template_id: params.fetch(:template_id),
       recipient: params.fetch(:email_address),
       reference: params.fetch(:reference),
-      variables: JSON.parse(params.fetch(:personalisation))
+      variables: params.fetch(:variables)
     )
   end
 
