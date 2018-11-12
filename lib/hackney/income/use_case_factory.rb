@@ -42,6 +42,12 @@ module Hackney
         Hackney::Income::AssignTenancyToUser.new(user_assignment_gateway: user_assignment_gateway)
       end
 
+      def show_tenancies_for_message_1
+        Hackney::Income::ShowTenanciesForMessageOne.new(
+          sql_tenancies_for_messages_gateway: sql_tenancies_for_messages_gateway
+        )
+      end
+
       private
 
       def legal_cases_gateway
@@ -80,6 +86,10 @@ module Hackney
           host: ENV['INCOME_COLLECTION_API_HOST'],
           key: ENV['INCOME_COLLECTION_API_KEY']
         )
+      end
+
+      def sql_tenancies_for_messages_gateway
+        Hackney::Income::SqlTenanciesForMessagesGateway.new
       end
 
       def background_job_gateway
