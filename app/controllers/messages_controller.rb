@@ -19,4 +19,10 @@ class MessagesController < ApplicationController
     )
   end
 
+  def get_templates
+    render json: income_use_case_factory.get_templates.execute(
+      type: params.fetch(:type)
+    )
+  end
+
 end

@@ -31,6 +31,12 @@ module Hackney
         )
       end
 
+      def get_templates
+        Hackney::Income::GetTemplates.new(
+          notification_gateway: notifications_gateway,
+        )
+      end
+
       def set_tenancy_paused_status
         Hackney::Income::SetTenancyPausedStatus.new(gateway: sql_pause_tenancy_gateway)
       end

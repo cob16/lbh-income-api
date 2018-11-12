@@ -6,5 +6,6 @@ Rails.application.routes.draw do
     patch '/tenancies/:tenancy_ref', to: 'tenancies#update'
     post '/messages/send_sms', to: 'messages#send_sms'
     post '/messages/send_email', to: 'messages#send_email'
+    get '/messages/get_templates', to: 'messages#get_templates'
   end
 end

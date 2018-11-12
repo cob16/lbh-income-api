@@ -27,15 +27,9 @@ module Hackney
         )
       end
 
-      def get_text_templates
-        @client.get_all_templates(type: 'sms').collection.map do |template|
+      def get_templates(type:)
+        @client.get_all_templates(type: type).collection.map do |template|
           { id: template.id, name: template.name, body: template.body }
-        end
-      end
-
-      def get_email_templates
-        @client.get_all_templates(type: 'email').collection.map do |template|
-          { id: template.id, name: template.name, body: template.body, subject: template.subject }
         end
       end
 

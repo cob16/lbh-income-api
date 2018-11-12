@@ -102,7 +102,7 @@ describe Hackney::Income::GovNotifyGateway do
           }])
         )
 
-      expect(subject.get_text_templates).to eq([{
+      expect(subject.get_templates(type: 'sms')).to eq([{
         id: template_id,
         name: 'template-name',
         body: 'hello ((first name)), how are you?'
@@ -165,7 +165,7 @@ describe Hackney::Income::GovNotifyGateway do
           }])
         )
 
-      expect(subject.get_email_templates).to eq([{
+      expect(subject.get_templates(type: 'email')).to eq([{
         id: template_id,
         name: 'template-name',
         subject: 'email subject',
