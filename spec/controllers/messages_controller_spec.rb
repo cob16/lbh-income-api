@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
+include MessagesHelper
 
 describe MessagesController, type: :controller do
   let(:sms_params) do
@@ -35,7 +36,11 @@ describe MessagesController, type: :controller do
   end
 
   before do
-    stub_const('Hackney::Income::GovNotifyGateway', StubGovNotifyGateway)
+    stub_const(
+      'Hackney::Income::GovNotifyGateway',
+      StubGovNotifyGateway,
+      transfer_nested_constants: true
+    )
   end
 
   it 'sends an sms' do
@@ -73,7 +78,8 @@ describe MessagesController, type: :controller do
 
     patch :get_templates, params: {type: 'email'}
 
-    expect(response.body).to match(/email/)
+    expect(response.body).to eq(StubGovNotifyGateway::EXAMPLE_TEMPLATES.to_json)
+
   end
 
   it 'gets sms templates' do
@@ -83,12 +89,15 @@ describe MessagesController, type: :controller do
 
     patch :get_templates, params: {type: 'sms'}
 
-    expect(response.body).to match(/sms/)
+    expect(response.body).to eq(StubGovNotifyGateway::EXAMPLE_TEMPLATES.to_json)
   end
 
 end
 
 class StubGovNotifyGateway
+
+  EXAMPLE_TEMPLATES = example_templates
+
   def initialize(sms_sender_id:, api_key:); end
 
   def send_text_message(phone_number:, template_id:, reference:, variables:); end
@@ -96,11 +105,7 @@ class StubGovNotifyGateway
   def send_email(recipient:, template_id:, reference:, variables:); end
 
   def get_templates(type:)
-    [{
-       "id": "#{Faker::Number.number(4)}-#{Faker::Number.number(4)}-#{Faker::Number.number(4)}-#{Faker::Number.number(4)}",
-       "name": type,
-       "body": Faker::HitchhikersGuideToTheGalaxy.quote
-     }]
+    EXAMPLE_TEMPLATES
   end
 
 end
