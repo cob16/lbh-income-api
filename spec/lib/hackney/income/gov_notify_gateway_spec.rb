@@ -168,7 +168,7 @@ describe Hackney::Income::GovNotifyGateway do
       expect(subject.get_templates(type: 'email')).to eq([{
         id: template_id,
         name: 'template-name',
-        subject: 'email subject',
+        # subject: 'email subject',
         body: 'hello ((first name)), how are you?'
       }])
     end

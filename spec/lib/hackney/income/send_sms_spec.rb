@@ -63,17 +63,5 @@ describe Hackney::Income::SendSms do
       )
     end
 
-    xit 'should create a tenancy event' do
-      Timecop.freeze(Time.local(2018)) do
-        send_sms_message
-        expect(events).to include(
-          tenancy_ref: '2345678',
-          type: 'sms_message_sent',
-          description: 'Sent SMS message to 0208 123 1234',
-          timestamp: Time.local(2018),
-          automated: false
-        )
-      end
-    end
   end
 end
