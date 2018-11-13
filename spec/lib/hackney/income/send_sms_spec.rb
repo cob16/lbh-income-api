@@ -3,8 +3,6 @@ require 'rails_helper'
 describe Hackney::Income::SendSms do
   let(:tenancy_1) { create_tenancy_model }
   let(:notification_gateway) { Hackney::Income::StubNotificationsGateway.new }
-  # let(:events_gateway) { Hackney::Income::StubEventsGateway.new }
-  # let(:events) { events_gateway.events_for(tenancy_ref: '2345678') }
 
   before do
     tenancy_1.save
