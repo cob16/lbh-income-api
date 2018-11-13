@@ -30,6 +30,8 @@ gem 'mysql2'
 gem 'sequel'
 gem 'tiny_tds'
 
+gem 'notifications-ruby-client'
+
 gem 'daemons'
 gem 'delayed_job'
 gem 'delayed_job_active_record'
@@ -44,6 +46,7 @@ group :development, :test do
   gem 'rspec-rails'
   gem 'sqlite3'
   gem 'webmock'
+  gem 'timecop'
 end
 
 group :development do
