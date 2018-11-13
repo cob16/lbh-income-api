@@ -21,19 +21,19 @@ module Hackney
 
       def send_sms
         Hackney::Income::SendSms.new(
-          notification_gateway: notifications_gateway,
+          notification_gateway: notifications_gateway
         )
       end
 
       def send_email
         Hackney::Income::SendEmail.new(
-          notification_gateway: notifications_gateway,
+          notification_gateway: notifications_gateway
         )
       end
 
       def get_templates
         Hackney::Income::GetTemplates.new(
-          notification_gateway: notifications_gateway,
+          notification_gateway: notifications_gateway
         )
       end
 
