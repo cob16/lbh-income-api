@@ -13,7 +13,7 @@ module Hackney
           reference: reference,
           variables: variables
         )
-        
+
         # tenancy = Hackney::Income::Models::Tenancy.find_by(tenancy_ref: tenancy_ref)
 
         # @events_gateway.create_event(
@@ -22,16 +22,6 @@ module Hackney
         #   description: "Sent SMS message to #{contact_number_for(tenancy)}",
         #   automated: false
         # )
-      end
-
-      private
-
-      def contact_number_for(tenancy)
-        tenancy.primary_contact_phone
-      end
-
-      def reference_for(tenancy)
-        "manual_#{tenancy.tenancy_ref}"
       end
     end
   end
