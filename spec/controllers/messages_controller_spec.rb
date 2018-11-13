@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
-include MessagesHelper
 
 describe MessagesController, type: :controller do
+  include MessagesHelper
+
   let(:sms_params) do
     {
       tenancy_ref: "#{Faker::Number.number(8)}/#{Faker::Number.number(2)}",
@@ -30,7 +31,7 @@ describe MessagesController, type: :controller do
   let(:stub_template) do
     [{
        "id": "#{Faker::Number.number(4)}-#{Faker::Number.number(4)}-#{Faker::Number.number(4)}-#{Faker::Number.number(4)}",
-       "name":Faker::HitchhikersGuideToTheGalaxy.planet,
+       "name": Faker::HitchhikersGuideToTheGalaxy.planet,
        "body": Faker::HitchhikersGuideToTheGalaxy.quote
      }]
   end
@@ -76,10 +77,9 @@ describe MessagesController, type: :controller do
       type: 'email'
     ).and_call_original
 
-    patch :get_templates, params: {type: 'email'}
+    patch :get_templates, params: { type: 'email' }
 
     expect(response.body).to eq(StubGovNotifyGateway::EXAMPLE_TEMPLATES.to_json)
-
   end
 
   it 'gets sms templates' do
@@ -87,15 +87,13 @@ describe MessagesController, type: :controller do
       type: 'sms'
     ).and_call_original
 
-    patch :get_templates, params: {type: 'sms'}
+    patch :get_templates, params: { type: 'sms' }
 
     expect(response.body).to eq(StubGovNotifyGateway::EXAMPLE_TEMPLATES.to_json)
   end
-
 end
 
 class StubGovNotifyGateway
-
   EXAMPLE_TEMPLATES = example_templates
 
   def initialize(sms_sender_id:, api_key:); end
@@ -107,5 +105,4 @@ class StubGovNotifyGateway
   def get_templates(type:)
     EXAMPLE_TEMPLATES
   end
-
 end

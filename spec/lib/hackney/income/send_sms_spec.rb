@@ -8,7 +8,6 @@ describe Hackney::Income::SendSms do
     tenancy_1.save
   end
 
-
   let(:send_sms) do
     described_class.new(
       notification_gateway: notification_gateway,
@@ -17,10 +16,10 @@ describe Hackney::Income::SendSms do
   end
 
   context 'when sending an SMS manually' do
-    let(:template_id) {Faker::Superhero.power}
-    let(:phone_number) {Faker::Number.leading_zero_number(11)}
-    let(:reference) {Faker::Superhero.prefix}
-    let(:first_name) {Faker::Superhero.name}
+    let(:template_id) { Faker::Superhero.power }
+    let(:phone_number) { Faker::Number.leading_zero_number(11) }
+    let(:reference) { Faker::Superhero.prefix }
+    let(:first_name) { Faker::Superhero.name }
 
     subject do
       send_sms.execute(
@@ -28,7 +27,7 @@ describe Hackney::Income::SendSms do
         template_id: template_id,
         phone_number: phone_number,
         reference: reference,
-        variables: { 'first name' => first_name}
+        variables: { 'first name' => first_name }
       )
       notification_gateway.last_text_message
     end
@@ -60,6 +59,5 @@ describe Hackney::Income::SendSms do
         reference: reference
       )
     end
-
   end
 end
