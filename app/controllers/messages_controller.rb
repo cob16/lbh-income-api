@@ -7,7 +7,7 @@ class MessagesController < ApplicationController
       reference: params.fetch(:reference),
       variables: params.fetch(:variables)
     )
-    end
+  end
 
   def send_email
     income_use_case_factory.send_email.execute(
@@ -24,5 +24,4 @@ class MessagesController < ApplicationController
       type: params.fetch(:type)
     )
   end
-
 end
