@@ -45,8 +45,8 @@ group :development, :test do
   gem 'rspec-its'
   gem 'rspec-rails'
   gem 'sqlite3'
-  gem 'webmock'
   gem 'timecop'
+  gem 'webmock'
 end
 
 group :development do
