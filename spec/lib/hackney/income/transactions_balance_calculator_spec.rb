@@ -1,4 +1,4 @@
-require_relative '../../../../lib/hackney/income/transactions_balance_calculator'
+require 'rails_helper'
 require 'active_support/core_ext/numeric/time'
 
 describe Hackney::Income::TransactionsBalanceCalculator do

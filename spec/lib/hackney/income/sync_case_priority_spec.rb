@@ -1,12 +1,10 @@
-require_relative '../../../../lib/hackney/income/tenancy_prioritiser/stub_criteria'
-require_relative '../../../../lib/hackney/income/tenancy_prioritiser/priority_weightings'
-require_relative '../../../../lib/hackney/income/sync_case_priority'
+require 'rails_helper'
 
 describe Hackney::Income::SyncCasePriority do
   let(:stub_tenancy_object) { double }
   let(:stored_tenancies_gateway) { double(store_tenancy: stub_tenancy_object) }
   let(:assign_tenancy_to_user) { double(assign_tenancy_to_user: nil) }
-  let(:criteria) { Hackney::Income::TenancyPrioritiser::StubCriteria.new }
+  let(:criteria) { Stubs::StubCriteria.new }
   let(:weightings) { Hackney::Income::TenancyPrioritiser::PriorityWeightings.new }
 
   let(:prioritisation_gateway) do

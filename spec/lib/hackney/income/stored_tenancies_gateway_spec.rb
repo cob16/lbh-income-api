@@ -11,7 +11,7 @@ describe Hackney::Income::StoredTenanciesGateway do
         tenancy_ref: Faker::Internet.slug,
         priority_band: Faker::Internet.slug,
         priority_score: Faker::Number.number(5).to_i,
-        criteria: Hackney::Income::TenancyPrioritiser::StubCriteria.new,
+        criteria: Stubs::StubCriteria.new,
         weightings: Hackney::Income::TenancyPrioritiser::PriorityWeightings.new
       }
     end
@@ -114,7 +114,7 @@ describe Hackney::Income::StoredTenanciesGateway do
           tenancy_ref: Faker::Internet.slug,
           priority_band: Faker::Internet.slug,
           priority_score: Faker::Number.number(5).to_i,
-          criteria: Hackney::Income::TenancyPrioritiser::StubCriteria.new,
+          criteria: Stubs::StubCriteria.new,
           weightings: Hackney::Income::TenancyPrioritiser::PriorityWeightings.new
         }
       end

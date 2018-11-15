@@ -1,9 +1,7 @@
-require_relative '../../../../../lib/hackney/income/tenancy_prioritiser/score'
-require_relative '../../../../../lib/hackney/income/tenancy_prioritiser/stub_criteria'
-require_relative '../../../../../lib/hackney/income/tenancy_prioritiser/priority_weightings'
+require 'rails_helper'
 
 describe Hackney::Income::TenancyPrioritiser::Score do
-  let(:criteria) { Hackney::Income::TenancyPrioritiser::StubCriteria.new }
+  let(:criteria) { Stubs::StubCriteria.new }
   let(:weightings) { Hackney::Income::TenancyPrioritiser::PriorityWeightings.new }
 
   subject { described_class.new(criteria, weightings) }
