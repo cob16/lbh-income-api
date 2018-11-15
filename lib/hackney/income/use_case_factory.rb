@@ -65,7 +65,10 @@ module Hackney
       def notifications_gateway
         Hackney::Income::GovNotifyGateway.new(
           sms_sender_id: ENV['GOV_NOTIFY_SENDER_ID'],
-          api_key: ENV['GOV_NOTIFY_API_KEY']
+          api_key: ENV['GOV_NOTIFY_API_KEY'],
+          send_live_communications: ENV['SEND_LIVE_COMMUNICATIONS'],
+          test_phone_number: ENV['TEST_PHONE_NUMBER'],
+          test_email_address:  ENV['TEST_EMAIL_ADDRESS']
         )
       end
 

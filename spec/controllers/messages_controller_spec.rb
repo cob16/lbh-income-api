@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
+require 'spec_helper'
 
 describe MessagesController, type: :controller do
   include MessagesHelper
@@ -28,20 +29,16 @@ describe MessagesController, type: :controller do
     }
   end
 
-  let(:stub_template) do
-    [{
-       "id": "#{Faker::Number.number(4)}-#{Faker::Number.number(4)}-#{Faker::Number.number(4)}-#{Faker::Number.number(4)}",
-       "name": Faker::HitchhikersGuideToTheGalaxy.planet,
-       "body": Faker::HitchhikersGuideToTheGalaxy.quote
-     }]
-  end
-
   before do
     stub_const(
       'Hackney::Income::GovNotifyGateway',
-      StubGovNotifyGateway,
+      Hackney::Income::StubGovNotifyGateway,
       transfer_nested_constants: true
     )
+  end
+
+  let(:expeted_templates) do
+    Hackney::Income::GovNotifyGateway::EXAMPLE_TEMPLATES.to_json
   end
 
   it 'sends an sms' do
@@ -79,9 +76,8 @@ describe MessagesController, type: :controller do
 
     patch :get_templates, params: { type: 'email' }
 
-    expect(response.body).to eq(StubGovNotifyGateway::EXAMPLE_TEMPLATES.to_json)
+    expect(response.body).to eq(expeted_templates)
   end
-
   it 'gets sms templates' do
     expect_any_instance_of(Hackney::Income::GetTemplates).to receive(:execute).with(
       type: 'sms'
@@ -89,6 +85,6 @@ describe MessagesController, type: :controller do
 
     patch :get_templates, params: { type: 'sms' }
 
-    expect(response.body).to eq(StubGovNotifyGateway::EXAMPLE_TEMPLATES.to_json)
+    expect(response.body).to eq(expeted_templates)
   end
 end

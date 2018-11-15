@@ -3,9 +3,12 @@ require 'notifications/client'
 module Hackney
   module Income
     class GovNotifyGateway
-      def initialize(sms_sender_id:, api_key:)
+      def initialize(sms_sender_id:, api_key:, send_live_communications:, test_phone_number:, test_email_address:)
         @sms_sender_id = sms_sender_id
         @client = Notifications::Client.new(api_key)
+        @send_live_communications = send_live_communications
+        @test_phone_number = test_phone_number
+        @test_email_address = test_email_address
       end
 
       def send_text_message(phone_number:, template_id:, reference:, variables:)
@@ -36,17 +39,13 @@ module Hackney
       private
 
       def pre_release_phone_number(phone_number)
-        return phone_number if send_for_real?
-        ENV['TEST_PHONE_NUMBER']
+        return phone_number if @send_live_communications
+        @test_phone_number
       end
 
       def pre_release_email(email)
-        return email if send_for_real?
-        ENV['TEST_EMAIL_ADDRESS']
-      end
-
-      def send_for_real?
-        ENV['SEND_LIVE_COMMUNICATIONS'] == 'true'
+        return email if @send_live_communications
+        @test_email_address
       end
     end
   end

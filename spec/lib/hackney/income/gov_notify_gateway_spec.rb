@@ -3,8 +3,19 @@ require 'rails_helper'
 describe Hackney::Income::GovNotifyGateway do
   let(:sms_sender_id) { 'cool_sender_id' }
   let(:api_key) { 'FAKE_API_KEY-53822c9d-b17d-442d-ace7-565d08215d20-53822c9d-b17d-442d-ace7-565d08215d20' }
+  let(:send_live_communications) { true }
+  let(:test_phone_number) { Faker::PhoneNumber.phone_number }
+  let(:test_email) { Faker::Internet.email }
 
-  subject { described_class.new(sms_sender_id: sms_sender_id, api_key: api_key) }
+  subject do
+    described_class.new(
+      sms_sender_id: sms_sender_id,
+      api_key: api_key,
+      send_live_communications: send_live_communications,
+      test_phone_number: test_phone_number,
+      test_email_address: test_email
+    )
+  end
 
   context 'when initializing the gateway' do
     it 'should authenticate with Gov Notify' do
@@ -15,9 +26,6 @@ describe Hackney::Income::GovNotifyGateway do
 
   context 'when sending a text message to a live tenant' do
     let(:phone_number) { Faker::PhoneNumber.phone_number }
-    before do
-      ENV['SEND_LIVE_COMMUNICATIONS'] = 'true'
-    end
 
     it 'should send the message to the live phone number' do
       expect_any_instance_of(Notifications::Client).to receive(:send_sms).with(
@@ -41,26 +49,14 @@ describe Hackney::Income::GovNotifyGateway do
         reference: 'amazing-test-reference'
       )
     end
-
-    after do
-      ENV.delete('SEND_LIVE_COMMUNICATIONS')
-    end
   end
 
   context 'when sending a text message to a tenant' do
-    before do
-      ENV['TEST_PHONE_NUMBER'] = '01234 123456'
-      ENV['SEND_LIVE_COMMUNICATIONS'] = 'false'
-    end
-
-    after do
-      ENV.delete('TEST_PHONE_NUMBER')
-      ENV.delete('SEND_LIVE_COMMUNICATIONS')
-    end
+    let(:send_live_communications) { false }
 
     it 'should send through Gov Notify' do
       expect_any_instance_of(Notifications::Client).to receive(:send_sms).with(
-        phone_number: ENV['TEST_PHONE_NUMBER'],
+        phone_number: test_phone_number,
         template_id: 'sweet-test-template-id',
         personalisation: {
           'first name' => 'Steven Leighton',
@@ -111,19 +107,11 @@ describe Hackney::Income::GovNotifyGateway do
 
   # FIXME: govnotify doesn't appear to currently pass through the reply to email?
   context 'when sending an email to a tenant' do
-    before do
-      ENV['TEST_EMAIL_ADDRESS'] = 'test@example.com'
-      ENV['SEND_LIVE_COMMUNICATIONS'] = 'false'
-    end
-
-    after do
-      ENV.delete('TEST_EMAIL_ADDRESS')
-      ENV.delete('SEND_LIVE_COMMUNICATIONS')
-    end
+    let(:send_live_communications) { false }
 
     it 'should send through Gov Notify' do
       expect_any_instance_of(Notifications::Client).to receive(:send_email).with(
-        email_address: ENV['TEST_EMAIL_ADDRESS'],
+        email_address: test_email,
         template_id: 'sweet-test-template-id',
         personalisation: {
           'first name' => 'Steven Leighton'
