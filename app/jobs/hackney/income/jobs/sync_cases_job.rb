@@ -2,7 +2,7 @@ module Hackney
   module Income
     module Jobs
       class SyncCasesJob < ApplicationJob
-        queue_as :default
+        queue_as :uh_sync_cases
 
         def self.next_run_time
           Date.tomorrow.midnight + 3.hours

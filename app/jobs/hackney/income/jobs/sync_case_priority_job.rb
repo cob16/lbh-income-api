@@ -2,7 +2,7 @@ module Hackney
   module Income
     module Jobs
       class SyncCasePriorityJob < ApplicationJob
-        queue_as :default
+        queue_as :uh_sync_cases
 
         def perform(tenancy_ref:)
           if run_tenancy_sync_jobs?
