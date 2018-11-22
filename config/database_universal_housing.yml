@@ -6,7 +6,8 @@ default: &default
   port: <%= ENV['UH_DATABASE_PORT'] %>
   database: <%= ENV['UH_DATABASE_NAME'] %>
   timeout: 60
-  log_warn_duration: 45
+  max_connections: 4
+  preconnect: false
 
 development:
   <<: *default
