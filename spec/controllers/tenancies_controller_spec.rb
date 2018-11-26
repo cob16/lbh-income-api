@@ -20,7 +20,7 @@ describe TenanciesController, type: :controller do
     stub_const('Hackney::Income::SqlPauseTenancyGateway', StubSqlPauseTenancyGateway)
   end
 
-  it 'should be acessable from /' do
+  it 'should be accessible from /' do
     assert_generates '/api/v1/tenancies/1234', controller: 'tenancies', action: 'update', tenancy_ref: 1234
   end
 

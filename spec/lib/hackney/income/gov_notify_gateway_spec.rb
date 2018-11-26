@@ -105,7 +105,7 @@ describe Hackney::Income::GovNotifyGateway do
     end
   end
 
-  # FIXME: govnotify doesn't appear to currently pass through the reply to email?
+  # FIXME: Gov Notify doesn't appear to currently pass through the reply to email?
   context 'when sending an email to a tenant' do
     let(:send_live_communications) { false }
 
@@ -121,7 +121,7 @@ describe Hackney::Income::GovNotifyGateway do
       )
 
       subject.send_email(
-        recipient: 'I am an email adddress that will be ignored',
+        recipient: 'I am an email address that will be ignored',
         template_id: 'sweet-test-template-id',
         variables: {
           'first name' => 'Steven Leighton'
