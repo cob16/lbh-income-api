@@ -6,13 +6,17 @@ describe TenanciesController, type: :controller do
   let(:paused_parms) do
     {
       tenancy_ref: Faker::Lorem.characters(8),
-      is_paused_until: Faker::Date.forward(23).to_s
+      is_paused_until: Faker::Date.forward(23).to_s,
+      pause_reason: Faker::Lorem.sentence,
+      pause_comment: Faker::Lorem.paragraph
     }
   end
   let(:params2) do
     {
       tenancy_ref: Faker::Lorem.characters(8),
-      is_paused_until: Faker::Date.backward(23).to_s
+      is_paused_until: Faker::Date.backward(23).to_s,
+      pause_reason: Faker::Lorem.sentence,
+      pause_comment: Faker::Lorem.paragraph
     }
   end
 
@@ -28,7 +32,9 @@ describe TenanciesController, type: :controller do
     it 'should pass the correct params to the use case' do
       expect_any_instance_of(Hackney::Income::SetTenancyPausedStatus).to receive(:execute).with(
         tenancy_ref: paused_parms.fetch(:tenancy_ref),
-        until_date: paused_parms[:is_paused_until]
+        until_date: paused_parms.fetch(:is_paused_until),
+        pause_reason: paused_parms.fetch(:pause_reason),
+        pause_comment: paused_parms.fetch(:pause_comment)
       ).and_call_original
 
       patch :update, params: paused_parms
@@ -39,7 +45,9 @@ describe TenanciesController, type: :controller do
     it 'should return a 200 response' do
       expect_any_instance_of(Hackney::Income::SetTenancyPausedStatus).to receive(:execute).with(
         tenancy_ref: params2.fetch(:tenancy_ref),
-        until_date: params2.fetch(:is_paused_until).to_s
+        until_date: params2.fetch(:is_paused_until).to_s,
+        pause_reason: params2.fetch(:pause_reason),
+        pause_comment: params2.fetch(:pause_comment)
       ).and_call_original
 
       patch :update, params: params2
@@ -80,11 +88,11 @@ end
 class StubSetUnknownTenancyPausedStatus
   def initialize(gateway:); end
 
-  def execute(tenancy_ref:, until_date:)
+  def execute(tenancy_ref:, until_date:, pause_reason:, pause_comment:)
     raise "Raised on #{tenancy_ref}"
   end
 end
 
 class StubSqlPauseTenancyGateway
-  def set_paused_until(tenancy_ref:, until_date:); end
+  def set_paused_until(tenancy_ref:, until_date:, pause_reason:, pause_comment:); end
 end

@@ -2,11 +2,11 @@ require 'active_record/errors'
 module Hackney
   module Income
     class SqlPauseTenancyGateway
-      def set_paused_until(tenancy_ref:, until_date:)
+      def set_paused_until(tenancy_ref:, until_date:, pause_reason:, pause_comment:)
         tenancy = Hackney::Income::Models::Tenancy.find_by(tenancy_ref: tenancy_ref)
         raise "Unable to pause tenancy: #{tenancy_ref} - tenancy not found." if tenancy.nil?
         date = Date.parse(until_date)
-        tenancy.update!(is_paused_until: date)
+        tenancy.update!(is_paused_until: date, pause_reason: pause_reason, pause_comment: pause_comment)
       rescue ArgumentError
         raise "Unable to pause tenancy: #{tenancy_ref} until #{until_date} - invalid pause date."
       rescue ActiveRecord::RecordNotSaved
