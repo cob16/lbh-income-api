@@ -21,13 +21,22 @@ module Hackney
 
       def send_sms
         Hackney::Income::SendSms.new(
-          notification_gateway: notifications_gateway
+          notification_gateway: notifications_gateway,
+          add_action_diary_usecase: add_action_diary
+        )
+      end
+
+      def add_action_diary
+        Hackney::Tenancy::AddActionDiaryEntry.new(
+          action_diary_gateway: action_diary_gateway,
+          users_gateway: users_gateway
         )
       end
 
       def send_email
         Hackney::Income::SendEmail.new(
-          notification_gateway: notifications_gateway
+          notification_gateway: notifications_gateway,
+          add_action_diary_usecase: add_action_diary
         )
       end
 
@@ -118,6 +127,13 @@ module Hackney
 
       def sql_tenancies_for_messages_gateway
         Hackney::Income::SqlTenanciesForMessagesGateway.new
+      end
+
+      def action_diary_gateway
+        Hackney::Tenancy::ActionDiaryGateway.new(
+          host: ENV['INCOME_COLLECTION_API_HOST'],
+          api_key: ENV['INCOME_COLLECTION_API_KEY']
+        )
       end
 
       def background_job_gateway
