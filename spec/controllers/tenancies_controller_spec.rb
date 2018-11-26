@@ -84,14 +84,6 @@ describe TenanciesController, type: :controller do
   end
 end
 
-class StubSetUnknownTenancyPausedStatus
-  def initialize(gateway:); end
-
-  def execute(tenancy_ref:, until_date:, pause_reason:, pause_comment:)
-    raise "Raised on #{tenancy_ref}"
-  end
-end
-
 class StubSqlPauseTenancyGateway
   def set_paused_until(tenancy_ref:, until_date:, pause_reason:, pause_comment:); end
 end
