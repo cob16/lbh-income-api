@@ -13,10 +13,10 @@ module Hackney
         username = user_id.nil? ? nil : @users_gateway.find_user(id: user_id)&.name
 
         if !user_id.nil? && username.nil?
-          raise ArgumentError, 'user_id supplyed does not exist'
+          raise ArgumentError, 'user_id supplied does not exist'
         end
 
-        Rails.logger.info('Adding comment to action diary')
+        Rails.logger.info("Adding action diary comment to #{tenancy_ref} with username '#{username}'")
         @action_diary_gateway.create_entry(tenancy_ref: tenancy_ref, action_code: action_code, action_balance: action_balance, comment: comment, username: username)
       end
     end

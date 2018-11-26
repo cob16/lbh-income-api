@@ -72,9 +72,9 @@ describe Hackney::Income::SendSms do
       .with(
         user_id: user_id,
         tenancy_ref: tenancy.tenancy_ref,
-        action_code: '', # TODO: this needs to be decided
-        action_balance: nil, # TODO: this should not be required
-        comment: "An SMS has been sent to '#{phone_number}'"
+        action_code: 'GAT',
+        action_balance: nil,
+        comment: "An SMS has been sent to '#{phone_number}' with template_id: #{template_id}"
       )
       .once
 

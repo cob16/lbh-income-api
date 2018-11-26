@@ -16,13 +16,13 @@ module Hackney
           reference: reference,
           variables: variables
         )
-        @add_action_diary_usecase.execute(
-          user_id: user_id,
-          tenancy_ref: tenancy_ref,
-          action_code: '', # this needs to be decided
-          action_balance: nil,
-          comment: "An email has been sent to '#{recipient}'"
-        )
+        # @add_action_diary_usecase.execute(
+        #   user_id: user_id,
+        #   tenancy_ref: tenancy_ref,
+        #   action_code: Hackney::Tenancy::ActionCodes::EMAIL_ACTION_CODE,
+        #   action_balance: nil, # TODO: this should not be required
+        #   comment: "An email has been sent to '#{recipient}' with template id '#{template_id}'"
+        # )
       end
     end
   end
