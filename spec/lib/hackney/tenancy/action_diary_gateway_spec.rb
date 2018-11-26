@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe Hackney::Tenancy::ActionDiaryGateway do
+describe Hackney::Tenancy::Gateway::ActionDiaryGateway do
   let(:host) { Faker::Internet.url('example.com') }
   let(:key) { SecureRandom.uuid }
   let(:tenancy_ref) { Faker::Lorem.characters(8) }

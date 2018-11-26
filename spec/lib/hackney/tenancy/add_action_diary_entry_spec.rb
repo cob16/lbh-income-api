@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 describe Hackney::Tenancy::AddActionDiaryEntry do
-  let(:action_diary_gateway) { double(Hackney::Tenancy::ActionDiaryGateway) }
+  let(:action_diary_gateway) { double(Hackney::Tenancy::Gateway::ActionDiaryGateway) }
   let(:users_gateway) { double(Hackney::Income::SqlUsersGateway) }
 
   let(:usecase) { described_class.new(action_diary_gateway: action_diary_gateway, users_gateway: users_gateway) }

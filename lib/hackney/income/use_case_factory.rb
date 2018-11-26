@@ -119,7 +119,7 @@ module Hackney
       end
 
       def tenancy_api_gateway
-        Hackney::Income::TenancyApiGateway.new(
+        Hackney::Tenancy::Gateway::TenanciesGateway.new(
           host: ENV['INCOME_COLLECTION_API_HOST'],
           key: ENV['INCOME_COLLECTION_API_KEY']
         )
@@ -130,7 +130,7 @@ module Hackney
       end
 
       def action_diary_gateway
-        Hackney::Tenancy::ActionDiaryGateway.new(
+        Hackney::Tenancy::Gateway::ActionDiaryGateway.new(
           host: ENV['INCOME_COLLECTION_API_HOST'],
           api_key: ENV['INCOME_COLLECTION_API_KEY']
         )

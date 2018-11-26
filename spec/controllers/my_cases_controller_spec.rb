@@ -6,7 +6,7 @@ describe MyCasesController do
 
     before do
       allow(Hackney::Income::ViewMyCases).to receive(:new).with(
-        tenancy_api_gateway: instance_of(Hackney::Income::TenancyApiGateway),
+        tenancy_api_gateway: instance_of(Hackney::Tenancy::Gateway::TenanciesGateway),
         stored_tenancies_gateway: instance_of(Hackney::Income::StoredTenanciesGateway)
       ).and_return(view_my_cases_instance)
     end
