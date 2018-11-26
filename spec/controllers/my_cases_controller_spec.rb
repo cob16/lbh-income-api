@@ -15,7 +15,7 @@ describe MyCasesController do
       expect { get :index }.to raise_error(ActionController::ParameterMissing)
     end
 
-    context 'when a page numebr or number of results per page requested is less than 1' do
+    context 'when a page number or number of results per page requested is less than 1' do
       let(:user_id) { Faker::Number.number(2).to_i }
 
       it 'min of 1 should be used' do

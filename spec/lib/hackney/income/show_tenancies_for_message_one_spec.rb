@@ -11,7 +11,7 @@ describe Hackney::Income::ShowTenanciesForMessageOne do
 
   subject { show_tenancies_for_message_1.execute }
 
-  context 'when asking for a list of tennacys to send messages to' do
+  context 'when asking for a list of tenancies to send messages to' do
     it 'should call its gateway' do
       expect(sql_tenancies_for_messages_gateway).to receive(:get_tenancies_for_message_1)
       subject

@@ -17,7 +17,7 @@ describe Hackney::Income::Jobs::SyncCasePriorityJob do
     end
   end
 
-  context 'whgen sync jobs are enabled' do
+  context 'when sync jobs are enabled' do
     before do
       allow_any_instance_of(Hackney::Income::Jobs::SyncCasePriorityJob)
         .to receive(:run_tenancy_sync_jobs?)
