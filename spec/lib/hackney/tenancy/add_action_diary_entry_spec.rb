@@ -44,7 +44,7 @@ describe Hackney::Tenancy::AddActionDiaryEntry do
 
     subject { usecase.execute(user_id: user_id, tenancy_ref: tenancy_ref, action_code: action_code, action_balance: action_balance, comment: comment) }
 
-    it 'should thow an invalid argument exption' do
+    it 'should throw an invalid argument exception' do
       expect(users_gateway).to receive(:find_user).with(id: user_id).and_return(nil).once
 
       expect { subject }.to raise_error(ArgumentError, 'user_id supplied does not exist')
