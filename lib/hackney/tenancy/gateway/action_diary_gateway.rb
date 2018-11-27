@@ -21,6 +21,7 @@ module Hackney
             actionCode: action_code,
             actionBalance: action_balance,
             comment: comment
+            # "companyCode": 'string',
           }
           body[:username] = username unless username.nil?
 
