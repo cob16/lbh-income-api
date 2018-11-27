@@ -6,7 +6,7 @@ describe MyCasesController do
 
     before do
       allow(Hackney::Income::ViewMyCases).to receive(:new).with(
-        tenancy_api_gateway: instance_of(Hackney::Income::TenancyApiGateway),
+        tenancy_api_gateway: instance_of(Hackney::Tenancy::Gateway::TenanciesGateway),
         stored_tenancies_gateway: instance_of(Hackney::Income::StoredTenanciesGateway)
       ).and_return(view_my_cases_instance)
     end
@@ -15,7 +15,7 @@ describe MyCasesController do
       expect { get :index }.to raise_error(ActionController::ParameterMissing)
     end
 
-    context 'when a page numebr or number of results per page requested is less than 1' do
+    context 'when a page number or number of results per page requested is less than 1' do
       let(:user_id) { Faker::Number.number(2).to_i }
 
       it 'min of 1 should be used' do

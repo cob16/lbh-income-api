@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe Hackney::Income::TenancyApiGateway do
+describe Hackney::Tenancy::Gateway::TenanciesGateway do
   let(:gateway) { described_class.new(host: 'https://example.com', key: 'skeleton') }
 
   context 'when retrieving tenancies' do

@@ -7,6 +7,7 @@ describe MessagesController, type: :controller do
 
   let(:sms_params) do
     {
+      user_id: Faker::Number.number(2),
       tenancy_ref: "#{Faker::Number.number(8)}/#{Faker::Number.number(2)}",
       template_id: Faker::HitchhikersGuideToTheGalaxy.planet,
       phone_number: Faker::PhoneNumber.phone_number,
@@ -18,6 +19,7 @@ describe MessagesController, type: :controller do
   end
   let(:email_params) do
     {
+      user_id: Faker::Number.number(2),
       tenancy_ref: "#{Faker::Number.number(8)}/#{Faker::Number.number(2)}",
       template_id: Faker::HitchhikersGuideToTheGalaxy.planet,
       email_address: Faker::Internet.email,
@@ -28,12 +30,18 @@ describe MessagesController, type: :controller do
     }
   end
 
+  let(:dummy_action_diary_usecase) { double(Hackney::Tenancy::AddActionDiaryEntry) }
+
   before do
     stub_const(
       'Hackney::Income::GovNotifyGateway',
       Hackney::Income::StubGovNotifyGateway,
       transfer_nested_constants: true
     )
+
+    stub_const('Hackney::Tenancy::AddActionDiaryEntry', dummy_action_diary_usecase)
+    allow(dummy_action_diary_usecase).to receive(:new).and_return(dummy_action_diary_usecase)
+    allow(dummy_action_diary_usecase).to receive(:execute)
   end
 
   let(:expeted_templates) do
@@ -42,6 +50,7 @@ describe MessagesController, type: :controller do
 
   it 'sends an sms' do
     expect_any_instance_of(Hackney::Income::SendSms).to receive(:execute).with(
+      user_id: sms_params.fetch(:user_id),
       tenancy_ref: sms_params.fetch(:tenancy_ref),
       template_id: sms_params.fetch(:template_id),
       phone_number: sms_params.fetch(:phone_number),
@@ -56,6 +65,7 @@ describe MessagesController, type: :controller do
 
   it 'sends an email' do
     expect_any_instance_of(Hackney::Income::SendEmail).to receive(:execute).with(
+      user_id: email_params.fetch(:user_id),
       tenancy_ref: email_params.fetch(:tenancy_ref),
       template_id: email_params.fetch(:template_id),
       recipient: email_params.fetch(:email_address),

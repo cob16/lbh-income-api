@@ -3,11 +3,11 @@ require File.expand_path(File.join(File.dirname(__FILE__), '..', 'config', 'envi
 require 'delayed/command'
 require 'securerandom'
 
-# this stops workers running other dockerer containers from picking up the same job,
+# this stops workers running other docker containers from picking up the same job,
 # however jobs left locked on SIGKILL will be ignored for 4 hours
 uuid_prefix = '--prefix=' + SecureRandom.uuid
 
-queue = '--pool=uh_sync_cases:2'
+queue = '--pool=uh_sync_cases:1'
 fixed_params = [queue, uuid_prefix]
 
 puts fixed_params + ARGV
