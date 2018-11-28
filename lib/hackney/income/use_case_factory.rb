@@ -47,7 +47,10 @@ module Hackney
       end
 
       def set_tenancy_paused_status
-        Hackney::Income::SetTenancyPausedStatus.new(gateway: sql_pause_tenancy_gateway)
+        Hackney::Income::SetTenancyPausedStatus.new(
+          gateway: sql_pause_tenancy_gateway,
+          add_action_diary_usecase: add_action_diary
+        )
       end
 
       def sync_case_priority
