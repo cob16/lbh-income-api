@@ -17,7 +17,7 @@ module Hackney
         # @add_action_diary_usecase.execute(
         #   user_id: user_id,
         #   tenancy_ref: tenancy_ref,
-        #   action_code: Hackney::Tenancy::ActionCodes::SMS_ACTION_CODE,
+        #   action_code: Hackney::Tenancy::ActionCodes::MANUAL_SMS_ACTION_CODE,
         #   action_balance: nil, # TODO: this should not be required
         #   comment: "An SMS has been sent to '#{phone_number}' with template_id: #{template_id}"
         # )
