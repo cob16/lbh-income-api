@@ -51,6 +51,9 @@ module Hackney
       end
 
       def sync_case_priority
+        ActiveSupport::Deprecation.warn(
+          "SyncCasePriorityJob is deprecated - use external scheduler via 'rake income:sync:enqueue'"
+          )
         Hackney::Income::SyncCasePriority.new(
           prioritisation_gateway: prioritisation_gateway,
           stored_tenancies_gateway: stored_tenancies_gateway,
