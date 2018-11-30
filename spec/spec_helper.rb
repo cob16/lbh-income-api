@@ -1,3 +1,8 @@
+ENV['RAILS_ENV'] = 'test'
+
+ENV['TENANCY_API_HOST'] = 'example.com'
+ENV['TENANCY_API_KEY'] = '1234'
+
 require 'support/faker'
 require 'support/tenancy_helper'
 
