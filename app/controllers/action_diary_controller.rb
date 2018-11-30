@@ -3,9 +3,16 @@ class ActionDiaryController < ApplicationController
 
   def create
     begin
-      income_use_case_factory.add_action_diary.execute(action_diary_params.to_h)
+      income_use_case_factory.add_action_diary.execute(
+        tenancy_ref: action_diary_params.fetch(:tenancy_ref),
+        action_code: action_diary_params.fetch(:action_code),
+        action_balance: action_diary_params.fetch(:action_balance),
+        comment: action_diary_params.fetch(:comment),
+        user_id: action_diary_params.fetch(:user_id)
+      )
     rescue ArgumentError => e
-      render(json: { status: 'error', code: 422, message: e.message }, status: :unprocessable_entity) && (return)
+      render(json: { status: 'error', code: 422, message: e.message }, status: :unprocessable_entity)
+      return
     end
     head(:no_content)
   end

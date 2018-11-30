@@ -27,7 +27,7 @@ describe Hackney::Tenancy::Gateway::ActionDiaryGateway do
       )
 
       assert_requested(
-        :post, host + '/tenancies/arrears-action-diary',
+        :post, host + '/api/v2/tenancies/arrears-action-diary',
         headers: { API_HEADER_NAME => key },
         body: {
           tenancyAgreementRef: tenancy_ref,
@@ -47,7 +47,7 @@ describe Hackney::Tenancy::Gateway::ActionDiaryGateway do
                            username: username)
 
       assert_requested(
-        :post, host + '/tenancies/arrears-action-diary',
+        :post, host + '/api/v2/tenancies/arrears-action-diary',
         headers: { API_HEADER_NAME => key },
         body: {
           tenancyAgreementRef: tenancy_ref,
@@ -75,7 +75,7 @@ describe Hackney::Tenancy::Gateway::ActionDiaryGateway do
           comment: comment,
           username: username
         )
-      }.to raise_error(Hackney::Tenancy::TenancyApiException)
+      }.to raise_error(Hackney::Tenancy::Exceptions::TenancyApiException)
     end
   end
 end
