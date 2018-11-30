@@ -9,16 +9,22 @@ describe Hackney::Tenancy::Gateway::ActionDiaryGateway do
   let(:action_code) { Faker::Internet.slug }
   let(:comment) { Faker::Lorem.paragraph }
 
-  API_HEADER_NAME = 'x-api-key'.freeze
+  let(:required_headers) do
+    {
+      'X-Api-Key' => key,
+      'Content-Type': 'application/json',
+      'Accept': 'application/json'
+    }
+  end
 
   subject { described_class.new(host: host, api_key: key) }
 
   context 'when creating an action diary entry' do
     before do
-      stub_request(:post, /#{host}/).with(headers: { API_HEADER_NAME => key }).to_return(status: 200)
+      stub_request(:post, /#{host}/).with(headers: required_headers).to_return(status: 200)
     end
 
-    it 'shoud create an system entry' do
+    it 'should create an system entry' do
       subject.create_entry(
         tenancy_ref: tenancy_ref,
         action_code: action_code,
@@ -28,7 +34,7 @@ describe Hackney::Tenancy::Gateway::ActionDiaryGateway do
 
       assert_requested(
         :post, host + '/api/v2/tenancies/arrears-action-diary',
-        headers: { API_HEADER_NAME => key },
+        headers: required_headers,
         body: {
           tenancyAgreementRef: tenancy_ref,
           actionCode: action_code,
@@ -39,7 +45,7 @@ describe Hackney::Tenancy::Gateway::ActionDiaryGateway do
       )
     end
 
-    it 'shoud create a entry with user user if username supplyed' do
+    it 'should create a entry with user user if username supplied' do
       subject.create_entry(tenancy_ref: tenancy_ref,
                            action_code: action_code,
                            action_balance: action_balance,
@@ -48,7 +54,7 @@ describe Hackney::Tenancy::Gateway::ActionDiaryGateway do
 
       assert_requested(
         :post, host + '/api/v2/tenancies/arrears-action-diary',
-        headers: { API_HEADER_NAME => key },
+        headers: required_headers,
         body: {
           tenancyAgreementRef: tenancy_ref,
           actionCode: action_code,
@@ -63,7 +69,7 @@ describe Hackney::Tenancy::Gateway::ActionDiaryGateway do
 
   context 'when tenancy api returns an error' do
     before do
-      stub_request(:post, /#{host}/).with(headers: { API_HEADER_NAME => key }).to_return(status: 500)
+      stub_request(:post, /#{host}/).with(headers: required_headers).to_return(status: 500)
     end
 
     it 'an exception should be thrown' do
