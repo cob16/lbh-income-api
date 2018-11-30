@@ -11,7 +11,11 @@ module Hackney
         def initialize(host:, api_key:)
           self.class.base_uri host
           @options = {
-            headers: { 'x-api-key': api_key }
+            headers: {
+              'X-Api-Key': api_key,
+              'Content-Type': 'application/json',
+              'Accept': 'application/json'
+            }
           }
         end
 
