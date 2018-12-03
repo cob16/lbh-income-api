@@ -4,7 +4,6 @@ describe Hackney::Tenancy::Gateway::ActionDiaryGateway do
   let(:host) { Faker::Internet.url('example.com') }
   let(:key) { SecureRandom.uuid }
   let(:tenancy_ref) { Faker::Lorem.characters(8) }
-  let(:action_balance) { Faker::Commerce.price }
   let(:username) { Faker::Name.name }
   let(:action_code) { Faker::Internet.slug }
   let(:comment) { Faker::Lorem.paragraph }
@@ -28,7 +27,6 @@ describe Hackney::Tenancy::Gateway::ActionDiaryGateway do
       subject.create_entry(
         tenancy_ref: tenancy_ref,
         action_code: action_code,
-        action_balance: action_balance,
         comment: comment
       )
 
@@ -38,7 +36,6 @@ describe Hackney::Tenancy::Gateway::ActionDiaryGateway do
         body: {
           tenancyAgreementRef: tenancy_ref,
           actionCode: action_code,
-          actionBalance: action_balance,
           comment: comment
         }.to_json,
         times: 1
@@ -48,7 +45,6 @@ describe Hackney::Tenancy::Gateway::ActionDiaryGateway do
     it 'should create a entry with user user if username supplied' do
       subject.create_entry(tenancy_ref: tenancy_ref,
                            action_code: action_code,
-                           action_balance: action_balance,
                            comment: comment,
                            username: username)
 
@@ -58,7 +54,6 @@ describe Hackney::Tenancy::Gateway::ActionDiaryGateway do
         body: {
           tenancyAgreementRef: tenancy_ref,
           actionCode: action_code,
-          actionBalance: action_balance,
           comment: comment,
           username: username
         }.to_json,
@@ -77,7 +72,6 @@ describe Hackney::Tenancy::Gateway::ActionDiaryGateway do
         subject.create_entry(
           tenancy_ref: tenancy_ref,
           action_code: action_code,
-          action_balance: action_balance,
           comment: comment,
           username: username
         )

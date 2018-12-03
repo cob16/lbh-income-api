@@ -18,7 +18,6 @@ module Hackney
           user_id: user_id,
           tenancy_ref: tenancy_ref,
           action_code: action_code,
-          action_balance: nil, # TODO: this should not be required
           comment: "#{pause_reason}: Paused to #{until_date}. #{pause_comment}"
         )
       end

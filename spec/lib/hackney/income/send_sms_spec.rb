@@ -73,7 +73,6 @@ describe Hackney::Income::SendSms do
         user_id: user_id,
         tenancy_ref: tenancy.tenancy_ref,
         action_code: 'GMS',
-        action_balance: nil,
         comment: "An SMS has been sent to '#{phone_number}' with template_id: #{template_id}"
       )
       .once
