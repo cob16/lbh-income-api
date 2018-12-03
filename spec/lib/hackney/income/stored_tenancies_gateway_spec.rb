@@ -164,13 +164,15 @@ describe Hackney::Income::StoredTenanciesGateway do
 
     context 'and the user is assigned multiple tenancies' do
       let(:multiple_attributes) do
-        Array.new(Faker::Number.number(2).to_i) do
-          {
+        multiple_attributes = []
+        Faker::Number.number(1).to_i.times do
+          multiple_attributes.append(
             tenancy_ref: Faker::Internet.slug,
             priority_band: Faker::Internet.slug,
             priority_score: Faker::Number.number(5).to_i
-          }
+          )
         end
+        multiple_attributes
       end
 
       context 'and the tenancies exist' do
