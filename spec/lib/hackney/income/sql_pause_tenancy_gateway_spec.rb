@@ -2,6 +2,8 @@ require 'rails_helper'
 
 describe Hackney::Income::SqlPauseTenancyGateway do
   let(:tenancy_1) { create_tenancy_model }
+  let(:pause_reason) { Faker::Lorem.sentence }
+  let(:pause_comment) { Faker::Lorem.paragraph }
   let(:future_date) { Faker::Time.forward(23).iso8601 }
   let(:invalid_string) { SecureRandom.uuid }
 
@@ -14,7 +16,14 @@ describe Hackney::Income::SqlPauseTenancyGateway do
   context 'set pause status' do
     context 'when the tenancy does not exist' do
       it 'should raise an exception containing the tenancy ref' do
-        expect { subject.set_paused_until(tenancy_ref: invalid_string, until_date: future_date) }
+        expect do
+          subject.set_paused_until(
+            tenancy_ref: invalid_string,
+            until_date: future_date,
+            pause_reason: pause_reason,
+            pause_comment: pause_comment
+          )
+        end
           .to raise_error
           .with_message(/#{invalid_string}/)
       end
@@ -22,7 +31,14 @@ describe Hackney::Income::SqlPauseTenancyGateway do
 
     context 'when the date given can not be parsed' do
       it 'should raise an exception containing date error' do
-        expect { subject.set_paused_until(tenancy_ref: tenancy_1.tenancy_ref, until_date: invalid_string) }
+        expect do
+          subject.set_paused_until(
+            tenancy_ref: tenancy_1.tenancy_ref,
+            until_date: invalid_string,
+            pause_reason: pause_reason,
+            pause_comment: pause_comment
+          )
+        end
           .to raise_error
           .with_message(/#{invalid_string}/)
       end
@@ -33,7 +49,12 @@ describe Hackney::Income::SqlPauseTenancyGateway do
     end
 
     it 'should update with the given an unpause date' do
-      subject.set_paused_until(tenancy_ref: tenancy_1.tenancy_ref, until_date: future_date)
+      subject.set_paused_until(
+        tenancy_ref: tenancy_1.tenancy_ref,
+        until_date: future_date,
+        pause_reason: pause_reason,
+        pause_comment: pause_comment
+      )
 
       expect(Hackney::Income::Models::Tenancy.find_by(tenancy_ref: tenancy_1.tenancy_ref).paused?).to be(true)
     end
