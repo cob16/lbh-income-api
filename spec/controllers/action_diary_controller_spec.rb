@@ -20,7 +20,7 @@ describe ActionDiaryController, type: :controller do
     allow(use_case_double).to receive(:new).and_return(use_case_double)
   end
 
-  it 'should be acessable' do
+  it 'should be accessible' do
     assert_generates '/api/v1/tenancies/1234/action_diary', controller: 'action_diary', action: 'create', tenancy_ref: 1234
   end
 
@@ -44,14 +44,14 @@ describe ActionDiaryController, type: :controller do
   context 'when receiving a user id that does not exist' do
     it 'should return a 422 error' do
       expect(use_case_double).to receive(:execute)
-        .and_raise(ArgumentError.new('user_id supplyed does not exist'))
+        .and_raise(ArgumentError.new('user_id supplied does not exist'))
         .once
 
       patch :create, params: action_diary_params
 
       expect(response.status).to eq(422)
       json = JSON.parse(response.body, symbolize_names: true)
-      expect(json).to eq(code: 422, message: 'user_id supplyed does not exist', status: 'error')
+      expect(json).to eq(code: 422, message: 'user_id supplied does not exist', status: 'error')
     end
   end
 end

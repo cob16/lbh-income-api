@@ -11,7 +11,11 @@ module Hackney
         def initialize(host:, api_key:)
           self.class.base_uri host
           @options = {
-            headers: { 'x-api-key': api_key }
+            headers: {
+              'X-Api-Key': api_key,
+              'Content-Type': 'application/json',
+              'Accept': 'application/json'
+            }
           }
         end
 
@@ -25,9 +29,9 @@ module Hackney
           }
           body[:username] = username unless username.nil?
 
-          request = self.class.post('/tenancies/arrears-action-diary', @options.merge(body: body.to_json))
-          raise Hackney::Tenancy::TenancyApiException unless request.success?
-          request
+          responce = self.class.post('/api/v2/tenancies/arrears-action-diary', @options.merge(body: body.to_json))
+          raise Hackney::Tenancy::Exceptions::TenancyApiException, responce unless responce.success?
+          responce
         end
       end
     end

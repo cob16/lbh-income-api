@@ -1,6 +1,8 @@
 module Hackney
   module Tenancy
-    class TenancyApiException < StandardError
+    module Exceptions
+      class TenancyApiException < StandardError
+      end
     end
   end
 end

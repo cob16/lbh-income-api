@@ -14,14 +14,14 @@ module Hackney
         def get_tenancies_by_refs(refs)
           return [] if refs.empty?
 
-          uri = URI("#{@host}/tenancies?#{params_list('tenancy_refs', refs)}")
+          uri = URI("#{@host}/api/v1/tenancies?#{params_list('tenancy_refs', refs)}")
 
           req = Net::HTTP::Get.new(uri)
           req['X-Api-Key'] = @key
 
           res = Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) { |http| http.request(req) }
 
-          raise Hackney::Tenancy::TenancyApiException unless res.is_a? Net::HTTPSuccess
+          raise Hackney::Tenancy::Exceptions::TenancyApiException unless res.is_a? Net::HTTPSuccess
 
           body = JSON.parse(res.body)
 
