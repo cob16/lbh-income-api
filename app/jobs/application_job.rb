@@ -11,7 +11,7 @@ class ApplicationJob < ActiveJob::Base
     def enqueue_next
       ActiveSupport::Deprecation.warn(
         "enqueue_next is deprecated - use external scheduler via 'rake income:sync:enqueue'"
-        )
+      )
 
       return if already_queued_for_next_run?
 
