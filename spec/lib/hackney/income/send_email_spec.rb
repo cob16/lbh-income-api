@@ -55,7 +55,7 @@ describe Hackney::Income::SendEmail do
       )
     end
 
-    xit 'should call action_diary_usecase' do
+    it 'should call action_diary_usecase' do
       expect(add_action_diary_usecase).to receive(:execute)
       .with(
         user_id: user_id,

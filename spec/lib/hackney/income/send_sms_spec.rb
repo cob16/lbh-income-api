@@ -67,7 +67,7 @@ describe Hackney::Income::SendSms do
       )
     end
 
-    xit 'should write a entry to the action diary' do
+    it 'should write a entry to the action diary' do
       expect(add_action_diary_usecase).to receive(:execute)
       .with(
         user_id: user_id,
