@@ -5,7 +5,9 @@ git_source(:github) do |repo_name|
   "https://github.com/#{repo_name}.git"
 end
 
-gem 'loofah', '>= 2.2.3' # pinning actioncable dependency
+# security patch pins min versions
+gem 'loofah', '>= 2.2.3'
+gem 'rack', '>= 2.0.6'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '~> 5.1.6'
