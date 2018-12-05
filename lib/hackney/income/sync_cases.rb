@@ -7,6 +7,7 @@ module Hackney
       end
 
       def execute
+        Rails.logger.info('preparing to sync tenancies_in_arrears ')
         tenancies = @uh_tenancies_gateway.tenancies_in_arrears
         Rails.logger.info("About to schedule #{tenancies.length} case priority sync jobs")
         tenancies.each do |tenancy_ref|
