@@ -7,7 +7,6 @@ module Hackney
       end
 
       def execute(user_id:, tenancy_ref:, template_id:, phone_number:, reference:, variables:)
-        # something will be done with the tenancy_ref here later
         @notification_gateway.send_text_message(
           phone_number: phone_number,
           template_id: template_id,

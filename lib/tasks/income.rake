@@ -11,9 +11,9 @@ namespace :income do
   end
 
   desc 'Manual task, list all tenants that are eligible for message'
-  task :show_tenancies_for_message_1 do |_task|
+  task :show_green_in_arrears do |_task|
     use_case_factory = Hackney::Income::UseCaseFactory.new
-    tenancy_refs = use_case_factory.show_tenancies_for_message_1.execute.pluck(:tenancy_ref)
+    tenancy_refs = use_case_factory.show_green_in_arrears.execute.pluck(:tenancy_ref)
     puts '---'
     tenancy_refs.each do |ref|
       puts ref
