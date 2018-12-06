@@ -19,13 +19,11 @@ module Hackney
           }
         end
 
-        def create_entry(tenancy_ref:, action_code:, action_balance:, comment:, username: nil)
+        def create_entry(tenancy_ref:, action_code:, comment:, username: nil)
           body = {
             tenancyAgreementRef: tenancy_ref,
             actionCode: action_code,
-            actionBalance: action_balance,
             comment: comment
-            # "companyCode": 'string',
           }
           body[:username] = username unless username.nil?
 

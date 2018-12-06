@@ -67,13 +67,12 @@ describe Hackney::Income::SendSms do
       )
     end
 
-    xit 'should write a entry to the action diary' do
+    it 'should write a entry to the action diary' do
       expect(add_action_diary_usecase).to receive(:execute)
       .with(
         user_id: user_id,
         tenancy_ref: tenancy.tenancy_ref,
         action_code: 'GMS',
-        action_balance: nil,
         comment: "An SMS has been sent to '#{phone_number}' with template_id: #{template_id}"
       )
       .once

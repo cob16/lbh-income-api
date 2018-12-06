@@ -55,13 +55,12 @@ describe Hackney::Income::SendEmail do
       )
     end
 
-    xit 'should call action_diary_usecase' do
+    it 'should call action_diary_usecase' do
       expect(add_action_diary_usecase).to receive(:execute)
       .with(
         user_id: user_id,
         tenancy_ref: tenancy_1.tenancy_ref,
         action_code: 'GME',
-        action_balance: nil,
         comment: "An email has been sent to '#{recipient}' with template id '#{template_id}'"
       )
       .once

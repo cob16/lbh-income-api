@@ -7,7 +7,6 @@ describe ActionDiaryController, type: :controller do
     {
       user_id: Faker::Number.number(2).to_i,
       tenancy_ref: Faker::Lorem.characters(8),
-      action_balance: Faker::Commerce.price,
       action_code: Faker::Internet.slug,
       comment: Faker::Lorem.paragraph
     }

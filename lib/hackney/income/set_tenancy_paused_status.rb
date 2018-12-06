@@ -13,7 +13,6 @@ module Hackney
           pause_reason: pause_reason,
           pause_comment: pause_comment
         )
-
         @add_action_diary_usecase.execute(
           user_id: user_id,
           tenancy_ref: tenancy_ref,
