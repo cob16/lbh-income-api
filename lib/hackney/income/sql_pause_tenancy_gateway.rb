@@ -14,6 +14,12 @@ module Hackney
       rescue ActiveRecord::RecordNotSaved
         raise "Unable to pause tenancy: #{tenancy_ref} - something went wrong while updating."
       end
+
+      def get_tenancy_pause(tenancy_ref:)
+        tenancy = Hackney::Income::Models::Tenancy.find_by(tenancy_ref: tenancy_ref)
+        raise "Unable to pause tenancy: #{tenancy_ref} - tenancy not found." if tenancy.nil?
+        tenancy
+      end
     end
   end
 end

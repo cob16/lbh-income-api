@@ -69,6 +69,18 @@ describe TenanciesController, type: :controller do
     end
   end
 
+  context 'when receiving valid params' do
+    it 'should pass the correct params to the use case' do
+      expect_any_instance_of(Hackney::Income::GetTenancyPause).to receive(:execute).with(
+        tenancy_ref: paused_parms.fetch(:tenancy_ref),
+      ).and_call_original
+
+      get :pause, params: {tenancy_ref: paused_parms.fetch(:tenancy_ref)}
+
+      expect(response.status).to eq(200)
+    end
+  end
+
   context 'when receiving a request missing params' do
     it 'should return a 400 - bad request' do
       assert_incomplete_params(
@@ -86,4 +98,5 @@ end
 
 class StubSqlPauseTenancyGateway
   def set_paused_until(tenancy_ref:, until_date:, pause_reason:, pause_comment:); end
+  def get_tenancy_pause(tenancy_ref:); end
 end

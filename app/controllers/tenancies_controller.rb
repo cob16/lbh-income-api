@@ -11,4 +11,10 @@ class TenanciesController < ApplicationController
 
     head(:no_content)
   end
+
+  def pause
+    render json: income_use_case_factory.get_tenancy_pause.execute(
+      tenancy_ref: params.fetch(:tenancy_ref)
+    )
+  end
 end

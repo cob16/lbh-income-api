@@ -59,4 +59,14 @@ describe Hackney::Income::SqlPauseTenancyGateway do
       expect(Hackney::Income::Models::Tenancy.find_by(tenancy_ref: tenancy_1.tenancy_ref).paused?).to be(true)
     end
   end
+
+  context 'get tenancy pause' do
+    it 'should get tenancy pause' do
+      tenancy_pause = subject.get_tenancy_pause(
+        tenancy_ref: tenancy_1.tenancy_ref,
+      )
+
+      expect(tenancy_pause).to eq(tenancy_1)
+    end
+  end
 end
