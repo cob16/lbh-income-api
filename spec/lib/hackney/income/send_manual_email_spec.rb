@@ -1,45 +1,33 @@
 require 'rails_helper'
 
-describe Hackney::Income::SendSms do
-  let(:tenancy) { create_tenancy_model }
+describe Hackney::Income::SendManualEmail do
   let(:notification_gateway) { Hackney::Income::StubNotificationsGateway.new }
   let(:add_action_diary_usecase) { double(Hackney::Tenancy::AddActionDiaryEntry) }
+  let(:send_email) { described_class.new(notification_gateway: notification_gateway, add_action_diary_usecase: add_action_diary_usecase) }
+  let(:tenancy_1) { create_tenancy_model }
 
-  before do
-    tenancy.save
-  end
-
-  let(:send_sms) do
-    described_class.new(
-      notification_gateway: notification_gateway,
-      add_action_diary_usecase: add_action_diary_usecase
-    )
-  end
-
-  context 'when sending an SMS manually' do
+  context 'when sending an email manually' do
     let(:template_id) { Faker::Superhero.power }
-    let(:phone_number) { Faker::Number.leading_zero_number(11) }
+    let(:recipient) { Faker::Internet.email }
     let(:reference) { Faker::Superhero.prefix }
     let(:first_name) { Faker::Superhero.name }
     let(:user_id) { Faker::Number.number(2) }
 
-    before do
-      allow(add_action_diary_usecase).to receive(:execute)
-    end
-
     subject do
-      send_sms.execute(
+      send_email.execute(
         user_id: user_id,
-        tenancy_ref: tenancy.tenancy_ref,
+        tenancy_ref: tenancy_1.tenancy_ref,
+        recipient: recipient,
         template_id: template_id,
-        phone_number: phone_number,
         reference: reference,
         variables: { 'first name' => first_name }
       )
-      notification_gateway.last_text_message
+      notification_gateway.last_email
     end
 
-    alias_method :send_sms_message, :subject
+    before do
+      allow(add_action_diary_usecase).to receive(:execute)
+    end
 
     it 'should map the tenancy to a set of variables' do
       expect(subject).to include(
@@ -49,9 +37,9 @@ describe Hackney::Income::SendSms do
       )
     end
 
-    it 'should pass through the phone number' do
+    it 'should pass through email address from the primary contact' do
       expect(subject).to include(
-        phone_number: phone_number
+        recipient: recipient
       )
     end
 
@@ -67,13 +55,13 @@ describe Hackney::Income::SendSms do
       )
     end
 
-    it 'should write a entry to the action diary' do
+    it 'should call action_diary_usecase' do
       expect(add_action_diary_usecase).to receive(:execute)
       .with(
         user_id: user_id,
-        tenancy_ref: tenancy.tenancy_ref,
-        action_code: 'GMS',
-        comment: "An SMS has been sent to '#{phone_number}' with template_id: #{template_id}"
+        tenancy_ref: tenancy_1.tenancy_ref,
+        action_code: 'GME',
+        comment: "An email has been sent to '#{recipient}' with template id '#{template_id}'"
       )
       .once
 

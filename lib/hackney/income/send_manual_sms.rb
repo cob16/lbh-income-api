@@ -1,6 +1,6 @@
 module Hackney
   module Income
-    class SendSms
+    class SendManualSms
       def initialize(notification_gateway:, add_action_diary_usecase:)
         @notification_gateway = notification_gateway
         @add_action_diary_usecase = add_action_diary_usecase

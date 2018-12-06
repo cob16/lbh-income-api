@@ -1,6 +1,6 @@
 module Hackney
   module Income
-    class SendEmail
+    class SendManualEmail
       def initialize(notification_gateway:, add_action_diary_usecase:)
         # @tenancy_gateway = tenancy_gateway
         @notification_gateway = notification_gateway
@@ -8,8 +8,6 @@ module Hackney
       end
 
       def execute(user_id:, tenancy_ref:, recipient:, template_id:, reference:, variables:)
-        # tenancy = @tenancy_gateway.get_tenancy(tenancy_ref: tenancy_ref)
-        # FIXME: currently not getting email addresses or saving!
         @notification_gateway.send_email(
           recipient: recipient,
           template_id: template_id,
