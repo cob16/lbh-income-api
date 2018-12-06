@@ -72,10 +72,10 @@ describe TenanciesController, type: :controller do
   context 'when receiving valid params' do
     it 'should pass the correct params to the use case' do
       expect_any_instance_of(Hackney::Income::GetTenancyPause).to receive(:execute).with(
-        tenancy_ref: paused_parms.fetch(:tenancy_ref),
+        tenancy_ref: paused_parms.fetch(:tenancy_ref)
       ).and_call_original
 
-      get :pause, params: {tenancy_ref: paused_parms.fetch(:tenancy_ref)}
+      get :pause, params: { tenancy_ref: paused_parms.fetch(:tenancy_ref) }
 
       expect(response.status).to eq(200)
     end
@@ -98,5 +98,6 @@ end
 
 class StubSqlPauseTenancyGateway
   def set_paused_until(tenancy_ref:, until_date:, pause_reason:, pause_comment:); end
+
   def get_tenancy_pause(tenancy_ref:); end
 end
