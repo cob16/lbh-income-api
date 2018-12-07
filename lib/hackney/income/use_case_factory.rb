@@ -19,13 +19,6 @@ module Hackney
         Hackney::Income::FindOrCreateUser.new(users_gateway: users_gateway)
       end
 
-      def send_sms
-        Hackney::Income::SendManualSms.new(
-          notification_gateway: notifications_gateway,
-          add_action_diary_usecase: add_action_diary
-        )
-      end
-
       def add_action_diary
         Hackney::Tenancy::AddActionDiaryEntry.new(
           action_diary_gateway: action_diary_gateway,
@@ -33,11 +26,26 @@ module Hackney
         )
       end
 
-      def send_email
+      def send_manual_sms
+        Hackney::Income::SendManualSms.new(
+          notification_gateway: notifications_gateway,
+          add_action_diary_usecase: add_action_diary
+        )
+      end
+
+      def send_manual_email
         Hackney::Income::SendManualEmail.new(
           notification_gateway: notifications_gateway,
           add_action_diary_usecase: add_action_diary
         )
+      end
+
+      def send_automated_sms
+        Hackney::Income::SendAutomatedSms.new(notification_gateway: notifications_gateway)
+      end
+
+      def send_automated_email
+        Hackney::Income::SendAutomatedEmail.new(notification_gateway: notifications_gateway)
       end
 
       def get_templates
@@ -85,11 +93,11 @@ module Hackney
 
       def notifications_gateway
         Hackney::Income::GovNotifyGateway.new(
-          sms_sender_id: ENV['GOV_NOTIFY_SENDER_ID'],
-          api_key: ENV['GOV_NOTIFY_API_KEY'],
-          send_live_communications: ENV['SEND_LIVE_COMMUNICATIONS'],
-          test_phone_number: ENV['TEST_PHONE_NUMBER'],
-          test_email_address:  ENV['TEST_EMAIL_ADDRESS']
+          sms_sender_id: Rails.application.config.gov_notify_sms_sender_id,
+          api_key: Rails.application.config.gov_notify_api_key,
+          send_live_communications: Rails.application.config.gov_notify_send_live,
+          test_phone_number: Rails.application.config.gov_notify_test_phone_number,
+          test_email_address: Rails.application.config.gov_notify_test_email_address
         )
       end
 

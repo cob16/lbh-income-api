@@ -2,6 +2,7 @@ require 'rails_helper'
 
 describe Hackney::Income::GovNotifyGateway do
   let(:sms_sender_id) { 'cool_sender_id' }
+  let(:mock_gov_notify) { double(Notifications::Client) }
   let(:api_key) { 'FAKE_API_KEY-53822c9d-b17d-442d-ace7-565d08215d20-53822c9d-b17d-442d-ace7-565d08215d20' }
   let(:send_live_communications) { true }
   let(:test_phone_number) { Faker::PhoneNumber.phone_number }
@@ -17,18 +18,17 @@ describe Hackney::Income::GovNotifyGateway do
     )
   end
 
-  context 'when initializing the gateway' do
-    it 'should authenticate with Gov Notify' do
-      expect(Notifications::Client).to receive(:new).with(api_key)
-      subject
-    end
+  before do
+    allow(Notifications::Client).to receive(:new)
+      .with(api_key)
+      .and_return(mock_gov_notify)
   end
 
   context 'when sending a text message to a live tenant' do
     let(:phone_number) { Faker::PhoneNumber.phone_number }
 
     it 'should send the message to the live phone number' do
-      expect_any_instance_of(Notifications::Client).to receive(:send_sms).with(
+      expect(mock_gov_notify).to receive(:send_sms).with(
         phone_number: phone_number,
         template_id: 'sweet-test-template-id',
         personalisation: {
@@ -55,7 +55,7 @@ describe Hackney::Income::GovNotifyGateway do
     let(:send_live_communications) { false }
 
     it 'should send through Gov Notify' do
-      expect_any_instance_of(Notifications::Client).to receive(:send_sms).with(
+      expect(mock_gov_notify).to receive(:send_sms).with(
         phone_number: test_phone_number,
         template_id: 'sweet-test-template-id',
         personalisation: {
@@ -82,7 +82,7 @@ describe Hackney::Income::GovNotifyGateway do
     let(:template_id) { Faker::IDNumber.valid }
 
     it 'should return a list of templates' do
-      expect_any_instance_of(Notifications::Client).to receive(:get_all_templates)
+      expect(mock_gov_notify).to receive(:get_all_templates)
         .with(type: 'sms')
         .and_return(
           Notifications::Client::TemplateCollection.new('templates' => [{
@@ -110,7 +110,7 @@ describe Hackney::Income::GovNotifyGateway do
     let(:send_live_communications) { false }
 
     it 'should send through Gov Notify' do
-      expect_any_instance_of(Notifications::Client).to receive(:send_email).with(
+      expect(mock_gov_notify).to receive(:send_email).with(
         email_address: test_email,
         template_id: 'sweet-test-template-id',
         personalisation: {
@@ -136,7 +136,7 @@ describe Hackney::Income::GovNotifyGateway do
     let(:template_id) { Faker::IDNumber.valid }
 
     it 'should return a list of templates' do
-      expect_any_instance_of(Notifications::Client).to receive(:get_all_templates)
+      expect(mock_gov_notify).to receive(:get_all_templates)
         .with(type: 'email')
         .and_return(
           Notifications::Client::TemplateCollection.new('templates' => [{

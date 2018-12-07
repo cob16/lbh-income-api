@@ -38,5 +38,10 @@ module App
     config.active_job.queue_adapter = :delayed_job
 
     config.run_tenancy_sync_jobs = feature_toggle('ENABLE_TENANCY_SYNC')
+
+    config.gov_notify_send_live = feature_toggle('SEND_LIVE_COMMUNICATIONS')
+    config.gov_notify_test_phone_number = ENV.fetch('TEST_PHONE_NUMBER', '123456789')
+    config.gov_notify_sms_sender_id = ENV.fetch('GOV_NOTIFY_SENDER_ID', SecureRandom.uuid)
+    config.gov_notify_test_email_address = ENV.fetch('TEST_EMAIL_ADDRESS', 'test@example.com')
   end
 end
