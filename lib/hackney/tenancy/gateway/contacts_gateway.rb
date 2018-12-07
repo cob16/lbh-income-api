@@ -27,21 +27,22 @@ module Hackney
 
         def json_to_domain_contact_array(json_string, responsible_only: true)
           json = JSON.parse(json_string, symbolize_names: true)
-          json = json.dig(:data, :contacts)
-          json = json.select { |contact| contact[:responsible] } if responsible_only
+          contacts_json = json.dig(:data, :contacts)
+          return [] if contacts_json.nil? || contacts_json.empty?
 
-          contacts = []
-          json.each do |contact|
+          contacts_json = contacts_json.select { |contact| contact[:responsible] } if responsible_only
+
+          contacts_json.each_with_object([]) do |contact, contacts_list|
             phone_numbers = []
-            phone_numbers << contact[:telephone1] unless contact[:telephone1].nil?
-            phone_numbers << contact[:telephone2] unless contact[:telephone2].nil?
-            phone_numbers << contact[:telephone3] unless contact[:telephone3].nil?
-            contacts << Hackney::Income::Domain::Contact.new.tap do |c|
+            phone_numbers << contact[:telephone1] if contact[:telephone1]
+            phone_numbers << contact[:telephone2] if contact[:telephone2]
+            phone_numbers << contact[:telephone3] if contact[:telephone3]
+
+            contacts_list << Hackney::Income::Domain::Contact.new.tap do |c|
               c.phone_numbers = phone_numbers
               c.email = contact[:email]
             end
           end
-          contacts
         end
       end
     end

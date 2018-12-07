@@ -7,7 +7,7 @@ describe Hackney::Tenancy::Gateway::ContactsGateway do
 
   let(:example_return) { generate_example_return }
 
-  context 'when retrieving tenancies' do
+  context 'when retrieving a tenancy with contacts' do
     let(:tenancy_ref) { '123456/09' }
     let(:tenancy_ref_url_encoded) { '123456%2F09' }
 
@@ -41,6 +41,51 @@ describe Hackney::Tenancy::Gateway::ContactsGateway do
 
     it 'should return an email' do
       expect(subject.first.email).to eq(example_return[:data][:contacts].first[:email])
+      expect(WebMock).to have_requested(:get, hostname + "/api/v1/tenancies/#{tenancy_ref_url_encoded}/contacts").once
+    end
+  end
+
+  context 'when retrieving a tenancy without any contacts' do
+    let(:tenancy_ref) { '123456/09' }
+    let(:tenancy_ref_url_encoded) { '123456%2F09' }
+
+    subject { gateway.get_responsible_contacts(tenancy_ref: tenancy_ref) }
+
+    let(:example_return) do
+      {
+        "data": {
+          "contacts": []
+        }
+      }
+    end
+
+    before do
+      stub_request(:get, hostname + "/api/v1/tenancies/#{tenancy_ref_url_encoded}/contacts")
+        .with(headers: { 'x-api-key' => api_key })
+        .to_return(body: example_return.to_json)
+    end
+
+    it 'should return an empty array' do
+      expect(subject).to eq([])
+      expect(WebMock).to have_requested(:get, hostname + "/api/v1/tenancies/#{tenancy_ref_url_encoded}/contacts").once
+    end
+  end
+
+  context 'when retrieving a tenancy causes a timeout' do
+    let(:tenancy_ref) { '123456/09' }
+    let(:tenancy_ref_url_encoded) { '123456%2F09' }
+
+    subject { gateway.get_responsible_contacts(tenancy_ref: tenancy_ref) }
+
+    before do
+      stub_request(:get, hostname + "/api/v1/tenancies/#{tenancy_ref_url_encoded}/contacts")
+        .with(headers: { 'x-api-key' => api_key })
+        .to_return(status: 504)
+    end
+
+    it 'should raise a TenancyApiException' do
+      expect { subject }.to raise_error Hackney::Tenancy::Exceptions::TenancyApiException
+
       expect(WebMock).to have_requested(:get, hostname + "/api/v1/tenancies/#{tenancy_ref_url_encoded}/contacts").once
     end
   end
