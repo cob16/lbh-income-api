@@ -8,7 +8,7 @@ describe Hackney::Income::SendAutomatedMessageToTenancy do
   let(:sms_template_id) { SecureRandom.uuid }
   let(:email_template_id) { SecureRandom.uuid }
   let(:batch_id) { SecureRandom.uuid }
-  let(:variables) { {somthing: 'here', and: 'there'} }
+  let(:variables) { { somthing: 'here', and: 'there' } }
 
   subject do
     described_class.new(

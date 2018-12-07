@@ -6,7 +6,7 @@ module Hackney
       end
 
       def execute(template_id:, phone_number:, reference:, variables:)
-        # todo verify number before sending
+        # TODO: verify number before sending
         @notification_gateway.send_text_message(
           phone_number: phone_number,
           template_id: template_id,
