@@ -1,12 +1,12 @@
 module Hackney
   module Income
-    class ShowTenanciesForMessageOne
+    class ShowTenanciesForCriteriaGreenInArrears
       def initialize(sql_tenancies_for_messages_gateway:)
         @sql_tenancies_for_messages_gateway = sql_tenancies_for_messages_gateway
       end
 
       def execute
-        @sql_tenancies_for_messages_gateway.get_tenancies_for_message_1
+        @sql_tenancies_for_messages_gateway.criteria_for_green_in_arrears
       end
     end
   end

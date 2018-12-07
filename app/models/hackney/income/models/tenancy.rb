@@ -12,7 +12,7 @@ module Hackney
           where('is_paused_until < ? OR is_paused_until is null', Date.today)
         end
 
-        def self.tenancies_for_message_1
+        def self.criteria_for_green_in_arrears
           where(priority_band: 'green')
             .where('days_in_arrears >= ?', 5)
             .where('balance >= ?', 10.00)

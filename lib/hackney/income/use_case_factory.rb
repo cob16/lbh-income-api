@@ -20,7 +20,7 @@ module Hackney
       end
 
       def send_sms
-        Hackney::Income::SendSms.new(
+        Hackney::Income::SendManualSms.new(
           notification_gateway: notifications_gateway,
           add_action_diary_usecase: add_action_diary
         )
@@ -34,7 +34,7 @@ module Hackney
       end
 
       def send_email
-        Hackney::Income::SendEmail.new(
+        Hackney::Income::SendManualEmail.new(
           notification_gateway: notifications_gateway,
           add_action_diary_usecase: add_action_diary
         )
@@ -75,8 +75,8 @@ module Hackney
         Hackney::Income::AssignTenancyToUser.new(user_assignment_gateway: user_assignment_gateway)
       end
 
-      def show_tenancies_for_message_1
-        Hackney::Income::ShowTenanciesForMessageOne.new(
+      def show_green_in_arrears
+        Hackney::Income::ShowTenanciesForCriteriaGreenInArrears.new(
           sql_tenancies_for_messages_gateway: sql_tenancies_for_messages_gateway
         )
       end
