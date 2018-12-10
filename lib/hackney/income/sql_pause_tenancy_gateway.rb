@@ -17,7 +17,10 @@ module Hackney
 
       def get_tenancy_pause(tenancy_ref:)
         tenancy = Hackney::Income::Models::Tenancy.find_by(tenancy_ref: tenancy_ref)
-        raise PauseNotFoundError, "Unable to pause tenancy: #{tenancy_ref} - tenancy not found." if tenancy.nil?
+        if tenancy.nil?
+          Rails.logger.error("Failed to retrieve tenancy pause with tenancy_ref: '#{tenancy_ref}' ")
+          raise PauseNotFoundError, "Unable to pause tenancy: #{tenancy_ref} - tenancy not found."
+        end
         tenancy
       end
 
