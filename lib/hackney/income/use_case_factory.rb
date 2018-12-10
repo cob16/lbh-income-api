@@ -53,6 +53,12 @@ module Hackney
         )
       end
 
+      def get_tenancy_pause
+        Hackney::Income::GetTenancyPause.new(
+          gateway: sql_pause_tenancy_gateway
+        )
+      end
+
       def sync_case_priority
         ActiveSupport::Deprecation.warn(
           "SyncCasePriorityJob is deprecated - use external scheduler via 'rake income:sync:enqueue'"
