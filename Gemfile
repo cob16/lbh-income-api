@@ -35,6 +35,7 @@ gem 'tiny_tds'
 gem 'httparty'
 
 gem 'notifications-ruby-client'
+gem 'phonelib'
 
 gem 'daemons'
 gem 'delayed_job'

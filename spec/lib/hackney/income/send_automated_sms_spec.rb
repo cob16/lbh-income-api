@@ -2,7 +2,7 @@ require 'rails_helper'
 
 describe Hackney::Income::SendAutomatedSms do
   let(:tenancy) { create_tenancy_model }
-  let(:notification_gateway) { Hackney::Income::StubNotificationsGateway.new }
+  let(:notification_gateway) { double(Hackney::Income::GovNotifyGateway) }
 
   before do
     tenancy.save
@@ -16,7 +16,8 @@ describe Hackney::Income::SendAutomatedSms do
 
   context 'when sending an SMS automatically' do
     let(:template_id) { Faker::Superhero.power }
-    let(:phone_number) { Faker::Number.leading_zero_number(11) }
+    let(:phone_number) { '020 8356 3000' }
+    let(:e164_phone_number) { '+442083563000' }
     let(:reference) { Faker::Superhero.prefix }
     let(:first_name) { Faker::Superhero.name }
 
@@ -25,35 +26,38 @@ describe Hackney::Income::SendAutomatedSms do
         template_id: template_id,
         phone_number: phone_number,
         reference: reference,
-        variables: { 'first name' => first_name }
+        variables: { 'first name': first_name }
       )
-      notification_gateway.last_text_message
     end
 
-    it 'should map the tenancy to a set of variables' do
-      expect(subject).to include(
-        variables: include(
-          'first name' => first_name
+    it 'should pass vars to the gateway' do
+      expect(notification_gateway).to receive(:send_text_message)
+        .with(
+          variables: {
+            'first name': first_name
+          },
+          phone_number: e164_phone_number,
+          template_id: template_id,
+          reference: reference
         )
-      )
+      subject
     end
 
-    it 'should pass through the phone number' do
-      expect(subject).to include(
-        phone_number: phone_number
-      )
+    it 'should validate and format a full e164 phone number, assuming local numbers are from uk' do
+      expect(notification_gateway)
+        .to receive(:send_text_message)
+        .with(include(phone_number: e164_phone_number))
+
+      subject
     end
 
-    it 'should pass through the template id' do
-      expect(subject).to include(
-        template_id: template_id
-      )
-    end
+    context 'and when number is invalid' do
+      let(:phone_number) { SecureRandom.uuid }
 
-    it 'should generate a tenant and message representative reference' do
-      expect(subject).to include(
-        reference: reference
-      )
+      it 'should not call gateway and return false' do
+        expect(notification_gateway).not_to receive(:send_text_message)
+        subject
+      end
     end
   end
 end

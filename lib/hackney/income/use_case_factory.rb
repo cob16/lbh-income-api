@@ -139,8 +139,11 @@ module Hackney
         )
       end
 
-      def sql_tenancies_for_messages_gateway
-        Hackney::Income::SqlTenanciesForMessagesGateway.new
+      def contacts_gateway
+        Hackney::Tenancy::Gateway::ContactsGateway.new(
+          host: ENV.fetch('TENANCY_API_HOST'),
+          api_key: ENV.fetch('TENANCY_API_KEY')
+        )
       end
 
       def action_diary_gateway
@@ -148,6 +151,10 @@ module Hackney
           host: ENV.fetch('TENANCY_API_HOST'),
           api_key: ENV.fetch('TENANCY_API_KEY')
         )
+      end
+
+      def sql_tenancies_for_messages_gateway
+        Hackney::Income::SqlTenanciesForMessagesGateway.new
       end
 
       def background_job_gateway
