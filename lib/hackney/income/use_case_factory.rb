@@ -48,6 +48,14 @@ module Hackney
         Hackney::Income::SendAutomatedEmail.new(notification_gateway: notifications_gateway)
       end
 
+      def send_automated_message_to_tenancy
+        SendAutomatedMessageToTenancy.new(
+          automated_sms_usecase: send_automated_sms,
+          automated_email_usecase: send_automated_email,
+          contacts_gateway: contacts_gateway
+        )
+      end
+
       def get_templates
         Hackney::Income::GetTemplates.new(
           notification_gateway: notifications_gateway

@@ -43,5 +43,8 @@ module App
     config.gov_notify_test_phone_number = ENV.fetch('TEST_PHONE_NUMBER', '123456789')
     config.gov_notify_sms_sender_id = ENV.fetch('GOV_NOTIFY_SENDER_ID', SecureRandom.uuid)
     config.gov_notify_test_email_address = ENV.fetch('TEST_EMAIL_ADDRESS', 'test@example.com')
+
+    config.x.green_in_arrears.sms_template_id = ENV.fetch('GREEN_IN_ARREARS_SMS_TEMPLATE_ID', '59cf06bd-9769-4a1c-be1f-4eefac95f824')
+    config.x.green_in_arrears.email_template_id = ENV.fetch('GREEN_IN_ARREARS_EMAIL_TEMPLATE_ID', 'd36cb99b-7e7e-4859-a1d0-d8083d0f0391')
   end
 end

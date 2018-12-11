@@ -18,7 +18,7 @@ module Hackney
           )
         else
           # don't log the phone number to keep our logs free from personal data
-          Rails.logger.warn("Invalid phone number when trying to send SMS for reference: '#{reference}' using template_id: #{template_id}")
+          Rails.logger.warn("Invalid phone number when trying to send SMS for reference: '#{reference}' using template_id: #{template_id}, skipping")
         end
       end
     end
