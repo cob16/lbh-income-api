@@ -77,4 +77,6 @@ Rails.application.configure do
 
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false
+
+  config.x.gov_notify.api_key = ENV.fetch('GOV_NOTIFY_API_KEY')
 end

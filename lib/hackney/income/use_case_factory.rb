@@ -19,13 +19,6 @@ module Hackney
         Hackney::Income::FindOrCreateUser.new(users_gateway: users_gateway)
       end
 
-      def send_sms
-        Hackney::Income::SendManualSms.new(
-          notification_gateway: notifications_gateway,
-          add_action_diary_usecase: add_action_diary
-        )
-      end
-
       def add_action_diary
         Hackney::Tenancy::AddActionDiaryEntry.new(
           action_diary_gateway: action_diary_gateway,
@@ -33,10 +26,33 @@ module Hackney
         )
       end
 
-      def send_email
+      def send_manual_sms
+        Hackney::Income::SendManualSms.new(
+          notification_gateway: notifications_gateway,
+          add_action_diary_usecase: add_action_diary
+        )
+      end
+
+      def send_manual_email
         Hackney::Income::SendManualEmail.new(
           notification_gateway: notifications_gateway,
           add_action_diary_usecase: add_action_diary
+        )
+      end
+
+      def send_automated_sms
+        Hackney::Income::SendAutomatedSms.new(notification_gateway: notifications_gateway)
+      end
+
+      def send_automated_email
+        Hackney::Income::SendAutomatedEmail.new(notification_gateway: notifications_gateway)
+      end
+
+      def send_automated_message_to_tenancy
+        SendAutomatedMessageToTenancy.new(
+          automated_sms_usecase: send_automated_sms,
+          automated_email_usecase: send_automated_email,
+          contacts_gateway: contacts_gateway
         )
       end
 
@@ -50,6 +66,12 @@ module Hackney
         Hackney::Income::SetTenancyPausedStatus.new(
           gateway: sql_pause_tenancy_gateway,
           add_action_diary_usecase: add_action_diary
+        )
+      end
+
+      def get_tenancy_pause
+        Hackney::Income::GetTenancyPause.new(
+          gateway: sql_pause_tenancy_gateway
         )
       end
 
@@ -85,11 +107,11 @@ module Hackney
 
       def notifications_gateway
         Hackney::Income::GovNotifyGateway.new(
-          sms_sender_id: ENV['GOV_NOTIFY_SENDER_ID'],
-          api_key: ENV['GOV_NOTIFY_API_KEY'],
-          send_live_communications: ENV['SEND_LIVE_COMMUNICATIONS'],
-          test_phone_number: ENV['TEST_PHONE_NUMBER'],
-          test_email_address:  ENV['TEST_EMAIL_ADDRESS']
+          sms_sender_id:  Rails.configuration.x.gov_notify.sms_sender_id,
+          api_key: Rails.configuration.x.gov_notify.api_key,
+          send_live_communications: Rails.configuration.x.gov_notify.send_live,
+          test_phone_number: Rails.configuration.x.gov_notify.test_phone_number,
+          test_email_address: Rails.configuration.x.gov_notify.test_email_address
         )
       end
 
@@ -131,8 +153,11 @@ module Hackney
         )
       end
 
-      def sql_tenancies_for_messages_gateway
-        Hackney::Income::SqlTenanciesForMessagesGateway.new
+      def contacts_gateway
+        Hackney::Tenancy::Gateway::ContactsGateway.new(
+          host: ENV.fetch('TENANCY_API_HOST'),
+          api_key: ENV.fetch('TENANCY_API_KEY')
+        )
       end
 
       def action_diary_gateway
@@ -140,6 +165,10 @@ module Hackney
           host: ENV.fetch('TENANCY_API_HOST'),
           api_key: ENV.fetch('TENANCY_API_KEY')
         )
+      end
+
+      def sql_tenancies_for_messages_gateway
+        Hackney::Income::SqlTenanciesForMessagesGateway.new
       end
 
       def background_job_gateway
