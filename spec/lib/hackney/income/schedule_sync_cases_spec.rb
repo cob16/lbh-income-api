@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe Hackney::Income::SyncCases do
+describe Hackney::Income::ScheduleSyncCases do
   let(:uh_tenancies_gateway) { double(tenancies_in_arrears: []) }
   let(:background_job_gateway) { double(schedule_case_priority_sync: nil) }
 

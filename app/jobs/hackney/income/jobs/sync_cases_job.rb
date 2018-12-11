@@ -17,7 +17,7 @@ module Hackney
           if run_tenancy_sync_jobs?
             Rails.logger.info("Running '#{self.class.name}' job")
             begin
-              income_use_case_factory.sync_cases.execute
+              income_use_case_factory.schedule_sync_cases.execute
             rescue => e
               Rails.logger.error("Caught error: #{e}")
             ensure
