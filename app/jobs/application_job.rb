@@ -4,7 +4,7 @@ class ApplicationJob < ActiveJob::Base
   end
 
   def run_tenancy_sync_jobs?
-    Rails.application.config.run_tenancy_sync_jobs
+    Rails.configuration.x.run_tenancy_sync_jobs
   end
 
   class << self

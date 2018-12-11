@@ -40,5 +40,6 @@ Rails.application.configure do
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true
 
-  config.run_tenancy_sync_jobs = true
+  config.x.run_tenancy_sync_jobs = true
+  config.x.gov_notify.api_key = 'TestApiKEY12345'
 end
