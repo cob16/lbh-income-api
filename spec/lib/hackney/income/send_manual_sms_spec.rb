@@ -77,11 +77,5 @@ describe Hackney::Income::SendManualSms do
 
       subject
     end
-
-    it 'should write a entry to the action diary' do
-      binding.pry
-      exception = StandardError.new
-      Raven.capture_exception(exception)
-    end
   end
 end
