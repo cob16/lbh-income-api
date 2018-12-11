@@ -8,7 +8,12 @@ module Hackney
           Date.tomorrow.midnight + 3.hours
         end
 
+        # this is NOT a sync job!
+        # this enqueues the job that enqueues all the sync jobs
         def perform
+          ActiveSupport::Deprecation.warn(
+            "SyncCasePriorityJob is deprecated - use external scheduler via 'rake income:sync:enqueue'"
+          )
           if run_tenancy_sync_jobs?
             Rails.logger.info("Running '#{self.class.name}' job")
             begin
