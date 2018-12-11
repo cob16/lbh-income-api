@@ -26,7 +26,7 @@ test:
 
 .PHONY: shell
 shell:
-	docker-compose exec app /bin/bash
+	docker-compose run --rm app /bin/bash
 
 .PHONY: lint
 lint:
