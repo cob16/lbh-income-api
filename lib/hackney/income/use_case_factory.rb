@@ -101,11 +101,11 @@ module Hackney
 
       def notifications_gateway
         Hackney::Income::GovNotifyGateway.new(
-          sms_sender_id: Rails.application.config.gov_notify_sms_sender_id,
-          api_key: Rails.application.config.gov_notify_api_key,
-          send_live_communications: Rails.application.config.gov_notify_send_live,
-          test_phone_number: Rails.application.config.gov_notify_test_phone_number,
-          test_email_address: Rails.application.config.gov_notify_test_email_address
+          sms_sender_id:  Rails.configuration.x.gov_notify.sms_sender_id,
+          api_key: Rails.configuration.x.gov_notify.api_key,
+          send_live_communications: Rails.configuration.x.gov_notify.send_live,
+          test_phone_number: Rails.configuration.x.gov_notify.test_phone_number,
+          test_email_address: Rails.configuration.x.gov_notify.test_email_address
         )
       end
 
