@@ -17,7 +17,7 @@ module Hackney
           user_id: user_id,
           tenancy_ref: tenancy_ref,
           action_code: action_code,
-          comment: "#{pause_reason}: Paused to #{until_date}. #{pause_comment}"
+          comment: "#{pause_reason}: Paused to #{Date.parse(until_date)}. #{pause_comment}"
         )
       end
     end

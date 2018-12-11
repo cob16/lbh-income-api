@@ -40,6 +40,7 @@ gem 'phonelib'
 gem 'daemons'
 gem 'delayed_job'
 gem 'delayed_job_active_record'
+gem 'sentry-raven'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
@@ -65,7 +66,6 @@ end
 
 group :staging, :production do
   gem 'newrelic_rpm'
-  gem 'sentry-raven'
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
