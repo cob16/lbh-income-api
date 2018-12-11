@@ -13,7 +13,7 @@ describe Hackney::Income::Jobs::SendGreenInArrearsMsgJob do
     allow(mock_automated_message).to receive(:new).and_return(mock_automated_message)
   end
 
-  it 'should run the SyncCases use case' do
+  it 'should call usecase with correct args' do
     expect(mock_automated_message).to receive(:execute).with(
       hash_including(
         tenancy_ref: tenancy_ref,
