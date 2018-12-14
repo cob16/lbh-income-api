@@ -8,9 +8,16 @@ module Hackney
         )
       end
 
-      def sync_cases
-        Hackney::Income::SyncCases.new(
+      def schedule_sync_cases
+        Hackney::Income::ScheduleSyncCases.new(
           uh_tenancies_gateway: uh_tenancies_gateway,
+          background_job_gateway: background_job_gateway
+        )
+      end
+
+      def schedule_green_in_arrears_message
+        Hackney::Income::ScheduleGreenInArrearsMessage.new(
+          matching_criteria_gateway: sql_tenancies_matching_criteria_gateway,
           background_job_gateway: background_job_gateway
         )
       end
@@ -97,9 +104,10 @@ module Hackney
         Hackney::Income::AssignTenancyToUser.new(user_assignment_gateway: user_assignment_gateway)
       end
 
+      # intended to only be used for rake task please delete when no longer required
       def show_green_in_arrears
         Hackney::Income::ShowTenanciesForCriteriaGreenInArrears.new(
-          sql_tenancies_for_messages_gateway: sql_tenancies_for_messages_gateway
+          sql_tenancies_for_messages_gateway: sql_tenancies_matching_criteria_gateway
         )
       end
 
@@ -107,7 +115,7 @@ module Hackney
 
       def notifications_gateway
         Hackney::Income::GovNotifyGateway.new(
-          sms_sender_id:  Rails.configuration.x.gov_notify.sms_sender_id,
+          sms_sender_id: Rails.configuration.x.gov_notify.sms_sender_id,
           api_key: Rails.configuration.x.gov_notify.api_key,
           send_live_communications: Rails.configuration.x.gov_notify.send_live,
           test_phone_number: Rails.configuration.x.gov_notify.test_phone_number,
@@ -167,8 +175,8 @@ module Hackney
         )
       end
 
-      def sql_tenancies_for_messages_gateway
-        Hackney::Income::SqlTenanciesForMessagesGateway.new
+      def sql_tenancies_matching_criteria_gateway
+        Hackney::Income::SqlTenanciesMatchingCriteriaGateway.new
       end
 
       def background_job_gateway

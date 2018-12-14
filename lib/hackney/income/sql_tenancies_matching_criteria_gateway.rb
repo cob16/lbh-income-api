@@ -1,6 +1,6 @@
 module Hackney
   module Income
-    class SqlTenanciesForMessagesGateway
+    class SqlTenanciesMatchingCriteriaGateway
       def criteria_for_green_in_arrears
         Hackney::Income::Models::Tenancy.criteria_for_green_in_arrears
       end

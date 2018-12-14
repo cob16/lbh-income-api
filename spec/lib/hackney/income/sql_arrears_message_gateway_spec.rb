@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe Hackney::Income::SqlTenanciesForMessagesGateway do
+describe Hackney::Income::SqlTenanciesMatchingCriteriaGateway do
   subject { described_class.new }
 
   it 'returns an empty array when critira do not match' do

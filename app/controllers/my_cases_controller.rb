@@ -33,7 +33,7 @@ class MyCasesController < ApplicationController
   end
 
   def sync
-    income_use_case_factory.sync_cases.execute
+    income_use_case_factory.schedule_sync_cases.execute
     render json: { success: true }
   end
 end
