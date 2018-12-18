@@ -12,6 +12,6 @@ queues = [
   '--pool=message_jobs:1'
 ]
 
-params = uuid_prefix + queues + ARGV
+params = [uuid_prefix] + queues + ARGV
 puts params
 Delayed::Command.new(params).daemonize
