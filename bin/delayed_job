@@ -7,8 +7,11 @@ require 'securerandom'
 # however jobs left locked on SIGKILL will be ignored for 4 hours
 uuid_prefix = '--prefix=' + SecureRandom.uuid
 
-queue = '--pool=uh_sync_cases:1,message_jobs:1'
-fixed_params = [queue, uuid_prefix]
+queues = [
+  '--pool=uh_sync_cases:1', # worker dedicated for sync
+  '--pool=message_jobs:1'
+]
 
-puts fixed_params + ARGV
-Delayed::Command.new(fixed_params + ARGV).daemonize
+params = uuid_prefix + queues + ARGV
+puts params
+Delayed::Command.new(params).daemonize
