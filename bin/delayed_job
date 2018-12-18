@@ -8,8 +8,9 @@ require 'securerandom'
 uuid_prefix = '--prefix=' + SecureRandom.uuid
 
 queues = [
-  '--pool=uh_sync_cases:1', # worker dedicated for sync
-  '--pool=message_jobs:1'
+  '--pool=*:1'
+  # this is currency being used with the 'run' command,
+  # this seems to disable separate threads. Therefore until jobs are run using 'start' we can not use separate worker queues
 ]
 
 params = [uuid_prefix] + queues + ARGV
