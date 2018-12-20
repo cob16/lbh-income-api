@@ -55,7 +55,10 @@ module Hackney
       end
 
       def send_automated_email
-        Hackney::Income::SendAutomatedEmail.new(notification_gateway: notifications_gateway)
+        Hackney::Income::SendAutomatedEmail.new(
+          notification_gateway: notifications_gateway,
+          background_job_gateway: background_job_gateway
+        )
       end
 
       def send_automated_message_to_tenancy
