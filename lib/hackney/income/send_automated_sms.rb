@@ -3,11 +3,12 @@ require 'phonelib'
 module Hackney
   module Income
     class SendAutomatedSms
-      def initialize(notification_gateway:)
+      def initialize(notification_gateway:, background_job_gateway:)
         @notification_gateway = notification_gateway
+        @background_job_gateway = background_job_gateway
       end
 
-      def execute(template_id:, phone_number:, reference:, variables:)
+      def execute(tenancy_ref:, template_id:, phone_number:, reference:, variables:)
         phone = Phonelib.parse(phone_number)
         if phone.valid?
           @notification_gateway.send_text_message(
@@ -15,6 +16,14 @@ module Hackney
             template_id: template_id,
             reference: reference,
             variables: variables
+          )
+          Rails.logger.info("Automated SMS sent using template_id: #{template_id}, reference was: #{reference}")
+
+          template_name = @notification_gateway.get_template_by_id(template_id).fetch(:name)
+          @background_job_gateway.add_action_diary_entry(
+            tenancy_ref: tenancy_ref,
+            action_code: Hackney::Tenancy::ActionCodes::AUTOMATED_SMS_ACTION_CODE,
+            comment: "'#{template_name}' SMS sent to '#{phone.full_e164}'"
           )
         else
           # don't log the phone number to keep our logs free from personal data

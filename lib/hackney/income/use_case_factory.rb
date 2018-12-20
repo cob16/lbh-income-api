@@ -48,7 +48,10 @@ module Hackney
       end
 
       def send_automated_sms
-        Hackney::Income::SendAutomatedSms.new(notification_gateway: notifications_gateway)
+        Hackney::Income::SendAutomatedSms.new(
+          notification_gateway: notifications_gateway,
+          background_job_gateway: background_job_gateway
+        )
       end
 
       def send_automated_email
