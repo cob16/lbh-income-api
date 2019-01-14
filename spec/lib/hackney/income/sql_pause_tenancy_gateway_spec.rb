@@ -6,7 +6,7 @@ describe Hackney::Income::SqlPauseTenancyGateway do
   let(:pause_comment) { Faker::Lorem.paragraph }
   let(:future_date) { Faker::Time.forward(23).iso8601 }
   let(:invalid_string) { SecureRandom.uuid }
-  let(:case_model) { described_class::CaseModel }
+  let(:gateway_model) { described_class::GatewayModel }
 
   subject { described_class.new }
 
@@ -57,7 +57,7 @@ describe Hackney::Income::SqlPauseTenancyGateway do
         pause_comment: pause_comment
       )
 
-      expect(case_model.find_by(tenancy_ref: tenancy_1.tenancy_ref).paused?).to be(true)
+      expect(gateway_model.find_by(tenancy_ref: tenancy_1.tenancy_ref).paused?).to be(true)
     end
   end
 

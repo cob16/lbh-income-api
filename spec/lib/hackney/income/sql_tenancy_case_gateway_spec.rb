@@ -2,7 +2,7 @@ require 'rails_helper'
 
 describe Hackney::Income::SqlTenancyCaseGateway do
   subject { described_class.new }
-  let(:tenancy_model) { Hackney::Income::Models::CasePriority }
+  let(:gateway_model) { described_class::GatewayModel }
 
   context 'when persisting tenancies which do not exist in the database' do
     let(:tenancies) do
@@ -16,7 +16,7 @@ describe Hackney::Income::SqlTenancyCaseGateway do
 
     it 'should save the tenancies in the database' do
       tenancies.each do |tenancy|
-        expect(tenancy_model.exists?(tenancy_ref: tenancy.tenancy_ref)).to be_truthy
+        expect(gateway_model.exists?(tenancy_ref: tenancy.tenancy_ref)).to be_truthy
       end
     end
   end
@@ -24,7 +24,7 @@ describe Hackney::Income::SqlTenancyCaseGateway do
   context 'when persisting a tenancy which already exists in the database' do
     let(:tenancy) { create_tenancy_model }
     let(:existing_tenancy_record) do
-      tenancy_model.create!(tenancy_ref: tenancy.tenancy_ref)
+      gateway_model.create!(tenancy_ref: tenancy.tenancy_ref)
     end
 
     before do
@@ -33,13 +33,13 @@ describe Hackney::Income::SqlTenancyCaseGateway do
     end
 
     it 'should not create a new record' do
-      expect(tenancy_model.count).to eq(1)
+      expect(gateway_model.count).to eq(1)
     end
   end
 
   context 'when assigning a user to a case' do
     let!(:tenancy_ref) { Faker::Number.number(6) }
-    let!(:tenancy) { tenancy_model.create(tenancy_ref: tenancy_ref) }
+    let!(:tenancy) { gateway_model.create(tenancy_ref: tenancy_ref) }
     let!(:user) { Hackney::Income::Models::User.create }
 
     it 'should assign the user' do
@@ -151,15 +151,15 @@ describe Hackney::Income::SqlTenancyCaseGateway do
           user_f = Hackney::Income::Models::User.create!(role: :base_user)
           user_g = Hackney::Income::Models::User.create!(role: :legal_case_worker)
 
-          tenancy_a = tenancy_model.create!(priority_band: 'red')
-          tenancy_b = tenancy_model.create!(priority_band: 'red')
-          tenancy_c = tenancy_model.create!(priority_band: 'red')
-          tenancy_d = tenancy_model.create!(priority_band: 'red')
-          tenancy_e = tenancy_model.create!(priority_band: 'red')
-          tenancy_f = tenancy_model.create!(priority_band: 'red')
-          tenancy_g = tenancy_model.create!(priority_band: 'green')
-          tenancy_h = tenancy_model.create!(priority_band: 'green')
-          tenancy_i = tenancy_model.create!(priority_band: 'green')
+          tenancy_a = gateway_model.create!(priority_band: 'red')
+          tenancy_b = gateway_model.create!(priority_band: 'red')
+          tenancy_c = gateway_model.create!(priority_band: 'red')
+          tenancy_d = gateway_model.create!(priority_band: 'red')
+          tenancy_e = gateway_model.create!(priority_band: 'red')
+          tenancy_f = gateway_model.create!(priority_band: 'red')
+          tenancy_g = gateway_model.create!(priority_band: 'green')
+          tenancy_h = gateway_model.create!(priority_band: 'green')
+          tenancy_i = gateway_model.create!(priority_band: 'green')
 
           subject.assign_to_next_available_user(tenancy: tenancy_a)
           subject.assign_to_next_available_user(tenancy: tenancy_b)
@@ -185,11 +185,11 @@ describe Hackney::Income::SqlTenancyCaseGateway do
 
   def persist_new_tenancy
     tenancy = create_tenancy_model
-    tenancy_model.create!(tenancy_ref: tenancy.tenancy_ref)
+    gateway_model.create!(tenancy_ref: tenancy.tenancy_ref)
   end
 
   def create_assigned_tenancy_model(band:, user:)
-    tenancy_model.create!(
+    gateway_model.create!(
       tenancy_ref: Faker::Lorem.characters(5),
       priority_band: band,
       priority_score: Faker::Lorem.characters(5),
