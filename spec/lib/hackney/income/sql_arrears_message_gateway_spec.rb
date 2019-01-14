@@ -2,8 +2,7 @@ require 'rails_helper'
 
 describe Hackney::Income::SqlTenanciesMatchingCriteriaGateway do
   subject { described_class.new }
-  let(:gateway_model) { described_class::GatewayModel}
-      # GatewayModel = Hackney::Income::Models::CasePriority
+  let(:gateway_model) { described_class::GatewayModel }
 
   it 'returns an empty array when critira do not match' do
     expect(subject.criteria_for_green_in_arrears).to eq([])
