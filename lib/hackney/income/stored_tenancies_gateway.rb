@@ -3,13 +3,15 @@
 module Hackney
   module Income
     class StoredTenanciesGateway
+      GatewayModel = Hackney::Income::Models::CasePriority
+
       def store_tenancy(tenancy_ref:, priority_band:, priority_score:, criteria:, weightings:)
         score_calculator = Hackney::Income::TenancyPrioritiser::Score.new(
           criteria,
           weightings
         )
         begin
-          Hackney::Income::Models::Tenancy.find_or_create_by(tenancy_ref: tenancy_ref).tap do |tenancy|
+          GatewayModel.find_or_create_by(tenancy_ref: tenancy_ref).tap do |tenancy|
             tenancy.update(
               priority_band: priority_band,
               priority_score: priority_score,
@@ -60,9 +62,9 @@ module Hackney
       private
 
       def tenancy_filtered_by_paused_state_for(user_id, is_paused)
-        query = Hackney::Income::Models::Tenancy.where('
-          tenancies.assigned_user_id = ? AND
-          tenancies.balance > 0', user_id)
+        query = GatewayModel.where('
+          assigned_user_id = ? AND
+          balance > ?', user_id, 0)
 
         return query if is_paused.nil?
 
