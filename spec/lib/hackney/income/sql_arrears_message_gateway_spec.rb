@@ -2,6 +2,8 @@ require 'rails_helper'
 
 describe Hackney::Income::SqlTenanciesMatchingCriteriaGateway do
   subject { described_class.new }
+  let(:gateway_model) { described_class::GatewayModel}
+      # GatewayModel = Hackney::Income::Models::CasePriority
 
   it 'returns an empty array when critira do not match' do
     expect(subject.criteria_for_green_in_arrears).to eq([])
@@ -19,7 +21,7 @@ describe Hackney::Income::SqlTenanciesMatchingCriteriaGateway do
 
     it 'returns only green tennacys' do
       expect(subject.criteria_for_green_in_arrears.count).to eq(1)
-      expect(subject.criteria_for_green_in_arrears).to all(be_an(Hackney::Income::Models::Tenancy))
+      expect(subject.criteria_for_green_in_arrears).to all(be_an(gateway_model))
     end
   end
 
@@ -35,7 +37,7 @@ describe Hackney::Income::SqlTenanciesMatchingCriteriaGateway do
 
     it 'returns only tennacys that are over £9.99' do
       expect(subject.criteria_for_green_in_arrears.count).to eq(2)
-      expect(subject.criteria_for_green_in_arrears).to all(be_an(Hackney::Income::Models::Tenancy))
+      expect(subject.criteria_for_green_in_arrears).to all(be_an(gateway_model))
     end
   end
 
@@ -54,7 +56,7 @@ describe Hackney::Income::SqlTenanciesMatchingCriteriaGateway do
 
     it 'returns only tennacys in arrers for more than 4 days' do
       expect(subject.criteria_for_green_in_arrears.count).to eq(num_tenancy_over_and_at_5_days)
-      expect(subject.criteria_for_green_in_arrears).to all(be_an(Hackney::Income::Models::Tenancy))
+      expect(subject.criteria_for_green_in_arrears).to all(be_an(gateway_model))
     end
   end
 
@@ -73,7 +75,7 @@ describe Hackney::Income::SqlTenanciesMatchingCriteriaGateway do
 
     it 'returns only tennacys that do not have an active agrement' do
       expect(subject.criteria_for_green_in_arrears.count).to eq(num_tenancy_inactive)
-      expect(subject.criteria_for_green_in_arrears).to all(be_an(Hackney::Income::Models::Tenancy))
+      expect(subject.criteria_for_green_in_arrears).to all(be_an(gateway_model))
     end
   end
 
@@ -94,7 +96,7 @@ describe Hackney::Income::SqlTenanciesMatchingCriteriaGateway do
 
     it 'returns only unpaused tenancies' do
       expect(subject.criteria_for_green_in_arrears.count).to eq(num_tenancy_unpaused)
-      expect(subject.criteria_for_green_in_arrears).to all(be_an(Hackney::Income::Models::Tenancy))
+      expect(subject.criteria_for_green_in_arrears).to all(be_an(gateway_model))
     end
   end
 end
@@ -102,7 +104,7 @@ end
 def create_tenancy(user:, band: 'green', balance: nil, days_in_arrears: nil, active_agreement: false, is_paused_until: nil)
   balance = Faker::Commerce.price(10..1000.0) if balance.nil?
   days_in_arrears = Faker::Number.between(5, 1000) if days_in_arrears.nil?
-  Hackney::Income::Models::Tenancy.create!(
+  gateway_model.create!(
     priority_band: band,
     balance: balance,
     days_in_arrears: days_in_arrears,
