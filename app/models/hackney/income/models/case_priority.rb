@@ -4,7 +4,7 @@ module Hackney
       class CasePriority < ApplicationRecord
         belongs_to :assigned_user, class_name: 'Hackney::Income::Models::User', optional: true
 
-        belongs_to :case, class_name: 'Hackney::Income::Models::case', optional: true
+        belongs_to :case, class_name: 'Hackney::Income::Models::Case', optional: true
 
         def paused?
           is_paused_until ? is_paused_until.future? : false
