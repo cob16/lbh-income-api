@@ -195,9 +195,11 @@ describe Hackney::Income::GovNotifyGateway do
 
   context 'when getting a individual template by id' do
     let(:template_id) { SecureRandom.uuid }
+    let(:template_name) { Faker::Nation.capital_city }
+
     let(:other_template_id) { SecureRandom.uuid }
 
-    it 'should return a template' do
+    before do
       expect(mock_gov_notify).to receive(:get_all_templates)
         .with(no_args)
         .and_return(
@@ -208,7 +210,7 @@ describe Hackney::Income::GovNotifyGateway do
               'created_at' => '2016-11-29T11:12:30.12354Z',
               'updated_at' => '2016-11-29T11:12:40.12354Z',
               'created_by' => 'jane.doe@gmail.com',
-              'name' => 'template-name',
+              'name' => template_name,
               'body' => 'hello ((first name)), how are you?',
               'subject' => 'email subject',
               'version' => '2'
@@ -224,13 +226,15 @@ describe Hackney::Income::GovNotifyGateway do
               'version' => '2'
             }
           ])
-        )
-      expect(subject.get_template_by_id(template_id)).to eq(
-        id: template_id,
-        type: 'email',
-        name: 'template-name',
-        body: 'hello ((first name)), how are you?'
-      )
+        ).once
+    end
+
+    it 'should return a template' do
+      expect(subject.get_template_name(template_id)).to eq(template_name)
+    end
+
+    it 'should return the id if not found' do
+      expect(subject.get_template_name('foobar')).to eq('foobar')
     end
   end
 end

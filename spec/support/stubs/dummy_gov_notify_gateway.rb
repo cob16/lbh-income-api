@@ -6,7 +6,7 @@ module Hackney
 
       def initialize(sms_sender_id:, api_key:, send_live_communications:, test_phone_number:, test_email_address:); end
 
-      def get_template_by_id(id); end
+      def get_template_name(id); end
 
       def send_text_message(phone_number:, template_id:, reference:, variables:); end
 

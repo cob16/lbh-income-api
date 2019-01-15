@@ -14,7 +14,7 @@ module Hackney
           reference: reference,
           variables: variables
         )
-        template_name = @notification_gateway.get_template_by_id(template_id)&.fetch(:name) || template_id
+        template_name = @notification_gateway.get_template_name(template_id)
         @add_action_diary_usecase.execute(
           user_id: user_id,
           tenancy_ref: tenancy_ref,

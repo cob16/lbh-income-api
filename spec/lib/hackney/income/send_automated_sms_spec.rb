@@ -36,7 +36,7 @@ describe Hackney::Income::SendAutomatedSms do
 
     context 'and when number is valid' do
       before do
-        expect(notification_gateway).to receive(:get_template_by_id).with(template_id).and_return(id: template_id, name: gov_notify_template_name).once
+        expect(notification_gateway).to receive(:get_template_name).with(template_id).and_return(gov_notify_template_name).once
       end
 
       it 'should pass vars to the gateway' do
@@ -80,7 +80,7 @@ describe Hackney::Income::SendAutomatedSms do
       let(:phone_number) { 'there should be no number in this string' }
 
       it 'should not call gateway and return false' do
-        expect(notification_gateway).not_to receive(:get_template_by_id)
+        expect(notification_gateway).not_to receive(:get_template_name)
         expect(notification_gateway).not_to receive(:send_text_message)
         subject
       end
