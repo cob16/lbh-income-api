@@ -8,7 +8,7 @@ describe Hackney::Income::Jobs::SendGreenInArrearsMsgJob do
   let(:balance) { Faker::Number.decimal(2) }
 
   before do
-    stub_const('Hackney::Income::GovNotifyGateway', Hackney::Income::StubGovNotifyGateway)
+    stub_const('Hackney::Income::GovNotifyGateway', Hackney::Income::DummyGovNotifyGateway)
     stub_const('Hackney::Income::SendAutomatedMessageToTenancy', mock_automated_message)
     allow(mock_automated_message).to receive(:new).and_return(mock_automated_message)
   end

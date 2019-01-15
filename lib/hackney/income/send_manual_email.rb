@@ -14,11 +14,12 @@ module Hackney
           reference: reference,
           variables: variables
         )
+        template_name = @notification_gateway.get_template_name(template_id)
         @add_action_diary_usecase.execute(
           user_id: user_id,
           tenancy_ref: tenancy_ref,
           action_code: Hackney::Tenancy::ActionCodes::MANUAL_EMAIL_ACTION_CODE,
-          comment: "An email has been sent to '#{recipient}' with template id '#{template_id}'"
+          comment: "'#{template_name}' Email sent to '#{recipient}'"
         )
       end
     end

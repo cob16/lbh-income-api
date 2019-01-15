@@ -35,7 +35,7 @@ describe MessagesController, type: :controller do
   before do
     stub_const(
       'Hackney::Income::GovNotifyGateway',
-      Hackney::Income::StubGovNotifyGateway,
+      Hackney::Income::DummyGovNotifyGateway,
       transfer_nested_constants: true
     )
 
