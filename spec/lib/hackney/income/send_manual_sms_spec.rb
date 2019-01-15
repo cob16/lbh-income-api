@@ -78,5 +78,26 @@ describe Hackney::Income::SendManualSms do
 
       subject
     end
+
+    context 'when sending an invalid number' do
+      let(:notification_gateway) { double(Hackney::Income::GovNotifyGateway) }
+      let(:phone_number) { 'not a phone number' }
+
+      subject do
+        send_sms.execute(
+          user_id: user_id,
+          tenancy_ref: tenancy.tenancy_ref,
+          template_id: template_id,
+          phone_number: phone_number,
+          reference: reference,
+          variables: { 'first name' => first_name }
+        )
+      end
+
+      it 'should not send an sms' do
+        expect(add_action_diary_usecase).not_to receive(:send_text_message)
+        subject
+      end
+    end
   end
 end
