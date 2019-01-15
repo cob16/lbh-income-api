@@ -77,7 +77,7 @@ module Hackney
       end
 
       def by_band_then_score
-        "
+        Arel.sql("
         (
           CASE priority_band
             WHEN 'red' THEN 1
@@ -85,7 +85,7 @@ module Hackney
             WHEN 'green' THEN 3
           END
         ), priority_score DESC
-        "
+        ")
       end
 
       def build_tenancy_list_item(model)
