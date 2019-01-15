@@ -1,5 +1,6 @@
 module Hackney
   module Income
+    # TODO: rework to assign users to cases
     class AssignTenancyToUser
       def initialize(user_assignment_gateway:)
         @user_assignment_gateway = user_assignment_gateway

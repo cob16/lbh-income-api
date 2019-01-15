@@ -5,6 +5,8 @@ require 'rails_helper'
 describe Hackney::Income::StoredTenanciesGateway do
   let(:gateway) { described_class.new }
 
+  let(:tenancy_model) { Hackney::Income::Models::CasePriority }
+
   context 'when storing a tenancy' do
     let(:attributes) do
       {
@@ -34,7 +36,7 @@ describe Hackney::Income::StoredTenanciesGateway do
     end
 
     context 'and the tenancy does not already exist' do
-      let(:created_tenancy) { Hackney::Income::Models::Tenancy.find_by(tenancy_ref: attributes.fetch(:tenancy_ref)) }
+      let(:created_tenancy) { tenancy_model.find_by(tenancy_ref: attributes.fetch(:tenancy_ref)) }
 
       it 'should create the tenancy' do
         store_tenancy
@@ -49,7 +51,7 @@ describe Hackney::Income::StoredTenanciesGateway do
 
     context 'and the tenancy already exists' do
       let!(:pre_existing_tenancy) do
-        Hackney::Income::Models::Tenancy.create!(
+        tenancy_model.create!(
           tenancy_ref: attributes.fetch(:tenancy_ref),
           priority_band: attributes.fetch(:priority_band),
           priority_score: attributes.fetch(:priority_score),
@@ -78,7 +80,7 @@ describe Hackney::Income::StoredTenanciesGateway do
         )
       end
 
-      let(:stored_tenancy) { Hackney::Income::Models::Tenancy.find_by(tenancy_ref: attributes.fetch(:tenancy_ref)) }
+      let(:stored_tenancy) { tenancy_model.find_by(tenancy_ref: attributes.fetch(:tenancy_ref)) }
 
       it 'should update the tenancy' do
         store_tenancy
@@ -87,7 +89,7 @@ describe Hackney::Income::StoredTenanciesGateway do
 
       it 'should not create a new tenancy' do
         store_tenancy
-        expect(Hackney::Income::Models::Tenancy.count).to eq(1)
+        expect(tenancy_model.count).to eq(1)
       end
 
       # FIXME: shouldn't return AR models from gateways
@@ -127,7 +129,7 @@ describe Hackney::Income::StoredTenanciesGateway do
       end
 
       before do
-        Hackney::Income::Models::Tenancy.create!(
+        tenancy_model.create!(
           assigned_user_id: user_id,
           tenancy_ref: attributes.fetch(:tenancy_ref),
           priority_band: attributes.fetch(:priority_band),
@@ -178,7 +180,7 @@ describe Hackney::Income::StoredTenanciesGateway do
       context 'and the tenancies exist' do
         before do
           multiple_attributes.map do |attributes|
-            Hackney::Income::Models::Tenancy.create!(
+            tenancy_model.create!(
               assigned_user_id: user_id,
               tenancy_ref: attributes.fetch(:tenancy_ref),
               priority_band: attributes.fetch(:priority_band),
@@ -257,9 +259,9 @@ describe Hackney::Income::StoredTenanciesGateway do
 
     context 'and tenancies exist which aren\'t assigned to the user' do
       before do
-        Hackney::Income::Models::Tenancy.create!(assigned_user_id: user_id, balance: 1)
-        Hackney::Income::Models::Tenancy.create!(assigned_user_id: other_user_id, balance: 1)
-        Hackney::Income::Models::Tenancy.create!(assigned_user_id: user_id, balance: 1)
+        tenancy_model.create!(assigned_user_id: user_id, balance: 1)
+        tenancy_model.create!(assigned_user_id: other_user_id, balance: 1)
+        tenancy_model.create!(assigned_user_id: user_id, balance: 1)
       end
 
       it 'should only return the user\'s tenancies' do
@@ -409,7 +411,7 @@ describe Hackney::Income::StoredTenanciesGateway do
   end
 
   def create_tenancy(user_id: nil, balance: 1, is_paused_until: nil)
-    Hackney::Income::Models::Tenancy.create(assigned_user_id: user_id, balance: balance, is_paused_until: is_paused_until)
+    tenancy_model.create(assigned_user_id: user_id, balance: balance, is_paused_until: is_paused_until)
   end
 
   def expected_serialised_tenancy(attributes)

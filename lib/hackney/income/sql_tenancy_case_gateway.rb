@@ -1,19 +1,22 @@
 module Hackney
   module Income
     class SqlTenancyCaseGateway
+      GatewayModel = Hackney::Income::Models::CasePriority
+
+      # TODO: rename from tenancies
       def persist(tenancies:)
         tenancies.each do |tenancy|
-          Hackney::Income::Models::Tenancy.find_or_create_by!(tenancy_ref: tenancy.tenancy_ref)
+          GatewayModel.find_or_create_by!(tenancy_ref: tenancy.tenancy_ref)
         end
       end
 
       def assign_user(tenancy_ref:, user_id:)
-        tenancy = Hackney::Income::Models::Tenancy.find_by(tenancy_ref: tenancy_ref)
+        tenancy = GatewayModel.find_by(tenancy_ref: tenancy_ref)
         tenancy.update!(assigned_user_id: user_id)
       end
 
       def assigned_tenancies(assignee_id:)
-        Hackney::Income::Models::Tenancy
+        GatewayModel
           .where(assigned_user_id: assignee_id)
           .map { |t| { tenancy_ref: t.tenancy_ref } }
       end
