@@ -19,7 +19,7 @@ module Hackney
           )
           Rails.logger.info("Automated SMS sent using template_id: #{template_id}, reference was: #{reference}")
 
-          template_name = @notification_gateway.get_template_by_id(template_id).fetch(:name)
+          template_name = @notification_gateway.get_template_by_id(template_id)&.fetch(:name) || template_id
           @background_job_gateway.add_action_diary_entry(
             tenancy_ref: tenancy_ref,
             action_code: Hackney::Tenancy::ActionCodes::AUTOMATED_SMS_ACTION_CODE,
