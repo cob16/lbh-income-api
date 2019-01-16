@@ -7,7 +7,7 @@ class PopulateCasesFromCasePriorities < ActiveRecord::Migration[5.1]
 
   def self.down
     Hackney::Income::Models::CasePriority.all.each { |case_priority|
-      case_priority.case.destroy! if case_priority.case
+      case_priority.case&.destroy!
     }
   end
 end

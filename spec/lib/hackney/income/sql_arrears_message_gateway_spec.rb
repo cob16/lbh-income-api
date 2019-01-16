@@ -100,10 +100,12 @@ describe Hackney::Income::SqlTenanciesMatchingCriteriaGateway do
   end
 end
 
-def create_tenancy(user:, band: 'green', balance: nil, days_in_arrears: nil, active_agreement: false, is_paused_until: nil)
+def create_tenancy(user:, band: 'green', balance: nil, days_in_arrears: nil, active_agreement: false, is_paused_until: nil, tenancy_ref: nil)
   balance = Faker::Commerce.price(10..1000.0) if balance.nil?
   days_in_arrears = Faker::Number.between(5, 1000) if days_in_arrears.nil?
+  # require 'pry' ; binding.pry
   gateway_model.create!(
+    tenancy_ref: (tenancy_ref ||  Faker::Lorem.characters(5)),
     priority_band: band,
     balance: balance,
     days_in_arrears: days_in_arrears,
