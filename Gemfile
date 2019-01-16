@@ -46,6 +46,7 @@ group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'brakeman', '~> 4.3', '>= 4.3.1'
   gem 'byebug', platforms: %i[mri mingw x64_mingw]
+  gem 'factory_bot'
   gem 'faker'
   gem 'guard-rspec', require: false
   gem 'guard-rubocop', require: false

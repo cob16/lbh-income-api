@@ -1,5 +1,6 @@
 # This file is copied to spec/ when you run 'rails generate rspec:install'
 require 'spec_helper'
+require 'pry'
 require File.expand_path('../config/environment', __dir__)
 # Prevent database truncation if the environment is production
 abort('The Universal Housing credentials do not look like the simulator!') if ENV['UH_DATABASE_NAME'] != 'uhsimulator'
