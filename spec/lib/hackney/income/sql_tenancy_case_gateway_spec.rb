@@ -143,12 +143,12 @@ describe Hackney::Income::SqlTenancyCaseGateway do
     context 'when assigning several cases' do
       context 'and they are all in the same band' do
         it 'should assign them evenly to eligible users' do
-          user_a, user_b, user_c, user_d, user_e = 5.times.map { create(:user, :credit_controller) }
+          user_a, user_b, user_c, user_d, user_e = Array.new(5) { create(:user, :credit_controller) }
           user_f = create(:user)
           user_g = create(:user, :legal_case_worker)
 
-          tenancy_a, tenancy_b, tenancy_c, tenancy_d, tenancy_e, tenancy_f = 6.times.map { create(:case_priority, :red) }
-          tenancy_g, tenancy_h, tenancy_i = 3.times.map { create(:case_priority) }
+          tenancy_a, tenancy_b, tenancy_c, tenancy_d, tenancy_e, tenancy_f = Array.new(6) { create(:case_priority, :red) }
+          tenancy_g, tenancy_h, tenancy_i = Array.new(3) { create(:case_priority) }
 
           subject.assign_to_next_available_user(tenancy: tenancy_a)
           subject.assign_to_next_available_user(tenancy: tenancy_b)
