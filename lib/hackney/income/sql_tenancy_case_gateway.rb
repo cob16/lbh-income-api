@@ -12,6 +12,7 @@ module Hackney
 
       def assign_user(tenancy_ref:, user_id:)
         tenancy = GatewayModel.find_by(tenancy_ref: tenancy_ref)
+        raise "Unable to assign user #{user_id} to tenancy #{tenancy_ref} - tenancy not found." if tenancy.nil?
         tenancy.update!(assigned_user_id: user_id)
       end
 
