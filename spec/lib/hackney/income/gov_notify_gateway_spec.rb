@@ -81,31 +81,42 @@ describe Hackney::Income::GovNotifyGateway do
   context 'when retrieving a list of text message templates' do
     let(:template_id) { Faker::IDNumber.valid }
 
-    it 'should return a list of templates' do
+    it 'should return a list of sms templates' do
       expect(mock_gov_notify).to receive(:get_all_templates)
-        .with(type: 'sms')
+        .with(no_args)
         .and_return(
-          Notifications::Client::TemplateCollection.new('templates' => [{
-            'id' => template_id,
-            'type' => 'sms',
-            'created_at' => '2016-11-29T11:12:30.12354Z',
-            'updated_at' => '2016-11-29T11:12:40.12354Z',
-            'created_by' => 'jane.doe@gmail.com',
-            'name' => 'template-name',
-            'body' => 'hello ((first name)), how are you?',
-            'version' => '2'
-          }])
+          Notifications::Client::TemplateCollection.new('templates' => [
+            {
+              'id' => template_id,
+              'type' => 'sms',
+              'created_at' => '2016-11-29T11:12:30.12354Z',
+              'updated_at' => '2016-11-29T11:12:40.12354Z',
+              'created_by' => 'jane.doe@gmail.com',
+              'name' => 'template-name',
+              'body' => 'hello ((first name)), how are you?',
+              'version' => '2'
+            }, {
+              'id' => 'wibble',
+              'type' => 'email',
+              'created_at' => '2016-11-29T11:12:30.12354Z',
+              'updated_at' => '2016-11-29T11:12:40.12354Z',
+              'created_by' => 'jane.doe@gmail.com',
+              'name' => 'template-name',
+              'body' => 'hello ((first name)), how are you?',
+              'version' => '2'
+            }
+          ])
         )
 
       expect(subject.get_templates(type: 'sms')).to eq([{
         id: template_id,
+        type: 'sms',
         name: 'template-name',
         body: 'hello ((first name)), how are you?'
       }])
     end
   end
 
-  # FIXME: Gov Notify doesn't appear to currently pass through the reply to email?
   context 'when sending an email to a tenant' do
     let(:send_live_communications) { false }
 
@@ -116,8 +127,7 @@ describe Hackney::Income::GovNotifyGateway do
         personalisation: {
           'first name' => 'Steven Leighton'
         },
-        reference: 'amazing-test-reference',
-        # email_reply_to_id: email_reply_to_id
+        reference: 'amazing-test-reference'
       )
 
       subject.send_email(
@@ -126,38 +136,105 @@ describe Hackney::Income::GovNotifyGateway do
         variables: {
           'first name' => 'Steven Leighton'
         },
-        reference: 'amazing-test-reference',
-        # email_reply_to_id: email_reply_to_id
+        reference: 'amazing-test-reference'
       )
     end
   end
 
   context 'when retrieving a list of email templates' do
     let(:template_id) { Faker::IDNumber.valid }
+    let(:other_template_id) { Faker::IDNumber.valid }
+
+    it 'should memoize the templates list' do
+      expect(mock_gov_notify).to receive(:get_all_templates)
+        .with(no_args)
+        .and_return(Notifications::Client::TemplateCollection.new('templates' => []))
+        .once
+
+      expect(subject.get_templates).to eq([])
+      expect(subject.get_templates).to eq([])
+    end
 
     it 'should return a list of templates' do
       expect(mock_gov_notify).to receive(:get_all_templates)
-        .with(type: 'email')
+        .with(no_args)
         .and_return(
-          Notifications::Client::TemplateCollection.new('templates' => [{
-            'id' => template_id,
-            'type' => 'email',
-            'created_at' => '2016-11-29T11:12:30.12354Z',
-            'updated_at' => '2016-11-29T11:12:40.12354Z',
-            'created_by' => 'jane.doe@gmail.com',
-            'name' => 'template-name',
-            'body' => 'hello ((first name)), how are you?',
-            'subject' => 'email subject',
-            'version' => '2'
-          }])
+          Notifications::Client::TemplateCollection.new('templates' => [
+              {
+              'id' => template_id,
+              'type' => 'email',
+              'created_at' => '2016-11-29T11:12:30.12354Z',
+              'updated_at' => '2016-11-29T11:12:40.12354Z',
+              'created_by' => 'jane.doe@gmail.com',
+              'name' => 'template-name',
+              'body' => 'hello ((first name)), how are you?',
+              'subject' => 'email subject',
+              'version' => '2'
+            }, {
+              'id' => other_template_id,
+              'type' => 'sms',
+              'created_at' => '2016-11-29T11:12:30.12354Z',
+              'updated_at' => '2016-11-29T11:12:40.12354Z',
+              'created_by' => 'jane.doe@gmail.com',
+              'name' => 'template-name',
+              'body' => 'hello ((first name)), how are you?',
+              'subject' => 'email subject',
+              'version' => '2'
+            }
+          ])
         )
 
       expect(subject.get_templates(type: 'email')).to eq([{
         id: template_id,
+        type: 'email',
         name: 'template-name',
-        # subject: 'email subject',
         body: 'hello ((first name)), how are you?'
       }])
+    end
+  end
+
+  context 'when getting a individual template by id' do
+    let(:template_id) { SecureRandom.uuid }
+    let(:template_name) { Faker::Nation.capital_city }
+
+    let(:other_template_id) { SecureRandom.uuid }
+
+    before do
+      expect(mock_gov_notify).to receive(:get_all_templates)
+        .with(no_args)
+        .and_return(
+          Notifications::Client::TemplateCollection.new('templates' => [
+            {
+              'id' => template_id,
+              'type' => 'email',
+              'created_at' => '2016-11-29T11:12:30.12354Z',
+              'updated_at' => '2016-11-29T11:12:40.12354Z',
+              'created_by' => 'jane.doe@gmail.com',
+              'name' => template_name,
+              'body' => 'hello ((first name)), how are you?',
+              'subject' => 'email subject',
+              'version' => '2'
+            }, {
+              'id' => other_template_id,
+              'type' => 'sms',
+              'created_at' => '2016-11-29T11:12:30.12354Z',
+              'updated_at' => '2016-11-29T11:12:40.12354Z',
+              'created_by' => 'jane.doe@gmail.com',
+              'name' => 'template-name',
+              'body' => 'hello ((first name)), how are you?',
+              'subject' => 'email subject',
+              'version' => '2'
+            }
+          ])
+        ).once
+    end
+
+    it 'should return a template' do
+      expect(subject.get_template_name(template_id)).to eq(template_name)
+    end
+
+    it 'should return the id if not found' do
+      expect(subject.get_template_name('foobar')).to eq('foobar')
     end
   end
 end

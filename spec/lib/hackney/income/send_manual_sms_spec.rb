@@ -18,7 +18,8 @@ describe Hackney::Income::SendManualSms do
 
   context 'when sending an SMS manually' do
     let(:template_id) { Faker::Superhero.power }
-    let(:phone_number) { Faker::Number.leading_zero_number(11) }
+    let(:phone_number) { '020 8356 3000' }
+    let(:e164_phone_number) { '+442083563000' }
     let(:reference) { Faker::Superhero.prefix }
     let(:first_name) { Faker::Superhero.name }
     let(:user_id) { Faker::Number.number(2) }
@@ -47,9 +48,9 @@ describe Hackney::Income::SendManualSms do
       )
     end
 
-    it 'should pass through the phone number' do
+    it 'should parse the phone number to full e164 format' do
       expect(subject).to include(
-        phone_number: phone_number
+        phone_number: e164_phone_number
       )
     end
 
@@ -65,17 +66,38 @@ describe Hackney::Income::SendManualSms do
       )
     end
 
-    it 'should write a entry to the action diary' do
+    it 'should write a entry to the action diary using the template friendly name' do
       expect(add_action_diary_usecase).to receive(:execute)
       .with(
         user_id: user_id,
         tenancy_ref: tenancy.tenancy_ref,
         action_code: 'GMS',
-        comment: "An SMS has been sent to '#{phone_number}' with template_id: #{template_id}"
+        comment: "Quick Template' SMS sent to '+442083563000'"
       )
       .once
 
       subject
+    end
+
+    context 'when sending an invalid number' do
+      let(:notification_gateway) { double(Hackney::Income::GovNotifyGateway) }
+      let(:phone_number) { 'not a phone number' }
+
+      subject do
+        send_sms.execute(
+          user_id: user_id,
+          tenancy_ref: tenancy.tenancy_ref,
+          template_id: template_id,
+          phone_number: phone_number,
+          reference: reference,
+          variables: { 'first name' => first_name }
+        )
+      end
+
+      it 'should not send an sms' do
+        expect(add_action_diary_usecase).not_to receive(:send_text_message)
+        subject
+      end
     end
   end
 end

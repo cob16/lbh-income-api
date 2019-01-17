@@ -30,13 +30,26 @@ module Hackney
         )
       end
 
-      def get_templates(type:)
-        @client.get_all_templates(type: type).collection.map do |template|
-          { id: template.id, name: template.name, body: template.body }
+      def get_template_name(template_id)
+        get_templates&.find { |template_item| template_item[:id] == template_id }&.fetch(:name) || template_id
+      end
+
+      def get_templates(type: nil)
+        @all_templates ||= all_templates_request
+        if type.nil?
+          @all_templates
+        else
+          @all_templates.select { |template| template[:type] == type }
         end
       end
 
       private
+
+      def all_templates_request
+        @client.get_all_templates.collection.map do |template|
+          { id: template.id, type: template.type, name: template.name, body: template.body }
+        end
+      end
 
       def pre_release_phone_number(phone_number)
         return phone_number if @send_live_communications

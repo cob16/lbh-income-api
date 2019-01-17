@@ -12,6 +12,7 @@ module Hackney
         contacts.each do |contact|
           if contact.email
             @automated_email_usecase.execute(
+              tenancy_ref: tenancy_ref,
               recipient: contact.email,
               template_id: email_template_id,
               reference: batch_id,
@@ -20,8 +21,9 @@ module Hackney
           end
           contact.phone_numbers&.each do |number|
             @automated_sms_usecase.execute(
-              phone_number: number,
+              tenancy_ref: tenancy_ref,
               template_id: sms_template_id,
+              phone_number: number,
               reference: batch_id,
               variables: variables
             )

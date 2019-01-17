@@ -10,24 +10,9 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181126112318) do
+ActiveRecord::Schema.define(version: 20190114103101) do
 
-  create_table "delayed_jobs", force: :cascade do |t|
-    t.integer "priority", default: 0, null: false
-    t.integer "attempts", default: 0, null: false
-    t.text "handler", null: false
-    t.text "last_error"
-    t.datetime "run_at"
-    t.datetime "locked_at"
-    t.datetime "failed_at"
-    t.string "locked_by"
-    t.string "queue"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.index ["priority", "run_at"], name: "delayed_jobs_priority"
-  end
-
-  create_table "tenancies", force: :cascade do |t|
+  create_table "case_priorities", force: :cascade do |t|
     t.string "tenancy_ref"
     t.string "priority_band"
     t.integer "priority_score"
@@ -57,8 +42,23 @@ ActiveRecord::Schema.define(version: 20181126112318) do
     t.datetime "is_paused_until"
     t.string "pause_reason"
     t.text "pause_comment"
-    t.index ["assigned_user_id"], name: "index_tenancies_on_assigned_user_id"
-    t.index ["tenancy_ref"], name: "index_tenancies_on_tenancy_ref", unique: true
+    t.index ["assigned_user_id"], name: "index_case_priorities_on_assigned_user_id"
+    t.index ["tenancy_ref"], name: "index_case_priorities_on_tenancy_ref", unique: true
+  end
+
+  create_table "delayed_jobs", force: :cascade do |t|
+    t.integer "priority", default: 0, null: false
+    t.integer "attempts", default: 0, null: false
+    t.text "handler", null: false
+    t.text "last_error"
+    t.datetime "run_at"
+    t.datetime "locked_at"
+    t.datetime "failed_at"
+    t.string "locked_by"
+    t.string "queue"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.index ["priority", "run_at"], name: "delayed_jobs_priority"
   end
 
   create_table "users", force: :cascade do |t|

@@ -3,6 +3,8 @@ require 'rails_helper'
 describe Hackney::Income::SendAutomatedSms do
   let(:tenancy) { create_tenancy_model }
   let(:notification_gateway) { double(Hackney::Income::GovNotifyGateway) }
+  let(:background_job_gateway) { double(Hackney::Income::BackgroundJobGateway) }
+  let(:gov_notify_template_name) { Faker::Superhero.name }
 
   before do
     tenancy.save
@@ -10,7 +12,8 @@ describe Hackney::Income::SendAutomatedSms do
 
   let(:send_sms) do
     described_class.new(
-      notification_gateway: notification_gateway
+      notification_gateway: notification_gateway,
+      background_job_gateway: background_job_gateway
     )
   end
 
@@ -23,6 +26,7 @@ describe Hackney::Income::SendAutomatedSms do
 
     subject do
       send_sms.execute(
+        tenancy_ref: tenancy.tenancy_ref,
         template_id: template_id,
         phone_number: phone_number,
         reference: reference,
@@ -30,31 +34,53 @@ describe Hackney::Income::SendAutomatedSms do
       )
     end
 
-    it 'should pass vars to the gateway' do
-      expect(notification_gateway).to receive(:send_text_message)
-        .with(
-          variables: {
-            'first name': first_name
-          },
-          phone_number: e164_phone_number,
-          template_id: template_id,
-          reference: reference
-        )
-      subject
-    end
+    context 'and when number is valid' do
+      before do
+        expect(notification_gateway).to receive(:get_template_name).with(template_id).and_return(gov_notify_template_name).once
+      end
 
-    it 'should validate and format a full e164 phone number, assuming local numbers are from uk' do
-      expect(notification_gateway)
-        .to receive(:send_text_message)
-        .with(include(phone_number: e164_phone_number))
+      it 'should pass vars to the gateway' do
+        allow(background_job_gateway).to receive(:add_action_diary_entry)
+        expect(notification_gateway).to receive(:send_text_message)
+          .with(
+            variables: {
+              'first name': first_name
+            },
+            phone_number: e164_phone_number,
+            template_id: template_id,
+            reference: reference
+          ).once
+        subject
+      end
 
-      subject
+      it 'should validate and format a full e164 phone number, assuming local numbers are from uk' do
+        allow(background_job_gateway).to receive(:add_action_diary_entry)
+
+        expect(notification_gateway)
+          .to receive(:send_text_message)
+          .with(include(phone_number: e164_phone_number))
+          .once
+
+        subject
+      end
+
+      it 'should queue a job to write to the action diary' do
+        allow(notification_gateway).to receive(:send_text_message)
+        expect(background_job_gateway).to receive(:add_action_diary_entry)
+          .with(
+            tenancy_ref: tenancy.tenancy_ref,
+            action_code: Hackney::Tenancy::ActionCodes::AUTOMATED_SMS_ACTION_CODE,
+            comment: "'#{gov_notify_template_name}' SMS sent to '#{e164_phone_number}'"
+          )
+        subject
+      end
     end
 
     context 'and when number is invalid' do
-      let(:phone_number) { SecureRandom.uuid }
+      let(:phone_number) { 'there should be no number in this string' }
 
       it 'should not call gateway and return false' do
+        expect(notification_gateway).not_to receive(:get_template_name)
         expect(notification_gateway).not_to receive(:send_text_message)
         subject
       end

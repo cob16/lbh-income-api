@@ -1,5 +1,5 @@
 require 'active_model'
-require 'active_model/type/value'
+require 'active_model/type'
 require 'active_model/type/boolean'
 
 module FeatureToggle

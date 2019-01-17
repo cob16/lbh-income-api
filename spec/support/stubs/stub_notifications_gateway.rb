@@ -16,6 +16,10 @@ module Hackney
         @last_email = nil
       end
 
+      def get_template_name(id)
+        @templates.first.fetch(:name)
+      end
+
       def get_text_templates
         @templates
       end

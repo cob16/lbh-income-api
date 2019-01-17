@@ -32,7 +32,7 @@ describe Hackney::Income::AssignTenancyToUser do
   end
 
   def create_assigned_tenancy_model(band:, user:)
-    Hackney::Income::Models::Tenancy.create!(
+    Hackney::Income::Models::CasePriority.create!(
       tenancy_ref: Faker::Lorem.characters(5),
       priority_band: band,
       priority_score: Faker::Lorem.characters(5),

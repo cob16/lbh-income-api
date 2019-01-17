@@ -21,7 +21,7 @@ module Hackney
 
           res = Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) { |http| http.request(req) }
 
-          raise Hackney::Tenancy::Exceptions::TenancyApiException unless res.is_a? Net::HTTPSuccess
+          raise Hackney::Tenancy::Exceptions::TenancyApiException, res unless res.is_a? Net::HTTPSuccess
 
           body = JSON.parse(res.body)
 

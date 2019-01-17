@@ -8,7 +8,7 @@ describe Hackney::Income::SendManualEmail do
 
   context 'when sending an email manually' do
     let(:template_id) { Faker::Superhero.power }
-    let(:recipient) { Faker::Internet.email }
+    let(:recipient) { Faker::Internet.safe_email }
     let(:reference) { Faker::Superhero.prefix }
     let(:first_name) { Faker::Superhero.name }
     let(:user_id) { Faker::Number.number(2) }
@@ -61,7 +61,7 @@ describe Hackney::Income::SendManualEmail do
         user_id: user_id,
         tenancy_ref: tenancy_1.tenancy_ref,
         action_code: 'GME',
-        comment: "An email has been sent to '#{recipient}' with template id '#{template_id}'"
+        comment: "'Quick Template' Email sent to '#{recipient}'"
       )
       .once
 
