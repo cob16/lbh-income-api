@@ -47,6 +47,17 @@ describe Hackney::Income::SqlTenancyCaseGateway do
         assigned_user: user
       )
     end
+
+    it 'should raise an exception when assigning a non existing case to user' do
+      expect do
+        subject.assign_user(
+          tenancy_ref: 'not_a_real_tenancy_ref',
+          user_id: user.id
+        )
+      end
+        .to raise_error
+              .with_message('Unable to assign user 1 to tenancy not_a_real_tenancy_ref - tenancy not found.')
+    end
   end
 
   context 'when retrieving cases assigned to a user' do
