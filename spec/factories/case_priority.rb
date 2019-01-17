@@ -12,6 +12,7 @@ FactoryBot.define do
     days_in_arrears Faker::Number.between(5, 1000)
     active_agreement false
     is_paused_until nil
+
     priority_band 'green'
 
     trait :red do
