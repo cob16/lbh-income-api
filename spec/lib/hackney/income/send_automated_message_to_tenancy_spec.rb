@@ -52,6 +52,7 @@ describe Hackney::Income::SendAutomatedMessageToTenancy do
       expect(sms_mock).to receive(:execute).with(
         phone_number: phone_number,
         template_id: sms_template_id,
+        tenancy_ref: '000001/FAKE',
         reference: batch_id,
         variables: variables
       ).exactly(3).times

@@ -30,8 +30,8 @@ module Hackney
         )
       end
 
-      def get_template_by_id(id)
-        get_templates&.find { |template_item| template_item[:id] == id }
+      def get_template_name(template_id)
+        get_templates&.find { |template_item| template_item[:id] == template_id }&.fetch(:name) || template_id
       end
 
       def get_templates(type: nil)
