@@ -100,9 +100,10 @@ describe Hackney::Income::StoredTenanciesGateway do
   end
 
   context 'when retrieving tenancies by user' do
-    let(:user_id) { 1 }
-    let(:other_user_id) { 2 }
-    subject { gateway.get_tenancies_for_user(user_id: user_id) }
+    let(:user) { create(:user) }
+    let(:other_user) { create(:user) }
+
+    subject { gateway.get_tenancies_for_user(user_id: user.id) }
 
     context 'and the user has no tenancies' do
       it 'should return no tenancies' do
@@ -130,7 +131,7 @@ describe Hackney::Income::StoredTenanciesGateway do
 
       before do
         tenancy_model.create!(
-          assigned_user_id: user_id,
+          assigned_user_id: user.id,
           tenancy_ref: attributes.fetch(:tenancy_ref),
           priority_band: attributes.fetch(:priority_band),
           priority_score: attributes.fetch(:priority_score),
@@ -181,7 +182,7 @@ describe Hackney::Income::StoredTenanciesGateway do
         before do
           multiple_attributes.map do |attributes|
             tenancy_model.create!(
-              assigned_user_id: user_id,
+              assigned_user_id: user.id,
               tenancy_ref: attributes.fetch(:tenancy_ref),
               priority_band: attributes.fetch(:priority_band),
               priority_score: attributes.fetch(:priority_score),
@@ -232,7 +233,7 @@ describe Hackney::Income::StoredTenanciesGateway do
           end
 
           context 'and page number is set to one, and number per page is set to two' do
-            subject { gateway.get_tenancies_for_user(user_id: user_id, page_number: 1, number_per_page: 2) }
+            subject { gateway.get_tenancies_for_user(user_id: user.id, page_number: 1, number_per_page: 2) }
 
             it 'should only return the first two' do
               expect(cases).to eq([
@@ -243,7 +244,7 @@ describe Hackney::Income::StoredTenanciesGateway do
           end
 
           context 'and page number is set to two, and number per page is set to three' do
-            subject { gateway.get_tenancies_for_user(user_id: user_id, page_number: 2, number_per_page: 3) }
+            subject { gateway.get_tenancies_for_user(user_id: user.id, page_number: 2, number_per_page: 3) }
 
             it 'should only return the last three' do
               expect(cases).to eq([
@@ -259,9 +260,9 @@ describe Hackney::Income::StoredTenanciesGateway do
 
     context 'and tenancies exist which aren\'t assigned to the user' do
       before do
-        tenancy_model.create!(assigned_user_id: user_id, balance: 1)
-        tenancy_model.create!(assigned_user_id: other_user_id, balance: 1)
-        tenancy_model.create!(assigned_user_id: user_id, balance: 1)
+        create(:case_priority, assigned_user_id: user.id, balance: 1)
+        create(:case_priority, assigned_user_id: user.id, balance: 1)
+        create(:case_priority, assigned_user_id: other_user.id, balance: 1)
       end
 
       it 'should only return the user\'s tenancies' do
@@ -271,13 +272,15 @@ describe Hackney::Income::StoredTenanciesGateway do
   end
 
   context 'when counting the number of pages of tenancies for a user' do
-    let(:user_id) { Faker::Number.number(2).to_i }
-    subject { gateway.number_of_pages_for_user(user_id: user_id, number_per_page: number_per_page) }
+    let(:user) { create(:user) }
+    let(:other_user) { create(:user) }
+
+    subject { gateway.number_of_pages_for_user(user_id: user.id, number_per_page: number_per_page) }
 
     context 'and the user has ten tenancies in arrears, and ten not in arrears' do
       before do
-        10.times { create_tenancy(user_id: user_id, balance: 1) }
-        10.times { create_tenancy(user_id: user_id, balance: -1) }
+        10.times { create(:case_priority, assigned_user_id: user.id, balance: 1) }
+        10.times { create(:case_priority, assigned_user_id: user.id, balance: -1) }
       end
 
       context 'and the number per page is five' do
@@ -287,7 +290,7 @@ describe Hackney::Income::StoredTenanciesGateway do
     end
 
     context 'and the user has nine tenancies' do
-      before { 9.times { create_tenancy(user_id: user_id) } }
+      before { 9.times { create(:case_priority, assigned_user_id: user.id) } }
 
       context 'and the number per page is five' do
         let(:number_per_page) { 5 }
@@ -296,7 +299,8 @@ describe Hackney::Income::StoredTenanciesGateway do
     end
 
     context 'and the user has twelve tenancies' do
-      before { 12.times { create_tenancy(user_id: user_id) } }
+      # before { 12.times { create_tenancy(user_id: user_id) } }
+      before { 12.times { create(:case_priority, assigned_user_id: user.id) } }
 
       context 'and the number per page is three' do
         let(:number_per_page) { 3 }
@@ -305,11 +309,13 @@ describe Hackney::Income::StoredTenanciesGateway do
     end
 
     context 'and the user is not the only assignee' do
-      let(:other_user_id) { Faker::Number.number(3).to_i }
+      let(:other_user) { create(:user) }
 
       before do
-        6.times { create_tenancy(user_id: user_id) }
-        6.times { create_tenancy(user_id: other_user_id) }
+        6.times { create(:case_priority, assigned_user_id: user.id) }
+        6.times { create(:case_priority, assigned_user_id: other_user.id) }
+        # 6.times { create_tenancy(user_id: user_id) }
+        # 6.times { create_tenancy(user_id: other_user_id) }
       end
 
       context 'and the number per page is three' do
@@ -321,7 +327,7 @@ describe Hackney::Income::StoredTenanciesGateway do
 
   context 'there are paused and paused tenancies' do
     let(:is_paused) { nil }
-    let(:user_id) { Faker::Number.number(2).to_i }
+    let(:user) { create(:user) }
 
     let(:num_paused_cases) { Faker::Number.between(2, 10) }
     let(:num_active_cases) { Faker::Number.between(2, 20) }
@@ -329,13 +335,15 @@ describe Hackney::Income::StoredTenanciesGateway do
 
     before do
       num_paused_cases.times do
-        create_tenancy(user_id: user_id, balance: 40, is_paused_until: Faker::Date.forward(1))
+        create(:case_priority, assigned_user_id: user.id, balance: 40, is_paused_until: Faker::Date.forward(1))
       end
+
       (num_active_cases - 2).times do
-        create_tenancy(user_id: user_id, balance: 40)
+        create(:case_priority, assigned_user_id: user.id, balance: 40)
       end
+
       2.times do
-        create_tenancy(user_id: user_id, balance: 40, is_paused_until: Faker::Date.backward(1))
+        create(:case_priority, assigned_user_id: user.id, balance: 40, is_paused_until: Faker::Date.backward(1))
       end
     end
 
@@ -343,7 +351,7 @@ describe Hackney::Income::StoredTenanciesGateway do
       let(:is_paused) { nil }
       subject do
         gateway.get_tenancies_for_user(
-          user_id: user_id,
+          user_id: user.id,
           page_number: 1,
           number_per_page: 50,
           is_paused: is_paused
@@ -364,7 +372,6 @@ describe Hackney::Income::StoredTenanciesGateway do
 
       context 'and is_paused is set false' do
         let(:is_paused) { false }
-
         it 'should only return unpaused tenancies' do
           expect(subject.count).to eq(num_active_cases)
         end
@@ -374,7 +381,7 @@ describe Hackney::Income::StoredTenanciesGateway do
     context 'when we call number_of_pages_for_user' do
       subject do
         gateway.number_of_pages_for_user(
-          user_id: user_id,
+          user_id: user.id,
           number_per_page: num_pages,
           is_paused: is_paused
         )
@@ -408,10 +415,6 @@ describe Hackney::Income::StoredTenanciesGateway do
 
   def expected_num_pages(items, number_per_page)
     (items.to_f / number_per_page).ceil
-  end
-
-  def create_tenancy(user_id: nil, balance: 1, is_paused_until: nil)
-    tenancy_model.create(assigned_user_id: user_id, balance: balance, is_paused_until: is_paused_until)
   end
 
   def expected_serialised_tenancy(attributes)
