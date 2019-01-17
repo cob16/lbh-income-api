@@ -10,12 +10,12 @@ module Hackney
 
         belongs_to :case, class_name: 'Hackney::Income::Models::Case', optional: true
 
-        # def tenancy_ref
-        #   # ActiveSupport::Deprecation.warn(
-        #   #   "Mr Cases says - tenancy_ref has been moved to Hackney::Income::Models::Case"
-        #   # )
-        #  self.tenancy_ref
-        # end
+        def tenancy_ref
+          ActiveSupport::Deprecation.warn(
+            'Mr Cases says - tenancy_ref has been moved to Hackney::Income::Models::Case'
+          )
+          read_attribute(:tenancy_ref)
+        end
 
         def create_case_with_tenancy_ref
           self.case_id ||= Hackney::Income::Models::Case.find_or_create_by(tenancy_ref: tenancy_ref).id

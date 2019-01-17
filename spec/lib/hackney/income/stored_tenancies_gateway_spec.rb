@@ -299,7 +299,6 @@ describe Hackney::Income::StoredTenanciesGateway do
     end
 
     context 'and the user has twelve tenancies' do
-      # before { 12.times { create_tenancy(user_id: user_id) } }
       before { 12.times { create(:case_priority, assigned_user_id: user.id) } }
 
       context 'and the number per page is three' do
@@ -314,8 +313,6 @@ describe Hackney::Income::StoredTenanciesGateway do
       before do
         6.times { create(:case_priority, assigned_user_id: user.id) }
         6.times { create(:case_priority, assigned_user_id: other_user.id) }
-        # 6.times { create_tenancy(user_id: user_id) }
-        # 6.times { create_tenancy(user_id: other_user_id) }
       end
 
       context 'and the number per page is three' do
