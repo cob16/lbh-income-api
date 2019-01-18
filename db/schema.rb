@@ -10,9 +10,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190114151859) do
+ActiveRecord::Schema.define(version: 2019_01_14_151859) do
 
   create_table "case_priorities", force: :cascade do |t|
+    t.string "tenancy_ref"
     t.string "priority_band"
     t.integer "priority_score"
     t.datetime "created_at", null: false
@@ -42,9 +43,9 @@ ActiveRecord::Schema.define(version: 20190114151859) do
     t.string "pause_reason"
     t.text "pause_comment"
     t.integer "case_id"
-    t.string "tenancy_ref"
     t.index ["assigned_user_id"], name: "index_case_priorities_on_assigned_user_id"
-    t.index ["case_id"], name: "index_case_priorities_on_case_id", unique: true
+    t.index ["case_id"], name: "index_case_priorities_on_case_id"
+    t.index ["tenancy_ref"], name: "index_case_priorities_on_tenancy_ref", unique: true
   end
 
   create_table "cases", force: :cascade do |t|
