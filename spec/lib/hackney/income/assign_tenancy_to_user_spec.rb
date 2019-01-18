@@ -1,42 +1,34 @@
 require 'rails_helper'
 
 describe Hackney::Income::AssignTenancyToUser do
-  let!(:user1) { Hackney::Income::Models::User.create!(name: Faker::Name.name, role: :credit_controller) }
-  let!(:user2) { Hackney::Income::Models::User.create!(name: Faker::Name.name, role: :credit_controller) }
-  let!(:assigned_tenancy) { create_assigned_tenancy_model(band: 'green', user: user2) }
-  let!(:unassigned_tenancy) { create_assigned_tenancy_model(band: 'green', user: nil) }
+  let!(:user1) { create(:user, :credit_controller) }
+  let!(:user2) { create(:user, :credit_controller) }
+
+  let!(:assigned_case) { create(:case_priority, assigned_user: user2) }
+  let!(:unassigned_case) { create(:case_priority, assigned_user_id: nil) }
 
   let(:gateway) { double('UserAssignmentGateway') }
   subject { described_class.new(user_assignment_gateway: gateway) }
 
   before do
-    allow(gateway).to receive(:assign_to_next_available_user).with(tenancy: unassigned_tenancy).and_return(user1.id)
+    allow(gateway).to receive(:assign_to_next_available_user).with(tenancy: unassigned_case).and_return(user1.id)
   end
 
-  context 'when trying to assign a tenancy already assigned' do
-    it 'should not assign the tenancy' do
+  context 'when trying to assign a case already assigned' do
+    it 'should not assign the case' do
       expect(gateway).to_not receive(:assign_to_next_available_user)
 
-      expect(subject.assign(tenancy: assigned_tenancy)).to eq(user2.id)
+      expect(subject.assign(tenancy: assigned_case)).to eq(user2.id)
     end
   end
 
-  context 'when trying to assign a new tenancy' do
-    it 'should pass the tenancy to the assignment gateway and return the assigned user id' do
+  context 'when trying to assign a new case' do
+    it 'should pass the case to the assignment gateway and return the assigned user id' do
       expect(gateway).to receive(:assign_to_next_available_user).with(
-        tenancy: unassigned_tenancy
+        tenancy: unassigned_case
       )
 
-      expect(subject.assign(tenancy: unassigned_tenancy)).to eq(user1.id)
+      expect(subject.assign(tenancy: unassigned_case)).to eq(user1.id)
     end
-  end
-
-  def create_assigned_tenancy_model(band:, user:)
-    newcase = Hackney::Income::Models::Case.create(tenancy_ref: Faker::Lorem.characters(5))
-    newcase.create_case_priority!(
-      priority_band: band,
-      priority_score: Faker::Lorem.characters(5),
-      assigned_user: user
-    )
   end
 end
