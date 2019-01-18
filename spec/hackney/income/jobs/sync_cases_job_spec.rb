@@ -47,7 +47,6 @@ describe Hackney::Income::Jobs::SyncCasesJob do
 
       it 'the job should still succeed and be removed from the queue' do
         job = Delayed::Job.first
-
         expect do
           Delayed::Worker.new.work_off
         end.to change {

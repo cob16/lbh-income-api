@@ -154,23 +154,12 @@ describe Hackney::Income::SqlTenancyCaseGateway do
     context 'when assigning several cases' do
       context 'and they are all in the same band' do
         it 'should assign them evenly to eligible users' do
-          user_a = Hackney::Income::Models::User.create!(role: :credit_controller)
-          user_b = Hackney::Income::Models::User.create!(role: :credit_controller)
-          user_c = Hackney::Income::Models::User.create!(role: :credit_controller)
-          user_d = Hackney::Income::Models::User.create!(role: :credit_controller)
-          user_e = Hackney::Income::Models::User.create!(role: :credit_controller)
-          user_f = Hackney::Income::Models::User.create!(role: :base_user)
-          user_g = Hackney::Income::Models::User.create!(role: :legal_case_worker)
+          user_a, user_b, user_c, user_d, user_e = Array.new(5) { create(:user, :credit_controller) }
+          user_f = create(:user)
+          user_g = create(:user, :legal_case_worker)
 
-          tenancy_a = gateway_model.create!(priority_band: 'red')
-          tenancy_b = gateway_model.create!(priority_band: 'red')
-          tenancy_c = gateway_model.create!(priority_band: 'red')
-          tenancy_d = gateway_model.create!(priority_band: 'red')
-          tenancy_e = gateway_model.create!(priority_band: 'red')
-          tenancy_f = gateway_model.create!(priority_band: 'red')
-          tenancy_g = gateway_model.create!(priority_band: 'green')
-          tenancy_h = gateway_model.create!(priority_band: 'green')
-          tenancy_i = gateway_model.create!(priority_band: 'green')
+          tenancy_a, tenancy_b, tenancy_c, tenancy_d, tenancy_e, tenancy_f = Array.new(6) { create(:case_priority, :red) }
+          tenancy_g, tenancy_h, tenancy_i = Array.new(3) { create(:case_priority) }
 
           subject.assign_to_next_available_user(tenancy: tenancy_a)
           subject.assign_to_next_available_user(tenancy: tenancy_b)
