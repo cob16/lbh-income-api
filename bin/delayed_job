@@ -4,14 +4,17 @@ require 'delayed/command'
 
 # this stops workers running other docker containers from picking up the same job,
 # however jobs left locked on SIGKILL will be ignored for 4 hours
-uuid_prefix = '--identifier=' + rand(1_000...1_000_000).to_s
+job_identifier_prefix = '--identifier=' + rand(1_000...1_000_000).to_s
 
 queues = [
-  '--pool=*:1'
+  '--queues=action_diary_writer,message_jobs,uh_sync_cases'
   # this is currency being used with the 'run' command,
-  # this seems to disable separate threads. Therefore until jobs are run using 'start' we can not use separate worker queues
+  # this seems to disable separate threads. Therefore until:
+  #  - jobs are run using 'start'
+  #  - identifier is no longer need
+  # we can not use separate worker queues
 ]
 
-params = [uuid_prefix] + queues + ARGV
+params = [job_identifier_prefix] + queues + ARGV
 puts params
 Delayed::Command.new(params).daemonize
