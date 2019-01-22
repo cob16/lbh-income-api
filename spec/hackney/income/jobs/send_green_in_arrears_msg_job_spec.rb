@@ -13,7 +13,7 @@ describe Hackney::Income::Jobs::SendGreenInArrearsMsgJob do
     allow(mock_automated_message).to receive(:new).and_return(mock_automated_message)
   end
 
-  it 'should call usecase with correct args' do
+  it 'calls usecase with correct args' do
     expect(mock_automated_message).to receive(:execute).with(
       hash_including(
         tenancy_ref: tenancy_ref,
@@ -25,9 +25,9 @@ describe Hackney::Income::Jobs::SendGreenInArrearsMsgJob do
     subject.perform_now(tenancy_ref: tenancy_ref, balance: balance)
   end
 
-  it 'should be able to be scheduled' do
+  it 'is able to be scheduled' do
     expect do
       subject.set(wait_until: Time.now + 5.minutes).perform_later
-    end.to_not raise_error
+    end.not_to raise_error
   end
 end

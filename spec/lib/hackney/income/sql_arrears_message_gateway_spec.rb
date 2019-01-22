@@ -2,6 +2,7 @@ require 'rails_helper'
 
 describe Hackney::Income::SqlTenanciesMatchingCriteriaGateway do
   subject { described_class.new }
+
   let(:gateway_model) { described_class::GatewayModel }
 
   it 'returns an empty array when critira do not match' do

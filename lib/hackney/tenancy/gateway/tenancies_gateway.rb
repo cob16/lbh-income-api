@@ -26,27 +26,34 @@ module Hackney
           body = JSON.parse(res.body)
 
           body['tenancies'].map do |tenancy|
-            action_missing = tenancy.dig('latest_action', 'code').nil?
-            contact_missing = tenancy.dig('primary_contact', 'name').nil?
-
             {
               ref: tenancy.fetch('ref'),
               current_balance: tenancy.fetch('current_balance'),
               current_arrears_agreement_status: tenancy.fetch('current_arrears_agreement_status'),
-              latest_action: action_missing ? nil : {
-                code: tenancy.dig('latest_action', 'code'),
-                date: Time.parse(tenancy.dig('latest_action', 'date'))
-              },
-              primary_contact: contact_missing ? nil : {
-                name: tenancy.dig('primary_contact', 'name'),
-                short_address: tenancy.dig('primary_contact', 'short_address'),
-                postcode: tenancy.dig('primary_contact', 'postcode')
-              }
+              latest_action: build_latest_action(tenancy),
+              primary_contact: build_primary_contact(tenancy)
             }
           end
         end
 
         private
+
+        def build_primary_contact(tenancy)
+          return nil if tenancy.dig('primary_contact', 'name').nil?
+          {
+            name: tenancy.dig('primary_contact', 'name'),
+            short_address: tenancy.dig('primary_contact', 'short_address'),
+            postcode: tenancy.dig('primary_contact', 'postcode')
+          }
+        end
+
+        def build_latest_action(tenancy)
+          return nil if tenancy.dig('latest_action', 'code').nil?
+          {
+            code: tenancy.dig('latest_action', 'code'),
+            date: Time.parse(tenancy.dig('latest_action', 'date'))
+          }
+        end
 
         def params_list(key, values)
           values.each_with_index.map do |value, index|

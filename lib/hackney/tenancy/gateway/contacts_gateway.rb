@@ -30,7 +30,7 @@ module Hackney
           contacts_json = json.dig(:data, :contacts)
           return [] if contacts_json.nil? || contacts_json.empty?
 
-          contacts_json = contacts_json.select { |contact| contact[:responsible] } if responsible_only
+          contacts_json = contacts_json.select { |contact| contact[:responsible] }
 
           contacts_json.each_with_object([]) do |contact, contacts_list|
             phone_numbers = []

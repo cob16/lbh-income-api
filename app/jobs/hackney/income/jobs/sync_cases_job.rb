@@ -18,7 +18,7 @@ module Hackney
             Rails.logger.info("Running '#{self.class.name}' job")
             begin
               income_use_case_factory.schedule_sync_cases.execute
-            rescue => e
+            rescue StandardError => e
               Rails.logger.error("Caught error: #{e}")
             ensure
               self.class.enqueue_next

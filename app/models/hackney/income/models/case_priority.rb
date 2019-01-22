@@ -11,9 +11,9 @@ module Hackney
         belongs_to :case, class_name: 'Hackney::Income::Models::Case', optional: true
 
         def tenancy_ref
-          ActiveSupport::Deprecation.warn(
-            'Mr Cases says - tenancy_ref has been moved to Hackney::Income::Models::Case'
-          )
+          # ActiveSupport::Deprecation.warn(
+          #   'Mr Cases says - tenancy_ref has been moved to Hackney::Income::Models::Case'
+          # )
           read_attribute(:tenancy_ref)
         end
 

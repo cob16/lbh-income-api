@@ -32,7 +32,7 @@ describe MyCasesController do
       let(:page_number) { Faker::Number.number(2).to_i }
       let(:number_per_page) { Faker::Number.number(2).to_i }
 
-      it 'should create the view my cases use case' do
+      it 'creates the view my cases use case' do
         allow(view_my_cases_instance)
           .to receive(:execute)
           .and_return(cases: [], number_per_page: 1)
@@ -40,7 +40,7 @@ describe MyCasesController do
         get :index, params: { user_id: user_id, page_number: page_number, number_per_page: number_per_page }
       end
 
-      it 'should call the view my cases use case with the given user_id, page_number and number_per_page' do
+      it 'calls the view my cases use case with the given user_id, page_number and number_per_page' do
         allow(view_my_cases_instance)
           .to receive(:execute)
           .with(user_id: user_id, page_number: page_number, number_per_page: number_per_page, is_paused: nil)
@@ -49,7 +49,7 @@ describe MyCasesController do
         get :index, params: { user_id: user_id, page_number: page_number, number_per_page: number_per_page }
       end
 
-      it 'should respond with the results of the view my cases use case' do
+      it 'responds with the results of the view my cases use case' do
         expected_result = {
           cases: [Faker::GreekPhilosophers.quote],
           number_per_page: 10
@@ -64,7 +64,7 @@ describe MyCasesController do
         expect(response.body).to eq(expected_result.to_json)
       end
 
-      it 'should respond with only non paused results when requested' do
+      it 'responds with only non paused results when requested' do
         expected_result = {
           cases: [Faker::GreekPhilosophers.quote],
           number_per_page: number_per_page
@@ -83,7 +83,7 @@ describe MyCasesController do
   end
 
   describe '#sync' do
-    it 'should create the sync tenancies use case' do
+    it 'creates the sync tenancies use case' do
       expect(Hackney::Income::ScheduleSyncCases).to receive(:new).with(
         uh_tenancies_gateway: instance_of(Hackney::Income::UniversalHousingTenanciesGateway),
         background_job_gateway: instance_of(Hackney::Income::BackgroundJobGateway)
@@ -96,7 +96,7 @@ describe MyCasesController do
       get :sync
     end
 
-    it 'should call the sync tenancies use case' do
+    it 'calls the sync tenancies use case' do
       expect_any_instance_of(Hackney::Income::ScheduleSyncCases)
         .to receive(:execute)
         .and_return(cases: [], number_per_page: 1)
@@ -104,7 +104,7 @@ describe MyCasesController do
       get :sync
     end
 
-    it 'should respond with { success: true }' do
+    it 'responds with { success: true }' do
       allow_any_instance_of(Hackney::Income::ScheduleSyncCases)
         .to receive(:execute)
         .and_return(cases: [], number_per_page: 1)

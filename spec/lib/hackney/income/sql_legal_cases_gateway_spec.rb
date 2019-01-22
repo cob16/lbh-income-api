@@ -37,7 +37,7 @@ describe Hackney::Income::SqlLegalCasesGateway, universal: true do
     ]
   end
 
-  context 'given a patch, get all tenancies above stage 4' do
+  context 'when a patch has all tenancies above stage 4' do
     before do
       create_uh_tenancy_agreement_with_property(tenancy_ref: 'not_a_legal_case', prop_ref: '1234', arr_patch: 'W01')
       high_actions_above_stage_4.each_with_index do |high_action, i|
@@ -50,12 +50,12 @@ describe Hackney::Income::SqlLegalCasesGateway, universal: true do
       end
     end
 
-    it 'should return the tenancy refs for that patch' do
+    it 'returns the tenancy refs for that patch' do
       expect(subject.get_tenancies_for_legal_process_for_patch(patch: patch_code)).to match_array(tenancy_ref_array)
     end
   end
 
-  context 'given a patch with no tenancies with a high_action above stage 4' do
+  context 'when a patch has no tenancies with high_action above stage 4' do
     before do
       patch_codes.each_with_index do |patch_code, i|
         create_uh_tenancy_agreement_with_property(
@@ -67,7 +67,7 @@ describe Hackney::Income::SqlLegalCasesGateway, universal: true do
       end
     end
 
-    it 'should return an empty array' do
+    it 'returns an empty array' do
       patch_codes.each do |patch_code|
         expect(subject.get_tenancies_for_legal_process_for_patch(patch: patch_code)).to eq([])
       end

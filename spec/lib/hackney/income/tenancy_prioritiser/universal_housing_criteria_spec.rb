@@ -2,12 +2,14 @@ require 'rails_helper'
 
 describe Hackney::Income::TenancyPrioritiser::UniversalHousingCriteria, universal: true do
   subject(:criteria) { described_class.for_tenancy(universal_housing_client, tenancy_ref) }
+
   let(:universal_housing_client) { Hackney::UniversalHousing::Client.connection }
 
   let(:tenancy_ref) { '000015/01' }
   let(:current_balance) { Faker::Number.decimal.to_f }
 
   before { create_uh_tenancy_agreement(tenancy_ref: tenancy_ref, current_balance: current_balance) }
+
   after { truncate_uh_tables }
 
   it { is_expected.to be_instance_of(described_class) }
@@ -15,7 +17,7 @@ describe Hackney::Income::TenancyPrioritiser::UniversalHousingCriteria, universa
   describe '#balance' do
     subject { criteria.balance }
 
-    it 'should return the current balance of a tenancy' do
+    it 'returns the current balance of a tenancy' do
       expect(subject).to eq(current_balance)
     end
   end
@@ -43,7 +45,7 @@ describe Hackney::Income::TenancyPrioritiser::UniversalHousingCriteria, universa
         create_uh_transaction(tenancy_ref: tenancy_ref, amount: 50.0, date: Date.today - 7.days)
       end
 
-      it 'should return the difference between now and the first date it was in arrears' do
+      it 'returns the difference between now and the first date it was in arrears' do
         expect(subject).to eq(7)
       end
     end
@@ -56,7 +58,7 @@ describe Hackney::Income::TenancyPrioritiser::UniversalHousingCriteria, universa
         create_uh_transaction(tenancy_ref: tenancy_ref, amount: 25.0, date: Date.today - 14.days)
       end
 
-      it 'should return the difference between now and the first date it was in arrears' do
+      it 'returns the difference between now and the first date it was in arrears' do
         expect(subject).to eq(14)
       end
     end
@@ -71,7 +73,7 @@ describe Hackney::Income::TenancyPrioritiser::UniversalHousingCriteria, universa
         create_uh_transaction(tenancy_ref: tenancy_ref, amount: 10.0, date: Date.today - 30.days)
       end
 
-      it 'should return the first date' do
+      it 'returns the first date' do
         expect(subject).to eq(30)
       end
     end
@@ -142,7 +144,7 @@ describe Hackney::Income::TenancyPrioritiser::UniversalHousingCriteria, universa
         end
       end
 
-      it 'should be equal the number of broken agreements' do
+      it 'is equal the number of broken agreements' do
         expect(subject).to eq(broken_agreements_count)
       end
     end
@@ -229,7 +231,7 @@ describe Hackney::Income::TenancyPrioritiser::UniversalHousingCriteria, universa
         create_uh_transaction(tenancy_ref: tenancy_ref, amount: -75.0, date: Date.today - 3.days, type: 'RPY')
       end
 
-      it 'should return the delta between payments' do
+      it 'returns the delta between payments' do
         expect(subject).to eq(50.0)
       end
     end
@@ -241,7 +243,7 @@ describe Hackney::Income::TenancyPrioritiser::UniversalHousingCriteria, universa
         create_uh_transaction(tenancy_ref: tenancy_ref, amount: -50.0, date: Date.today - 3.days, type: 'RPY')
       end
 
-      it 'should return the delta between payments' do
+      it 'returns the delta between payments' do
         expect(subject).to eq(0.0)
       end
     end
@@ -276,7 +278,7 @@ describe Hackney::Income::TenancyPrioritiser::UniversalHousingCriteria, universa
         create_uh_transaction(tenancy_ref: tenancy_ref, date: Date.today - 25.days, type: 'RPY')
       end
 
-      it 'should return the delta between payment dates' do
+      it 'returns the delta between payment dates' do
         expect(subject).to eq(5)
       end
     end
@@ -288,7 +290,7 @@ describe Hackney::Income::TenancyPrioritiser::UniversalHousingCriteria, universa
         create_uh_transaction(tenancy_ref: tenancy_ref, date: Date.today - 30.days, type: 'RPY')
       end
 
-      it 'should return the delta between payment dates' do
+      it 'returns the delta between payment dates' do
         expect(subject).to be_zero
       end
     end
@@ -296,7 +298,7 @@ describe Hackney::Income::TenancyPrioritiser::UniversalHousingCriteria, universa
 
   describe '#broken_court_order?' do
     context 'when the tenant has no court ordered agreements' do
-      it 'should be false' do
+      it 'is false' do
         expect(subject.broken_court_order?).to be(false)
       end
     end
@@ -304,7 +306,7 @@ describe Hackney::Income::TenancyPrioritiser::UniversalHousingCriteria, universa
     context 'when the tenant has an informal breached agreement' do
       before { create_uh_arrears_agreement(tenancy_ref: tenancy_ref, status: '300') }
 
-      it 'should be false' do
+      it 'is false' do
         expect(subject.broken_court_order?).to be(false)
       end
     end
@@ -312,7 +314,7 @@ describe Hackney::Income::TenancyPrioritiser::UniversalHousingCriteria, universa
     xcontext 'when the tenant has an breached court-ordered agreement' do
       before { create_uh_arrears_agreement(tenancy_ref: tenancy_ref, status: '300') }
 
-      it 'should be true' do
+      it 'is true' do
         expect(subject.broken_court_order?).to be(true)
       end
     end

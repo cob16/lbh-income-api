@@ -8,7 +8,7 @@ describe Hackney::Income::FindOrCreateUser do
     let(:email) { Faker::Lovecraft.sentence }
     let(:provider_permissions) { "#{Faker::Number.number(6)}.#{Faker::Number.number(6)}" }
 
-    it 'should return a hash for the user' do
+    it 'returns a hash for the user' do
       expect(call_subject(uid: uid, name: name, email: email, provider_permissions: provider_permissions)).to include(
         id: 1,
         name: name,
@@ -17,10 +17,7 @@ describe Hackney::Income::FindOrCreateUser do
       )
     end
 
-    let(:name) { Faker::Lovecraft.deity }
-    let(:uid) { Faker::Number.number(10) }
-
-    it 'should create a new user id for each user' do
+    it 'creates a new user id for each user' do
       call_subject(uid: 'test-uid', name: 'test-name', email: 'test-email', provider_permissions: provider_permissions)
       expect(call_subject(uid: uid, name: name, email: email, provider_permissions: provider_permissions)).to include(
         id: 2,

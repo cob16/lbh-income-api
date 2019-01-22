@@ -1,6 +1,8 @@
 require 'rails_helper'
 
 describe Hackney::Income::ScheduleSyncCases do
+  subject { sync_cases.execute }
+
   let(:uh_tenancies_gateway) { double(tenancies_in_arrears: []) }
   let(:background_job_gateway) { double(schedule_case_priority_sync: nil) }
 
@@ -11,32 +13,30 @@ describe Hackney::Income::ScheduleSyncCases do
     )
   end
 
-  subject { sync_cases.execute }
-
   context 'when syncing cases' do
-    context 'and finding no cases' do
-      it 'should queue no jobs' do
+    context 'without finding any cases' do
+      it 'queues no jobs' do
         expect(background_job_gateway).not_to receive(:schedule_case_priority_sync)
         subject
       end
     end
 
-    context 'and finding a case' do
+    context 'when finding a case' do
       let(:tenancy_ref) { Faker::IDNumber.valid }
       let(:uh_tenancies_gateway) { double(tenancies_in_arrears: [tenancy_ref]) }
 
-      it 'should queue a job to sync that case' do
+      it 'queues a job to sync that case' do
         expect(background_job_gateway).to receive(:schedule_case_priority_sync).with(tenancy_ref: tenancy_ref)
         subject
       end
     end
 
-    context 'and finding a few cases' do
+    context 'when 3 cases are found' do
       let(:uh_tenancies_gateway) do
         double(tenancies_in_arrears: ['000010/01', '000011/01', '000012/01'])
       end
 
-      it 'should queue a job for each case individually' do
+      it 'queues a job for each case individually' do
         expect(background_job_gateway).to receive(:schedule_case_priority_sync).with(tenancy_ref: '000010/01')
         expect(background_job_gateway).to receive(:schedule_case_priority_sync).with(tenancy_ref: '000011/01')
         expect(background_job_gateway).to receive(:schedule_case_priority_sync).with(tenancy_ref: '000012/01')

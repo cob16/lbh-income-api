@@ -8,6 +8,16 @@ describe Hackney::Income::StoredTenanciesGateway do
   let(:tenancy_model) { Hackney::Income::Models::CasePriority }
 
   context 'when storing a tenancy' do
+    subject(:store_tenancy) do
+      gateway.store_tenancy(
+        tenancy_ref: attributes.fetch(:tenancy_ref),
+        priority_band: attributes.fetch(:priority_band),
+        priority_score: attributes.fetch(:priority_score),
+        criteria: attributes.fetch(:criteria),
+        weightings: attributes.fetch(:weightings)
+      )
+    end
+
     let(:attributes) do
       {
         tenancy_ref: Faker::Internet.slug,
@@ -25,31 +35,21 @@ describe Hackney::Income::StoredTenanciesGateway do
       )
     end
 
-    subject(:store_tenancy) do
-      gateway.store_tenancy(
-        tenancy_ref: attributes.fetch(:tenancy_ref),
-        priority_band: attributes.fetch(:priority_band),
-        priority_score: attributes.fetch(:priority_score),
-        criteria: attributes.fetch(:criteria),
-        weightings: attributes.fetch(:weightings)
-      )
-    end
-
-    context 'and the tenancy does not already exist' do
+    context 'when the tenancy does not already exist' do
       let(:created_tenancy) { tenancy_model.find_by(tenancy_ref: attributes.fetch(:tenancy_ref)) }
 
-      it 'should create the tenancy' do
+      it 'creates the tenancy' do
         store_tenancy
         expect(created_tenancy).to have_attributes(expected_serialised_tenancy(attributes))
       end
 
       # FIXME: shouldn't return AR models from gateways
-      it 'should return the tenancy' do
+      it 'returns the tenancy' do
         expect(store_tenancy).to eq(created_tenancy)
       end
     end
 
-    context 'and the tenancy already exists' do
+    context 'when the tenancy already exists' do
       let!(:pre_existing_tenancy) do
         tenancy_model.create!(
           tenancy_ref: attributes.fetch(:tenancy_ref),
@@ -82,36 +82,36 @@ describe Hackney::Income::StoredTenanciesGateway do
 
       let(:stored_tenancy) { tenancy_model.find_by(tenancy_ref: attributes.fetch(:tenancy_ref)) }
 
-      it 'should update the tenancy' do
+      it 'updates the tenancy' do
         store_tenancy
         expect(stored_tenancy).to have_attributes(expected_serialised_tenancy(attributes))
       end
 
-      it 'should not create a new tenancy' do
+      it 'does not create a new tenancy' do
         store_tenancy
         expect(tenancy_model.count).to eq(1)
       end
 
       # FIXME: shouldn't return AR models from gateways
-      it 'should return the tenancy' do
+      it 'returns the tenancy' do
         expect(store_tenancy).to eq(pre_existing_tenancy)
       end
     end
   end
 
   context 'when retrieving tenancies by user' do
+    subject { gateway.get_tenancies_for_user(user_id: user.id) }
+
     let(:user) { create(:user) }
     let(:other_user) { create(:user) }
 
-    subject { gateway.get_tenancies_for_user(user_id: user.id) }
-
-    context 'and the user has no tenancies' do
-      it 'should return no tenancies' do
+    context 'when the user has no tenancies' do
+      it 'returns no tenancies' do
         expect(subject).to eq([])
       end
     end
 
-    context 'and the user is assigned a single tenancy' do
+    context 'when the user is assigned a single tenancy' do
       let(:attributes) do
         {
           tenancy_ref: Faker::Internet.slug,
@@ -159,13 +159,13 @@ describe Hackney::Income::StoredTenanciesGateway do
         )
       end
 
-      it 'should include the tenancy\'s ref, band and score' do
+      it 'includes the tenancy\'s ref, band and score' do
         expect(subject.count).to eq(1)
         expect(subject).to include(a_hash_including(expected_serialised_tenancy(attributes)))
       end
     end
 
-    context 'and the user is assigned multiple tenancies' do
+    context 'when the user is assigned multiple tenancies' do
       let(:multiple_attributes) do
         multiple_attributes = []
         Faker::Number.number(1).to_i.times do
@@ -178,7 +178,7 @@ describe Hackney::Income::StoredTenanciesGateway do
         multiple_attributes
       end
 
-      context 'and the tenancies exist' do
+      context 'when the tenancies exist' do
         before do
           multiple_attributes.map do |attributes|
             tenancy_model.create!(
@@ -191,7 +191,7 @@ describe Hackney::Income::StoredTenanciesGateway do
           end
         end
 
-        it 'should include the tenancy\'s ref, band and score' do
+        it 'includes the tenancy\'s ref, band and score' do
           expect(subject.count).to eq(multiple_attributes.count)
 
           multiple_attributes.each do |attributes|
@@ -203,7 +203,7 @@ describe Hackney::Income::StoredTenanciesGateway do
           end
         end
 
-        context 'and the cases are assigned different bands and scores' do
+        context 'when cases are assigned different bands and scores' do
           let(:multiple_attributes) do
             [
               { tenancy_ref: Faker::Internet.slug, priority_band: 'red', priority_score: 1, balance: 1 },
@@ -221,7 +221,7 @@ describe Hackney::Income::StoredTenanciesGateway do
             end
           end
 
-          it 'should sort by band, then score' do
+          it 'sorts by band, then score' do
             expect(cases).to eq([
               { band: 'red', score: 101 },
               { band: 'red', score: 1 },
@@ -232,10 +232,10 @@ describe Hackney::Income::StoredTenanciesGateway do
             ])
           end
 
-          context 'and page number is set to one, and number per page is set to two' do
+          context 'with page number set to one, and number per page set to two' do
             subject { gateway.get_tenancies_for_user(user_id: user.id, page_number: 1, number_per_page: 2) }
 
-            it 'should only return the first two' do
+            it 'only return the first two' do
               expect(cases).to eq([
                 { band: 'red', score: 101 },
                 { band: 'red', score: 1 }
@@ -243,10 +243,10 @@ describe Hackney::Income::StoredTenanciesGateway do
             end
           end
 
-          context 'and page number is set to two, and number per page is set to three' do
+          context 'with page number set to two, and number per page set to three' do
             subject { gateway.get_tenancies_for_user(user_id: user.id, page_number: 2, number_per_page: 3) }
 
-            it 'should only return the last three' do
+            it 'only return the last three' do
               expect(cases).to eq([
                 { band: 'amber', score: 100 },
                 { band: 'green', score: 100 },
@@ -258,71 +258,75 @@ describe Hackney::Income::StoredTenanciesGateway do
       end
     end
 
-    context 'and tenancies exist which aren\'t assigned to the user' do
+    context 'when tenancies exist which are not assigned to the user' do
       before do
         create(:case_priority, assigned_user_id: user.id, balance: 1)
         create(:case_priority, assigned_user_id: user.id, balance: 1)
         create(:case_priority, assigned_user_id: other_user.id, balance: 1)
       end
 
-      it 'should only return the user\'s tenancies' do
+      it 'returns only the user\'s tenancies' do
         expect(subject.count).to eq(2)
       end
     end
   end
 
   context 'when counting the number of pages of tenancies for a user' do
+    subject { gateway.number_of_pages_for_user(user_id: user.id, number_per_page: number_per_page) }
+
     let(:user) { create(:user) }
     let(:other_user) { create(:user) }
 
-    subject { gateway.number_of_pages_for_user(user_id: user.id, number_per_page: number_per_page) }
-
-    context 'and the user has ten tenancies in arrears, and ten not in arrears' do
+    context 'with thr user having ten tenancies in arrears and ten not in arrears' do
       before do
-        10.times { create(:case_priority, assigned_user_id: user.id, balance: 1) }
-        10.times { create(:case_priority, assigned_user_id: user.id, balance: -1) }
+        create_list(:case_priority, 10, assigned_user_id: user.id, balance: 1)
+        create_list(:case_priority, 10, assigned_user_id: user.id, balance: -1)
       end
 
-      context 'and the number per page is five' do
+      context 'when the number shown per page is five' do
         let(:number_per_page) { 5 }
+
         it { is_expected.to eq(2) }
       end
     end
 
-    context 'and the user has nine tenancies' do
-      before { 9.times { create(:case_priority, assigned_user_id: user.id) } }
+    context 'when the user has nine tenancies' do
+      before { create_list(:case_priority, 9, assigned_user_id: user.id) }
 
-      context 'and the number per page is five' do
+      context 'with five results per page' do
         let(:number_per_page) { 5 }
+
         it { is_expected.to eq(2) }
       end
     end
 
-    context 'and the user has twelve tenancies' do
-      before { 12.times { create(:case_priority, assigned_user_id: user.id) } }
+    context 'when the user has twelve tenancies' do
+      before { create_list(:case_priority, 12, assigned_user_id: user.id) }
 
-      context 'and the number per page is three' do
+      context 'with three results per page' do
         let(:number_per_page) { 3 }
+
         it { is_expected.to eq(4) }
       end
     end
 
-    context 'and the user is not the only assignee' do
+    context 'when the user is not the only assignee' do
       let(:other_user) { create(:user) }
 
       before do
-        6.times { create(:case_priority, assigned_user_id: user.id) }
-        6.times { create(:case_priority, assigned_user_id: other_user.id) }
+        create_list(:case_priority, 6, assigned_user_id: user.id)
+        create_list(:case_priority, 6, assigned_user_id: other_user.id)
       end
 
-      context 'and the number per page is three' do
+      context 'when the number per page is three' do
         let(:number_per_page) { 3 }
+
         it { is_expected.to eq(2) }
       end
     end
   end
 
-  context 'there are paused and paused tenancies' do
+  context 'when there are paused and paused tenancies' do
     let(:is_paused) { nil }
     let(:user) { create(:user) }
 
@@ -339,13 +343,10 @@ describe Hackney::Income::StoredTenanciesGateway do
         create(:case_priority, assigned_user_id: user.id, balance: 40)
       end
 
-      2.times do
-        create(:case_priority, assigned_user_id: user.id, balance: 40, is_paused_until: Faker::Date.backward(1))
-      end
+      create_list(:case_priority, 2, assigned_user_id: user.id, balance: 40, is_paused_until: Faker::Date.backward(1))
     end
 
     context 'when we call get_tenancies_for_user' do
-      let(:is_paused) { nil }
       subject do
         gateway.get_tenancies_for_user(
           user_id: user.id,
@@ -355,21 +356,24 @@ describe Hackney::Income::StoredTenanciesGateway do
         )
       end
 
-      it 'should return all tenancies' do
+      let(:is_paused) { nil }
+
+      it 'returns all tenancies' do
         expect(subject.count).to eq(num_paused_cases + num_active_cases)
       end
 
       context 'when and is_paused is set true' do
         let(:is_paused) { true }
 
-        it 'should only return only paused tenancies' do
+        it 'onlies return only paused tenancies' do
           expect(subject.count).to eq(num_paused_cases)
         end
       end
 
-      context 'and is_paused is set false' do
+      context 'with is_paused set false' do
         let(:is_paused) { false }
-        it 'should only return unpaused tenancies' do
+
+        it 'onlies return unpaused tenancies' do
           expect(subject.count).to eq(num_active_cases)
         end
       end
@@ -384,26 +388,26 @@ describe Hackney::Income::StoredTenanciesGateway do
         )
       end
 
-      context 'and is_paused is set false' do
+      context 'with is_paused set false' do
         let(:is_paused) { false }
 
-        it 'should show the number pages of of paused cases' do
+        it 'shows the number pages of of paused cases' do
           expect(subject).to eq(expected_num_pages(num_active_cases, num_pages))
         end
       end
 
-      context 'and is_paused is set true' do
+      context 'with is_paused set true' do
         let(:is_paused) { true }
 
-        it 'should show the number pages of of paused cases' do
+        it 'shows the number pages of of paused cases' do
           expect(subject).to eq(expected_num_pages(num_paused_cases, num_pages))
         end
       end
 
-      context 'and is_paused is not set' do
+      context 'with is_paused not set' do
         let(:is_paused) { nil }
 
-        it 'should show the number pages of of paused cases' do
+        it 'shows the number pages of of paused cases' do
           expect(subject).to eq(expected_num_pages((num_paused_cases + num_active_cases), num_pages))
         end
       end

@@ -28,7 +28,12 @@ module Hackney
           body[:username] = username unless username.nil?
 
           responce = self.class.post('/api/v2/tenancies/arrears-action-diary', @options.merge(body: body.to_json))
-          raise Hackney::Tenancy::Exceptions::TenancyApiException.new(responce), "when trying to create action diary entry for #{tenancy_ref}" unless responce.success?
+
+          unless responce.success?
+            raise Hackney::Tenancy::Exceptions::TenancyApiException.new(responce),
+                  "when trying to create action diary entry for #{tenancy_ref}"
+          end
+
           responce
         end
       end

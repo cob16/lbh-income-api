@@ -15,7 +15,7 @@ describe Hackney::Income::UniversalHousingPrioritisationGateway, universal: true
       allow_any_instance_of(Hackney::Income::TenancyPrioritiser).to receive(:priority_band).and_return(priority_band)
     end
 
-    it 'should return the priority scores and criteria of that tenancy' do
+    it 'returns the priority scores and criteria of that tenancy' do
       expect(subject.priorities_for_tenancy(tenancy_ref)).to include(
         priority_score: priority_score,
         priority_band: priority_band,
@@ -24,7 +24,7 @@ describe Hackney::Income::UniversalHousingPrioritisationGateway, universal: true
       )
     end
 
-    it 'should determine universal housing criteria' do
+    it 'determines universal housing criteria' do
       expect(Hackney::Income::TenancyPrioritiser::UniversalHousingCriteria)
         .to receive(:for_tenancy)
         .with(an_instance_of(Sequel::TinyTDS::Database), tenancy_ref)
@@ -32,7 +32,7 @@ describe Hackney::Income::UniversalHousingPrioritisationGateway, universal: true
       subject.priorities_for_tenancy(tenancy_ref)
     end
 
-    it 'should use universal housing criteria' do
+    it 'uses universal housing criteria' do
       expect(Hackney::Income::TenancyPrioritiser)
         .to receive(:new)
         .with(criteria: an_instance_of(Hackney::Income::TenancyPrioritiser::UniversalHousingCriteria), weightings: anything)
@@ -41,7 +41,7 @@ describe Hackney::Income::UniversalHousingPrioritisationGateway, universal: true
       subject.priorities_for_tenancy(tenancy_ref)
     end
 
-    it 'should use appropriate weightings' do
+    it 'uses appropriate weightings' do
       expect(Hackney::Income::TenancyPrioritiser)
         .to receive(:new)
         .with(criteria: anything, weightings: an_instance_of(Hackney::Income::TenancyPrioritiser::PriorityWeightings))

@@ -5,36 +5,36 @@ describe Hackney::Income::Jobs::SyncCasesJob do
 
   context 'when sync jobs are disabled' do
     before do
-      allow_any_instance_of(Hackney::Income::Jobs::SyncCasesJob)
+      allow_any_instance_of(described_class)
       .to receive(:run_tenancy_sync_jobs?)
           .and_return(false)
     end
 
-    it 'should not run use case' do
-      expect_any_instance_of(Hackney::Income::ScheduleSyncCases).to_not receive(:execute)
+    it 'does not run use case' do
+      expect_any_instance_of(Hackney::Income::ScheduleSyncCases).not_to receive(:execute)
       subject.perform_now
     end
   end
 
   context 'when sync jobs are enabled' do
     before do
-      allow_any_instance_of(Hackney::Income::Jobs::SyncCasesJob)
+      allow_any_instance_of(described_class)
       .to receive(:run_tenancy_sync_jobs?)
           .and_return(true)
     end
 
-    it 'should run the ScheduleSyncCases use case' do
+    it 'runs the ScheduleSyncCases use case' do
       expect_any_instance_of(Hackney::Income::ScheduleSyncCases).to receive(:execute).with(no_args)
       subject.perform_now
     end
 
-    it 'should be able to be scheduled' do
+    it 'is able to be scheduled' do
       expect do
         subject.set(wait_until: Time.now + 5.minutes).perform_later
-      end.to_not raise_error
+      end.not_to raise_error
     end
 
-    it 'should still schedule a new job for tomorrow on completion' do
+    it 'stills schedule a new job for tomorrow on completion' do
       subject.perform_now
       expect(Delayed::Job.last).to have_attributes(run_at: next_expected_run_time)
     end
@@ -54,7 +54,7 @@ describe Hackney::Income::Jobs::SyncCasesJob do
         }.from(true).to(false)
       end
 
-      it 'should still schedule a new job for tomorrow' do
+      it 'stills schedule a new job for tomorrow' do
         Delayed::Worker.new.work_off
 
         expect(Delayed::Job.last).to have_attributes(run_at: next_expected_run_time)

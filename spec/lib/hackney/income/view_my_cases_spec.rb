@@ -1,11 +1,13 @@
 require 'rails_helper'
 
 describe Hackney::Income::ViewMyCases do
+  subject { view_my_cases.execute(user_id: user_id, page_number: page_number, number_per_page: number_per_page) }
+
   let(:user_id) { Faker::Number.number(2).to_i }
   let(:page_number) { Faker::Number.number(2).to_i }
   let(:number_per_page) { Faker::Number.number(2).to_i }
-  let(:tenancy_api_gateway) { TenancyApiGatewayDouble.new({}) }
-  let(:stored_tenancies_gateway) { StoredTenancyGatewayDouble.new({}) }
+  let(:tenancy_api_gateway) { Hackney::Income::TenancyApiGatewayStub.new({}) }
+  let(:stored_tenancies_gateway) { Hackney::Income::StoredTenancyGatewayStub.new({}) }
 
   let(:view_my_cases) do
     described_class.new(
@@ -14,15 +16,13 @@ describe Hackney::Income::ViewMyCases do
     )
   end
 
-  subject { view_my_cases.execute(user_id: user_id, page_number: page_number, number_per_page: number_per_page) }
-
   context 'when the stored tenancies gateway responds with no tenancies' do
-    it 'should return nothing' do
+    it 'returns nothing' do
       expect(subject.cases).to eq([])
     end
   end
 
-  it 'should not do further queries if the page number returned is 0' do
+  it 'does not do further queries if the page number returned is 0' do
     expect(stored_tenancies_gateway)
     .to receive(:number_of_pages_for_user)
         .with(a_hash_including(user_id: user_id))
@@ -40,13 +40,20 @@ describe Hackney::Income::ViewMyCases do
     let(:tenancy_priority_factors) { random_tenancy_priority_factors }
     let(:tenancy_priority_band) { Faker::Internet.slug }
     let(:tenancy_priority_score) { Faker::Number.number(5).to_i }
-    let(:stored_tenancies_gateway) do
-      StoredTenancyGatewayDouble.new(
-        tenancy_attributes.fetch(:ref) => { tenancy_ref: tenancy_attributes.fetch(:ref), priority_band: tenancy_priority_band, priority_score: tenancy_priority_score }.merge(tenancy_priority_factors)
-      )
+
+    let(:tenancy_list) do
+      {
+        tenancy_attributes.fetch(:ref) => {
+          tenancy_ref: tenancy_attributes.fetch(:ref),
+          priority_band: tenancy_priority_band,
+          priority_score: tenancy_priority_score
+        }.merge(tenancy_priority_factors)
+      }
     end
 
-    it 'should pass the correct user id into the stored tenancy gateway' do
+    let(:stored_tenancies_gateway) { Hackney::Income::StoredTenancyGatewayStub.new(tenancy_list) }
+
+    it 'passes the correct user id into the stored tenancy gateway' do
       expect(stored_tenancies_gateway)
       .to receive(:get_tenancies_for_user)
           .with(a_hash_including(user_id: user_id))
@@ -55,7 +62,7 @@ describe Hackney::Income::ViewMyCases do
       subject
     end
 
-    it 'should pass the correct page number and number per page into the stored tenancy gateway' do
+    it 'passes the correct page number and number per page into the stored tenancy gateway' do
       expect(stored_tenancies_gateway)
       .to receive(:get_tenancies_for_user)
           .with(a_hash_including(page_number: page_number, number_per_page: number_per_page))
@@ -64,21 +71,21 @@ describe Hackney::Income::ViewMyCases do
       subject
     end
 
-    context 'and full tenancy details can NOT be found' do
-      it 'should ignore the tenancy' do
+    context 'without tenancy details being found' do
+      it 'ignores the tenancy' do
         expect(subject.cases).to eq([])
       end
     end
 
-    context 'and full tenancy details can be found' do
+    context 'when full tenancy details are be found' do
       let(:tenancy_api_gateway) do
-        TenancyApiGatewayDouble.new(
+        Hackney::Income::TenancyApiGatewayStub.new(
           other_tenancy_attributes.fetch(:ref) => other_tenancy_attributes,
           tenancy_attributes.fetch(:ref) => tenancy_attributes
         )
       end
 
-      it 'should return full details for the correct tenancy' do
+      it 'returns full details for the correct tenancy' do
         expect(subject.cases.count).to eq(1)
         expect(subject.cases).to include(a_hash_including(
                                            ref: tenancy_attributes.fetch(:ref),
@@ -125,7 +132,7 @@ describe Hackney::Income::ViewMyCases do
       context 'when filtering out paused cases' do
         subject { view_my_cases.execute(user_id: user_id, page_number: page_number, number_per_page: number_per_page, is_paused: false) }
 
-        it 'should return only paused cases' do
+        it 'returns only paused cases' do
           expect(stored_tenancies_gateway)
           .to receive(:get_tenancies_for_user)
               .with(a_hash_including(user_id: user_id, page_number: page_number, number_per_page: number_per_page, is_paused: false))
@@ -142,21 +149,25 @@ describe Hackney::Income::ViewMyCases do
     end
   end
 
-  context 'counting the number of pages of tenancies for a user' do
+  context 'when counting the number of pages of tenancies for a user' do
     let(:number_of_pages) { Faker::Number.number(3).to_i }
 
-    it 'should consult the stored tenancies gateway' do
-      expect(stored_tenancies_gateway).to receive(:number_of_pages_for_user).with(user_id: user_id, number_per_page: number_per_page, is_paused: nil).and_call_original
+    it 'consults the stored tenancies gateway' do
+      expect(stored_tenancies_gateway).to receive(:number_of_pages_for_user).with(
+        user_id: user_id,
+        number_per_page: number_per_page,
+        is_paused: nil
+      ).and_call_original
       subject
     end
 
-    it 'should return what the stored tenancies gateway does' do
+    it 'returns what the stored tenancies gateway does' do
       allow(stored_tenancies_gateway).to receive(:number_of_pages_for_user).and_return(number_of_pages)
       expect(subject.number_of_pages).to eq(number_of_pages)
     end
   end
 
-  it 'should be serialisable as valid JSON' do
+  it 'is serialisable as valid JSON' do
     loaded_json = JSON.parse(subject.to_json)
 
     expect(loaded_json.fetch('cases')).to be_a(Array)
@@ -204,29 +215,5 @@ describe Hackney::Income::ViewMyCases do
         postcode: Faker::Address.postcode
       }
     }
-  end
-
-  class TenancyApiGatewayDouble
-    def initialize(tenancies_attributes)
-      @tenancies_attributes = tenancies_attributes
-    end
-
-    def get_tenancies_by_refs(refs)
-      refs.map { |ref| @tenancies_attributes[ref] }.compact
-    end
-  end
-
-  class StoredTenancyGatewayDouble
-    def initialize(stored_tenancies_attributes)
-      @stored_tenancies_attributes = stored_tenancies_attributes
-    end
-
-    def get_tenancies_for_user(user_id:, page_number:, number_per_page:, is_paused: nil)
-      @stored_tenancies_attributes.values
-    end
-
-    def number_of_pages_for_user(user_id:, number_per_page:, is_paused: nil)
-      @stored_tenancies_attributes.keys.count
-    end
   end
 end

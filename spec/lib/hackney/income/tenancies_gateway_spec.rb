@@ -6,7 +6,7 @@ describe Hackney::Tenancy::Gateway::TenanciesGateway do
   context 'when retrieving tenancies' do
     subject { gateway.get_tenancies_by_refs(refs) }
 
-    context 'and using a different host' do
+    context 'with a different host' do
       let(:gateway) { described_class.new(host: 'https://other.com', key: 'skeleton') }
       let(:refs) { %w[123] }
 
@@ -18,21 +18,21 @@ describe Hackney::Tenancy::Gateway::TenanciesGateway do
         )
       end
 
-      it 'should use the host' do
+      it 'uses the host' do
         subject
         expect(WebMock).to have_requested(:get, 'https://other.com/api/v1/tenancies?tenancy_refs%5B%5D=123').once
       end
     end
 
-    context 'and passing no tenancy refs' do
+    context 'when passing no tenancy refs' do
       let(:refs) { [] }
 
-      it 'should give no tenancies' do
+      it 'gives no tenancies' do
         expect(subject).to be_empty
       end
     end
 
-    context 'and the tenancy has a ref' do
+    context 'when the tenancy has a ref' do
       let(:refs) { %w[000015/01] }
 
       before do
@@ -43,7 +43,7 @@ describe Hackney::Tenancy::Gateway::TenanciesGateway do
         )
       end
 
-      it 'should give basic details on that tenancy' do
+      it 'gives basic details on that tenancy' do
         expect(subject).to eq([{
           ref: '000015/01',
           current_balance: '£1000.00',
@@ -61,7 +61,7 @@ describe Hackney::Tenancy::Gateway::TenanciesGateway do
       end
     end
 
-    context 'and the tenancy has nil values' do
+    context 'with tenancy containing nil values' do
       let(:refs) { %w[000017/01] }
 
       before do
@@ -69,7 +69,7 @@ describe Hackney::Tenancy::Gateway::TenanciesGateway do
           .to_return(body: { 'tenancies' => [example_tenancy_with_nils] }.to_json)
       end
 
-      it 'should null out the values completely' do
+      it 'nulls out the values completely' do
         expect(subject).to eq([{
           ref: '000017/01',
           current_balance: '£19.99',
@@ -80,7 +80,7 @@ describe Hackney::Tenancy::Gateway::TenanciesGateway do
       end
     end
 
-    context 'and two tenancy refs are given' do
+    context 'with two tenancy refs' do
       let(:refs) { %w[000015/01 000017/01] }
 
       before do
@@ -88,11 +88,11 @@ describe Hackney::Tenancy::Gateway::TenanciesGateway do
           .to_return(body: { 'tenancies' => [example_tenancy, example_tenancy_with_nils] }.to_json)
       end
 
-      it 'should include both tenancies' do
+      it 'includes both tenancies' do
         expect(subject.count).to eq(2)
       end
 
-      it 'should return them in order' do
+      it 'returns them in order' do
         ordered_refs = subject.map { |t| t.fetch(:ref) }
         expect(ordered_refs).to eq(['000015/01', '000017/01'])
       end

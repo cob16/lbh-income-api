@@ -9,7 +9,7 @@ describe Hackney::Income::TenancyPrioritiser do
   context 'when retrieving priority score' do
     let(:priority_score) { Faker::Number.number(2).to_i }
 
-    it 'should generate a score assigner and pass it its criteria' do
+    it 'generates a score assigner and pass it its criteria' do
       expect(Hackney::Income::TenancyPrioritiser::Score).to receive(:new).with(criteria, weightings).and_call_original
       expect_any_instance_of(Hackney::Income::TenancyPrioritiser::Score).to receive(:execute)
 
@@ -26,14 +26,14 @@ describe Hackney::Income::TenancyPrioritiser do
   context 'when generating a priority band' do
     let(:priority_band) { Faker::Dog.size.to_sym }
 
-    it 'should generate a band assigner and pass it its criteria' do
+    it 'generates a band assigner and pass it its criteria' do
       expect(Hackney::Income::TenancyPrioritiser::Band).to receive(:new).with(criteria).and_call_original
       expect_any_instance_of(Hackney::Income::TenancyPrioritiser::Band).to receive(:execute)
 
       subject.priority_band
     end
 
-    it 'should return the band assigner\'s band' do
+    it 'returns the band assigner\'s band' do
       allow_any_instance_of(Hackney::Income::TenancyPrioritiser::Band).to receive(:execute).and_return(priority_band)
 
       expect(subject.priority_band).to eq(priority_band)
@@ -46,7 +46,7 @@ describe Hackney::Income::TenancyPrioritiser do
       allow_any_instance_of(Hackney::Income::TenancyPrioritiser::Band).to receive(:execute).and_return(computed_priority_band)
     end
 
-    context 'and an otherwise green case scores not quite high enough to adjust its score' do
+    context 'when an otherwise green case scores not quite high enough to adjust its score' do
       let(:computed_priority_score) { described_class::AMBER_SCORE_THRESHOLD }
       let(:computed_priority_band) { :green }
 
@@ -55,7 +55,7 @@ describe Hackney::Income::TenancyPrioritiser do
       end
     end
 
-    context 'and an otherwise green case scores high enough to adjust its score' do
+    context 'when an otherwise green case scores high enough to adjust its score' do
       let(:computed_priority_score) { described_class::AMBER_SCORE_THRESHOLD + 1 }
       let(:computed_priority_band) { :green }
 
@@ -74,7 +74,7 @@ describe Hackney::Income::TenancyPrioritiser do
       end
     end
 
-    context 'and an otherwise amber case scores not quite high enough to adjust its score' do
+    context 'when an otherwise amber case scores not quite high enough to adjust its score' do
       let(:computed_priority_score) { described_class::RED_SCORE_THRESHOLD }
       let(:computed_priority_band) { :amber }
 
@@ -83,7 +83,7 @@ describe Hackney::Income::TenancyPrioritiser do
       end
     end
 
-    context 'and an otherwise amber case scores high enough to adjust its score' do
+    context 'when an otherwise amber case scores high enough to adjust its score' do
       let(:computed_priority_score) { described_class::RED_SCORE_THRESHOLD + 1 }
       let(:computed_priority_band) { :amber }
 
