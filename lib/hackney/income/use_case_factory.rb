@@ -11,8 +11,7 @@ module Hackney
       def schedule_sync_cases
         Hackney::Income::ScheduleSyncCases.new(
           uh_tenancies_gateway: uh_tenancies_gateway,
-          background_job_gateway: background_job_gateway,
-          case_priority_delete_gateway: case_priority_delete_gateway
+          background_job_gateway: background_job_gateway
         )
       end
 
