@@ -44,7 +44,7 @@ ActiveRecord::Schema.define(version: 2019_01_14_151859) do
     t.text "pause_comment"
     t.integer "case_id"
     t.index ["assigned_user_id"], name: "index_case_priorities_on_assigned_user_id"
-    t.index ["case_id"], name: "index_case_priorities_on_case_id", unique: true
+    t.index ["case_id"], name: "index_case_priorities_on_case_id"
     t.index ["tenancy_ref"], name: "index_case_priorities_on_tenancy_ref", unique: true
   end
 
