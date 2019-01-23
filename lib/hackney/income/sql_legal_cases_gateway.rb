@@ -6,12 +6,12 @@ module Hackney
 
         query
           .left_join(:property, prop_ref: :prop_ref)
-            .where(Sequel[:property][:arr_patch] => patch.upcase)
-            .where(Sequel[:tenagree][:tenure] => SECURE_TENURE_TYPE)
-            .where(Sequel[:tenagree][:terminated].cast(:integer) => 0)
-            .where(Sequel[:tenagree][:high_action] => LEGAL_STAGES)
-            .select { Sequel[:tenagree][:tag_ref].as(:tag_ref) }
-            .map { |record| record[:tag_ref].strip }
+          .where(Sequel[:property][:arr_patch] => patch.upcase)
+          .where(Sequel[:tenagree][:tenure] => SECURE_TENURE_TYPE)
+          .where(Sequel[:tenagree][:terminated].cast(:integer) => 0)
+          .where(Sequel[:tenagree][:high_action] => LEGAL_STAGES)
+          .select { Sequel[:tenagree][:tag_ref].as(:tag_ref) }
+          .map { |record| record[:tag_ref].strip }
       end
 
       private

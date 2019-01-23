@@ -24,9 +24,9 @@ describe Hackney::Income::ViewMyCases do
 
   it 'does not do further queries if the page number returned is 0' do
     expect(stored_tenancies_gateway)
-    .to receive(:number_of_pages_for_user)
-        .with(a_hash_including(user_id: user_id))
-        .and_call_original
+      .to receive(:number_of_pages_for_user)
+      .with(a_hash_including(user_id: user_id))
+      .and_call_original
 
     expect(stored_tenancies_gateway).not_to receive(:get_tenancies_for_user)
 
@@ -55,18 +55,18 @@ describe Hackney::Income::ViewMyCases do
 
     it 'passes the correct user id into the stored tenancy gateway' do
       expect(stored_tenancies_gateway)
-      .to receive(:get_tenancies_for_user)
-          .with(a_hash_including(user_id: user_id))
-          .and_call_original
+        .to receive(:get_tenancies_for_user)
+        .with(a_hash_including(user_id: user_id))
+        .and_call_original
 
       subject
     end
 
     it 'passes the correct page number and number per page into the stored tenancy gateway' do
       expect(stored_tenancies_gateway)
-      .to receive(:get_tenancies_for_user)
-          .with(a_hash_including(page_number: page_number, number_per_page: number_per_page))
-          .and_call_original
+        .to receive(:get_tenancies_for_user)
+        .with(a_hash_including(page_number: page_number, number_per_page: number_per_page))
+        .and_call_original
 
       subject
     end
@@ -134,14 +134,14 @@ describe Hackney::Income::ViewMyCases do
 
         it 'returns only paused cases' do
           expect(stored_tenancies_gateway)
-          .to receive(:get_tenancies_for_user)
-              .with(a_hash_including(user_id: user_id, page_number: page_number, number_per_page: number_per_page, is_paused: false))
-              .and_call_original
+            .to receive(:get_tenancies_for_user)
+            .with(a_hash_including(user_id: user_id, page_number: page_number, number_per_page: number_per_page, is_paused: false))
+            .and_call_original
 
           expect(stored_tenancies_gateway)
-          .to receive(:number_of_pages_for_user)
-              .with(a_hash_including(user_id: user_id, number_per_page: number_per_page, is_paused: false))
-              .and_call_original
+            .to receive(:number_of_pages_for_user)
+            .with(a_hash_including(user_id: user_id, number_per_page: number_per_page, is_paused: false))
+            .and_call_original
 
           expect(subject.cases.count).to eq(1)
         end

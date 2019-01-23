@@ -67,13 +67,13 @@ describe Hackney::Income::SendManualSms do
 
     it 'writes a entry to the action diary using the template friendly name' do
       expect(add_action_diary_usecase).to receive(:execute)
-      .with(
-        user_id: user_id,
-        tenancy_ref: tenancy.tenancy_ref,
-        action_code: 'GMS',
-        comment: "Quick Template' SMS sent to '+442083563000'"
-      )
-      .once
+        .with(
+          user_id: user_id,
+          tenancy_ref: tenancy.tenancy_ref,
+          action_code: 'GMS',
+          comment: "Quick Template' SMS sent to '+442083563000'"
+        )
+        .once
 
       subject
     end

@@ -8,19 +8,14 @@ AllCops:
     - bin/setup
     - bin/spring
     - bin/update
-    - db/migrate/20180828112331_create_delayed_jobs.rb
     - db/schema.rb
     - vendor/**/*
-    - bin/stack_test.rb
 
 Layout/IndentArray:
   EnforcedStyle: consistent
 
 Layout/IndentHash:
   EnforcedStyle: consistent
-
-Layout/MultilineMethodCallIndentation:
-  Enabled: false
 
 Lint/UnusedMethodArgument:
   Enabled: false

@@ -1,12 +1,12 @@
 module TenancyHelper
   def example_tenancy(attributes = {})
     agreements = attributes
-      .fetch(:agreements, [])
-      .map(&method(:example_agreement))
+                 .fetch(:agreements, [])
+                 .map(&method(:example_agreement))
 
     arrears_actions = attributes
-      .fetch(:arrears_actions, [])
-      .map(&method(:example_arrears_action))
+                      .fetch(:arrears_actions, [])
+                      .map(&method(:example_arrears_action))
 
     {
       ref: attributes.fetch(:tenancy_ref, '000001/FAKE'),

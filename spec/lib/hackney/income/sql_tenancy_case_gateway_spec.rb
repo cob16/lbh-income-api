@@ -58,7 +58,7 @@ describe Hackney::Income::SqlTenancyCaseGateway do
         )
       end
         .to raise_error
-              .with_message('Unable to assign user 1 to tenancy not_a_real_tenancy_ref - tenancy not found.')
+        .with_message('Unable to assign user 1 to tenancy not_a_real_tenancy_ref - tenancy not found.')
     end
   end
 

@@ -57,13 +57,13 @@ describe Hackney::Income::SendManualEmail do
 
     it 'calls action_diary_usecase' do
       expect(add_action_diary_usecase).to receive(:execute)
-      .with(
-        user_id: user_id,
-        tenancy_ref: tenancy_1.tenancy_ref,
-        action_code: 'GME',
-        comment: "'Quick Template' Email sent to '#{recipient}'"
-      )
-      .once
+        .with(
+          user_id: user_id,
+          tenancy_ref: tenancy_1.tenancy_ref,
+          action_code: 'GME',
+          comment: "'Quick Template' Email sent to '#{recipient}'"
+        )
+        .once
 
       subject
     end

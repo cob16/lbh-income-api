@@ -6,8 +6,8 @@ describe Hackney::Income::Jobs::SyncCasesJob do
   context 'when sync jobs are disabled' do
     before do
       allow_any_instance_of(described_class)
-      .to receive(:run_tenancy_sync_jobs?)
-          .and_return(false)
+        .to receive(:run_tenancy_sync_jobs?)
+        .and_return(false)
     end
 
     it 'does not run use case' do
@@ -19,8 +19,8 @@ describe Hackney::Income::Jobs::SyncCasesJob do
   context 'when sync jobs are enabled' do
     before do
       allow_any_instance_of(described_class)
-      .to receive(:run_tenancy_sync_jobs?)
-          .and_return(true)
+        .to receive(:run_tenancy_sync_jobs?)
+        .and_return(true)
     end
 
     it 'runs the ScheduleSyncCases use case' do
