@@ -1,10 +1,12 @@
 require 'rails_helper'
 
+# TODO: RENAME from ScheduleSyncCases to descriptive schedule and delete
 describe Hackney::Income::ScheduleSyncCases do
   subject { sync_cases.execute }
 
   let(:uh_tenancies_gateway) { double(tenancies_in_arrears: []) }
   let(:background_job_gateway) { double(schedule_case_priority_sync: nil) }
+  let!(:removed_case_priority) { create(:case_priority) }
 
   let(:sync_cases) do
     described_class.new(
@@ -13,10 +15,30 @@ describe Hackney::Income::ScheduleSyncCases do
     )
   end
 
+  context 'unit' do
+    let(:case_priorities) { create_list(:case_priority, 2) }
+    let(:tenancy_refs) { [case_priorities.first.tenancy_ref, attributes_for(:case_priority)[:tenancy_ref]] }
+
+    it do
+      sync_cases.send(:delete_case_priorities_not_syncable, case_priorities: case_priorities, tenancy_refs: tenancy_refs)
+      found = Hackney::Income::Models::CasePriority.where(tenancy_ref: case_priorities.pluck(:tenancy_ref))
+      expect(found).to include(case_priorities.first)
+      expect(found).to_not include(case_priorities.last)
+    end
+  end
+
   context 'when syncing cases' do
     context 'without finding any cases' do
       it 'queues no jobs' do
         expect(background_job_gateway).not_to receive(:schedule_case_priority_sync)
+        subject
+      end
+    end
+
+    context 'finding cases that aren\'t to be synced' do
+      it 'should delete those case_priorities' do
+        expect_any_instance_of(described_class).to receive(:delete_case_priorities_not_syncable).with(case_priorities: [removed_case_priority], tenancy_refs: [])
+
         subject
       end
     end
