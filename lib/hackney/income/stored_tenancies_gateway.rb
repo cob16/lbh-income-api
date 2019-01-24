@@ -48,9 +48,7 @@ module Hackney
       def get_tenancies_for_user(user_id:, page_number: nil, number_per_page: nil, is_paused: nil)
         query = tenancy_filtered_by_paused_state_for(user_id, is_paused)
 
-        if page_number.present? && number_per_page.present?
-          query = query.offset((page_number - 1) * number_per_page).limit(number_per_page)
-        end
+        query = query.offset((page_number - 1) * number_per_page).limit(number_per_page) if page_number.present? && number_per_page.present?
 
         query.order(by_band_then_score).map(&method(:build_tenancy_list_item))
       end
