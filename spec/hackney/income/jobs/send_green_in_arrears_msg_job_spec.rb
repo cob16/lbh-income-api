@@ -7,7 +7,8 @@ describe Hackney::Income::Jobs::SendGreenInArrearsMsgJob do
   let(:mock_automated_message_class) { class_double(Hackney::Income::SendAutomatedMessageToTenancy) }
   let(:tenancy_ref) { Faker::Internet.slug }
   let(:balance) { Faker::Commerce.price }
-  let!(:case_priority) { create(:case_priority, balance: balance, tenancy_ref: tenancy_ref) }
+  let(:case_id) { Faker::Number.number }
+  let!(:case_priority) { create(:case_priority, balance: balance, tenancy_ref: tenancy_ref, case_id: case_id) }
 
   before do
     stub_const('Hackney::Income::GovNotifyGateway', Hackney::Income::DummyGovNotifyGateway)
@@ -24,7 +25,7 @@ describe Hackney::Income::Jobs::SendGreenInArrearsMsgJob do
         variables: { balance: balance }
       )
     ).once
-    subject.perform_now(case_id: case_priority.case_id)
+    subject.perform_now(case_id: case_id)
   end
 
   it 'no message is sent if case_priority not found' do

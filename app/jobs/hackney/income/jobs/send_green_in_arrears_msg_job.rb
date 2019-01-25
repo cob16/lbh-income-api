@@ -5,7 +5,7 @@ module Hackney
         queue_as :message_jobs
 
         def perform(case_id:)
-          case_priority = Hackney::Income::Models::CasePriority.find(case_id)
+          case_priority = Hackney::Income::Models::CasePriority.find_by!(case_id: case_id)
           Rails.logger.info("Starting SendGreenInArrearsMsgJob for case id #{case_priority.case_id}")
           income_use_case_factory.send_automated_message_to_tenancy.execute(
             tenancy_ref: case_priority.tenancy_ref,
