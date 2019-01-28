@@ -11,7 +11,7 @@ module Hackney
         belongs_to :case, class_name: 'Hackney::Income::Models::Case', optional: true
 
         def tenancy_ref
-          # todo please do not use tenancy_ref has been moved to Hackney::Income::Models::Case'
+          # TODO: please do not use tenancy_ref has been moved to Hackney::Income::Models::Case'
           read_attribute(:tenancy_ref)
         end
 
