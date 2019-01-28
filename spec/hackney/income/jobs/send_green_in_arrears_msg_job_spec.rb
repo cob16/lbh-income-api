@@ -8,12 +8,13 @@ describe Hackney::Income::Jobs::SendGreenInArrearsMsgJob do
   let(:tenancy_ref) { Faker::Internet.slug }
   let(:balance) { Faker::Commerce.price }
   let(:case_id) { Faker::Number.number }
-  let!(:case_priority) { create(:case_priority, balance: balance, tenancy_ref: tenancy_ref, case_id: case_id) }
 
   before do
     stub_const('Hackney::Income::GovNotifyGateway', Hackney::Income::DummyGovNotifyGateway)
     stub_const('Hackney::Income::SendAutomatedMessageToTenancy', mock_automated_message_class)
     allow(mock_automated_message_class).to receive(:new).and_return(mock_automated_message)
+
+    create(:case_priority, balance: balance, tenancy_ref: tenancy_ref, case_id: case_id)
   end
 
   it 'calls usecase with correct args' do
