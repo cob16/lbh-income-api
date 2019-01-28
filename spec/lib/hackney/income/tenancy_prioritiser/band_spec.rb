@@ -1,12 +1,12 @@
 require 'rails_helper'
 
 describe Hackney::Income::TenancyPrioritiser::Band do
+  subject { band_assigner.execute }
+
   let(:criteria) { Stubs::StubCriteria.new }
   let(:band_assigner) { described_class.new(criteria) }
 
-  subject { band_assigner.execute }
-
-  context 'maintaining an agreement' do
+  context 'when maintaining an agreement' do
     it 'will assign green while an active agreement is maintained regardless of other factors' do
       criteria.balance = 500.00
       criteria.days_in_arrears = 125
@@ -18,7 +18,7 @@ describe Hackney::Income::TenancyPrioritiser::Band do
     end
   end
 
-  context 'assigning a tenancy to the red band' do
+  context 'when assigning a tenancy to the red band' do
     it 'happens when balance is greater than £1050' do
       criteria.balance = 1050
 
@@ -85,7 +85,7 @@ describe Hackney::Income::TenancyPrioritiser::Band do
       end
     end
 
-    context 'assigning a tenancy to the amber band' do
+    context 'when assigning a tenancy to the amber band' do
       it 'happens when balance is greater than £350' do
         criteria.balance = 351
 
@@ -114,7 +114,7 @@ describe Hackney::Income::TenancyPrioritiser::Band do
       end
     end
 
-    context 'assigning a tenancy to the green band' do
+    context 'when assigning a tenancy to the green band' do
       it 'is otherwise green' do
         expect(subject).to eq(:green)
       end

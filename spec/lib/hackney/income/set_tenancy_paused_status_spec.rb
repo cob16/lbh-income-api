@@ -1,8 +1,10 @@
 require 'rails_helper'
 
 describe Hackney::Income::SetTenancyPausedStatus do
-  let(:action_diary_gateway) { double(Hackney::Tenancy::Gateway::ActionDiaryGateway) }
   subject { described_class.new(gateway: PauseGatewayDouble.new, add_action_diary_usecase: action_diary_gateway) }
+
+  let(:action_diary_gateway) { double(Hackney::Tenancy::Gateway::ActionDiaryGateway) }
+
   let(:tenancy_ref) { Faker::Lorem.characters(8) }
   let(:future_date) { Faker::Date.forward(23).to_s }
   let(:pause_reason) { Faker::Lorem.sentence }
@@ -13,9 +15,10 @@ describe Hackney::Income::SetTenancyPausedStatus do
   before do
     allow(action_diary_gateway).to receive(:execute)
   end
-  context 'setting the pause status for a case' do
-    context 'when the operation is successful' do
-      it 'should pass the required params to the gateway' do
+
+  context 'when setting the pause status for a case' do
+    context 'with the operation being successful' do
+      it 'passes the required params to the gateway' do
         expect_any_instance_of(PauseGatewayDouble).to receive(:set_paused_until)
           .with(
             tenancy_ref: tenancy_ref,
@@ -38,7 +41,7 @@ describe Hackney::Income::SetTenancyPausedStatus do
     context 'when the operation is unsuccessful' do
       subject { described_class.new(gateway: PauseGatewayDouble.new(true), add_action_diary_usecase: action_diary_gateway) }
 
-      it 'should catch the exception raised when the tenancy ref is not found' do
+      it 'catches the exception raised when the tenancy ref is not found' do
         expect do
           subject.execute(
             user_id: user_id,
@@ -51,7 +54,7 @@ describe Hackney::Income::SetTenancyPausedStatus do
         end.to raise_error
           .with_message(/#{tenancy_ref}/)
       end
-      it 'should catch the exception raised when the date is not valid' do
+      it 'catches the exception raised when the date is not valid' do
         expect do
           subject.execute(
             user_id: user_id,

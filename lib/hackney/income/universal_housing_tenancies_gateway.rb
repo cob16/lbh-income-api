@@ -11,8 +11,8 @@ module Hackney
 
         if @restrict_patches
           query = query
-            .left_join(:property, prop_ref: :prop_ref)
-            .where(Sequel[:property][:arr_patch] => @permitted_patches)
+                  .left_join(:property, prop_ref: :prop_ref)
+                  .where(Sequel[:property][:arr_patch] => @permitted_patches)
         end
 
         query

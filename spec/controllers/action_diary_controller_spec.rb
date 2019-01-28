@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require 'rails_helper'
 
 describe ActionDiaryController, type: :controller do
@@ -19,12 +17,12 @@ describe ActionDiaryController, type: :controller do
     allow(use_case_double).to receive(:new).and_return(use_case_double)
   end
 
-  it 'should be accessible' do
+  it 'is accessible' do
     assert_generates '/api/v1/tenancies/1234/action_diary', controller: 'action_diary', action: 'create', tenancy_ref: 1234
   end
 
   context 'when receiving valid params' do
-    it 'should pass the correct params to the use case' do
+    it 'passes the correct params to the use case' do
       expect(use_case_double).to receive(:execute)
         .with(action_diary_params)
         .and_return(nil)
@@ -33,7 +31,7 @@ describe ActionDiaryController, type: :controller do
       patch :create, params: action_diary_params
     end
 
-    it 'should return a 200 response' do
+    it 'returns a 200 response' do
       expect(use_case_double).to receive(:execute).and_return(nil).once
       patch :create, params: action_diary_params
       expect(response.status).to eq(204)
@@ -41,7 +39,7 @@ describe ActionDiaryController, type: :controller do
   end
 
   context 'when receiving a user id that does not exist' do
-    it 'should return a 422 error' do
+    it 'returns a 422 error' do
       expect(use_case_double).to receive(:execute)
         .and_raise(ArgumentError.new('user_id supplied does not exist'))
         .once

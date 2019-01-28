@@ -1,3 +1,5 @@
+require: rubocop-rspec
+
 AllCops:
   Exclude:
     - bin/bundle
@@ -6,19 +8,14 @@ AllCops:
     - bin/setup
     - bin/spring
     - bin/update
-    - db/migrate/20180828112331_create_delayed_jobs.rb
     - db/schema.rb
     - vendor/**/*
-    - bin/stack_test.rb
 
 Layout/IndentArray:
-  Enabled: false
+  EnforcedStyle: consistent
 
 Layout/IndentHash:
-  Enabled: false
-
-Layout/MultilineMethodCallIndentation:
-  Enabled: false
+  EnforcedStyle: consistent
 
 Lint/UnusedMethodArgument:
   Enabled: false
@@ -33,18 +30,15 @@ Metrics/ClassLength:
   Enabled: false
 
 Metrics/LineLength:
-  Enabled: false
+  Max: 160
 
 Metrics/MethodLength:
   Enabled: false
 
 Metrics/ParameterLists:
-  Enabled: false
+  Max: 7
 
 Naming/AccessorMethodName:
-  Enabled: false
-
-Style/BlockComments:
   Enabled: false
 
 Style/Documentation:
@@ -53,16 +47,10 @@ Style/Documentation:
 Style/FrozenStringLiteralComment:
   Enabled: false
 
-Metrics/CyclomaticComplexity:
+Metrics/CyclomaticComplexity: # todo this finds nasty parts of the code, please enable and fix
   Enabled: false
 
-Metrics/PerceivedComplexity:
-  Enabled: false
-
-Performance/RedundantBlockCall:
-  Enabled: false
-
-Style/RescueStandardError:
+Metrics/PerceivedComplexity:  # todo this finds nasty parts of the code, please enable and fix
   Enabled: false
 
 Style/MultilineBlockChain:
@@ -74,11 +62,32 @@ Style/NumericPredicate:
 Layout/EmptyLineAfterGuardClause:
   Enabled: false
 
-Style/MultilineTernaryOperator:
-  Enabled: false
-
 Style/BlockDelimiters:
   Enabled: false
 
 Style/ConditionalAssignment:
   Enabled: false
+
+RSpec/ExampleLength:
+  Enabled: false
+
+RSpec/MultipleExpectations:
+  Enabled: false
+
+RSpec/MessageSpies:
+  Enabled: false
+
+RSpec/AnyInstance: # todo re enable when we have a better way to fake the use_case_factory
+  Enabled: false
+
+RSpec/VerifiedDoubles: # todo re enable when we have a better way to fake the use_case_factory
+  Enabled: false
+
+RSpec/NamedSubject:
+  Enabled: false
+
+RSpec/ExpectInHook: #  useful for mocking classes outside of the scope of test in that they do not need to appear in the expectations
+  Enabled: false
+
+RSpec/NestedGroups:
+  Max: 6

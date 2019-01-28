@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class MyCasesController < ApplicationController
   REQUIRED_INDEX_PARAMS = %i[user_id page_number number_per_page].freeze
 

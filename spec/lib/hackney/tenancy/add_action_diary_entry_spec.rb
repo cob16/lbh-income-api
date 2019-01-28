@@ -13,7 +13,7 @@ describe Hackney::Tenancy::AddActionDiaryEntry do
   context 'when the system wants to add an action diary message' do
     subject { usecase.execute(tenancy_ref: tenancy_ref, action_code: action_code, comment: comment) }
 
-    it 'should call the action_diary_gateway' do
+    it 'calls the action_diary_gateway' do
       expect(action_diary_gateway).to receive(:create_entry)
         .with(tenancy_ref: tenancy_ref, action_code: action_code, comment: comment, username: nil)
         .once
@@ -23,11 +23,11 @@ describe Hackney::Tenancy::AddActionDiaryEntry do
   end
 
   context 'when a user wants to add an action diary message' do
-    let(:user) { OpenStruct.new(name: Faker::Name.name, id: Faker::Number.number(3).to_i) }
-
     subject { usecase.execute(user_id: user.id, tenancy_ref: tenancy_ref, action_code: action_code, comment: comment) }
 
-    it 'should call the action_diary_gateway' do
+    let(:user) { OpenStruct.new(name: Faker::Name.name, id: Faker::Number.number(3).to_i) }
+
+    it 'calls the action_diary_gateway' do
       expect(users_gateway).to receive(:find_user).with(id: user.id).and_return(user).once
 
       expect(action_diary_gateway).to receive(:create_entry)
@@ -39,11 +39,11 @@ describe Hackney::Tenancy::AddActionDiaryEntry do
   end
 
   context 'when using a non existing user id' do
-    let(:user_id) { SecureRandom.uuid }
-
     subject { usecase.execute(user_id: user_id, tenancy_ref: tenancy_ref, action_code: action_code, comment: comment) }
 
-    it 'should throw an invalid argument exception' do
+    let(:user_id) { SecureRandom.uuid }
+
+    it 'throws an invalid argument exception' do
       expect(users_gateway).to receive(:find_user).with(id: user_id).and_return(nil).once
 
       expect { subject }.to raise_error(ArgumentError, 'user_id supplied does not exist')

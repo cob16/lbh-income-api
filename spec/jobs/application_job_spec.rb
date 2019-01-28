@@ -1,41 +1,26 @@
 require 'rails_helper'
 
 describe ApplicationJob do
-  context '#enqueue_next' do
-    context 'when the next run is already scheduled' do
-      subject { MidnightJob }
+  context 'when we enqueue_next' do
+    it 'does not schedule again if already scheduled' do
+      midnight_job = MidnightJob
+      midnight_job.set(wait_until: midnight_job.next_run_time).perform_later
 
-      it 'should not schedule again' do
-        subject.set(wait_until: subject.next_run_time).perform_later
-
-        expect { subject.enqueue_next }.to_not(change { Delayed::Job.count })
-      end
+      expect { midnight_job.enqueue_next }.not_to(change { Delayed::Job.count })
     end
 
-    context 'when the next run time is tomorrow at lunch' do
-      subject { LunchJob }
-
-      it 'should queue the job for tomorrow at lunch' do
-        subject.enqueue_next
-        expect(Delayed::Job.last).to have_attributes(run_at: Date.tomorrow.noon)
-      end
+    it 'queues a job tomorrow noon' do
+      LunchJob.enqueue_next
+      expect(Delayed::Job.last).to have_attributes(run_at: Date.tomorrow.noon)
     end
 
-    context 'when the next run time is tomorrow at midnight' do
-      subject { MidnightJob }
-
-      it 'should queue the job for tomorrow at midnight' do
-        subject.enqueue_next
-        expect(Delayed::Job.last).to have_attributes(run_at: Date.tomorrow.midnight)
-      end
+    it 'queues a job tomorrow midnight' do
+      MidnightJob.enqueue_next
+      expect(Delayed::Job.last).to have_attributes(run_at: Date.tomorrow.midnight)
     end
 
-    context 'when next run time has not been set' do
-      subject { NextRunNotDefinedJob }
-
-      it 'should raise an exception' do
-        expect { subject.enqueue_next }.to raise_error(NotImplementedError)
-      end
+    it 'raises an exception when next run time has not been set' do
+      expect { NextRunNotDefinedJob.enqueue_next }.to raise_error(NotImplementedError)
     end
   end
 

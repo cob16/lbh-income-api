@@ -8,10 +8,10 @@ describe Hackney::Tenancy::Gateway::ContactsGateway do
   let(:example_return) { generate_example_return }
 
   context 'when retrieving a tenancy with contacts' do
+    subject { gateway.get_responsible_contacts(tenancy_ref: tenancy_ref) }
+
     let(:tenancy_ref) { '123456/09' }
     let(:tenancy_ref_url_encoded) { '123456%2F09' }
-
-    subject { gateway.get_responsible_contacts(tenancy_ref: tenancy_ref) }
 
     before do
       stub_request(:get, hostname + "/api/v1/tenancies/#{tenancy_ref_url_encoded}/contacts")
@@ -19,37 +19,37 @@ describe Hackney::Tenancy::Gateway::ContactsGateway do
         .to_return(body: example_return.to_json)
     end
 
-    it 'should make a get request data from the tenancy api' do
+    it 'makes a get request data from the tenancy api' do
       subject
       expect(WebMock).to have_requested(:get, hostname + "/api/v1/tenancies/#{tenancy_ref_url_encoded}/contacts").once
     end
 
-    it 'should return an array of Hackney::Income::Domain::Contact objects' do
+    it 'returns an array of Hackney::Income::Domain::Contact objects' do
       expect(subject).to all(be_an(Hackney::Income::Domain::Contact))
     end
 
-    it 'should return an array of available phone numbers' do
+    it 'returns an array of available phone numbers' do
       expect(subject.first.phone_numbers).to eq(
         [
-           example_return[:data][:contacts].first[:telephone1],
-           example_return[:data][:contacts].first[:telephone2],
-           example_return[:data][:contacts].first[:telephone3]
-         ]
+          example_return[:data][:contacts].first[:telephone1],
+          example_return[:data][:contacts].first[:telephone2],
+          example_return[:data][:contacts].first[:telephone3]
+        ]
       )
       expect(WebMock).to have_requested(:get, hostname + "/api/v1/tenancies/#{tenancy_ref_url_encoded}/contacts").once
     end
 
-    it 'should return an email' do
+    it 'returns an email' do
       expect(subject.first.email).to eq(example_return[:data][:contacts].first[:email])
       expect(WebMock).to have_requested(:get, hostname + "/api/v1/tenancies/#{tenancy_ref_url_encoded}/contacts").once
     end
   end
 
   context 'when retrieving a tenancy without any contacts' do
+    subject { gateway.get_responsible_contacts(tenancy_ref: tenancy_ref) }
+
     let(:tenancy_ref) { '123456/09' }
     let(:tenancy_ref_url_encoded) { '123456%2F09' }
-
-    subject { gateway.get_responsible_contacts(tenancy_ref: tenancy_ref) }
 
     let(:example_return) do
       {
@@ -65,17 +65,17 @@ describe Hackney::Tenancy::Gateway::ContactsGateway do
         .to_return(body: example_return.to_json)
     end
 
-    it 'should return an empty array' do
+    it 'returns an empty array' do
       expect(subject).to eq([])
       expect(WebMock).to have_requested(:get, hostname + "/api/v1/tenancies/#{tenancy_ref_url_encoded}/contacts").once
     end
   end
 
   context 'when retrieving a tenancy causes a timeout' do
+    subject { gateway.get_responsible_contacts(tenancy_ref: tenancy_ref) }
+
     let(:tenancy_ref) { '123456/09' }
     let(:tenancy_ref_url_encoded) { '123456%2F09' }
-
-    subject { gateway.get_responsible_contacts(tenancy_ref: tenancy_ref) }
 
     before do
       stub_request(:get, hostname + "/api/v1/tenancies/#{tenancy_ref_url_encoded}/contacts")
@@ -83,7 +83,7 @@ describe Hackney::Tenancy::Gateway::ContactsGateway do
         .to_return(status: 504)
     end
 
-    it 'should raise a TenancyApiException' do
+    it 'raises a TenancyApiException' do
       expect { subject }.to raise_error Hackney::Tenancy::Exceptions::TenancyApiException
 
       expect(WebMock).to have_requested(:get, hostname + "/api/v1/tenancies/#{tenancy_ref_url_encoded}/contacts").once

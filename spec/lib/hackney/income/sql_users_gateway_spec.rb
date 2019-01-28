@@ -16,10 +16,10 @@ describe Hackney::Income::SqlUsersGateway do
       )
     end
 
-    context 'and this user does not already exist' do
+    context 'when this user does not exist' do
       before { subject }
 
-      it 'should create a new User instance for that user' do
+      it 'creates a new User instance for that user' do
         expect(Hackney::Income::Models::User.first).to have_attributes(
           provider_uid: 'close-to-me',
           provider: 'universal',
@@ -32,7 +32,7 @@ describe Hackney::Income::SqlUsersGateway do
       end
     end
 
-    context 'and a user already exists' do
+    context 'when this user exists' do
       before do
         Hackney::Income::Models::User.create!(
           provider_uid: 'close-to-me',
@@ -47,22 +47,20 @@ describe Hackney::Income::SqlUsersGateway do
         subject
       end
 
-      it 'should not create a duplicate user' do
+      it 'does not create a duplicate user' do
         expect(Hackney::Income::Models::User.count).to eq(1)
       end
 
-      it 'should update the record found' do
+      it 'updates the record found' do
         expect(Hackney::Income::Models::User.first.email).to eq('exploding-boy@the-cure.com')
       end
     end
 
-    context 'in either case' do
-      it 'should return a hash representing the user' do
-        expect(subject).to include(
-          id: 1,
-          name: 'Robert Smith'
-        )
-      end
+    it 'returns a hash representing the user' do
+      expect(subject).to include(
+        id: 1,
+        name: 'Robert Smith'
+      )
     end
   end
 
@@ -73,7 +71,7 @@ describe Hackney::Income::SqlUsersGateway do
       )
     end
 
-    context 'and this user does not already exist' do
+    context 'when this user does not exist' do
       let(:user) do
         Hackney::Income::Models::User.new(
           provider_uid: 'close-to-me',
@@ -90,7 +88,7 @@ describe Hackney::Income::SqlUsersGateway do
         user.save!
       end
 
-      it 'should create a new User instance for that user' do
+      it 'creates a new User instance for that user' do
         expect(subject).to eq(user)
       end
     end

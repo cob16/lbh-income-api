@@ -5,11 +5,6 @@ describe Hackney::Income::SendAutomatedSms do
   let(:notification_gateway) { double(Hackney::Income::GovNotifyGateway) }
   let(:background_job_gateway) { double(Hackney::Income::BackgroundJobGateway) }
   let(:gov_notify_template_name) { Faker::Superhero.name }
-
-  before do
-    tenancy.save
-  end
-
   let(:send_sms) do
     described_class.new(
       notification_gateway: notification_gateway,
@@ -17,13 +12,11 @@ describe Hackney::Income::SendAutomatedSms do
     )
   end
 
-  context 'when sending an SMS automatically' do
-    let(:template_id) { Faker::Superhero.power }
-    let(:phone_number) { '020 8356 3000' }
-    let(:e164_phone_number) { '+442083563000' }
-    let(:reference) { Faker::Superhero.prefix }
-    let(:first_name) { Faker::Superhero.name }
+  before do
+    tenancy.save
+  end
 
+  context 'when sending an SMS automatically' do
     subject do
       send_sms.execute(
         tenancy_ref: tenancy.tenancy_ref,
@@ -34,12 +27,18 @@ describe Hackney::Income::SendAutomatedSms do
       )
     end
 
-    context 'and when number is valid' do
+    let(:template_id) { Faker::Superhero.power }
+    let(:phone_number) { '020 8356 3000' }
+    let(:e164_phone_number) { '+442083563000' }
+    let(:reference) { Faker::Superhero.prefix }
+    let(:first_name) { Faker::Superhero.name }
+
+    context 'when when number is valid' do
       before do
         expect(notification_gateway).to receive(:get_template_name).with(template_id).and_return(gov_notify_template_name).once
       end
 
-      it 'should pass vars to the gateway' do
+      it 'passes vars to the gateway' do
         allow(background_job_gateway).to receive(:add_action_diary_entry)
         expect(notification_gateway).to receive(:send_text_message)
           .with(
@@ -53,7 +52,7 @@ describe Hackney::Income::SendAutomatedSms do
         subject
       end
 
-      it 'should validate and format a full e164 phone number, assuming local numbers are from uk' do
+      it 'validates and format a full e164 phone number, assuming local numbers are from uk' do
         allow(background_job_gateway).to receive(:add_action_diary_entry)
 
         expect(notification_gateway)
@@ -64,7 +63,7 @@ describe Hackney::Income::SendAutomatedSms do
         subject
       end
 
-      it 'should queue a job to write to the action diary' do
+      it 'queues a job to write to the action diary' do
         allow(notification_gateway).to receive(:send_text_message)
         expect(background_job_gateway).to receive(:add_action_diary_entry)
           .with(
@@ -76,10 +75,10 @@ describe Hackney::Income::SendAutomatedSms do
       end
     end
 
-    context 'and when number is invalid' do
+    context 'when number is invalid' do
       let(:phone_number) { 'there should be no number in this string' }
 
-      it 'should not call gateway and return false' do
+      it 'does not call gateway and return false' do
         expect(notification_gateway).not_to receive(:get_template_name)
         expect(notification_gateway).not_to receive(:send_text_message)
         subject

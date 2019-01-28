@@ -6,17 +6,18 @@ describe Hackney::Income::Jobs::SendGreenInArrearsMsgJob do
   let(:mock_automated_message) { instance_double(Hackney::Income::SendAutomatedMessageToTenancy) }
   let(:mock_automated_message_class) { class_double(Hackney::Income::SendAutomatedMessageToTenancy) }
   let(:tenancy_ref) { Faker::Internet.slug }
-  let(:balance) { Faker::Commerce.price }
+  let(:balance) { Faker::Commerce.price(range = 100.0..199.99 ) }
   let(:case_id) { Faker::Number.number }
-  let!(:case_priority) { create(:case_priority, balance: balance, tenancy_ref: tenancy_ref, case_id: case_id) }
 
   before do
     stub_const('Hackney::Income::GovNotifyGateway', Hackney::Income::DummyGovNotifyGateway)
     stub_const('Hackney::Income::SendAutomatedMessageToTenancy', mock_automated_message_class)
     allow(mock_automated_message_class).to receive(:new).and_return(mock_automated_message)
+
+    create(:case_priority, balance: balance, tenancy_ref: tenancy_ref, case_id: case_id)
   end
 
-  it 'should call usecase with correct args' do
+  it 'calls usecase with correct args' do
     expect(mock_automated_message).to receive(:execute).with(
       hash_including(
         tenancy_ref: tenancy_ref,
@@ -33,9 +34,9 @@ describe Hackney::Income::Jobs::SendGreenInArrearsMsgJob do
     expect { subject.perform_now(case_id: 123_456_789_087_654_321) }.to raise_error(ActiveRecord::RecordNotFound)
   end
 
-  it 'should be able to be scheduled' do
+  it 'is able to be scheduled' do
     expect do
       subject.set(wait_until: Time.now + 5.minutes).perform_later
-    end.to_not raise_error
+    end.not_to raise_error
   end
 end

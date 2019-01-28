@@ -15,7 +15,7 @@ module Hackney
           first_name: first_name,
           last_name: last_name,
           provider_permissions: provider_permissions
-         }
+        }
       end
     end
   end

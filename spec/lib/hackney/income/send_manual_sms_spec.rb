@@ -4,11 +4,6 @@ describe Hackney::Income::SendManualSms do
   let(:tenancy) { create_tenancy_model }
   let(:notification_gateway) { Hackney::Income::StubNotificationsGateway.new }
   let(:add_action_diary_usecase) { double(Hackney::Tenancy::AddActionDiaryEntry) }
-
-  before do
-    tenancy.save
-  end
-
   let(:send_sms) do
     described_class.new(
       notification_gateway: notification_gateway,
@@ -16,18 +11,11 @@ describe Hackney::Income::SendManualSms do
     )
   end
 
+  before do
+    tenancy.save
+  end
+
   context 'when sending an SMS manually' do
-    let(:template_id) { Faker::Superhero.power }
-    let(:phone_number) { '020 8356 3000' }
-    let(:e164_phone_number) { '+442083563000' }
-    let(:reference) { Faker::Superhero.prefix }
-    let(:first_name) { Faker::Superhero.name }
-    let(:user_id) { Faker::Number.number(2) }
-
-    before do
-      allow(add_action_diary_usecase).to receive(:execute)
-    end
-
     subject do
       send_sms.execute(
         user_id: user_id,
@@ -40,7 +28,18 @@ describe Hackney::Income::SendManualSms do
       notification_gateway.last_text_message
     end
 
-    it 'should map the tenancy to a set of variables' do
+    let(:template_id) { Faker::Superhero.power }
+    let(:phone_number) { '020 8356 3000' }
+    let(:e164_phone_number) { '+442083563000' }
+    let(:reference) { Faker::Superhero.prefix }
+    let(:first_name) { Faker::Superhero.name }
+    let(:user_id) { Faker::Number.number(2) }
+
+    before do
+      allow(add_action_diary_usecase).to receive(:execute)
+    end
+
+    it 'maps the tenancy to a set of variables' do
       expect(subject).to include(
         variables: include(
           'first name' => first_name
@@ -48,41 +47,38 @@ describe Hackney::Income::SendManualSms do
       )
     end
 
-    it 'should parse the phone number to full e164 format' do
+    it 'parses the phone number to full e164 format' do
       expect(subject).to include(
         phone_number: e164_phone_number
       )
     end
 
-    it 'should pass through the template id' do
+    it 'passes through the template id' do
       expect(subject).to include(
         template_id: template_id
       )
     end
 
-    it 'should generate a tenant and message representative reference' do
+    it 'generates a tenant and message representative reference' do
       expect(subject).to include(
         reference: reference
       )
     end
 
-    it 'should write a entry to the action diary using the template friendly name' do
+    it 'writes a entry to the action diary using the template friendly name' do
       expect(add_action_diary_usecase).to receive(:execute)
-      .with(
-        user_id: user_id,
-        tenancy_ref: tenancy.tenancy_ref,
-        action_code: 'GMS',
-        comment: "Quick Template' SMS sent to '+442083563000'"
-      )
-      .once
+        .with(
+          user_id: user_id,
+          tenancy_ref: tenancy.tenancy_ref,
+          action_code: 'GMS',
+          comment: "Quick Template' SMS sent to '+442083563000'"
+        )
+        .once
 
       subject
     end
 
     context 'when sending an invalid number' do
-      let(:notification_gateway) { double(Hackney::Income::GovNotifyGateway) }
-      let(:phone_number) { 'not a phone number' }
-
       subject do
         send_sms.execute(
           user_id: user_id,
@@ -94,7 +90,10 @@ describe Hackney::Income::SendManualSms do
         )
       end
 
-      it 'should not send an sms' do
+      let(:notification_gateway) { double(Hackney::Income::GovNotifyGateway) }
+      let(:phone_number) { 'not a phone number' }
+
+      it 'does not send an sms' do
         expect(add_action_diary_usecase).not_to receive(:send_text_message)
         subject
       end

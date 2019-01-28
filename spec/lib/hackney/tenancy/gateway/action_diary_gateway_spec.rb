@@ -1,6 +1,8 @@
 require 'rails_helper'
 
 describe Hackney::Tenancy::Gateway::ActionDiaryGateway do
+  subject(:gateway) { described_class.new(host: host, api_key: key) }
+
   let(:host) { Faker::Internet.url('example.com') }
   let(:key) { SecureRandom.uuid }
   let(:tenancy_ref) { Faker::Lorem.characters(8) }
@@ -16,15 +18,13 @@ describe Hackney::Tenancy::Gateway::ActionDiaryGateway do
     }
   end
 
-  subject { described_class.new(host: host, api_key: key) }
-
   context 'when creating an action diary entry' do
     before do
       stub_request(:post, /#{host}/).with(headers: required_headers).to_return(status: 200)
     end
 
-    it 'should create an system entry' do
-      subject.create_entry(
+    it 'creates an system entry' do
+      gateway.create_entry(
         tenancy_ref: tenancy_ref,
         action_code: action_code,
         comment: comment
@@ -42,8 +42,8 @@ describe Hackney::Tenancy::Gateway::ActionDiaryGateway do
       )
     end
 
-    it 'should create a entry with user user if username supplied' do
-      subject.create_entry(tenancy_ref: tenancy_ref,
+    it 'creates a entry with user user if username supplied' do
+      gateway.create_entry(tenancy_ref: tenancy_ref,
                            action_code: action_code,
                            comment: comment,
                            username: username)
@@ -69,13 +69,16 @@ describe Hackney::Tenancy::Gateway::ActionDiaryGateway do
 
     it 'an exception should be thrown' do
       expect {
-        subject.create_entry(
+        gateway.create_entry(
           tenancy_ref: tenancy_ref,
           action_code: action_code,
           comment: comment,
           username: username
         )
-      }.to raise_error(Hackney::Tenancy::Exceptions::TenancyApiException, "[Tenancy API error: Received 500 response] when trying to create action diary entry for #{tenancy_ref}")
+      }.to raise_error(
+        Hackney::Tenancy::Exceptions::TenancyApiException,
+        "[Tenancy API error: Received 500 response] when trying to create action diary entry for #{tenancy_ref}"
+      )
     end
   end
 end

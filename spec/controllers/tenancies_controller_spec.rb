@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require 'rails_helper'
 
 describe TenanciesController, type: :controller do
@@ -33,12 +31,12 @@ describe TenanciesController, type: :controller do
     allow(dummy_action_diary_usecase).to receive(:execute)
   end
 
-  it 'should be accessible from /' do
+  it 'is accessible from /' do
     assert_generates '/api/v1/tenancies/1234', controller: 'tenancies', action: 'update', tenancy_ref: 1234
   end
 
   context 'when receiving valid params' do
-    it 'should pass the correct params to the use case' do
+    it 'passes the correct params to the use case' do
       expect_any_instance_of(Hackney::Income::SetTenancyPausedStatus).to receive(:execute).with(
         user_id: paused_parms.fetch(:user_id),
         tenancy_ref: paused_parms.fetch(:tenancy_ref),
@@ -53,7 +51,7 @@ describe TenanciesController, type: :controller do
       expect(response.status).to eq(204)
     end
 
-    it 'should return a 200 response' do
+    it 'returns a 200 response' do
       expect_any_instance_of(Hackney::Income::SetTenancyPausedStatus).to receive(:execute).with(
         user_id: params2.fetch(:user_id),
         tenancy_ref: params2.fetch(:tenancy_ref),
@@ -70,7 +68,7 @@ describe TenanciesController, type: :controller do
   end
 
   context 'when receiving valid params' do
-    it 'should pass the correct params to the use case' do
+    it 'passes the correct params to the use case' do
       expect_any_instance_of(Hackney::Income::GetTenancyPause).to receive(:execute).with(
         tenancy_ref: paused_parms.fetch(:tenancy_ref)
       ).and_call_original
@@ -82,7 +80,7 @@ describe TenanciesController, type: :controller do
   end
 
   context 'when receiving a request missing params' do
-    it 'should return a 400 - bad request' do
+    it 'returns a 400 - bad request' do
       assert_incomplete_params(
         tenancy_ref: Faker::Lorem.characters(8)
       )

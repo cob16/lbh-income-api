@@ -8,15 +8,15 @@ FactoryBot.define do
     # association :case
 
     tenancy_ref
-    balance Faker::Commerce.price(10..1000.0)
-    days_in_arrears Faker::Number.between(5, 1000)
-    active_agreement false
-    is_paused_until nil
+    balance { Faker::Commerce.price(10..1000.0) }
+    days_in_arrears { Faker::Number.between(5, 1000) }
+    active_agreement { false }
+    is_paused_until { nil }
 
-    priority_band 'green'
+    priority_band { 'green' }
 
     trait :red do
-      priority_band 'red'
+      priority_band { 'red' }
     end
   end
 end

@@ -23,6 +23,8 @@ module Hackney
         delete_case_priorities_not_syncable(case_priorities: found_case_priorities, tenancy_refs: tenancy_refs)
       end
 
+      private
+
       def delete_case_priorities_not_syncable(case_priorities:, tenancy_refs:)
         Rails.logger.info('Deleting case_priorities that are not to be synced')
         case_refs_not_synced = case_priorities.pluck(:tenancy_ref) - tenancy_refs

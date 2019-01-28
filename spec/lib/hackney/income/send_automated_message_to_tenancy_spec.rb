@@ -1,6 +1,14 @@
 require 'rails_helper'
 
 describe Hackney::Income::SendAutomatedMessageToTenancy do
+  subject do
+    described_class.new(
+      automated_sms_usecase: sms_mock,
+      automated_email_usecase: email_mock,
+      contacts_gateway: contacts_gateway_mock
+    )
+  end
+
   let(:sms_mock) { double(Hackney::Income::SendAutomatedSms) }
   let(:email_mock) { double(Hackney::Income::SendAutomatedEmail) }
   let(:contacts_gateway_mock) { double(Hackney::Tenancy::Gateway::ContactsGateway) }
@@ -9,14 +17,6 @@ describe Hackney::Income::SendAutomatedMessageToTenancy do
   let(:email_template_id) { SecureRandom.uuid }
   let(:batch_id) { SecureRandom.uuid }
   let(:variables) { { somthing: 'here', and: 'there' } }
-
-  subject do
-    described_class.new(
-      automated_sms_usecase: sms_mock,
-      automated_email_usecase: email_mock,
-      contacts_gateway: contacts_gateway_mock
-    )
-  end
 
   context 'when sending a automated message' do
     let(:tenancy_ref) { example_tenancy[:ref] }
@@ -37,7 +37,7 @@ describe Hackney::Income::SendAutomatedMessageToTenancy do
       ]
     end
 
-    it 'should look up contacts by ten_ref using the contacts gateway' do
+    it 'looks up contacts by ten_ref using the contacts gateway' do
       expect(contacts_gateway_mock).to receive(:get_responsible_contacts)
         .with(tenancy_ref: tenancy_ref)
         .and_return([])
@@ -45,7 +45,7 @@ describe Hackney::Income::SendAutomatedMessageToTenancy do
       subject.execute(tenancy_ref: tenancy_ref, sms_template_id: nil, email_template_id: nil, batch_id: nil, variables: {})
     end
 
-    it 'should try to sms the list of available numbers' do
+    it 'tries to sms the list of available numbers' do
       allow(contacts_gateway_mock).to receive(:get_responsible_contacts).and_return(contacts)
       allow(email_mock).to receive(:execute)
 
@@ -56,10 +56,17 @@ describe Hackney::Income::SendAutomatedMessageToTenancy do
         reference: batch_id,
         variables: variables
       ).exactly(3).times
-      subject.execute(tenancy_ref: tenancy_ref, sms_template_id: sms_template_id, email_template_id: email_template_id, batch_id: batch_id, variables: variables)
+
+      subject.execute(
+        tenancy_ref: tenancy_ref,
+        sms_template_id: sms_template_id,
+        email_template_id: email_template_id,
+        batch_id: batch_id,
+        variables: variables
+      )
     end
 
-    it 'should try to email all contacts with email' do
+    it 'tries to email all contacts with email' do
       allow(contacts_gateway_mock).to receive(:get_responsible_contacts).and_return(contacts)
       allow(sms_mock).to receive(:execute)
 
@@ -69,8 +76,14 @@ describe Hackney::Income::SendAutomatedMessageToTenancy do
         template_id: email_template_id,
         reference: batch_id,
         variables: variables
-      ).exactly(2).times
-      subject.execute(tenancy_ref: tenancy_ref, sms_template_id: sms_template_id, email_template_id: email_template_id, batch_id: batch_id, variables: variables)
+      ).twice
+      subject.execute(
+        tenancy_ref: tenancy_ref,
+        sms_template_id: sms_template_id,
+        email_template_id: email_template_id,
+        batch_id: batch_id,
+        variables: variables
+      )
     end
   end
 end

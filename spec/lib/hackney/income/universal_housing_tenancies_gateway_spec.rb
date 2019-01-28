@@ -5,11 +5,11 @@ describe Hackney::Income::UniversalHousingTenanciesGateway, universal: true do
 
   after { truncate_uh_tables }
 
-  context 'retrieving tenancy refs for cases in arrears' do
+  context 'when retrieving tenancy refs for cases in arrears' do
     subject { gateway.tenancies_in_arrears }
 
     context 'when there are no tenancies' do
-      it 'should return none' do
+      it 'returns none' do
         expect(subject).to be_empty
       end
     end
@@ -17,7 +17,7 @@ describe Hackney::Income::UniversalHousingTenanciesGateway, universal: true do
     context 'when there is one tenancy in arrears' do
       before { create_uh_tenancy_agreement(tenancy_ref: '000001/01', current_balance: 50.00) }
 
-      it 'should return that tenancy' do
+      it 'returns that tenancy' do
         expect(subject).to eq(%w[000001/01])
       end
     end
@@ -25,7 +25,7 @@ describe Hackney::Income::UniversalHousingTenanciesGateway, universal: true do
     context 'when there is one tenancy in credit' do
       before { create_uh_tenancy_agreement(tenancy_ref: '000001/01', current_balance: -50.00) }
 
-      it 'should return nothing' do
+      it 'returns nothing' do
         expect(subject).to eq([])
       end
     end
@@ -38,7 +38,7 @@ describe Hackney::Income::UniversalHousingTenanciesGateway, universal: true do
         create_uh_tenancy_agreement(tenancy_ref: '000004/01', current_balance: 100.00)
       end
 
-      it 'should return the two in arrears' do
+      it 'returns the two in arrears' do
         expect(subject).to eq(%w[000002/01 000004/01])
       end
     end
@@ -46,7 +46,7 @@ describe Hackney::Income::UniversalHousingTenanciesGateway, universal: true do
     context 'when there is a tenancy in arrears which has been terminated' do
       before { create_uh_tenancy_agreement(tenancy_ref: '000001/01', current_balance: 100.00, terminated: true) }
 
-      it 'should return nothing' do
+      it 'returns nothing' do
         expect(subject).to eq([])
       end
     end
@@ -54,7 +54,7 @@ describe Hackney::Income::UniversalHousingTenanciesGateway, universal: true do
     context 'when there is a tenancy in arrears which is a Secure tenancy' do
       before { create_uh_tenancy_agreement(tenancy_ref: '000001/01', current_balance: 100.00, tenure_type: 'SEC') }
 
-      it 'should return the tenancy' do
+      it 'returns the tenancy' do
         expect(subject).to eq(%w[000001/01])
       end
     end
@@ -62,39 +62,39 @@ describe Hackney::Income::UniversalHousingTenanciesGateway, universal: true do
     context 'when there is a tenancy in arrears which is NOT a Secure tenancy' do
       before { create_uh_tenancy_agreement(tenancy_ref: '000001/01', current_balance: 100.00, tenure_type: 'HEY') }
 
-      it 'should return nothing' do
+      it 'returns nothing' do
         expect(subject).to eq([])
       end
     end
 
     context 'when patches are restricted' do
-      context 'and a list of acceptable patches is given' do
+      context 'when a list of acceptable patches is given' do
         let(:gateway) { described_class.new(restrict_patches: true, patches: %w[X01 Y01 Z01]) }
 
-        context 'and a tenancy is not in an accepted patch' do
+        context 'when a tenancy is not in an accepted patch' do
           before do
             create_uh_tenancy_agreement(tenancy_ref: '00001/01', current_balance: 10.0, property_ref: 'PROP1')
             create_uh_property(property_ref: 'PROP1', patch_code: 'B01')
           end
 
-          it 'should not return the tenancy' do
+          it 'does not return the tenancy' do
             expect(subject).to be_empty
           end
         end
 
-        context 'and a tenancy is in one of the accepted patches' do
+        context 'when a tenancy is in one of the accepted patches' do
           before do
             create_uh_tenancy_agreement(tenancy_ref: '00001/01', current_balance: 10.0, property_ref: 'PROP1')
             create_uh_property(property_ref: 'PROP1', patch_code: 'Z01')
           end
 
-          it 'should include the tenancy' do
+          it 'includes the tenancy' do
             expect(subject).to eq(%w[00001/01])
           end
         end
       end
 
-      context 'but no list of acceptable patches is given' do
+      context 'without a list of acceptable patches given' do
         let(:gateway) { described_class.new(restrict_patches: true) }
 
         before do
@@ -102,7 +102,7 @@ describe Hackney::Income::UniversalHousingTenanciesGateway, universal: true do
           create_uh_property(property_ref: 'PROP1', patch_code: 'B01')
         end
 
-        it 'should return no tenancies' do
+        it 'returns no tenancies' do
           expect(subject).to eq([])
         end
       end

@@ -1,6 +1,8 @@
 require 'rails_helper'
 
 describe Hackney::Income::SyncCasePriority do
+  subject { sync_case.execute(tenancy_ref: tenancy_ref) }
+
   let(:stub_tenancy_object) { double }
   let(:stored_tenancies_gateway) { double(store_tenancy: stub_tenancy_object) }
   let(:assign_tenancy_to_user) { double(assign_tenancy_to_user: nil) }
@@ -26,14 +28,12 @@ describe Hackney::Income::SyncCasePriority do
     )
   end
 
-  subject { sync_case.execute(tenancy_ref: tenancy_ref) }
-
   context 'when given a tenancy ref' do
     let(:tenancy_ref) { '000009/01' }
     let(:priority_band) { :green }
     let(:priority_score) { 1000 }
 
-    it 'should sync the case\'s priority score' do
+    it 'syncs the case\'s priority score' do
       expect(stored_tenancies_gateway).to receive(:store_tenancy).with(
         tenancy_ref: '000009/01',
         priority_band: :green,
@@ -48,12 +48,12 @@ describe Hackney::Income::SyncCasePriority do
     end
   end
 
-  context 'and given a different tenancy ref with different priorities' do
+  context 'when given a different tenancy ref with different priorities' do
     let(:tenancy_ref) { '000010/01' }
     let(:priority_band) { :red }
     let(:priority_score) { 5000 }
 
-    it 'should sync the tenancy\'s priority score' do
+    it 'syncs the tenancy\'s priority score' do
       expect(stored_tenancies_gateway).to receive(:store_tenancy).with(
         tenancy_ref: '000010/01',
         priority_band: :red,

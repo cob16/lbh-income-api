@@ -20,7 +20,7 @@ describe UsersController do
   end
 
   context 'when receiving valid params' do
-    it 'should pass the correct params to the use case' do
+    it 'passes the correct params to the use case' do
       expect_any_instance_of(Hackney::Income::FindOrCreateUser).to receive(:execute).with(
         provider_uid: params.fetch(:provider_uid),
         provider: params.fetch(:provider),
@@ -41,7 +41,7 @@ describe UsersController do
       get :create, params: params
     end
 
-    it 'should return the response as json' do
+    it 'returns the response as json' do
       expect_any_instance_of(Hackney::Income::FindOrCreateUser).to receive(:execute).with(
         provider_uid: params.fetch(:provider_uid),
         provider: params.fetch(:provider),
@@ -75,7 +75,7 @@ describe UsersController do
   end
 
   context 'when receiving a request missing params' do
-    it 'should return a 400 - bad request' do
+    it 'returns a 400 - bad request' do
       assert_incomplete_params(
         provider_uid: Faker::Lorem.characters(10),
         provider: Faker::Lorem.word,

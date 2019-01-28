@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require 'rails_helper'
 
 describe MessagesController, type: :controller do
@@ -31,6 +29,7 @@ describe MessagesController, type: :controller do
   end
 
   let(:dummy_action_diary_usecase) { double(Hackney::Tenancy::AddActionDiaryEntry) }
+  let(:expeted_templates) { Hackney::Income::GovNotifyGateway::EXAMPLE_TEMPLATES.to_json }
 
   before do
     stub_const(
@@ -44,10 +43,6 @@ describe MessagesController, type: :controller do
     allow(dummy_action_diary_usecase).to receive(:execute)
   end
 
-  let(:expeted_templates) do
-    Hackney::Income::GovNotifyGateway::EXAMPLE_TEMPLATES.to_json
-  end
-
   it 'sends an sms' do
     expect_any_instance_of(Hackney::Income::SendManualSms).to receive(:execute).with(
       user_id: sms_params.fetch(:user_id),
@@ -59,7 +54,6 @@ describe MessagesController, type: :controller do
     ).and_call_original
 
     patch :send_sms, params: sms_params
-
     expect(response.status).to eq(204)
   end
 
@@ -87,6 +81,7 @@ describe MessagesController, type: :controller do
 
     expect(response.body).to eq(expeted_templates)
   end
+
   it 'gets sms templates' do
     expect_any_instance_of(Hackney::Income::GetTemplates).to receive(:execute).with(
       type: 'sms'

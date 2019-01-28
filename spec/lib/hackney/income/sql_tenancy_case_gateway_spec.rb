@@ -2,6 +2,7 @@ require 'rails_helper'
 
 describe Hackney::Income::SqlTenancyCaseGateway do
   subject { described_class.new }
+
   let(:gateway_model) { described_class::GatewayModel }
 
   context 'when persisting tenancies which do not exist in the database' do
@@ -14,9 +15,9 @@ describe Hackney::Income::SqlTenancyCaseGateway do
       subject.persist(tenancies: tenancies)
     end
 
-    it 'should save the tenancies in the database' do
+    it 'saves the tenancies in the database' do
       tenancies.each do |tenancy|
-        expect(gateway_model.exists?(tenancy_ref: tenancy.tenancy_ref)).to be_truthy
+        expect(gateway_model).to exist(tenancy_ref: tenancy.tenancy_ref)
       end
     end
   end
@@ -32,7 +33,7 @@ describe Hackney::Income::SqlTenancyCaseGateway do
       subject.persist(tenancies: [tenancy])
     end
 
-    it 'should not create a new record' do
+    it 'does not create a new record' do
       expect(gateway_model.count).to eq(1)
     end
   end
@@ -42,14 +43,14 @@ describe Hackney::Income::SqlTenancyCaseGateway do
     let!(:tenancy) { gateway_model.create(tenancy_ref: tenancy_ref) }
     let!(:user) { Hackney::Income::Models::User.create }
 
-    it 'should assign the user' do
+    it 'assigns the user' do
       subject.assign_user(tenancy_ref: tenancy_ref, user_id: user.id)
       expect(tenancy.reload).to have_attributes(
         assigned_user: user
       )
     end
 
-    it 'should raise an exception when assigning a non existing case to user' do
+    it 'raises an exception when assigning a non existing case to user' do
       expect do
         subject.assign_user(
           tenancy_ref: 'not_a_real_tenancy_ref',
@@ -57,7 +58,7 @@ describe Hackney::Income::SqlTenancyCaseGateway do
         )
       end
         .to raise_error
-              .with_message('Unable to assign user 1 to tenancy not_a_real_tenancy_ref - tenancy not found.')
+        .with_message('Unable to assign user 1 to tenancy not_a_real_tenancy_ref - tenancy not found.')
     end
   end
 
@@ -65,22 +66,23 @@ describe Hackney::Income::SqlTenancyCaseGateway do
     let(:assignee_id) { 1 }
     let(:assigned_tenancies) { subject.assigned_tenancies(assignee_id: assignee_id) }
 
-    context 'and the user has no assigned cases' do
-      it 'should return no cases' do
+    context 'with no user assigned cases' do
+      it 'returns no cases' do
         expect(assigned_tenancies).to be_empty
       end
     end
 
-    context 'and the user has one assigned case' do
+    context 'with one user assigned case' do
       let(:tenancy) { persist_new_tenancy }
+
       before { subject.assign_user(tenancy_ref: tenancy.tenancy_ref, user_id: assignee_id) }
 
-      it 'should return the user\'s case' do
+      it 'returns the user\'s case' do
         expect(assigned_tenancies).to include(tenancy_ref: tenancy.tenancy_ref)
       end
     end
 
-    context 'and many users have assigned cases' do
+    context 'when many users have assigned cases' do
       let(:user_tenancy) { persist_new_tenancy }
       let(:other_assignee_id) { 1234 }
 
@@ -90,7 +92,7 @@ describe Hackney::Income::SqlTenancyCaseGateway do
         subject.assign_user(tenancy_ref: persist_new_tenancy.tenancy_ref, user_id: other_assignee_id)
       end
 
-      it 'should only return the user\'s cases' do
+      it 'onlies return the user\'s cases' do
         expect(assigned_tenancies).to eq([{
           tenancy_ref: user_tenancy.tenancy_ref
         }])
@@ -98,26 +100,32 @@ describe Hackney::Income::SqlTenancyCaseGateway do
     end
 
     context 'when auto assigning users to cases' do
-      let!(:user1) { Hackney::Income::Models::User.create!(name: Faker::Name.name, role: :credit_controller) }
-      let!(:user2) { Hackney::Income::Models::User.create!(name: Faker::Name.name, role: :credit_controller) }
-      let!(:user3) { Hackney::Income::Models::User.create!(name: Faker::Name.name, role: :base_user) }
+      let(:user1) { Hackney::Income::Models::User.new(name: Faker::Name.name, role: :credit_controller) }
+      let(:user2) { Hackney::Income::Models::User.new(name: Faker::Name.name, role: :credit_controller) }
+      let(:user3) { Hackney::Income::Models::User.new(name: Faker::Name.name, role: :base_user) }
 
-      let!(:unassigned_green) { create_assigned_tenancy_model(band: 'green', user: nil) }
-      let!(:second_unassigned_green) { create_assigned_tenancy_model(band: 'green', user: nil) }
-      let!(:unassigned_amber) { create_assigned_tenancy_model(band: 'amber', user: nil) }
-      let!(:second_unassigned_amber) { create_assigned_tenancy_model(band: 'amber', user: nil) }
-      let!(:unassigned_red) { create_assigned_tenancy_model(band: 'red', user: nil) }
-      let!(:unassigned_case) { create_assigned_tenancy_model(band: 'error', user: nil) }
+      let(:unassigned_green) { create_assigned_tenancy_model(band: 'green', user: nil) }
+      let(:second_unassigned_green) { create_assigned_tenancy_model(band: 'green', user: nil) }
+      let(:unassigned_amber) { create_assigned_tenancy_model(band: 'amber', user: nil) }
+      let(:second_unassigned_amber) { create_assigned_tenancy_model(band: 'amber', user: nil) }
+      let(:unassigned_red) { create_assigned_tenancy_model(band: 'red', user: nil) }
+      let(:unassigned_case) { create_assigned_tenancy_model(band: 'error', user: nil) }
+
+      before do
+        user1.save!
+        user2.save!
+        user3.save!
+      end
 
       context 'when no cases have been assigned' do
-        it 'should assign to the first eligible user in the list' do
+        it 'assigns to the first eligible user in the list' do
           expect(subject.assign_to_next_available_user(tenancy: unassigned_green)).to eq(user1.id)
           expect(unassigned_green.assigned_user).to eq(user1)
         end
       end
 
-      context 'assigning a case which has a band that has a clear next user' do
-        it 'should assign it to the user who is next able to take on a green case' do
+      context 'when assigning a case which has a band that has a clear next user' do
+        it 'assigns it to the user who is next able to take on a green case' do
           2.times { create_assigned_tenancy_model(band: 'green', user: user1) }
           1.times { create_assigned_tenancy_model(band: 'green', user: user2) }
 
@@ -125,7 +133,7 @@ describe Hackney::Income::SqlTenancyCaseGateway do
           expect(second_unassigned_green.assigned_user).to eq(user2)
         end
 
-        it 'should assign it to the user at the top of the list if there is no clear choice' do
+        it 'assigns it to the user at the top of the list if there is no clear choice' do
           1.times { create_assigned_tenancy_model(band: 'amber', user: user1) }
           1.times { create_assigned_tenancy_model(band: 'amber', user: user2) }
 
@@ -136,7 +144,7 @@ describe Hackney::Income::SqlTenancyCaseGateway do
           expect(second_unassigned_amber.assigned_user).to eq(user2)
         end
 
-        it 'should behave the same way for each band' do
+        it 'behaves the same way for each band' do
           2.times { create_assigned_tenancy_model(band: 'red', user: user1) }
           1.times { create_assigned_tenancy_model(band: 'red', user: user2) }
 
@@ -145,15 +153,15 @@ describe Hackney::Income::SqlTenancyCaseGateway do
         end
       end
 
-      it 'should not assign if the band cannot be matched' do
+      it 'does not assign if the band cannot be matched' do
         expect(subject.assign_to_next_available_user(tenancy: unassigned_case)).to be_nil
         expect(unassigned_case.assigned_user).to be_nil
       end
     end
 
     context 'when assigning several cases' do
-      context 'and they are all in the same band' do
-        it 'should assign them evenly to eligible users' do
+      context 'with the same band' do
+        it 'assigns them evenly to eligible users' do
           user_a, user_b, user_c, user_d, user_e = Array.new(5) { create(:user, :credit_controller) }
           user_f = create(:user)
           user_g = create(:user, :legal_case_worker)
