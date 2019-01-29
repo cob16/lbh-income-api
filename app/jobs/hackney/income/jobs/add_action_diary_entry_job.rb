@@ -5,7 +5,7 @@ module Hackney
         queue_as :action_diary_writer
 
         def max_attempts
-          1
+          0
         end
 
         def perform(tenancy_ref:, action_code:, comment:)
