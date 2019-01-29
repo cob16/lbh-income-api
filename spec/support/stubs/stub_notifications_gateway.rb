@@ -35,6 +35,8 @@ module Hackney
           reference: reference,
           variables: variables
         }
+        body = @templates.find { |template| template[:id] == template_id }&.body
+        Hackney::Income::Domain::NotificationReceipt.new(body: body)
       end
 
       def send_email(recipient:, template_id:, reference:, variables:)
@@ -44,6 +46,8 @@ module Hackney
           reference: reference,
           variables: variables
         }
+        body = @templates.find { |template| template[:id] == template_id }&.body
+        Hackney::Income::Domain::NotificationReceipt.new(body: body)
       end
     end
   end
