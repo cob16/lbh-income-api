@@ -6,7 +6,7 @@ describe Hackney::Income::Jobs::SendGreenInArrearsMsgJob do
   let(:mock_automated_message) { instance_double(Hackney::Income::SendAutomatedMessageToTenancy) }
   let(:mock_automated_message_class) { class_double(Hackney::Income::SendAutomatedMessageToTenancy) }
   let(:tenancy_ref) { Faker::Internet.slug }
-  let(:balance) { Faker::Commerce.price(100.0..199.99) }
+  let(:balance) { Faker::Commerce.price.to_d }
   let(:case_id) { Faker::Number.number }
 
   before do
