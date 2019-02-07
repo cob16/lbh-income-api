@@ -18,10 +18,17 @@ We employ a variant of Clean Architecture, borrowing from [Made Tech Flavoured C
 
 ### Setup
 
-1. Clone the [Universal Housing Simulator][github-uh-simulator] (private sorry) into your parent directory.
-2. Install [Docker][docker-download].
+1. Install [Docker][docker-download].
+2. Get a hackney aws account (see maintainers)
 3. Clone this repository.
-4. Run `make build`.
+4. Login to ecr [Universal Housing Simulator][github-uh-simulator]:
+```bash
+aws ecr get-login --no-include-email --region $AWS_DEFAULT_REGION | sh
+```
+5. Run setup
+```bash
+make setup
+```
 
 ### Development
 
@@ -35,23 +42,23 @@ $ make serve
 
 #### Testing
 
-To run tests:
+To run linting and tests:
 
 ```sh
-$ make test
+$ make check
 ```
 
 If you're TDDing code, it can sometimes be faster to boot up the app container once, then run tests within it. That way you don't have to start the Docker container every time you run tests:
 
 ```sh
-# start the Docker container
-$ make serve
-
 # in a separate tab, run this to get a shell within the Docker container
 $ make shell
 
 # run rspec after every change in the Docker container shell
 $ rspec
+
+# or for one file
+$ rspec path/to/spec
 ```
 
 The above is useful because you can TDD your change and manually test through the browser without having to restart anything.
@@ -104,11 +111,11 @@ We use a [Universal Housing simulator][github-uh-simulator] to run automated tes
 - **Mark Rosel**, Lead Engineer at [Made Tech][made-tech] (mark.rosel@madetech.com)
 - **Steven Leighton**, Engineer at [Made Tech][made-tech] (steven@madetech.com)
 - **Cormac Brady**, Engineer at [Made Tech][made-tech] (cormac@madetech.com)
-- **Jeff Pinkham**, Engineer at [Made Tech][made-tech] (jeff@madetech.com)
-- Elena Vilimaite, Engineer at [Made Tech][made-tech] (elena@madetech.com)
+- **Elena Vilimaite**, Engineer at [Made Tech][made-tech] (elena@madetech.com)
 
 ### Other Contacts
 
+- **Jeff Pinkham**, Engineer at [Made Tech][made-tech] (jeff@madetech.com)
 - **Richard Foster**, Lead Engineer at [Made Tech][made-tech] (richard@madetech.com)
 - **Luke Morton**, Director at [Made Tech][made-tech] (luke@madetech.com)
 - **Dennis Robinson**, Delivery Lead at London Borough of Hackney (dennis.robinson@hackney.gov.uk)
