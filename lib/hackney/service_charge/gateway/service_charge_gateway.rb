@@ -14,7 +14,7 @@ module Hackney
         def get_cases_by_refs(refs)
           return [] if refs.empty?
 
-          uri = URI("#{@host}/api/v1/cases?#{params_list('tenancy_refs', refs)}")
+          uri = URI("#{@host}/api/v1/cases?tenancy_refs=#{refs}")
 
           req = Net::HTTP::Get.new(uri)
           req['X-Api-Key'] = @key
@@ -42,17 +42,15 @@ module Hackney
               original_Leaseholders: sc_case.fetch('original_Leaseholders'),
               full_names_of_current_lessees: sc_case.fetch('full_names_of_current_lessees'),
               previous_letter_sent: sc_case.fetch('previous_letter_sent'),
-              arrears_letter_1_date: sc_case.fetch('arrears_letter_1_date')
+              arrears_letter_1_date: sc_case.fetch('arrears_letter_1_date'),
+              international: is_international?(sc_case)
             }
           end
         end
-
         private
-
-        def params_list(key, values)
-          values.each_with_index.map do |value, index|
-            "#{key}[#{index}]=#{value}"
-          end.join('&')
+        def is_international?(sc_case)
+          true
+          false
         end
       end
     end
