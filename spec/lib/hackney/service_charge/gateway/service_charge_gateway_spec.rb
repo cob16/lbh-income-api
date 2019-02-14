@@ -5,6 +5,8 @@ describe Hackney::ServiceCharge::Gateway::ServiceChargeGateway do
   include RequestStubHelper
 
   let(:gateway) { described_class.new(host: 'https://example.com', key: 'skeleton') }
+  let(:refs) { [456] }
+  let(:test_url) { 'https://example.com/api/v1/cases?tenancy_refs=%5B456%5D' }
 
   context 'when retrieving service charge cases' do
     subject { gateway.get_cases_by_refs(refs) }
@@ -36,13 +38,12 @@ describe Hackney::ServiceCharge::Gateway::ServiceChargeGateway do
     end
 
     context 'when the case has a ref and uk correspondence address' do
-      let(:refs) { [456] }
-      let(:test_url) { 'https://example.com/api/v1/cases?tenancy_refs=%5B456%5D' }
-
       before do
         request_stub(
           url: test_url,
-          response_body: { 'cases' => [example_case] }.to_json
+          response_body: { 'cases' => [
+            example_case(correspondence_postcode: 'GY1 2JS')
+          ] }.to_json
         )
       end
 
@@ -52,9 +53,6 @@ describe Hackney::ServiceCharge::Gateway::ServiceChargeGateway do
     end
 
     context 'when the case has a ref and international correspondence address' do
-      let(:refs) { [123] }
-      let(:test_url) { 'https://example.com/api/v1/cases?tenancy_refs=%5B123%5D' }
-
       before do
         request_stub(
           url: test_url,
