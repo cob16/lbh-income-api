@@ -1,6 +1,7 @@
 require 'rails_helper'
 
 describe Hackney::ServiceCharge::Gateway::ServiceChargeGateway do
+  include CaseHelper
   include RequestStubHelper
 
   let(:gateway) { described_class.new(host: 'https://example.com', key: 'skeleton') }
@@ -14,10 +15,10 @@ describe Hackney::ServiceCharge::Gateway::ServiceChargeGateway do
       let(:test_url) { 'https://other.com/api/v1/cases?tenancy_refs=%5B123%5D' }
 
       before do
-        request_stub({
+        request_stub(
           url: test_url,
           response_body: { 'cases' => [example_case] }.to_json
-        })
+        )
       end
 
       it 'uses the host' do
@@ -34,90 +35,38 @@ describe Hackney::ServiceCharge::Gateway::ServiceChargeGateway do
       end
     end
 
-    context 'when the case has a ref' do
+    context 'when the case has a ref and uk correspondence address' do
       let(:refs) { [456] }
       let(:test_url) { 'https://example.com/api/v1/cases?tenancy_refs=%5B456%5D' }
 
       before do
-        request_stub({
-           url: test_url,
-           response_body: { 'cases' => [example_case] }.to_json
-        })
+        request_stub(
+          url: test_url,
+          response_body: { 'cases' => [example_case] }.to_json
+        )
       end
 
-      it 'gives basic details on that case' do
-        expect(subject).to eq([{
-           tenancy_ref: '123',
-           correspondence_address_1: '742 Evergreen Terrace',
-           correspondence_address_2: '',
-           correspondence_address_3: 'London',
-           correspondence_postcode: 'E1 1HA',
-           property_address: '1 Hillman St, London, E8 1DY',
-           payment_ref: '1234567890',
-           balance: '2340.34',
-           collectable_arrears_balance: '293.99',
-           lba_expiry_date: '',
-           original_lease_date: '12/04/08',
-           date_of_current_purchase_assignment: '31/02/10',
-           original_Leaseholders: 'Abe Simpson',
-           full_names_of_current_lessees: [
-             'Homer Simpson',
-             'Marge Simpson'
-           ],
-           previous_letter_sent: '',
-           arrears_letter_1_date: '',
-           international: false
-        }])
+      it 'recognises international correspondence address' do
+        expect(subject.first[:international]).to eq(false)
       end
     end
-  end
 
+    context 'when the case has a ref and international correspondence address' do
+      let(:refs) { [123] }
+      let(:test_url) { 'https://example.com/api/v1/cases?tenancy_refs=%5B123%5D' }
 
-  def example_case
-    {
-      "tenancy_ref": "123",
-      "correspondence_address_1": "742 Evergreen Terrace",
-      "correspondence_address_2": "",
-      "correspondence_address_3": "London",
-      "correspondence_postcode": "E1 1HA",
-      "property_address": "1 Hillman St, London, E8 1DY",
-      "payment_ref": "1234567890",
-      "balance": "2340.34",
-      "collectable_arrears_balance": "293.99",
-      "lba_expiry_date": "",
-      "original_lease_date": "12/04/08",
-      "date_of_current_purchase_assignment": "31/02/10",
-      "original_Leaseholders": "Abe Simpson",
-      "full_names_of_current_lessees": [
-        "Homer Simpson",
-        "Marge Simpson"
-      ],
-      "previous_letter_sent": "",
-      "arrears_letter_1_date": ""
-    }
-  end
+      before do
+        request_stub(
+          url: test_url,
+          response_body: { 'cases' => [
+            example_case(correspondence_postcode: '123123')
+          ] }.to_json
+        )
+      end
 
-  def example_case_with_nils
-    {
-      "tenancy_ref": "456",
-      "correspondence_address_1": "31 Spooner Street",
-      "correspondence_address_2": "Quahog",
-      "correspondence_address_3": "Rhode Island",
-      "correspondence_postcode": "02857",
-      "property_address": "1 Hillman St, London, E8 1DY",
-      "payment_ref": "0987654321",
-      "balance": "2330.29",
-      "collectable_arrears_balance": "200",
-      "lba_expiry_date": nil,
-      "original_lease_date": "12/04/03",
-      "date_of_current_purchase_assignment": "02/12/13",
-      "original_Leaseholders": "Peter Griffin",
-      "full_names_of_current_lessees": [
-        "Peter Griffin",
-        "Lois Griffin"
-      ],
-      "previous_letter_sent": nil,
-      "arrears_letter_1_date": nil
-    }
+      it 'recognises international correspondence address' do
+        expect(subject.first[:international]).to eq(true)
+      end
+    end
   end
 end

@@ -1,4 +1,5 @@
 require 'uri'
+require 'uk_postcode'
 require 'net/http'
 require "#{Rails.root}/lib/hackney/tenancy/exceptions/tenancy_api_exception"
 
@@ -43,14 +44,15 @@ module Hackney
               full_names_of_current_lessees: sc_case.fetch('full_names_of_current_lessees'),
               previous_letter_sent: sc_case.fetch('previous_letter_sent'),
               arrears_letter_1_date: sc_case.fetch('arrears_letter_1_date'),
-              international: is_international?(sc_case)
+              international: is_international?(sc_case.fetch('correspondence_postcode'))
             }
           end
         end
+
         private
-        def is_international?(sc_case)
-          true
-          false
+
+        def international?(postcode)
+          !UKPostcode.parse(postcode).valid?
         end
       end
     end
