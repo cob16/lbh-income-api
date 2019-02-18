@@ -14,6 +14,7 @@ services:
       - universal_housing_simulator
     volumes:
       - .:/app
+    command: sh -c 'rails db:migrate && rails s'
   universal_housing_simulator:
     image: 775052747630.dkr.ecr.eu-west-2.amazonaws.com/hackney/universal-housing-simulator:140ad3ef65f4a44d8bbbb3add55968a157625647
     ports:
