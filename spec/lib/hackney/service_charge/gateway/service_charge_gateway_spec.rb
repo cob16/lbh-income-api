@@ -4,7 +4,7 @@ describe Hackney::ServiceCharge::Gateway::ServiceChargeGateway do
   include CaseHelper
   include RequestStubHelper
 
-  let(:gateway) { described_class.new(host: 'https://example.com', key: 'skeleton') }
+  let(:gateway) { described_class.new(host: 'https://example.com', api_key: 'skeleton') }
   let(:refs) { [456] }
   let(:test_url) { 'https://example.com/api/v1/cases?tenancy_refs=%5B456%5D' }
 
@@ -12,7 +12,7 @@ describe Hackney::ServiceCharge::Gateway::ServiceChargeGateway do
     subject { gateway.get_cases_by_refs(refs) }
 
     context 'with a different host' do
-      let(:gateway) { described_class.new(host: 'https://other.com', key: 'skeleton') }
+      let(:gateway) { described_class.new(host: 'https://other.com', api_key: 'skeleton') }
       let(:refs) { [123] }
       let(:test_url) { 'https://other.com/api/v1/cases?tenancy_refs=%5B123%5D' }
 
@@ -64,6 +64,16 @@ describe Hackney::ServiceCharge::Gateway::ServiceChargeGateway do
 
       it 'recognises international correspondence address' do
         expect(subject.first[:international]).to eq(true)
+      end
+    end
+
+    context 'when retrieving a case causes a timeout' do
+      before do
+        request_stub(url: test_url, response_status: 504)
+      end
+
+      it 'raises a ServiceChargeException' do
+        expect { subject }.to raise_error Hackney::ServiceCharge::Exceptions::ServiceChargeException
       end
     end
   end

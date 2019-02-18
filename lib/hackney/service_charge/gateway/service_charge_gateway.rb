@@ -1,30 +1,33 @@
 require 'uri'
 require 'uk_postcode'
 require 'net/http'
-require "#{Rails.root}/lib/hackney/tenancy/exceptions/tenancy_api_exception"
+require "#{Rails.root}/lib/hackney/service_charge/exceptions/service_charge_api_exception"
 
 module Hackney
   module ServiceCharge
     module Gateway
       class ServiceChargeGateway
-        def initialize(host:, key:)
-          @host = host
-          @key = key
+        include HTTParty
+        format :json
+
+        def initialize(host:, api_key:)
+          self.class.base_uri host
+          @options = {
+            headers: {
+              'X-Api-Key': api_key,
+              'Content-Type': 'application/json',
+              'Accept': 'application/json'
+            }
+          }
         end
 
         def get_cases_by_refs(refs)
           return [] if refs.empty?
+          response = self.class.get("/api/v1/cases?tenancy_refs=#{URI.encode_www_form_component(refs)}", @options)
 
-          uri = URI("#{@host}/api/v1/cases?tenancy_refs=#{refs}")
+          raise Hackney::ServiceCharge::Exceptions::ServiceChargeException, response unless response.success?
 
-          req = Net::HTTP::Get.new(uri)
-          req['X-Api-Key'] = @key
-
-          res = Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) { |http| http.request(req) }
-
-          raise Hackney::Tenancy::Exceptions::TenancyApiException, res unless res.is_a? Net::HTTPSuccess
-
-          body = JSON.parse(res.body)
+          body = JSON.parse(response.body)
 
           body['cases'].map do |sc_case|
             {
