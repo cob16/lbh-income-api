@@ -1,33 +1,21 @@
-require 'uri'
 require 'uk_postcode'
-require 'net/http'
-require "#{Rails.root}/lib/hackney/service_charge/exceptions/service_charge_api_exception"
-
+require_relative 'service_charge_adapter'
 module Hackney
   module ServiceCharge
     module Gateway
       class ServiceChargeGateway
-        include HTTParty
-        format :json
 
         def initialize(host:, api_key:)
-          self.class.base_uri host
-          @options = {
-            headers: {
-              'X-Api-Key': api_key,
-              'Content-Type': 'application/json',
-              'Accept': 'application/json'
-            }
-          }
+          @service_charge_adapter = ServiceChargesAdapter.new(
+            host: host,
+            api_key: api_key
+          )
         end
 
         def get_cases_by_refs(refs)
           return [] if refs.empty?
-          response = self.class.get("/api/v1/cases?tenancy_refs=#{URI.encode_www_form_component(refs)}", @options)
 
-          raise Hackney::ServiceCharge::Exceptions::ServiceChargeException, response unless response.success?
-
-          body = JSON.parse(response.body)
+          body = @service_charge_adapter.request("tenancy_refs=#{refs}")
 
           body['cases'].map do |sc_case|
             {
