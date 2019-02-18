@@ -38,6 +38,9 @@ Metrics/MethodLength:
 Metrics/ParameterLists:
   Max: 7
 
+Metrics/ModuleLength:
+  Max: 200
+
 Naming/AccessorMethodName:
   Enabled: false
 
