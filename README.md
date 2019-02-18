@@ -23,7 +23,8 @@ We employ a variant of Clean Architecture, borrowing from [Made Tech Flavoured C
 3. Clone this repository.
 4. Login to ecr [Universal Housing Simulator][github-uh-simulator]:
 ```bash
-aws ecr get-login --no-include-email --region $AWS_DEFAULT_REGION | sh
+$ aws configure
+$ aws ecr get-login --no-include-email --region $AWS_DEFAULT_REGION | sh
 ```
 5. Run setup
 ```bash
