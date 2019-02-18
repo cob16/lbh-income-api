@@ -111,7 +111,7 @@ We use a [Universal Housing simulator][github-uh-simulator] to run automated tes
 - **Mark Rosel**, Lead Engineer at [Made Tech][made-tech] (mark.rosel@madetech.com)
 - **Steven Leighton**, Engineer at [Made Tech][made-tech] (steven@madetech.com)
 - **Cormac Brady**, Engineer at [Made Tech][made-tech] (cormac@madetech.com)
-- **Elena Vilimaite**, Engineer at [Made Tech][made-tech] (elena@madetech.com)
+- **Elena Vilimaitė**, Engineer at [Made Tech][made-tech] (elena@madetech.com)
 
 ### Other Contacts
 
