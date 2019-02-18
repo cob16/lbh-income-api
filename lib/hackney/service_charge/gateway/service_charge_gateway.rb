@@ -4,7 +4,6 @@ module Hackney
   module ServiceCharge
     module Gateway
       class ServiceChargeGateway
-
         def initialize(host:, api_key:)
           @service_charge_adapter = ServiceChargesAdapter.new(
             host: host,

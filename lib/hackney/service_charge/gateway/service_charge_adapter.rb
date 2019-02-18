@@ -16,16 +16,15 @@ module Hackney
         end
 
         def request(query)
-          endpoint = "/api/v1/cases"
+          endpoint = '/api/v1/cases'
           headers = {
             'X-Api-Key': api_key,
             'Content-Type': 'application/json',
             'Accept': 'application/json'
           }
 
-          @response = self.class.get(endpoint+'?'+query, {
-            headers: headers
-          })
+          @response = self.class.get(endpoint + '?' + query,
+                                     headers: headers)
 
           raise Hackney::ServiceCharge::Exceptions::ServiceChargeException, @response unless @response.success?
 
@@ -33,9 +32,9 @@ module Hackney
         end
 
         private
+
         attr_reader :api_key
       end
     end
   end
 end
-
