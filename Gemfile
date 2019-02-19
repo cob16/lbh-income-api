@@ -29,13 +29,14 @@ gem 'tiny_tds'
 
 gem 'httparty'
 
-gem 'notifications-ruby-client'
-gem 'phonelib'
-
 gem 'daemons'
 gem 'delayed_job'
 gem 'delayed_job_active_record'
+gem 'notifications-ruby-client'
+gem 'pdfkit'
+gem 'phonelib'
 gem 'sentry-raven'
+gem 'wkhtmltopdf-binary'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
