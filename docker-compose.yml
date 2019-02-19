@@ -8,6 +8,7 @@ services:
       - UH_DATABASE_PASSWORD=Rooty-Tooty
       - UH_DATABASE_HOST=universal_housing_simulator
       - UH_DATABASE_PORT=1433
+      - GOV_NOTIFY_API_KEY='tempmarktest-c0623e2d-7536-4476-9060-18864bca6b20-5739f5c8-78ae-4709-967c-ae76e49d0754'
     ports:
       - 3000:3000
     links:

@@ -132,8 +132,7 @@ module Hackney
           api_key: Rails.configuration.x.gov_notify.api_key,
           send_live_communications: Rails.configuration.x.gov_notify.send_live,
           test_phone_number: Rails.configuration.x.gov_notify.test_phone_number,
-          test_email_address: Rails.configuration.x.gov_notify.test_email_address,
-          test_physical_address: Rails.configuration.x.gov_notify.test_physical_address
+          test_email_address: Rails.configuration.x.gov_notify.test_email_address
         )
       end
 
