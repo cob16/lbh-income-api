@@ -8,7 +8,7 @@ describe Hackney::PDF::PDFGenerator do
     )
   end
 
-  let(:pdf_gateway) { Hackney::PDF::PDFGateway.new }
+  let(:pdf_gateway) { instance_double(Hackney::PDF::PDFGateway) }
   let(:test_template_path) { 'spec/lib/hackney/pdf/test_template.erb' }
   let(:test_letter_params) do
     {
@@ -32,6 +32,6 @@ describe Hackney::PDF::PDFGenerator do
   it 'passes the required translated html through to the gateway' do
     expect(pdf_gateway).to receive(:generate_pdf).with(translated_html)
 
-    subject.execute(test_letter_params)
+    subject.execute(letter_params: test_letter_params)
   end
 end
