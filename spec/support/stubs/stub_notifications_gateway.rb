@@ -9,12 +9,13 @@ module Hackney
       ].freeze
 
       private_constant :DEFAULT_TEMPLATES
-      attr_reader :last_text_message, :last_email
+      attr_reader :last_text_message, :last_email, :last_precompiled_letter
 
-      def initialize(templates: DEFAULT_TEMPLATES, sms_sender_id: nil, api_key: nil, last_text_message: nil)
+      def initialize(templates: DEFAULT_TEMPLATES, sms_sender_id: nil, api_key: nil, last_text_message: nil, last_precompiled_letter: nil)
         @templates = templates
         @last_text_message = nil
         @last_email = nil
+        @last_precompiled_letter = nil
       end
 
       def get_template_name(id)
@@ -48,6 +49,15 @@ module Hackney
           variables: variables
         }
         body = get_template(template_id)&.fetch(:body, nil)
+        Hackney::Income::Domain::NotificationReceipt.new(body: body)
+      end
+
+      def send_precompiled_letter(unique_reference:, letter_pdf_location:)
+        require 'pry'; binding.pry
+
+        # TODO: build from actual response
+        @last_precompiled_letter = 'meh'
+        body = 'meh'
         Hackney::Income::Domain::NotificationReceipt.new(body: body)
       end
 

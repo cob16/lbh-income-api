@@ -1,3 +1,5 @@
+require 'hackney/notification/base.rb' # TODO: global require
+
 module Hackney
   module Income
     ACTIVE_ARREARS_AGREEMENT_STATUS = '200'.freeze

@@ -3,12 +3,15 @@ require 'notifications/client'
 module Hackney
   module Income
     class GovNotifyGateway
-      def initialize(sms_sender_id:, api_key:, send_live_communications:, test_phone_number:, test_email_address:)
+      def initialize(sms_sender_id:, api_key:, send_live_communications:, test_phone_number: nil, test_email_address: nil, test_physical_address: nil)
         @sms_sender_id = sms_sender_id
         @client = Notifications::Client.new(api_key)
         @send_live_communications = send_live_communications
+
+        # TODO: do something with these
         @test_phone_number = test_phone_number
         @test_email_address = test_email_address
+        @test_physical_address = test_physical_address
       end
 
       def send_text_message(phone_number:, template_id:, reference:, variables:)
@@ -30,6 +33,18 @@ module Hackney
           reference: reference
         )
         create_notification_receipt(responce)
+      end
+
+      def send_precompiled_letter(unique_reference:, letter_pdf_location:)
+        require 'pry'; binding.pry
+
+        # letter_pdf = 'spec/test_files/test_pdf.pdf'
+        response = File.open(letter_pdf_location, 'rb') do |file|
+          postage = 'second' # is the default
+          client.send_precompiled_letter(unique_reference, file, postage)
+        end
+
+        create_notification_receipt(response)
       end
 
       def get_template_name(template_id)
