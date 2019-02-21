@@ -23,11 +23,11 @@ gem 'puma', '~> 3.7'
 # Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin AJAX possible
 # gem 'rack-cors'
 
+gem 'httparty'
 gem 'mysql2'
 gem 'sequel'
 gem 'tiny_tds'
-
-gem 'httparty'
+gem 'uk_postcode'
 
 gem 'notifications-ruby-client'
 gem 'phonelib'
