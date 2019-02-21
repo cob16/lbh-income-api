@@ -1,6 +1,6 @@
 module Hackney
   module Notification
-    class Base
+    class BaseManualGateway
       attr_writer :notification_gateway, :add_action_diary_usecase
 
       def initialize(notification_gateway:, add_action_diary_usecase:)

@@ -34,7 +34,7 @@ module Hackney
       end
 
       def send_manual_sms
-        Hackney::Income::SendManualSms.new(
+        Hackney::Notification::SendManualSms.new(
           notification_gateway: notifications_gateway,
           add_action_diary_usecase: add_action_diary
         )
@@ -55,21 +55,21 @@ module Hackney
       end
 
       def send_automated_sms
-        Hackney::Income::SendAutomatedSms.new(
+        Hackney::Notification::SendAutomatedSms.new(
           notification_gateway: notifications_gateway,
           background_job_gateway: background_job_gateway
         )
       end
 
       def send_automated_email
-        Hackney::Income::SendAutomatedEmail.new(
+        Hackney::Notification::SendAutomatedEmail.new(
           notification_gateway: notifications_gateway,
           background_job_gateway: background_job_gateway
         )
       end
 
       def send_automated_message_to_tenancy
-        SendAutomatedMessageToTenancy.new(
+        Hackney::Notification::SendAutomatedMessageToTenancy.new(
           automated_sms_usecase: send_automated_sms,
           automated_email_usecase: send_automated_email,
           contacts_gateway: contacts_gateway

@@ -1,5 +1,5 @@
 module Hackney
-  module Income
+  module Notification
     class SendAutomatedMessageToTenancy
       def initialize(automated_sms_usecase:, automated_email_usecase:, contacts_gateway:)
         @automated_sms_usecase = automated_sms_usecase

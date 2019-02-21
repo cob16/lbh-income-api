@@ -44,7 +44,7 @@ describe MessagesController, type: :controller do
   end
 
   it 'sends an sms' do
-    expect_any_instance_of(Hackney::Income::SendManualSms).to receive(:execute).with(
+    expect_any_instance_of(Hackney::Notification::SendManualSms).to receive(:execute).with(
       user_id: sms_params.fetch(:user_id),
       tenancy_ref: sms_params.fetch(:tenancy_ref),
       template_id: sms_params.fetch(:template_id),

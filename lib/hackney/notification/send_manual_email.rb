@@ -1,7 +1,7 @@
 # FIXME: nest under Hackney::Notifications
 module Hackney
   module Notification
-    class SendManualEmail < Base
+    class SendManualEmail < BaseManualGateway
       def execute(user_id:, tenancy_ref:, recipient:, template_id:, reference:, variables:)
         notification_gateway.send_email(
           recipient: recipient,

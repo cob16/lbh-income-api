@@ -1,7 +1,7 @@
 # FIXME: nest under Hackney::Notifications
 module Hackney
   module Notification
-    class SendPrecompiledLetter < Base
+    class SendManualPrecompiledLetter < BaseManualGateway
       def execute(user_id: nil, payment_ref: nil, unique_reference:, letter_pdf_location:)
         notification_gateway.send_precompiled_letter(
           unique_reference: unique_reference,

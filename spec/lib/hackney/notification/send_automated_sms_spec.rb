@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe Hackney::Income::SendAutomatedSms do
+describe Hackney::Notification::SendAutomatedSms do
   let(:tenancy) { create_tenancy_model }
   let(:notification_gateway) { instance_double(Hackney::Income::GovNotifyGateway) }
   let(:send_responce) { Hackney::Income::Domain::NotificationReceipt.new(body: nil) }

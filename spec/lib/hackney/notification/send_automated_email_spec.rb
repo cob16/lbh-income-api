@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe Hackney::Income::SendAutomatedEmail do
+describe Hackney::Notification::SendAutomatedEmail do
   let(:notification_gateway) { Hackney::Income::StubNotificationsGateway.new }
   let(:background_job_gateway) { double(Hackney::Income::BackgroundJobGateway) }
   let(:send_email) { described_class.new(notification_gateway: notification_gateway, background_job_gateway: background_job_gateway) }
