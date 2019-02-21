@@ -9,15 +9,6 @@ module Hackney
         )
 
         # TODO: add action diary event if payment_ref
-        if payment_ref
-          # template_name = notification_gateway.get_template_name(template_id)
-          # add_action_diary_usecase.execute(
-          #   user_id: user_id,
-          #   payment_ref: payment_ref,
-          #   action_code: Hackney::Tenancy::ActionCodes::MANUAL_LETTER_ACTION_CODE,
-          #   comment: "'#{unique_reference}' Letter sent to '#{recipient}'"
-          # )
-        end
       end
     end
   end
