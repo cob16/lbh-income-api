@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe Hackney::Income::Domain::NotificationReceipt do
+describe Hackney::Notification::Domain::NotificationReceipt do
   subject do
     described_class.new(body: body)
   end

@@ -38,7 +38,7 @@ module Hackney
           variables: variables
         }
         body = get_template(template_id)&.fetch(:body, nil)
-        Hackney::Income::Domain::NotificationReceipt.new(body: body)
+        Hackney::Notification::Domain::NotificationReceipt.new(body: body)
       end
 
       def send_email(recipient:, template_id:, reference:, variables:)
@@ -49,7 +49,7 @@ module Hackney
           variables: variables
         }
         body = get_template(template_id)&.fetch(:body, nil)
-        Hackney::Income::Domain::NotificationReceipt.new(body: body)
+        Hackney::Notification::Domain::NotificationReceipt.new(body: body)
       end
 
       def send_precompiled_letter(unique_reference:, letter_pdf_location:)
@@ -58,7 +58,7 @@ module Hackney
         # body = 'meh'
         postage = 'second'
         body = "#{unique_reference} sent via #{postage} postage"
-        Hackney::Income::Domain::NotificationReceipt.new(body: body)
+        Hackney::Notification::Domain::NotificationReceipt.new(body: body)
       end
 
       private

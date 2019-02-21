@@ -41,7 +41,7 @@ module Hackney
         response = @client.send_precompiled_letter(unique_reference, file, postage)
         # success returns a reference and postage
         body = "#{response.reference} sent via #{response.postage} postage"
-        Hackney::Income::Domain::NotificationReceipt.new(body: body)
+        Hackney::Notification::Domain::NotificationReceipt.new(body: body)
       end
 
       def get_template_name(template_id)
@@ -61,7 +61,7 @@ module Hackney
 
       def create_notification_receipt(responce)
         body = responce.content&.fetch('body', nil)
-        Hackney::Income::Domain::NotificationReceipt.new(body: body)
+        Hackney::Notification::Domain::NotificationReceipt.new(body: body)
       end
 
       def all_templates_request

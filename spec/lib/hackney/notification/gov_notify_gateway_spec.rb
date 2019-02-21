@@ -75,14 +75,14 @@ describe Hackney::Notification::GovNotifyGateway do
   it 'send_sms returns notification_receipt object' do
     notification_receipt = subject.send_text_message(phone_number: nil, template_id: nil, variables: nil, reference: nil)
 
-    expect(notification_receipt).to be_an(Hackney::Income::Domain::NotificationReceipt)
+    expect(notification_receipt).to be_an(Hackney::Notification::Domain::NotificationReceipt)
     expect(notification_receipt.body).to eq(example_gov_content_body)
   end
 
   it 'send_email returns notification_receipt object' do
     notification_receipt = subject.send_email(recipient: nil, template_id: nil, reference: nil, variables: nil)
 
-    expect(notification_receipt).to be_an(Hackney::Income::Domain::NotificationReceipt)
+    expect(notification_receipt).to be_an(Hackney::Notification::Domain::NotificationReceipt)
     expect(notification_receipt.body).to eq(example_gov_content_body)
   end
 

@@ -23,7 +23,7 @@ describe Hackney::Notification::SendManualPrecompiledLetter do
       )
     end
 
-    it { expect(subject).to be_a Hackney::Income::Domain::NotificationReceipt }
+    it { expect(subject).to be_a Hackney::Notification::Domain::NotificationReceipt }
     it { expect(subject.body).to include(unique_reference) }
   end
 end

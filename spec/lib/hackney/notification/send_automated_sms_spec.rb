@@ -3,7 +3,7 @@ require 'rails_helper'
 describe Hackney::Notification::SendAutomatedSms do
   let(:tenancy) { create_tenancy_model }
   let(:notification_gateway) { instance_double(Hackney::Notification::GovNotifyGateway) }
-  let(:send_responce) { Hackney::Income::Domain::NotificationReceipt.new(body: nil) }
+  let(:send_responce) { Hackney::Notification::Domain::NotificationReceipt.new(body: nil) }
   let(:background_job_gateway) { double(Hackney::Income::BackgroundJobGateway) }
   let(:gov_notify_template_name) { Faker::Superhero.name }
   let(:send_sms) do
@@ -80,7 +80,7 @@ describe Hackney::Notification::SendAutomatedSms do
 
       context 'when a message body is returned' do
         let(:send_responce) do
-          Hackney::Income::Domain::NotificationReceipt.new(
+          Hackney::Notification::Domain::NotificationReceipt.new(
             body: "some body text with perhaps a \newline?"
           )
         end
