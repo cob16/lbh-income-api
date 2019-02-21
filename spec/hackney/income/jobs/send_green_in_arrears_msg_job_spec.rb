@@ -10,7 +10,7 @@ describe Hackney::Income::Jobs::SendGreenInArrearsMsgJob do
   let(:case_id) { Faker::Number.number }
 
   before do
-    stub_const('Hackney::Income::GovNotifyGateway', Hackney::Income::DummyGovNotifyGateway)
+    stub_const('Hackney::Notification::GovNotifyGateway', Hackney::Notification::DummyGovNotifyGateway)
     stub_const('Hackney::Notification::SendAutomatedMessageToTenancy', mock_automated_message_class)
     allow(mock_automated_message_class).to receive(:new).and_return(mock_automated_message)
 

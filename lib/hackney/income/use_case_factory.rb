@@ -127,7 +127,7 @@ module Hackney
       private
 
       def notifications_gateway
-        Hackney::Income::GovNotifyGateway.new(
+        Hackney::Notification::GovNotifyGateway.new(
           sms_sender_id: Rails.configuration.x.gov_notify.sms_sender_id,
           api_key: Rails.configuration.x.gov_notify.api_key,
           send_live_communications: Rails.configuration.x.gov_notify.send_live,

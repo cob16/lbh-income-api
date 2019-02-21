@@ -1,5 +1,5 @@
 module Hackney
-  module Income
+  module Notification
     class DummyGovNotifyGateway
       extend MessagesHelper
       EXAMPLE_TEMPLATES = example_templates

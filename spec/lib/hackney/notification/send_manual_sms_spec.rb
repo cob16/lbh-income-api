@@ -90,7 +90,7 @@ describe Hackney::Notification::SendManualSms do
         )
       end
 
-      let(:notification_gateway) { double(Hackney::Income::GovNotifyGateway) }
+      let(:notification_gateway) { double(Hackney::Notification::GovNotifyGateway) }
       let(:phone_number) { 'not a phone number' }
 
       it 'does not send an sms' do

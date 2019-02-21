@@ -1,7 +1,7 @@
 require 'notifications/client'
 
 module Hackney
-  module Income
+  module Notification
     class GovNotifyGateway
       def initialize(sms_sender_id:, api_key:, send_live_communications:, test_phone_number: nil, test_email_address: nil)
         @sms_sender_id = sms_sender_id

@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe Hackney::Income::GovNotifyGateway do
+describe Hackney::Notification::GovNotifyGateway do
   subject do
     described_class.new(
       sms_sender_id: sms_sender_id,
