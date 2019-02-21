@@ -11,25 +11,18 @@ describe Hackney::Notification::SendPrecompiledLetter do
   end
 
   let(:test_file_path) { 'spec/test_files/test_pdf.pdf' }
-
-  # before do
-  #   allow(add_action_diary_usecase).to receive(:execute)
-  # end
+  let(:unique_reference) { SecureRandom.uuid }
 
   context 'when sending an letters manually' do
     subject do
-      # def execute(user_id: nil, tenancy_ref: nil, unique_reference:, letter_pdf_location:)
-
       send_precompiled_letter.execute(
         # user_id: user_id,
-        # tenancy_ref: tenancy.tenancy_ref,
-        unique_reference: SecureRandom.uuid,
+        # payment_ref: payment_ref,
+        unique_reference: unique_reference,
         letter_pdf_location: test_file_path
       )
-      # notification_gateway.last_text_message
     end
 
     it { expect(subject) }
-    it { binding.pry }
   end
 end

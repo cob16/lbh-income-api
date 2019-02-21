@@ -1,4 +1,4 @@
-COMPOSE_FILES = -f docker-compose.yml -f docker-compose.local.yml
+COMPOSE_FILES = -f docker-compose.yml #-f docker-compose.local.yml
 
 .PHONY: docker-build
 docker-build:

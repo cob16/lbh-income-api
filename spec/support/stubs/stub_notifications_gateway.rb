@@ -53,11 +53,11 @@ module Hackney
       end
 
       def send_precompiled_letter(unique_reference:, letter_pdf_location:)
-        require 'pry'; binding.pry
-
         # TODO: build from actual response
-        @last_precompiled_letter = 'meh'
-        body = 'meh'
+        # @last_precompiled_letter = 'meh'
+        # body = 'meh'
+        postage = 'second'
+        body = "#{unique_reference} sent via #{postage} postage"
         Hackney::Income::Domain::NotificationReceipt.new(body: body)
       end
 

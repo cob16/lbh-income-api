@@ -35,14 +35,10 @@ module Hackney
       end
 
       def send_precompiled_letter(unique_reference:, letter_pdf_location:)
-        require 'pry'; binding.pry
-
         # letter_pdf = 'spec/test_files/test_pdf.pdf'
-        response = File.open(letter_pdf_location, 'rb') do |file|
-          postage = 'second' # is the default
-          @client.send_precompiled_letter(unique_reference, file, postage)
-        end
-
+        file = File.open(letter_pdf_location, 'rb')
+        postage = 'second' # second is the default
+        response = @client.send_precompiled_letter(unique_reference, file, postage)
         # success returns a reference and postage
         body = "#{response.reference} sent via #{response.postage} postage"
         Hackney::Income::Domain::NotificationReceipt.new(body: body)

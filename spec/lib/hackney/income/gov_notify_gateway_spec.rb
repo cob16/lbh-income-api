@@ -25,6 +25,7 @@ describe Hackney::Income::GovNotifyGateway do
       "\n" \
       'You can reach us on 0123 456 789.'
   end
+
   let(:example_gov_notify_sms_responce) do
     uuid = SecureRandom.uuid
     {
@@ -42,6 +43,7 @@ describe Hackney::Income::GovNotifyGateway do
       'uri' => "https://api.notifications.service.gov.uk/v2/notifications/#{uuid}"
     }
   end
+
   let(:example_gov_notify_email_responce) do
     uuid = SecureRandom.uuid
     {
@@ -82,6 +84,24 @@ describe Hackney::Income::GovNotifyGateway do
 
     expect(notification_receipt).to be_an(Hackney::Income::Domain::NotificationReceipt)
     expect(notification_receipt.body).to eq(example_gov_content_body)
+  end
+
+  context 'when sending a pdf letter' do
+    let(:pdf_file) { File.open('spec/test_files/test_pdf.pdf', 'rb') }
+    let(:unique_reference) { SecureRandom.uuid }
+    let(:fake_response) { OpenStruct.new(reference: unique_reference, postage: 'second') }
+
+    it 'sends default second class letter' do
+      allow(File).to receive(:open).and_return(pdf_file)
+      expect(mock_gov_notify).to receive(:send_precompiled_letter).with(
+        unique_reference, pdf_file, 'second'
+      ).and_return(fake_response)
+
+      subject.send_precompiled_letter(
+        unique_reference: unique_reference,
+        letter_pdf_location: pdf_file
+      )
+    end
   end
 
   context 'when sending a text message to a live tenant' do
