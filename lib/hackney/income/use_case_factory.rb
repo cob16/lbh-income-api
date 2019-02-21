@@ -41,7 +41,7 @@ module Hackney
       end
 
       def send_manual_email
-        Hackney::Income::SendManualEmail.new(
+        Hackney::Notification::SendManualEmail.new(
           notification_gateway: notifications_gateway,
           add_action_diary_usecase: add_action_diary
         )
