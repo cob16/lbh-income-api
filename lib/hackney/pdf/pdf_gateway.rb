@@ -6,7 +6,9 @@ module Hackney
       def initialize; end
 
       def generate_pdf(html)
-        PDFKit.new(html, pdf_options)
+        kit = PDFKit.new(html, pdf_options)
+        kit.stylesheets << 'lib/hackney/pdf/templates/pdf_styles.css'
+        kit
       end
 
       private
