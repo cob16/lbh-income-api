@@ -1,4 +1,3 @@
-# FIXME: nest under Hackney::Notifications
 module Hackney
   module Notification
     class SendManualPrecompiledLetter < BaseManualGateway
