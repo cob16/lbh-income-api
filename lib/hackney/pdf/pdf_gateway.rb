@@ -3,10 +3,11 @@ require 'pdfkit'
 module Hackney
   module PDF
     class PDFGateway
+      PDF_STYLES = 'lib/hackney/pdf/templates/pdf_styles.css'.freeze
 
       def generate_pdf(html)
         kit = PDFKit.new(html, pdf_options)
-        kit.stylesheets << 'lib/hackney/pdf/templates/pdf_styles.css'
+        kit.stylesheets << PDF_STYLES
         kit
       end
 
