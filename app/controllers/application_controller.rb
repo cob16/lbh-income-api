@@ -5,6 +5,10 @@ class ApplicationController < ActionController::API
     @income_use_case_factory ||= Hackney::Income::UseCaseFactory.new
   end
 
+  def pfd_use_case_factory
+    @pfd_use_case_factory ||= Hackney::PDF::UseCaseFactory.new
+  end
+
   def set_raven_context
     Raven.extra_context(params: params.to_unsafe_h, url: request.url)
   end
