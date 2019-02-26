@@ -12,7 +12,6 @@ describe Hackney::PDF::PDFGenerator do
   let(:test_template_path) { 'spec/lib/hackney/pdf/test_template.erb' }
   let(:test_letter_params) do
     {
-
       payment_ref: '1234567890',
       lessee_full_name: 'Mr Philip Banks',
       correspondence_address_one: '508 Saint Cloud Road',

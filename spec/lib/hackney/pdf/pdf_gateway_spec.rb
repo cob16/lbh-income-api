@@ -21,7 +21,7 @@ describe Hackney::PDF::PDFGateway do
       )
     end
 
-    it 'pdf should have the right source' do
+    it 'pdf has the right source' do
       expect(subject.source.instance_values['source']).to eq(html)
     end
   end
