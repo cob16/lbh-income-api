@@ -3,7 +3,6 @@ require 'pdfkit'
 module Hackney
   module PDF
     class PDFGateway
-      def initialize; end
 
       def generate_pdf(html)
         kit = PDFKit.new(html, pdf_options)
