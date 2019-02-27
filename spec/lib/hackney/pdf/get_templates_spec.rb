@@ -9,7 +9,7 @@ describe Hackney::PDF::GetTemplates do
 
   it 'the templates are found' do
     expect(subject.execute).to eq([{
-      name: 'Test template', path: 'spec/lib/hackney/pdf/test_template.erb'
+      id: 'test_template', name: 'Test template', path: 'spec/lib/hackney/pdf/test_template.erb'
     }])
   end
 end
