@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe Hackney::Income::SendManualSms do
+describe Hackney::Notification::SendManualSms do
   let(:tenancy) { create_tenancy_model }
   let(:notification_gateway) { Hackney::Income::StubNotificationsGateway.new }
   let(:add_action_diary_usecase) { double(Hackney::Tenancy::AddActionDiaryEntry) }
@@ -90,7 +90,7 @@ describe Hackney::Income::SendManualSms do
         )
       end
 
-      let(:notification_gateway) { double(Hackney::Income::GovNotifyGateway) }
+      let(:notification_gateway) { double(Hackney::Notification::GovNotifyGateway) }
       let(:phone_number) { 'not a phone number' }
 
       it 'does not send an sms' do

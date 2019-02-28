@@ -1,7 +1,7 @@
 require 'phonelib'
 
 module Hackney
-  module Income
+  module Notification
     class SendAutomatedSms
       def initialize(notification_gateway:, background_job_gateway:)
         @notification_gateway = notification_gateway

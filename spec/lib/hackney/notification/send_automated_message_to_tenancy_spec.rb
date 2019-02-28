@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe Hackney::Income::SendAutomatedMessageToTenancy do
+describe Hackney::Notification::SendAutomatedMessageToTenancy do
   subject do
     described_class.new(
       automated_sms_usecase: sms_mock,
@@ -9,8 +9,8 @@ describe Hackney::Income::SendAutomatedMessageToTenancy do
     )
   end
 
-  let(:sms_mock) { double(Hackney::Income::SendAutomatedSms) }
-  let(:email_mock) { double(Hackney::Income::SendAutomatedEmail) }
+  let(:sms_mock) { double(Hackney::Notification::SendAutomatedSms) }
+  let(:email_mock) { double(Hackney::Notification::SendAutomatedEmail) }
   let(:contacts_gateway_mock) { double(Hackney::Tenancy::Gateway::ContactsGateway) }
 
   let(:sms_template_id) { SecureRandom.uuid }

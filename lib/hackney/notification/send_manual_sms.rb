@@ -1,13 +1,8 @@
 require 'phonelib'
 
 module Hackney
-  module Income
-    class SendManualSms
-      def initialize(notification_gateway:, add_action_diary_usecase:)
-        @notification_gateway = notification_gateway
-        @add_action_diary_usecase = add_action_diary_usecase
-      end
-
+  module Notification
+    class SendManualSms < BaseManualGateway
       def execute(user_id:, tenancy_ref:, template_id:, phone_number:, reference:, variables:)
         phone = Phonelib.parse(phone_number)
         if phone.valid?

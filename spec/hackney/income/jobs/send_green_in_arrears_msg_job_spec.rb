@@ -3,15 +3,15 @@ require 'rails_helper'
 describe Hackney::Income::Jobs::SendGreenInArrearsMsgJob do
   subject { described_class }
 
-  let(:mock_automated_message) { instance_double(Hackney::Income::SendAutomatedMessageToTenancy) }
-  let(:mock_automated_message_class) { class_double(Hackney::Income::SendAutomatedMessageToTenancy) }
+  let(:mock_automated_message) { instance_double(Hackney::Notification::SendAutomatedMessageToTenancy) }
+  let(:mock_automated_message_class) { class_double(Hackney::Notification::SendAutomatedMessageToTenancy) }
   let(:tenancy_ref) { Faker::Internet.slug }
   let(:balance) { Faker::Commerce.price.to_d }
   let(:case_id) { Faker::Number.number }
 
   before do
-    stub_const('Hackney::Income::GovNotifyGateway', Hackney::Income::DummyGovNotifyGateway)
-    stub_const('Hackney::Income::SendAutomatedMessageToTenancy', mock_automated_message_class)
+    stub_const('Hackney::Notification::GovNotifyGateway', Hackney::Notification::DummyGovNotifyGateway)
+    stub_const('Hackney::Notification::SendAutomatedMessageToTenancy', mock_automated_message_class)
     allow(mock_automated_message_class).to receive(:new).and_return(mock_automated_message)
 
     create(:case_priority, balance: balance, tenancy_ref: tenancy_ref, case_id: case_id)

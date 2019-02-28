@@ -1,12 +1,14 @@
 require 'notifications/client'
 
 module Hackney
-  module Income
+  module Notification
     class GovNotifyGateway
-      def initialize(sms_sender_id:, api_key:, send_live_communications:, test_phone_number:, test_email_address:)
+      def initialize(sms_sender_id:, api_key:, send_live_communications:, test_phone_number: nil, test_email_address: nil)
         @sms_sender_id = sms_sender_id
         @client = Notifications::Client.new(api_key)
         @send_live_communications = send_live_communications
+
+        # TODO: do something with these
         @test_phone_number = test_phone_number
         @test_email_address = test_email_address
       end
@@ -32,6 +34,16 @@ module Hackney
         create_notification_receipt(responce)
       end
 
+      def send_precompiled_letter(unique_reference:, letter_pdf_location:)
+        # letter_pdf = 'spec/test_files/test_pdf.pdf'
+        file = File.open(letter_pdf_location, 'rb')
+        postage = 'second' # second is the default
+        response = @client.send_precompiled_letter(unique_reference, file, postage)
+        # success returns a reference and postage
+        body = "#{response.reference} sent via #{response.postage} postage"
+        Hackney::Notification::Domain::NotificationReceipt.new(body: body)
+      end
+
       def get_template_name(template_id)
         get_templates&.find { |template_item| template_item[:id] == template_id }&.fetch(:name) || template_id
       end
@@ -49,7 +61,7 @@ module Hackney
 
       def create_notification_receipt(responce)
         body = responce.content&.fetch('body', nil)
-        Hackney::Income::Domain::NotificationReceipt.new(body: body)
+        Hackney::Notification::Domain::NotificationReceipt.new(body: body)
       end
 
       def all_templates_request

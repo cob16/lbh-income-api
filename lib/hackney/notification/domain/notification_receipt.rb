@@ -1,5 +1,5 @@
 module Hackney
-  module Income
+  module Notification
     module Domain
       class NotificationReceipt
         attr_accessor :body

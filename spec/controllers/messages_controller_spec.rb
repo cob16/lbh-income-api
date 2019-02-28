@@ -29,12 +29,12 @@ describe MessagesController, type: :controller do
   end
 
   let(:dummy_action_diary_usecase) { double(Hackney::Tenancy::AddActionDiaryEntry) }
-  let(:expeted_templates) { Hackney::Income::GovNotifyGateway::EXAMPLE_TEMPLATES.to_json }
+  let(:expeted_templates) { Hackney::Notification::GovNotifyGateway::EXAMPLE_TEMPLATES.to_json }
 
   before do
     stub_const(
-      'Hackney::Income::GovNotifyGateway',
-      Hackney::Income::DummyGovNotifyGateway,
+      'Hackney::Notification::GovNotifyGateway',
+      Hackney::Notification::DummyGovNotifyGateway,
       transfer_nested_constants: true
     )
 
@@ -44,7 +44,7 @@ describe MessagesController, type: :controller do
   end
 
   it 'sends an sms' do
-    expect_any_instance_of(Hackney::Income::SendManualSms).to receive(:execute).with(
+    expect_any_instance_of(Hackney::Notification::SendManualSms).to receive(:execute).with(
       user_id: sms_params.fetch(:user_id),
       tenancy_ref: sms_params.fetch(:tenancy_ref),
       template_id: sms_params.fetch(:template_id),
@@ -58,7 +58,7 @@ describe MessagesController, type: :controller do
   end
 
   it 'sends an email' do
-    expect_any_instance_of(Hackney::Income::SendManualEmail).to receive(:execute).with(
+    expect_any_instance_of(Hackney::Notification::SendManualEmail).to receive(:execute).with(
       user_id: email_params.fetch(:user_id),
       tenancy_ref: email_params.fetch(:tenancy_ref),
       template_id: email_params.fetch(:template_id),
