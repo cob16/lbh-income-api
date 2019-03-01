@@ -5,8 +5,12 @@ class ApplicationController < ActionController::API
     @income_use_case_factory ||= Hackney::Income::UseCaseFactory.new
   end
 
-  def pfd_use_case_factory
-    @pfd_use_case_factory ||= Hackney::PDF::UseCaseFactory.new
+  def pdf_use_case_factory
+    @pdf_use_case_factory ||= Hackney::PDF::UseCaseFactory.new
+  end
+
+  def service_charge_use_case_factory
+    @service_charge_use_case_factory ||= Hackney::ServiceCharge::UseCaseFactory.new
   end
 
   def set_raven_context
