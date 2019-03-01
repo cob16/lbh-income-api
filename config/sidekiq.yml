@@ -1,0 +1,11 @@
+# sidekiq -C config/sidekiq.yml
+---
+:concurrency: 2
+staging:
+  :concurrency: 3
+production:
+  :concurrency: 5
+:queues:
+  - uh_sync_cases
+  - message_jobs
+  - action_diary_writer
