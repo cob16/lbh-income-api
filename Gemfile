@@ -35,6 +35,7 @@ gem 'delayed_job_active_record'
 gem 'notifications-ruby-client'
 gem 'pdfkit'
 gem 'phonelib'
+gem 'redis-rails'
 gem 'sentry-raven'
 gem 'wkhtmltopdf-binary'
 
