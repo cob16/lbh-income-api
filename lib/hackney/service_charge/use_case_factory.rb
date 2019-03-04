@@ -1,8 +1,8 @@
 module Hackney
   module ServiceCharge
     class UseCaseFactory
-      def get_case_by_ref
-        Hackney::ServiceCharge::GetCaseByRef.new(
+      def get_leasehold_information
+        Hackney::ServiceCharge::GetLeaseholdInformation.new(
           service_charge_gateway: service_charge_gateway
         )
       end

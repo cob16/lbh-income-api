@@ -1,14 +1,14 @@
 module Hackney
   module PDF
-    class GeneratePreview
-      def initialize(get_templates_gateway:, get_case_by_refs_gateway:)
+    class Preview
+      def initialize(get_templates_gateway:, leasehold_information_gateway:)
         @get_templates_gateway = get_templates_gateway
-        @get_case_by_refs_gateway = get_case_by_refs_gateway
+        @leasehold_information_gateway = leasehold_information_gateway
       end
 
       def execute(payment_ref:, template_id:)
         template = get_template_by_id(template_id)
-        sc_case = @get_case_by_refs_gateway.execute(payment_ref: payment_ref).first
+        sc_case = @leasehold_information_gateway.execute(payment_ref: payment_ref).first
 
         html = Hackney::PDF::PreviewGenerator.new(
           template_path: template[:path]

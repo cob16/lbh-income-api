@@ -1,6 +1,6 @@
 module Hackney
   module ServiceCharge
-    class GetCaseByRef
+    class GetLeaseholdInformation
       def initialize(service_charge_gateway:)
         @service_charge_gateway = service_charge_gateway
       end

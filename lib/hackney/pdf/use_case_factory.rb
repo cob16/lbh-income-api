@@ -10,9 +10,9 @@ module Hackney
       end
 
       def get_preview
-        Hackney::PDF::GeneratePreview.new(
+        Hackney::PDF::Preview.new(
           get_templates_gateway: get_templates,
-          get_case_by_refs_gateway: Hackney::ServiceCharge::UseCaseFactory.new.get_case_by_ref
+          leasehold_information_gateway: Hackney::ServiceCharge::UseCaseFactory.new.get_leasehold_information
         )
       end
     end
