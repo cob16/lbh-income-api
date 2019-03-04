@@ -15,7 +15,7 @@ module Hackney
           pdf_gateway: 12
         ).execute(letter_params: sc_case)
 
-        return {
+        {
           case: sc_case,
           template: template,
           preview: html
@@ -23,8 +23,9 @@ module Hackney
       end
 
       private
+
       def get_template_path(template_id)
-        @get_templates_gateway.execute.select{ |temp| temp[:id] == template_id }.first
+        @get_templates_gateway.execute.select { |temp| temp[:id] == template_id }.first
       end
     end
   end

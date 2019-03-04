@@ -45,7 +45,7 @@ module Hackney
           pp refs.first
           raise Hackney::ServiceCharge::Exceptions::ServiceChargeException, refs if refs.first == '123'
           return [] if refs.empty?
-          example_case({payment_ref: refs.first}).map do |sc_case|
+          example_case(payment_ref: refs.first).map do |sc_case|
             {
               tenancy_ref: sc_case.fetch(:tenancy_ref),
               correspondence_address_1: sc_case.fetch(:correspondence_address_1),

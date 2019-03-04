@@ -1,7 +1,6 @@
 module Hackney
   module ServiceCharge
     class UseCaseFactory
-
       def get_case_by_ref
         Hackney::ServiceCharge::GetCaseByRef.new(
           service_charge_gateway: service_charge_gateway
