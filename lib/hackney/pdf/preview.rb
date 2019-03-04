@@ -8,20 +8,24 @@ module Hackney
 
       def execute(payment_ref:, template_id:)
         template = get_template_by_id(template_id)
-        sc_case = @leasehold_information_gateway.execute(payment_ref: payment_ref).first
+        leasehold_info = get_leasehold_info(payment_ref)
 
         html = Hackney::PDF::PreviewGenerator.new(
           template_path: template[:path]
-        ).execute(letter_params: sc_case)
+        ).execute(letter_params: leasehold_info)
 
         {
-          case: sc_case,
+          case: leasehold_info,
           template: template,
           preview: html
         }
       end
 
       private
+
+      def get_leasehold_info(payment_ref)
+        @leasehold_information_gateway.execute(payment_ref: payment_ref).first
+      end
 
       def get_template_by_id(template_id)
         @get_templates_gateway.execute.select { |temp| temp[:id] == template_id }.first
