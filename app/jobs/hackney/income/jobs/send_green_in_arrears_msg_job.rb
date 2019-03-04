@@ -2,12 +2,19 @@ module Hackney
   module Income
     module Jobs
       class SendGreenInArrearsMsgJob < ApplicationJob
+        attr_accessor :created_at
         EXPIRATION_DAYS = 5.days.freeze
+
         queue_as :message_jobs
 
         before_perform :check_expiration
 
-        def perform(case_id:)
+        def initialize(*arguments)
+          super
+          self.created_at = Time.now
+        end
+
+        def perform(case_id:, created_at: Time.now)
           case_priority = Hackney::Income::Models::CasePriority.find_by!(case_id: case_id)
           Rails.logger.info("Starting SendGreenInArrearsMsgJob for case id #{case_priority.case_id}")
           income_use_case_factory.send_automated_message_to_tenancy.execute(
@@ -33,10 +40,7 @@ module Hackney
         end
 
         def check_expiration
-          # TODO: remove delayed job dependency
-          current_job = Delayed::Job.where('handler LIKE ?', "%job_id: #{job_id}%").take
-
-          raise 'Error: Job expired!' if current_job && (current_job.created_at <= Time.now - EXPIRATION_DAYS)
+          raise 'Error: Job expired!' if created_at <= Time.now - EXPIRATION_DAYS
         end
       end
     end
