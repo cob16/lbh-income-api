@@ -43,6 +43,5 @@ Rails.application.configure do
   config.x.run_tenancy_sync_jobs = true
   config.x.gov_notify.api_key = 'TestApiKEY12345'
 
-  # TODO: use proper test mode
   config.active_job.queue_adapter = :test
 end
