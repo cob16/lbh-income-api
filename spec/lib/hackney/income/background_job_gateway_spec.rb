@@ -1,8 +1,8 @@
 require 'rails_helper'
 
-describe Hackney::Income::BackgroundJobGateway do
-  before { ActiveJob::Base.queue_adapter = :test }
+require 'sidekiq/testing'
 
+describe Hackney::Income::BackgroundJobGateway do
   context 'when scheduling a job to sync priority for a case' do
     subject { described_class.new.schedule_case_priority_sync(tenancy_ref: tenancy_ref) }
 

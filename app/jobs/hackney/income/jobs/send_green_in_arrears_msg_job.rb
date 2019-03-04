@@ -3,7 +3,6 @@ module Hackney
     module Jobs
       class SendGreenInArrearsMsgJob < ApplicationJob
         EXPIRATION_DAYS = 5.days.freeze
-
         queue_as :message_jobs
 
         before_perform :check_expiration
@@ -34,6 +33,7 @@ module Hackney
         end
 
         def check_expiration
+          # TODO: remove delayed job dependency
           current_job = Delayed::Job.where('handler LIKE ?', "%job_id: #{job_id}%").take
 
           raise 'Error: Job expired!' if current_job && (current_job.created_at <= Time.now - EXPIRATION_DAYS)

@@ -8,6 +8,7 @@ services:
       - UH_DATABASE_PASSWORD=Rooty-Tooty
       - UH_DATABASE_HOST=universal_housing_simulator
       - UH_DATABASE_PORT=1433
+      - REDIS_URL=redis:6379
     ports:
       - 3000:3000
     links:

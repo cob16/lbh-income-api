@@ -41,6 +41,8 @@ describe Hackney::Income::Jobs::SendGreenInArrearsMsgJob do
   end
 
   describe 'job expiration' do
+    # TODO: use queue_adapter
+    # let(:job) { ActiveJob::Base.queue_adapter.enqueued_jobs.last }
     let(:job) { Delayed::Job.last }
 
     before do
