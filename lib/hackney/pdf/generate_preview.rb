@@ -1,18 +1,17 @@
 module Hackney
   module PDF
-    class GetPreview
+    class GeneratePreview
       def initialize(get_templates_gateway:, get_case_by_refs_gateway:)
         @get_templates_gateway = get_templates_gateway
         @get_case_by_refs_gateway = get_case_by_refs_gateway
       end
 
       def execute(payment_ref:, template_id:)
-        template = get_template_path(template_id)
+        template = get_template_by_id(template_id)
         sc_case = @get_case_by_refs_gateway.execute(payment_ref: payment_ref).first
 
-        html = Hackney::PDF::PDFGenerator.new(
-          template_path: template[:path],
-          pdf_gateway: 12
+        html = Hackney::PDF::PreviewGenerator.new(
+          template_path: template[:path]
         ).execute(letter_params: sc_case)
 
         {
@@ -24,7 +23,7 @@ module Hackney
 
       private
 
-      def get_template_path(template_id)
+      def get_template_by_id(template_id)
         @get_templates_gateway.execute.select { |temp| temp[:id] == template_id }.first
       end
     end

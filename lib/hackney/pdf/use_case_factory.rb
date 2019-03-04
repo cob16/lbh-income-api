@@ -10,7 +10,7 @@ module Hackney
       end
 
       def get_preview
-        Hackney::PDF::GetPreview.new(
+        Hackney::PDF::GeneratePreview.new(
           get_templates_gateway: get_templates,
           get_case_by_refs_gateway: Hackney::ServiceCharge::UseCaseFactory.new.get_case_by_ref
         )
