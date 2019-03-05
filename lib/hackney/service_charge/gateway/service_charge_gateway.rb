@@ -6,6 +6,8 @@ module Hackney
   module ServiceCharge
     module Gateway
       class ServiceChargeGateway
+        NON_EXISTING_REF = '123'
+
         def initialize(host:, api_key:)
           @service_charge_adapter = ServiceChargesAdapter.new(
             host: host,
@@ -42,8 +44,10 @@ module Hackney
         end
 
         def fake_get_cases_by_refs(refs)
-          pp refs.first
-          raise Hackney::ServiceCharge::Exceptions::ServiceChargeException, refs if refs.first == '123'
+          # This is here to emulate what happens when a payment ref is not found,
+          # this will disappear when we have an actual api endpoint to call
+          raise Hackney::ServiceCharge::Exceptions::ServiceChargeException, refs if refs.include?(NON_EXISTING_REF)
+
           return [] if refs.empty?
           example_case(payment_ref: refs.first).map do |sc_case|
             {
