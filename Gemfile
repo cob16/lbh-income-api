@@ -40,7 +40,7 @@ gem 'sentry-raven'
 gem 'wkhtmltopdf-binary'
 
 gem 'sidekiq'
-# gem 'sidekiq-scheduler'
+gem 'sidekiq-scheduler'
 
 group :test do
   gem 'rspec-sidekiq'
