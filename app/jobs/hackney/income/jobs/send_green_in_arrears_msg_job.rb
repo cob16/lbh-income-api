@@ -14,7 +14,7 @@ module Hackney
           self.created_at = Time.now
         end
 
-        def perform(case_id:, created_at: Time.now)
+        def perform(case_id:)
           case_priority = Hackney::Income::Models::CasePriority.find_by!(case_id: case_id)
           Rails.logger.info("Starting SendGreenInArrearsMsgJob for case id #{case_priority.case_id}")
           income_use_case_factory.send_automated_message_to_tenancy.execute(
