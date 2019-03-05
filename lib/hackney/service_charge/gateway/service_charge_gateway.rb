@@ -6,7 +6,7 @@ module Hackney
   module ServiceCharge
     module Gateway
       class ServiceChargeGateway
-        NON_EXISTING_REF = '123'
+        NON_EXISTING_REF = '123'.freeze
 
         def initialize(host:, api_key:)
           @service_charge_adapter = ServiceChargesAdapter.new(
