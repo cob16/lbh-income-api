@@ -9,5 +9,7 @@ Rails.application.routes.draw do
     post '/messages/send_sms', to: 'messages#send_sms'
     post '/messages/send_email', to: 'messages#send_email'
     get '/messages/get_templates', to: 'messages#get_templates'
+    get '/pdf/get_templates', to: 'pdf#get_templates'
+    post '/pdf/send_letter', to: 'pdf#send_letter'
   end
 end
