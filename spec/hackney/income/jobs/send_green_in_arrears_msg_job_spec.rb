@@ -41,28 +41,26 @@ describe Hackney::Income::Jobs::SendGreenInArrearsMsgJob do
   end
 
   describe 'job expiration' do
-    let(:job) { Delayed::Job.last }
-
-    before do
-      subject.perform_later(case_id: case_id)
-    end
-
     context 'when the job was created 5 or more days ago' do
       it 'does not send the message' do
-        job.update(created_at: Time.now - 5.days)
+        Timecop.freeze(Time.now - 5.days)
+        job = subject.new(case_id: case_id)
+        Timecop.return
 
         expect(mock_automated_message).not_to receive(:execute)
-        expect { job.invoke_job }.to raise_error('Error: Job expired!')
+        expect { job.perform_now }.to raise_error('Error: Job expired!')
       end
     end
 
     context 'when the job was created less than 5 days' do
       it 'sends the message' do
-        job.update(created_at: Time.now - 5.days + 1.hour)
+        Timecop.freeze(Time.now - 4.days)
+        job = subject.new(case_id: case_id)
+        Timecop.return
 
         expect(mock_automated_message).to receive(:execute)
 
-        job.invoke_job
+        job.perform_now
       end
     end
   end

@@ -1,0 +1,19 @@
+# sidekiq -e production -C config/sidekiq.yml
+---
+:concurrency: 2
+staging:
+  :concurrency: 3
+production:
+  :concurrency: 5
+:queues:
+  - action_diary_writer
+  - message_jobs
+  - cloud_storage
+  - uh_sync_cases
+
+:schedule:
+  tenancy_sync:
+    cron: '0 0 3 * * 1-5' # 3am m-f
+    # every: 24h
+    # every: 1m
+    class: TenancySync

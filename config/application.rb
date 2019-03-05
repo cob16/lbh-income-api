@@ -36,7 +36,7 @@ module App
 
     config.eager_load_paths << Rails.root.join('lib')
 
-    config.active_job.queue_adapter = :delayed_job
+    config.active_job.queue_adapter = :sidekiq
 
     config.x.run_tenancy_sync_jobs = feature_toggle('ENABLE_TENANCY_SYNC')
 

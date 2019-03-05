@@ -36,8 +36,16 @@ gem 'delayed_job_active_record'
 gem 'notifications-ruby-client'
 gem 'pdfkit'
 gem 'phonelib'
+gem 'redis-rails'
 gem 'sentry-raven'
 gem 'wkhtmltopdf-binary'
+
+gem 'sidekiq'
+gem 'sidekiq-scheduler'
+
+group :test do
+  gem 'rspec-sidekiq'
+end
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
