@@ -22,11 +22,11 @@ module Hackney
       end
 
       def get_template_name(file_path)
-        file_path.split('/').last.split('.').first.tr('_', ' ').capitalize
+        File.basename(file_path, '.*').humanize
       end
 
       def get_template_id(file_path)
-        file_path.split('/').last.split('.').first
+        File.basename(file_path, '.*')
       end
     end
   end

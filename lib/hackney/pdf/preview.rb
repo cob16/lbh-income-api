@@ -28,7 +28,8 @@ module Hackney
       end
 
       def get_template_by_id(template_id)
-        @get_templates_gateway.execute.select { |temp| temp[:id] == template_id }.first
+        templates = @get_templates_gateway.execute
+        templates[templates.index { |temp| temp[:id] == template_id }]
       end
     end
   end
