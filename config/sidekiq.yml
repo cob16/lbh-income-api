@@ -2,9 +2,9 @@
 ---
 :concurrency: 2
 staging:
-  :concurrency: 3
+  :concurrency: 1
 production:
-  :concurrency: 5
+  :concurrency: 2
 :queues:
   - action_diary_writer
   - message_jobs
