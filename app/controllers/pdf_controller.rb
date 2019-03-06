@@ -1,4 +1,4 @@
-require "#{Rails.root}/lib/hackney/service_charge/exceptions/service_charge_api_exception"
+require "#{Rails.root}/lib/hackney/service_charge/exceptions/service_charge_exception"
 
 class PdfController < ApplicationController
   def get_templates
