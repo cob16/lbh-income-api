@@ -1,10 +1,10 @@
-# sidekiq -e production -C config/sidekiq.yml
+# sidekiq -C config/sidekiq.yml
 ---
 :concurrency: 2
 staging:
   :concurrency: 1
 production:
-  :concurrency: 2
+  :concurrency: 1
 :queues:
   - action_diary_writer
   - message_jobs
