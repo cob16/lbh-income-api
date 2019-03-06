@@ -1,4 +1,4 @@
-rails_load_path = File.join(File.dirname(__FILE__), '..', '..', 'config', 'environment')
+rails_load_path = File.join(File.dirname(__FILE__), '..', 'config', 'environment')
 # load only ouside rails app
 if File.exists?(rails_load_path)
 
