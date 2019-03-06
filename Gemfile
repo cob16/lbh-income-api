@@ -23,6 +23,7 @@ gem 'puma', '~> 3.7'
 
 # Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin AJAX possible
 # gem 'rack-cors'
+gem 'faker'
 
 gem 'httparty'
 gem 'mysql2'
@@ -52,7 +53,6 @@ group :development, :test do
   gem 'brakeman', '~> 4.3', '>= 4.3.1'
   gem 'byebug', platforms: %i[mri mingw x64_mingw]
   gem 'factory_bot'
-  gem 'faker'
   gem 'guard-rspec', require: false
   gem 'guard-rubocop', require: false
   gem 'rspec-its'
