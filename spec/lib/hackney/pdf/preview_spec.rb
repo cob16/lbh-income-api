@@ -53,7 +53,7 @@ describe Hackney::PDF::Preview do
     let(:test_letter_params) do
       {
         payment_ref: test_pay_ref,
-        lessee_full_name: '',
+        lessee_full_name: 'P Banks',
         correspondence_address_1: '',
         correspondence_address_2: '',
         correspondence_address_3: '',
@@ -67,7 +67,6 @@ describe Hackney::PDF::Preview do
 
     let(:translated_html) { File.open('spec/lib/hackney/pdf/translated_test_template_with_blanks.html').read }
 
-
     it 'generates letter preview with errors' do
       expect(leasehold_information_gateway).to receive(:execute).with(payment_ref: test_pay_ref).and_return([test_letter_params])
       expect(get_templates_gateway).to receive(:execute).and_return([test_template])
@@ -80,16 +79,13 @@ describe Hackney::PDF::Preview do
         preview: translated_html,
         errors: [
           {
-            field: 'correspondence_address_one',
+            field: 'correspondence_address_1',
             error: 'missing mandatory field'
           }, {
-          field: 'correspondence_address_two',
-          error: 'missing mandatory field'
-        }, {
-          field: 'correspondence_postcode',
-          error: 'missing mandatory field'
-        }, {
-            field: 'lessee_full_name',
+            field: 'correspondence_address_2',
+            error: 'missing mandatory field'
+          }, {
+            field: 'correspondence_postcode',
             error: 'missing mandatory field'
           }
         ]

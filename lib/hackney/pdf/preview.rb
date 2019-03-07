@@ -10,14 +10,15 @@ module Hackney
         template = get_template_by_id(template_id)
         leasehold_info = get_leasehold_info(payment_ref)
 
-        html = Hackney::PDF::PreviewGenerator.new(
+        html, preview_errors = Hackney::PDF::PreviewGenerator.new(
           template_path: template[:path]
         ).execute(letter_params: leasehold_info)
 
         {
           case: leasehold_info,
           template: template,
-          preview: html
+          preview: html,
+          errors: preview_errors
         }
       end
 

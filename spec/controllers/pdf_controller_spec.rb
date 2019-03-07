@@ -33,7 +33,7 @@ describe PdfController, type: :controller do
   describe '#send_letter' do
     context 'when all data is is found' do
       it 'generates pdf preview with template details, case and empty errors' do
-        expect_any_instance_of(Hackney::PDF::PreviewGenerator).to receive(:execute).and_return(preview_html)
+        expect_any_instance_of(Hackney::PDF::PreviewGenerator).to receive(:execute).and_return([preview_html, []])
 
         post :send_letter, params: { payment_ref: found_payment_ref, template_id: template_id }
 
@@ -61,7 +61,7 @@ describe PdfController, type: :controller do
         response_json = JSON.parse(response.body)
 
         expect(response_json['errors']).to eq([{
-          field: 'correspondence_address_one',
+          field: 'correspondence_address_1',
           error: 'missing mandatory field'
         }])
       end
