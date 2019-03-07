@@ -61,8 +61,8 @@ describe PdfController, type: :controller do
         response_json = JSON.parse(response.body)
 
         expect(response_json['errors']).to eq([{
-          field: 'correspondence_address_1',
-          error: 'missing mandatory field'
+          'field' => 'correspondence_address_1',
+          'error' => 'missing mandatory field'
         }])
       end
     end
