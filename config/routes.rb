@@ -1,3 +1,5 @@
+require_relative 'routes/sidekiq'
+
 Rails.application.routes.draw do
   scope '/api/v1' do
     get '/my-cases', to: 'my_cases#index'
