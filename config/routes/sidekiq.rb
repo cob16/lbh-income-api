@@ -7,12 +7,11 @@ Sidekiq::Web.use Rack::Auth::Basic do |username, password|
   # - See https://thisdata.com/blog/timing-attacks-against-string-comparison/
   # - Use & (do not use &&) so that it doesn't short circuit.
   # - Use digests to stop length information leaking (see also ActiveSupport::SecurityUtils.variable_size_secure_compare)
-  ActiveSupport::SecurityUtils.secure_compare(::Digest::SHA256.hexdigest(username), ::Digest::SHA256.hexdigest(ENV["SIDEKIQ_USERNAME"])) &
-    ActiveSupport::SecurityUtils.secure_compare(::Digest::SHA256.hexdigest(password), ::Digest::SHA256.hexdigest(ENV["SIDEKIQ_PASSWORD"]))
-end # unless Rails.env.development?
+  ActiveSupport::SecurityUtils.secure_compare(::Digest::SHA256.hexdigest(username), ::Digest::SHA256.hexdigest(ENV['SIDEKIQ_USERNAME'])) &
+    ActiveSupport::SecurityUtils.secure_compare(::Digest::SHA256.hexdigest(password), ::Digest::SHA256.hexdigest(ENV['SIDEKIQ_PASSWORD']))
+end
 
 Rails.application.routes.draw do
-
   scope '/dashboard' do
     mount Sidekiq::Web => '/sidekiq'
   end
