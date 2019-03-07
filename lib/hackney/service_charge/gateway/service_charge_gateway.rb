@@ -1,6 +1,7 @@
 require 'uk_postcode'
 require_relative 'service_charge_adapter'
 require "#{Rails.root}/lib/hackney/service_charge/exceptions/service_charge_exception"
+require "#{Rails.root}/spec/support/case_helper"
 
 module Hackney
   module ServiceCharge
