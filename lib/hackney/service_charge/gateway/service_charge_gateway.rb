@@ -12,6 +12,8 @@ module Hackney
         NON_EXISTING_REF = '123'.freeze
         MISSING_OPTIONAL_DATA_REF = '111'.freeze
         MISSING_MANDATORY_DATA_REF = '222'.freeze
+        MISSING_ALL_MANDATORY_DATA_REF = '000'.freeze
+        SORAYAS_TESTING_REF = '1915181251'.freeze
 
         def initialize(host:, api_key:)
           @service_charge_adapter = ServiceChargesAdapter.new(
@@ -93,6 +95,27 @@ module Hackney
         def get_stub_options(ref)
           return { payment_ref: ref, correspondence_address_3: '' } if ref == MISSING_OPTIONAL_DATA_REF
           return { payment_ref: ref, correspondence_address_1: '' } if ref == MISSING_MANDATORY_DATA_REF
+          if ref == MISSING_ALL_MANDATORY_DATA_REF
+            return {
+              payment_ref: ref,
+              correspondence_address_1: '',
+              correspondence_address_2: '',
+              correspondence_postcode: '',
+              property_address: '',
+              total_collectable_arrears_balance: ''
+            }
+          end
+          if ref == SORAYAS_TESTING_REF
+            return {
+              payment_ref: ref,
+              correspondence_address_1: ' 136 Southwark St',
+              correspondence_address_2: 'Southwark',
+              correspondence_address_3: 'London',
+              correspondence_postcode: 'SE1 0SW',
+              full_names_of_current_lessees: ['Soraya Clarke']
+            }
+          end
+
           { payment_ref: ref }
         end
       end
