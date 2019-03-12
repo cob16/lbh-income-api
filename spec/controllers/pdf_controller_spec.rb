@@ -4,10 +4,6 @@ describe PdfController, type: :controller do
   let(:template_path) { 'path/to/temp' }
   let(:template_id) { 'letter_1_template' }
   let(:template_name) { 'Letter 1 template' }
-  let(:found_payment_ref) { Faker::Number.number(4) }
-  let(:missing_optional_data) { 111 }
-  let(:missing_mandatory_data) { 222 }
-  let(:not_found_payment_ref) { 123 }
   let(:preview_html) { "<p>#{Faker::HitchhikersGuideToTheGalaxy.quote}</p>" }
 
   describe '#get_templates' do
@@ -32,6 +28,8 @@ describe PdfController, type: :controller do
 
   describe '#send_letter' do
     context 'when all data is is found' do
+      let(:found_payment_ref) { Faker::Number.number(4) }
+
       it 'generates pdf preview with template details, case and empty errors' do
         expect_any_instance_of(Hackney::PDF::PreviewGenerator).to receive(:execute).and_return(html: preview_html, errors: [])
 
@@ -47,6 +45,9 @@ describe PdfController, type: :controller do
     end
 
     context 'when some data is missing' do
+      let(:missing_optional_data) { 111 }
+      let(:missing_mandatory_data) { 222 }
+
       it 'no errors when only optional data is missing' do
         post :send_letter, params: { payment_ref: missing_optional_data, template_id: template_id }
 
@@ -68,6 +69,8 @@ describe PdfController, type: :controller do
     end
 
     context 'when payment_ref is not found' do
+      let(:not_found_payment_ref) { 123 }
+
       it 'returns 404' do
         post :send_letter, params: { payment_ref: not_found_payment_ref, template_id: template_id }
 
