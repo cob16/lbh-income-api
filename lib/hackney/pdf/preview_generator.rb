@@ -27,7 +27,7 @@ module Hackney
       def validate_mandatory_fields(letter_params)
         @errors = MANDATORY_LETTER_FIELDS
                   .reject { |field| letter_params[field].present? }
-                  .map { |mandatory_field| { field: mandatory_field.to_s, error: 'missing mandatory field' } }
+                  .map { |mandatory_field| { name: mandatory_field.to_s, message: 'missing mandatory field' } }
 
         letter_params[:lessee_short_name] = letter_params[:lessee_full_name] unless letter_params[:lessee_short_name].present?
         letter_params

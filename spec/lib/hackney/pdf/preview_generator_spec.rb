@@ -56,11 +56,11 @@ describe Hackney::PDF::PreviewGenerator do
       expect(preview_with_errors[:html]).to eq(translated_html)
       expect(preview_with_errors[:errors]).to eq([
         {
-          error: 'missing mandatory field', field: 'correspondence_address_1'
+          message: 'missing mandatory field', name: 'correspondence_address_1'
         }, {
-          error: 'missing mandatory field', field: 'correspondence_address_2'
+          message: 'missing mandatory field', name: 'correspondence_address_2'
         }, {
-          error: 'missing mandatory field', field: 'correspondence_postcode'
+          message: 'missing mandatory field', name: 'correspondence_postcode'
         }
       ])
     end
