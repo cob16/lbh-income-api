@@ -10,14 +10,17 @@ module Hackney
         template = get_template_by_id(template_id)
         leasehold_info = get_leasehold_info(payment_ref)
 
-        html = Hackney::PDF::PreviewGenerator.new(
+        preview_with_errors = Hackney::PDF::PreviewGenerator.new(
           template_path: template[:path]
         ).execute(letter_params: leasehold_info)
-
+        # generator = Hackney::PDF::PDFGateway.new()
+        # thing = generator.generate_pdf(html)
+        # thing.to_file('new_style_pdf.pdf')
         {
           case: leasehold_info,
           template: template,
-          preview: html
+          preview: preview_with_errors[:html],
+          errors: preview_with_errors[:errors]
         }
       end
 

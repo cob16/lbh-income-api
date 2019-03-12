@@ -30,29 +30,29 @@
   <p>
     <strong>Your reference number:</strong>
     <br>
-    <%= payment_ref %>
+    <%= params.fetch(:payment_ref) %>
   </p>
 </div>
 
 <div class="lessee_address">
-  <strong><%= lessee_full_name %></strong> <br>
-  <%= correspondence_address_one %> <br>
-  <%= correspondence_address_two %> <br>
-  <%= correspondence_address_three %> <br>
-  <%= correspondence_postcode %>
+  <strong><%= params.fetch(:lessee_full_name) %></strong> <br>
+  <%= params.fetch(:correspondence_address_1) %> <br>
+  <%= params.fetch(:correspondence_address_2) %> <br>
+  <%= params.fetch(:correspondence_address_3) %> <br>
+  <%= params.fetch(:correspondence_postcode) %>
 </div>
 
 <div>
-  Dear <%= lessee_short_name %>,
+  Dear <%= params.fetch(:lessee_short_name) %>,
 
   <p>
     <strong>Leaserholder of the property:</strong> <br>
-    <%= property_address %>
+    <%= params.fetch(:property_address) %>
   </p>
 
   <div class="green_box">
     Our records show that you still have the outstanding amount on your rent & service charge account:
-    <h1>£<%= total_collectable_arrears_balance %></h1>
+    <h1>£<%= params.fetch(:total_collectable_arrears_balance) %></h1>
   </div>
 
   <p>

@@ -77,4 +77,13 @@ describe Hackney::ServiceCharge::Gateway::ServiceChargeGateway do
       end
     end
   end
+
+  context 'when retrieving fake service charge cases' do
+    subject { gateway.fake_get_cases_by_refs(refs) }
+
+    it 'gets a case with provided payment_ref' do
+      test_case = subject.first
+      expect(test_case[:payment_ref]).to eq(refs.first)
+    end
+  end
 end
