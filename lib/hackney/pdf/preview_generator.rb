@@ -16,7 +16,10 @@ module Hackney
         template = File.open(@template_path).read
         html = ERB.new(template).result(binding)
 
-        [html, @errors]
+        {
+          html: html,
+          errors: @errors
+        }
       end
 
       private

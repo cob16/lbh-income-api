@@ -26,9 +26,10 @@ describe Hackney::PDF::PreviewGenerator do
   let(:translated_html) { File.open('spec/lib/hackney/pdf/translated_test_template.html').read }
 
   it 'translates erb templates to html and shows no errors' do
-    html, errors = subject.execute(letter_params: test_letter_params)
-    expect(html).to eq(translated_html)
-    expect(errors).to eq([])
+    preview_with_errors = subject.execute(letter_params: test_letter_params)
+
+    expect(preview_with_errors[:html]).to eq(translated_html)
+    expect(preview_with_errors[:errors]).to eq([])
   end
 
   context 'when data is missing' do
@@ -50,10 +51,10 @@ describe Hackney::PDF::PreviewGenerator do
     end
 
     it 'translates erb templates to html and shows errors' do
-      html, errors = subject.execute(letter_params: test_letter_params)
+      preview_with_errors = subject.execute(letter_params: test_letter_params)
 
-      expect(html).to eq(translated_html)
-      expect(errors).to eq([
+      expect(preview_with_errors[:html]).to eq(translated_html)
+      expect(preview_with_errors[:errors]).to eq([
         {
           error: 'missing mandatory field', field: 'correspondence_address_1'
         }, {
