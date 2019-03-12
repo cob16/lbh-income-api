@@ -21,7 +21,7 @@ describe Hackney::Income::ScheduleSyncCases do
 
     it 'deletes non priority cases them from the database' do
       sync_cases.send(:delete_case_priorities_not_syncable, case_priorities: case_priorities, tenancy_refs: tenancy_refs)
-      found = Hackney::Income::Models::CasePriority.where(tenancy_ref: case_priorities.pluck(:tenancy_ref))
+      found = Hackney::Rent::Models::CasePriority.where(tenancy_ref: case_priorities.pluck(:tenancy_ref))
       expect(found).to include(case_priorities.first)
       expect(found).not_to include(case_priorities.last)
     end

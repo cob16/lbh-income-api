@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe Hackney::Income::Models::CasePriority do
+describe Hackney::Rent::Models::CasePriority do
   before {
     Hackney::Income::Models::Case.delete_all
   }

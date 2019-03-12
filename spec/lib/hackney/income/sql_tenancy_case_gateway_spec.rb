@@ -41,7 +41,7 @@ describe Hackney::Income::SqlTenancyCaseGateway do
   context 'when assigning a user to a case' do
     let!(:tenancy_ref) { Faker::Number.number(6) }
     let!(:tenancy) { gateway_model.create(tenancy_ref: tenancy_ref) }
-    let!(:user) { Hackney::Income::Models::User.create }
+    let!(:user) { Hackney::Rent::Models::User.create }
 
     it 'assigns the user' do
       subject.assign_user(tenancy_ref: tenancy_ref, user_id: user.id)
@@ -100,9 +100,9 @@ describe Hackney::Income::SqlTenancyCaseGateway do
     end
 
     context 'when auto assigning users to cases' do
-      let(:user1) { Hackney::Income::Models::User.new(name: Faker::Name.name, role: :credit_controller) }
-      let(:user2) { Hackney::Income::Models::User.new(name: Faker::Name.name, role: :credit_controller) }
-      let(:user3) { Hackney::Income::Models::User.new(name: Faker::Name.name, role: :base_user) }
+      let(:user1) { Hackney::Rent::Models::User.new(name: Faker::Name.name, role: :credit_controller) }
+      let(:user2) { Hackney::Rent::Models::User.new(name: Faker::Name.name, role: :credit_controller) }
+      let(:user3) { Hackney::Rent::Models::User.new(name: Faker::Name.name, role: :base_user) }
 
       let(:unassigned_green) { create_assigned_tenancy_model(band: 'green', user: nil) }
       let(:second_unassigned_green) { create_assigned_tenancy_model(band: 'green', user: nil) }

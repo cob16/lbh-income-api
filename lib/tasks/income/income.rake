@@ -1,4 +1,4 @@
-namespace :income do
+namespace :rent do
   namespace :tasks do
     desc 'Manual task, supply a 3 character patch code and the user ID for a user in our SQL database.' \
          'All tenancies in that patch where the high action is 4RS or above will be assigned to that user.'

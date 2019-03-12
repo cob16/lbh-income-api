@@ -9,5 +9,5 @@ RSpec.describe Hackney::Income::Models::Case, type: :model do
   end
 
   it { expect(described_class.first).to be_a described_class }
-  it { expect(described_class.first.case_priority).to be_a Hackney::Income::Models::CasePriority }
+  it { expect(described_class.first.case_priority).to be_a Hackney::Rent::Models::CasePriority }
 end
