@@ -13,9 +13,7 @@ module Hackney
         preview_with_errors = Hackney::PDF::PreviewGenerator.new(
           template_path: template[:path]
         ).execute(letter_params: leasehold_info)
-        # generator = Hackney::PDF::PDFGateway.new()
-        # thing = generator.generate_pdf(html)
-        # thing.to_file('new_style_pdf.pdf')
+
         {
           case: leasehold_info,
           template: template,

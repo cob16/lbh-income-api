@@ -79,14 +79,14 @@ describe Hackney::PDF::Preview do
         preview: translated_html,
         errors: [
           {
-            field: 'correspondence_address_1',
-            error: 'missing mandatory field'
+            name: 'correspondence_address_1',
+            message: 'missing mandatory field'
           }, {
-            field: 'correspondence_address_2',
-            error: 'missing mandatory field'
+            name: 'correspondence_address_2',
+            message: 'missing mandatory field'
           }, {
-            field: 'correspondence_postcode',
-            error: 'missing mandatory field'
+            name: 'correspondence_postcode',
+            message: 'missing mandatory field'
           }
         ]
       )
