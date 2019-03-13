@@ -8,7 +8,7 @@ module Hackney
 
         belongs_to :assigned_user, class_name: 'Hackney::Rent::Models::User', optional: true
 
-        belongs_to :case, class_name: 'Hackney::Income::Models::Case', optional: true
+        belongs_to :case, class_name: 'Hackney::Rent::Models::Case', optional: true
 
         def tenancy_ref
           # TODO: please do not use tenancy_ref has been moved to Hackney::Income::Models::Case'
@@ -16,7 +16,7 @@ module Hackney
         end
 
         def create_case_with_tenancy_ref
-          self.case_id ||= Hackney::Income::Models::Case.find_or_create_by(tenancy_ref: tenancy_ref).id
+          self.case_id ||= Hackney::Rent::Models::Case.find_or_create_by(tenancy_ref: tenancy_ref).id
         end
 
         def paused?

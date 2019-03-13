@@ -10,7 +10,7 @@ describe Hackney::Rent::Models::CasePriority do
 
     it do
       described_class.create!(tenancy_ref: tenancy_ref)
-      expect(Hackney::Income::Models::Case.find_by(tenancy_ref: tenancy_ref)).to be_truthy
+      expect(Hackney::Rent::Models::Case.find_by(tenancy_ref: tenancy_ref)).to be_truthy
     end
   end
 
@@ -22,7 +22,7 @@ describe Hackney::Rent::Models::CasePriority do
       test_priority.create_case
     end
 
-    it { expect(described_class.first.case).to be_a Hackney::Income::Models::Case }
+    it { expect(described_class.first.case).to be_a Hackney::Rent::Models::Case }
 
     it 'throws an RecordNotUnique exception on the second insert' do
       expect do
