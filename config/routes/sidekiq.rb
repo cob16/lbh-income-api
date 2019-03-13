@@ -12,7 +12,7 @@ Sidekiq::Web.use Rack::Auth::Basic do |username, password|
 end
 
 Rails.application.routes.draw do
-  scope '/dashboard' do
+  scope '/admin' do
     mount Sidekiq::Web => '/sidekiq'
   end
 end
