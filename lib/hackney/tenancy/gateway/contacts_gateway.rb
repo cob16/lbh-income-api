@@ -38,7 +38,7 @@ module Hackney
             phone_numbers << contact[:telephone2] if contact[:telephone2]
             phone_numbers << contact[:telephone3] if contact[:telephone3]
 
-            contacts_list << Hackney::Income::Domain::Contact.new.tap do |c|
+            contacts_list << Hackney::Rent::Domain::Contact.new.tap do |c|
               c.phone_numbers = phone_numbers
               c.email = contact[:email]
             end

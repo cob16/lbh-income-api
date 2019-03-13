@@ -25,7 +25,7 @@ describe Hackney::Tenancy::Gateway::ContactsGateway do
     end
 
     it 'returns an array of Hackney::Income::domain::Contact objects' do
-      expect(subject).to all(be_an(Hackney::Income::Domain::Contact))
+      expect(subject).to all(be_an(Hackney::Rent::Domain::Contact))
     end
 
     it 'returns an array of available phone numbers' do
