@@ -1,1 +1,1 @@
-require Rails.root.join('lib/hackney/rent')
+require Rails.root.join('lib/hackney/income')
