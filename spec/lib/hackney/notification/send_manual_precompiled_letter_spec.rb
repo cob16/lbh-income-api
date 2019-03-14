@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 describe Hackney::Notification::SendManualPrecompiledLetter do
-  let(:notification_gateway) { Hackney::Income::StubNotificationsGateway.new }
+  let(:notification_gateway) { Hackney::Rent::StubNotificationsGateway.new }
   let(:add_action_diary_usecase) { double(Hackney::Tenancy::AddActionDiaryEntry) }
   let(:send_precompiled_letter) do
     described_class.new(

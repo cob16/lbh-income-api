@@ -13,7 +13,7 @@ describe Hackney::Rent::Jobs::SyncCasePriorityJob do
     end
 
     it 'does not run use case' do
-      expect_any_instance_of(Hackney::Income::SyncCasePriority).not_to receive(:execute)
+      expect_any_instance_of(Hackney::Rent::SyncCasePriority).not_to receive(:execute)
       subject.perform_now(tenancy_ref: tenancy_ref)
     end
   end
@@ -26,7 +26,7 @@ describe Hackney::Rent::Jobs::SyncCasePriorityJob do
     end
 
     it 'constructs the AssignTenancyToUser use case correctly' do
-      expect(Hackney::Income::AssignTenancyToUser)
+      expect(Hackney::Rent::AssignTenancyToUser)
         .to receive(:new)
         .with(user_assignment_gateway: an_object_responding_to(:assign_to_next_available_user).with_keywords(:tenancy))
         .and_call_original
@@ -35,7 +35,7 @@ describe Hackney::Rent::Jobs::SyncCasePriorityJob do
     end
 
     it 'runs the SyncCasePriority use case' do
-      expect_any_instance_of(Hackney::Income::SyncCasePriority)
+      expect_any_instance_of(Hackney::Rent::SyncCasePriority)
         .to receive(:execute)
         .with(tenancy_ref: tenancy_ref)
 

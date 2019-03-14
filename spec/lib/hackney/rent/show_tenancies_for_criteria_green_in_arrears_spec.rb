@@ -3,7 +3,7 @@ require 'rails_helper'
 describe Hackney::Rent::ShowTenanciesForCriteriaGreenInArrears do
   subject { show_green_in_arrears.execute }
 
-  let(:sql_tenancies_for_messages_gateway) { instance_double(Hackney::Income::SqlTenanciesMatchingCriteriaGateway) }
+  let(:sql_tenancies_for_messages_gateway) { instance_double(Hackney::Rent::SqlTenanciesMatchingCriteriaGateway) }
 
   let(:show_green_in_arrears) do
     described_class.new(

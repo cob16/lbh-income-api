@@ -9,7 +9,7 @@ describe Hackney::Rent::BackgroundJobGateway do
     let(:tenancy_ref) { Faker::IDNumber.valid }
 
     it 'enqueues the job to run as soon as possible' do
-      expect { subject }.to have_enqueued_job(Hackney::Income::Jobs::SyncCasePriorityJob).with(
+      expect { subject }.to have_enqueued_job(Hackney::Rent::Jobs::SyncCasePriorityJob).with(
         tenancy_ref: tenancy_ref
       )
     end
@@ -21,7 +21,7 @@ describe Hackney::Rent::BackgroundJobGateway do
     let(:case_id) { Faker::IDNumber.valid }
 
     it 'enqueues the job to run as soon as possible' do
-      expect { subject }.to have_enqueued_job(Hackney::Income::Jobs::SendGreenInArrearsMsgJob).with(case_id: case_id)
+      expect { subject }.to have_enqueued_job(Hackney::Rent::Jobs::SendGreenInArrearsMsgJob).with(case_id: case_id)
     end
   end
 
@@ -33,7 +33,7 @@ describe Hackney::Rent::BackgroundJobGateway do
     let(:comment) { Faker::Lorem.paragraph }
 
     it 'enqueues the job to run as soon as possible' do
-      expect { subject }.to have_enqueued_job(Hackney::Income::Jobs::AddActionDiaryEntryJob).with(
+      expect { subject }.to have_enqueued_job(Hackney::Rent::Jobs::AddActionDiaryEntryJob).with(
         tenancy_ref: tenancy_ref,
         action_code: action_code,
         comment: comment

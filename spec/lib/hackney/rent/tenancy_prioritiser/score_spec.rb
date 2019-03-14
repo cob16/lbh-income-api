@@ -4,7 +4,7 @@ describe Hackney::Rent::TenancyPrioritiser::Score do
   subject { described_class.new(criteria, weightings) }
 
   let(:criteria) { Stubs::StubCriteria.new }
-  let(:weightings) { Hackney::Income::TenancyPrioritiser::PriorityWeightings.new }
+  let(:weightings) { Hackney::Rent::TenancyPrioritiser::PriorityWeightings.new }
 
   context 'when assigning a score based on all criteria' do
     it 'assigns a composite score based on all of the existing factors' do

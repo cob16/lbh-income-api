@@ -2,7 +2,7 @@ require 'rails_helper'
 
 describe Hackney::Notification::SendManualSms do
   let(:tenancy) { create_tenancy_model }
-  let(:notification_gateway) { Hackney::Income::StubNotificationsGateway.new }
+  let(:notification_gateway) { Hackney::Rent::StubNotificationsGateway.new }
   let(:add_action_diary_usecase) { double(Hackney::Tenancy::AddActionDiaryEntry) }
   let(:send_sms) do
     described_class.new(

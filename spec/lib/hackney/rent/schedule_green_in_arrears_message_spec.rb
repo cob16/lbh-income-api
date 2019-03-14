@@ -3,8 +3,8 @@ require 'rails_helper'
 describe Hackney::Rent::ScheduleGreenInArrearsMessage do
   subject { sync_cases.execute }
 
-  let(:matching_criteria_gateway) { double(Hackney::Income::SqlTenanciesMatchingCriteriaGateway) }
-  let(:background_job_gateway) { double(Hackney::Income::BackgroundJobGateway) }
+  let(:matching_criteria_gateway) { double(Hackney::Rent::SqlTenanciesMatchingCriteriaGateway) }
+  let(:background_job_gateway) { double(Hackney::Rent::BackgroundJobGateway) }
 
   let(:sync_cases) do
     described_class.new(

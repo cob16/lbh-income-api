@@ -1,5 +1,5 @@
 module Hackney
-  module Income
+  module Rent
     class StubFindOrCreateUser
       def initialize(users_gateway:); end
 

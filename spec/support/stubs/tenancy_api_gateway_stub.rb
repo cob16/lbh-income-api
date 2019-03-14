@@ -1,5 +1,5 @@
 module Hackney
-  module Income
+  module Rent
     class TenancyApiGatewayStub
       def initialize(tenancies_attributes)
         @tenancies_attributes = tenancies_attributes

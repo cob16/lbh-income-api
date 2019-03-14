@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 describe Hackney::Notification::SendManualEmail do
-  let(:notification_gateway) { Hackney::Income::StubNotificationsGateway.new }
+  let(:notification_gateway) { Hackney::Rent::StubNotificationsGateway.new }
   let(:add_action_diary_usecase) { instance_double(Hackney::Tenancy::AddActionDiaryEntry) }
   let(:send_email) { described_class.new(notification_gateway: notification_gateway, add_action_diary_usecase: add_action_diary_usecase) }
   let(:tenancy_1) { create_tenancy_model }

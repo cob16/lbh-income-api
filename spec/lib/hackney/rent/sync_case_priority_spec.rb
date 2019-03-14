@@ -7,7 +7,7 @@ describe Hackney::Rent::SyncCasePriority do
   let(:stored_tenancies_gateway) { double(store_tenancy: stub_tenancy_object) }
   let(:assign_tenancy_to_user) { double(assign_tenancy_to_user: nil) }
   let(:criteria) { Stubs::StubCriteria.new }
-  let(:weightings) { Hackney::Income::TenancyPrioritiser::PriorityWeightings.new }
+  let(:weightings) { Hackney::Rent::TenancyPrioritiser::PriorityWeightings.new }
 
   let(:prioritisation_gateway) do
     PrioritisationGatewayDouble.new(

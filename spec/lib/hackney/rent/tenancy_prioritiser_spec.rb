@@ -2,7 +2,7 @@ require 'rails_helper'
 
 describe Hackney::Rent::TenancyPrioritiser do
   let(:criteria) { Stubs::StubCriteria.new }
-  let(:weightings) { Hackney::Income::TenancyPrioritiser::PriorityWeightings.new }
+  let(:weightings) { Hackney::Rent::TenancyPrioritiser::PriorityWeightings.new }
 
   let(:subject) { described_class.new(criteria: criteria, weightings: weightings) }
 
@@ -10,14 +10,14 @@ describe Hackney::Rent::TenancyPrioritiser do
     let(:priority_score) { Faker::Number.number(2).to_i }
 
     it 'generates a score assigner and pass it its criteria' do
-      expect(Hackney::Income::TenancyPrioritiser::Score).to receive(:new).with(criteria, weightings).and_call_original
-      expect_any_instance_of(Hackney::Income::TenancyPrioritiser::Score).to receive(:execute)
+      expect(Hackney::Rent::TenancyPrioritiser::Score).to receive(:new).with(criteria, weightings).and_call_original
+      expect_any_instance_of(Hackney::Rent::TenancyPrioritiser::Score).to receive(:execute)
 
       subject.priority_score
     end
 
     it 'return the score assigner\'s score' do
-      allow_any_instance_of(Hackney::Income::TenancyPrioritiser::Score).to receive(:execute).and_return(priority_score)
+      allow_any_instance_of(Hackney::Rent::TenancyPrioritiser::Score).to receive(:execute).and_return(priority_score)
 
       expect(subject.priority_score).to eq(priority_score)
     end
@@ -27,14 +27,14 @@ describe Hackney::Rent::TenancyPrioritiser do
     let(:priority_band) { Faker::Dog.size.to_sym }
 
     it 'generates a band assigner and pass it its criteria' do
-      expect(Hackney::Income::TenancyPrioritiser::Band).to receive(:new).with(criteria).and_call_original
-      expect_any_instance_of(Hackney::Income::TenancyPrioritiser::Band).to receive(:execute)
+      expect(Hackney::Rent::TenancyPrioritiser::Band).to receive(:new).with(criteria).and_call_original
+      expect_any_instance_of(Hackney::Rent::TenancyPrioritiser::Band).to receive(:execute)
 
       subject.priority_band
     end
 
     it 'returns the band assigner\'s band' do
-      allow_any_instance_of(Hackney::Income::TenancyPrioritiser::Band).to receive(:execute).and_return(priority_band)
+      allow_any_instance_of(Hackney::Rent::TenancyPrioritiser::Band).to receive(:execute).and_return(priority_band)
 
       expect(subject.priority_band).to eq(priority_band)
     end
@@ -42,8 +42,8 @@ describe Hackney::Rent::TenancyPrioritiser do
 
   context 'when using the score to drive band changes in edge cases' do
     before do
-      allow_any_instance_of(Hackney::Income::TenancyPrioritiser::Score).to receive(:execute).and_return(computed_priority_score)
-      allow_any_instance_of(Hackney::Income::TenancyPrioritiser::Band).to receive(:execute).and_return(computed_priority_band)
+      allow_any_instance_of(Hackney::Rent::TenancyPrioritiser::Score).to receive(:execute).and_return(computed_priority_score)
+      allow_any_instance_of(Hackney::Rent::TenancyPrioritiser::Band).to receive(:execute).and_return(computed_priority_band)
     end
 
     context 'when an otherwise green case scores not quite high enough to adjust its score' do

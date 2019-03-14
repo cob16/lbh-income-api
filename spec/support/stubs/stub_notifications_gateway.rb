@@ -1,5 +1,5 @@
 module Hackney
-  module Income
+  module Rent
     class StubNotificationsGateway
       DEFAULT_TEMPLATES = [
         { id: '00001', name: 'Quick Template', body: 'quick ((first name))!', subject: nil },

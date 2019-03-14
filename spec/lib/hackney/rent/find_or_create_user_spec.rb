@@ -1,5 +1,5 @@
 describe Hackney::Rent::FindOrCreateUser do
-  let(:users_gateway) { Hackney::Income::StubSqlUsersGateway.new }
+  let(:users_gateway) { Hackney::Rent::StubSqlUsersGateway.new }
   let(:subject) { described_class.new(users_gateway: users_gateway) }
 
   context 'when logging in to the app' do

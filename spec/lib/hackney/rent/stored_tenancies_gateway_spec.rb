@@ -22,12 +22,12 @@ describe Hackney::Rent::StoredTenanciesGateway do
         priority_band: Faker::Internet.slug,
         priority_score: Faker::Number.number(5).to_i,
         criteria: Stubs::StubCriteria.new,
-        weightings: Hackney::Income::TenancyPrioritiser::PriorityWeightings.new
+        weightings: Hackney::Rent::TenancyPrioritiser::PriorityWeightings.new
       }
     end
 
     let(:score_calculator) do
-      Hackney::Income::TenancyPrioritiser::Score.new(
+      Hackney::Rent::TenancyPrioritiser::Score.new(
         attributes.fetch(:criteria),
         attributes.fetch(:weightings)
       )
@@ -116,12 +116,12 @@ describe Hackney::Rent::StoredTenanciesGateway do
           priority_band: Faker::Internet.slug,
           priority_score: Faker::Number.number(5).to_i,
           criteria: Stubs::StubCriteria.new,
-          weightings: Hackney::Income::TenancyPrioritiser::PriorityWeightings.new
+          weightings: Hackney::Rent::TenancyPrioritiser::PriorityWeightings.new
         }
       end
 
       let(:score_calculator) do
-        Hackney::Income::TenancyPrioritiser::Score.new(
+        Hackney::Rent::TenancyPrioritiser::Score.new(
           attributes.fetch(:criteria),
           attributes.fetch(:weightings)
         )

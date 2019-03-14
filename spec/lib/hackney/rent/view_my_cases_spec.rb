@@ -6,8 +6,8 @@ describe Hackney::Rent::ViewMyCases do
   let(:user_id) { Faker::Number.number(2).to_i }
   let(:page_number) { Faker::Number.number(2).to_i }
   let(:number_per_page) { Faker::Number.number(2).to_i }
-  let(:tenancy_api_gateway) { Hackney::Income::TenancyApiGatewayStub.new({}) }
-  let(:stored_tenancies_gateway) { Hackney::Income::StoredTenancyGatewayStub.new({}) }
+  let(:tenancy_api_gateway) { Hackney::Rent::TenancyApiGatewayStub.new({}) }
+  let(:stored_tenancies_gateway) { Hackney::Rent::StoredTenancyGatewayStub.new({}) }
 
   let(:view_my_cases) do
     described_class.new(
@@ -51,7 +51,7 @@ describe Hackney::Rent::ViewMyCases do
       }
     end
 
-    let(:stored_tenancies_gateway) { Hackney::Income::StoredTenancyGatewayStub.new(tenancy_list) }
+    let(:stored_tenancies_gateway) { Hackney::Rent::StoredTenancyGatewayStub.new(tenancy_list) }
 
     it 'passes the correct user id into the stored tenancy gateway' do
       expect(stored_tenancies_gateway)
@@ -79,7 +79,7 @@ describe Hackney::Rent::ViewMyCases do
 
     context 'when full tenancy details are be found' do
       let(:tenancy_api_gateway) do
-        Hackney::Income::TenancyApiGatewayStub.new(
+        Hackney::Rent::TenancyApiGatewayStub.new(
           other_tenancy_attributes.fetch(:ref) => other_tenancy_attributes,
           tenancy_attributes.fetch(:ref) => tenancy_attributes
         )

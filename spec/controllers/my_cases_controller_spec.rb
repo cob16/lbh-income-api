@@ -2,12 +2,12 @@ require 'rails_helper'
 
 describe MyCasesController do
   describe '#index' do
-    let(:view_my_cases_instance) { instance_double(Hackney::Income::ViewMyCases) }
+    let(:view_my_cases_instance) { instance_double(Hackney::Rent::ViewMyCases) }
 
     before do
-      allow(Hackney::Income::ViewMyCases).to receive(:new).with(
+      allow(Hackney::Rent::ViewMyCases).to receive(:new).with(
         tenancy_api_gateway: instance_of(Hackney::Tenancy::Gateway::TenanciesGateway),
-        stored_tenancies_gateway: instance_of(Hackney::Income::StoredTenanciesGateway)
+        stored_tenancies_gateway: instance_of(Hackney::Rent::StoredTenanciesGateway)
       ).and_return(view_my_cases_instance)
     end
 
@@ -84,12 +84,12 @@ describe MyCasesController do
 
   describe '#sync' do
     it 'creates the sync tenancies use case' do
-      expect(Hackney::Income::ScheduleSyncCases).to receive(:new).with(
-        uh_tenancies_gateway: instance_of(Hackney::Income::UniversalHousingTenanciesGateway),
-        background_job_gateway: instance_of(Hackney::Income::BackgroundJobGateway)
+      expect(Hackney::Rent::ScheduleSyncCases).to receive(:new).with(
+        uh_tenancies_gateway: instance_of(Hackney::Rent::UniversalHousingTenanciesGateway),
+        background_job_gateway: instance_of(Hackney::Rent::BackgroundJobGateway)
       ).and_call_original
 
-      allow_any_instance_of(Hackney::Income::ScheduleSyncCases)
+      allow_any_instance_of(Hackney::Rent::ScheduleSyncCases)
         .to receive(:execute)
         .and_return(cases: [], number_per_page: 1)
 
@@ -97,7 +97,7 @@ describe MyCasesController do
     end
 
     it 'calls the sync tenancies use case' do
-      expect_any_instance_of(Hackney::Income::ScheduleSyncCases)
+      expect_any_instance_of(Hackney::Rent::ScheduleSyncCases)
         .to receive(:execute)
         .and_return(cases: [], number_per_page: 1)
 
@@ -105,7 +105,7 @@ describe MyCasesController do
     end
 
     it 'responds with { success: true }' do
-      allow_any_instance_of(Hackney::Income::ScheduleSyncCases)
+      allow_any_instance_of(Hackney::Rent::ScheduleSyncCases)
         .to receive(:execute)
         .and_return(cases: [], number_per_page: 1)
 
