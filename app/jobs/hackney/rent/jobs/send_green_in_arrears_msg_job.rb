@@ -17,7 +17,7 @@ module Hackney
         def perform(case_id:)
           case_priority = Hackney::Rent::Models::CasePriority.find_by!(case_id: case_id)
           Rails.logger.info("Starting SendGreenInArrearsMsgJob for case id #{case_priority.case_id}")
-          income_use_case_factory.send_automated_message_to_tenancy.execute(
+          rent_use_case_factory.send_automated_message_to_tenancy.execute(
             tenancy_ref: case_priority.tenancy_ref,
             sms_template_id: green_in_arrears_sms_template_id,
             email_template_id: green_in_arrears_email_template_id,

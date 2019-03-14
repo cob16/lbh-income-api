@@ -16,7 +16,7 @@ class TenanciesController < ApplicationController
     render json: income_use_case_factory.get_tenancy_pause.execute(
       tenancy_ref: params.fetch(:tenancy_ref)
     )
-  rescue Hackney::Income::SqlPauseTenancyGateway::PauseNotFoundError
+  rescue Hackney::Rent::SqlPauseTenancyGateway::PauseNotFoundError
     head(404)
   end
 end

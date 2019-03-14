@@ -10,7 +10,7 @@ module Hackney
 
         def perform(tenancy_ref:, action_code:, comment:)
           Rails.logger.info("Starting AddActionDiaryEntryJob for tenancy_ref #{tenancy_ref} and action code #{action_code}")
-          income_use_case_factory.add_action_diary.execute(
+          rent_use_case_factory.add_action_diary.execute(
             tenancy_ref: tenancy_ref,
             action_code: action_code,
             comment: comment,
