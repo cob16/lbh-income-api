@@ -28,11 +28,11 @@ module Hackney
       end
 
       def score_assigner
-        Hackney::Income::TenancyPrioritiser::Score.new(@criteria, @weightings)
+        Hackney::Rent::TenancyPrioritiser::Score.new(@criteria, @weightings)
       end
 
       def band_assigner
-        Hackney::Income::TenancyPrioritiser::Band.new(@criteria)
+        Hackney::Rent::TenancyPrioritiser::Band.new(@criteria)
       end
     end
   end

@@ -2,28 +2,28 @@ module Hackney
   module Rent
     class UseCaseFactory
       def view_my_cases
-        Hackney::Income::ViewMyCases.new(
+        Hackney::Rent::ViewMyCases.new(
           tenancy_api_gateway: tenancy_api_gateway,
           stored_tenancies_gateway: stored_tenancies_gateway
         )
       end
 
       def schedule_sync_cases
-        Hackney::Income::ScheduleSyncCases.new(
+        Hackney::Rent::ScheduleSyncCases.new(
           uh_tenancies_gateway: uh_tenancies_gateway,
           background_job_gateway: background_job_gateway
         )
       end
 
       def schedule_green_in_arrears_message
-        Hackney::Income::ScheduleGreenInArrearsMessage.new(
+        Hackney::Rent::ScheduleGreenInArrearsMessage.new(
           matching_criteria_gateway: sql_tenancies_matching_criteria_gateway,
           background_job_gateway: background_job_gateway
         )
       end
 
       def find_or_create_user
-        Hackney::Income::FindOrCreateUser.new(users_gateway: users_gateway)
+        Hackney::Rent::FindOrCreateUser.new(users_gateway: users_gateway)
       end
 
       def add_action_diary
@@ -48,7 +48,7 @@ module Hackney
       end
 
       def send_precompiled_letter
-        Hackney::Income::Notification::SendPrecompiledLetter.new(
+        Hackney::Rent::Notification::SendPrecompiledLetter.new(
           notification_gateway: notifications_gateway,
           add_action_diary_usecase: add_action_diary
         )
@@ -77,20 +77,20 @@ module Hackney
       end
 
       def get_templates
-        Hackney::Income::GetTemplates.new(
+        Hackney::Rent::GetTemplates.new(
           notification_gateway: notifications_gateway
         )
       end
 
       def set_tenancy_paused_status
-        Hackney::Income::SetTenancyPausedStatus.new(
+        Hackney::Rent::SetTenancyPausedStatus.new(
           gateway: sql_pause_tenancy_gateway,
           add_action_diary_usecase: add_action_diary
         )
       end
 
       def get_tenancy_pause
-        Hackney::Income::GetTenancyPause.new(
+        Hackney::Rent::GetTenancyPause.new(
           gateway: sql_pause_tenancy_gateway
         )
       end
@@ -99,7 +99,7 @@ module Hackney
         ActiveSupport::Deprecation.warn(
           "SyncCasePriorityJob is deprecated - use external scheduler via 'rake rent:sync:enqueue'"
         )
-        Hackney::Income::SyncCasePriority.new(
+        Hackney::Rent::SyncCasePriority.new(
           prioritisation_gateway: prioritisation_gateway,
           stored_tenancies_gateway: stored_tenancies_gateway,
           assign_tenancy_to_user: assign_tenancy_to_user
@@ -107,19 +107,19 @@ module Hackney
       end
 
       def migrate_patch_to_lcw
-        Hackney::Income::MigratePatchToLcw.new(
+        Hackney::Rent::MigratePatchToLcw.new(
           legal_cases_gateway: legal_cases_gateway,
           user_assignment_gateway: user_assignment_gateway
         )
       end
 
       def assign_tenancy_to_user
-        Hackney::Income::AssignTenancyToUser.new(user_assignment_gateway: user_assignment_gateway)
+        Hackney::Rent::AssignTenancyToUser.new(user_assignment_gateway: user_assignment_gateway)
       end
 
       # intended to only be used for rake task please delete when no longer required
       def show_green_in_arrears
-        Hackney::Income::ShowTenanciesForCriteriaGreenInArrears.new(
+        Hackney::Rent::ShowTenanciesForCriteriaGreenInArrears.new(
           sql_tenancies_for_messages_gateway: sql_tenancies_matching_criteria_gateway
         )
       end
@@ -137,31 +137,31 @@ module Hackney
       end
 
       def legal_cases_gateway
-        Hackney::Income::SqlLegalCasesGateway.new
+        Hackney::Rent::SqlLegalCasesGateway.new
       end
 
       def prioritisation_gateway
-        Hackney::Income::UniversalHousingPrioritisationGateway.new
+        Hackney::Rent::UniversalHousingPrioritisationGateway.new
       end
 
       def sql_pause_tenancy_gateway
-        Hackney::Income::SqlPauseTenancyGateway.new
+        Hackney::Rent::SqlPauseTenancyGateway.new
       end
 
       def stored_tenancies_gateway
-        Hackney::Income::StoredTenanciesGateway.new
+        Hackney::Rent::StoredTenanciesGateway.new
       end
 
       def users_gateway
-        Hackney::Income::SqlUsersGateway.new
+        Hackney::Rent::SqlUsersGateway.new
       end
 
       def user_assignment_gateway
-        Hackney::Income::SqlTenancyCaseGateway.new
+        Hackney::Rent::SqlTenancyCaseGateway.new
       end
 
       def uh_tenancies_gateway
-        Hackney::Income::UniversalHousingTenanciesGateway.new(
+        Hackney::Rent::UniversalHousingTenanciesGateway.new(
           restrict_patches: ENV.fetch('RESTRICT_PATCHES', false),
           patches: ENV.fetch('PERMITTED_PATCHES', '').split(',')
         )
@@ -189,11 +189,11 @@ module Hackney
       end
 
       def sql_tenancies_matching_criteria_gateway
-        Hackney::Income::SqlTenanciesMatchingCriteriaGateway.new
+        Hackney::Rent::SqlTenanciesMatchingCriteriaGateway.new
       end
 
       def background_job_gateway
-        Hackney::Income::BackgroundJobGateway.new
+        Hackney::Rent::BackgroundJobGateway.new
       end
     end
   end

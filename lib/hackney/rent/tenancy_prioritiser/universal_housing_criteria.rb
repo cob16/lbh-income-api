@@ -5,7 +5,7 @@ module Hackney
         def self.for_tenancy(universal_housing_client, tenancy_ref)
           sql = <<-SQL
             DECLARE @TenancyRef VARCHAR(60) = ?
-            DECLARE @ActiveArrearsAgreementStatus VARCHAR(60) = ?Rent
+            DECLARE @ActiveArrearsAgreementStatus VARCHAR(60) = ?
             DECLARE @BreachedArrearsAgreementStatus VARCHAR(60) = ?
             DECLARE @NospActionDiaryCode VARCHAR(60) = ?
             DECLARE @PaymentTypes table(payment_type varchar(3))
