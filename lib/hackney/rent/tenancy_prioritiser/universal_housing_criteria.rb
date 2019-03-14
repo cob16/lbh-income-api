@@ -5,7 +5,7 @@ module Hackney
         def self.for_tenancy(universal_housing_client, tenancy_ref)
           sql = <<-SQL
             DECLARE @TenancyRef VARCHAR(60) = ?
-            DECLARE @ActiveArrearsAgreementStatus VARCHAR(60) = ?
+            DECLARE @ActiveArrearsAgreementStatus VARCHAR(60) = ?Rent
             DECLARE @BreachedArrearsAgreementStatus VARCHAR(60) = ?
             DECLARE @NospActionDiaryCode VARCHAR(60) = ?
             DECLARE @PaymentTypes table(payment_type varchar(3))
@@ -71,9 +71,9 @@ module Hackney
           attributes = universal_housing_client[
             sql,
             tenancy_ref,
-            Hackney::Income::ACTIVE_ARREARS_AGREEMENT_STATUS,
-            Hackney::Income::BREACHED_ARREARS_AGREEMENT_STATUS,
-            Hackney::Income::NOSP_ACTION_DIARY_CODE
+            Hackney::Rent::ACTIVE_ARREARS_AGREEMENT_STATUS,
+            Hackney::Rent::BREACHED_ARREARS_AGREEMENT_STATUS,
+            Hackney::Rent::NOSP_ACTION_DIARY_CODE
           ]
 
           new(tenancy_ref, attributes.first.symbolize_keys)

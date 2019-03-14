@@ -11,21 +11,21 @@ describe Hackney::Rent::UniversalHousingPrioritisationGateway, universal: true d
     let(:priority_band) { Faker::Internet.slug.to_sym }
 
     before do
-      allow_any_instance_of(Hackney::Income::TenancyPrioritiser).to receive(:priority_score).and_return(priority_score)
-      allow_any_instance_of(Hackney::Income::TenancyPrioritiser).to receive(:priority_band).and_return(priority_band)
+      allow_any_instance_of(Hackney::Rent::TenancyPrioritiser).to receive(:priority_score).and_return(priority_score)
+      allow_any_instance_of(Hackney::Rent::TenancyPrioritiser).to receive(:priority_band).and_return(priority_band)
     end
 
     it 'returns the priority scores and criteria of that tenancy' do
       expect(subject.priorities_for_tenancy(tenancy_ref)).to include(
         priority_score: priority_score,
         priority_band: priority_band,
-        criteria: an_instance_of(Hackney::Income::TenancyPrioritiser::UniversalHousingCriteria),
-        weightings: an_instance_of(Hackney::Income::TenancyPrioritiser::PriorityWeightings)
+        criteria: an_instance_of(Hackney::Rent::TenancyPrioritiser::UniversalHousingCriteria),
+        weightings: an_instance_of(Hackney::Rent::TenancyPrioritiser::PriorityWeightings)
       )
     end
 
     it 'determines universal housing criteria' do
-      expect(Hackney::Income::TenancyPrioritiser::UniversalHousingCriteria)
+      expect(Hackney::Rent::TenancyPrioritiser::UniversalHousingCriteria)
         .to receive(:for_tenancy)
         .with(an_instance_of(Sequel::TinyTDS::Database), tenancy_ref)
 
@@ -33,18 +33,18 @@ describe Hackney::Rent::UniversalHousingPrioritisationGateway, universal: true d
     end
 
     it 'uses universal housing criteria' do
-      expect(Hackney::Income::TenancyPrioritiser)
+      expect(Hackney::Rent::TenancyPrioritiser)
         .to receive(:new)
-        .with(criteria: an_instance_of(Hackney::Income::TenancyPrioritiser::UniversalHousingCriteria), weightings: anything)
+        .with(criteria: an_instance_of(Hackney::Rent::TenancyPrioritiser::UniversalHousingCriteria), weightings: anything)
         .and_call_original
 
       subject.priorities_for_tenancy(tenancy_ref)
     end
 
     it 'uses appropriate weightings' do
-      expect(Hackney::Income::TenancyPrioritiser)
+      expect(Hackney::Rent::TenancyPrioritiser)
         .to receive(:new)
-        .with(criteria: anything, weightings: an_instance_of(Hackney::Income::TenancyPrioritiser::PriorityWeightings))
+        .with(criteria: anything, weightings: an_instance_of(Hackney::Rent::TenancyPrioritiser::PriorityWeightings))
         .and_call_original
 
       subject.priorities_for_tenancy(tenancy_ref)
