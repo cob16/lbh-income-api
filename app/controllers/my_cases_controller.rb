@@ -2,7 +2,7 @@ class MyCasesController < ApplicationController
   REQUIRED_INDEX_PARAMS = %i[user_id page_number number_per_page].freeze
 
   def index
-    response = income_use_case_factory.view_my_cases.execute(
+    response = rent_use_case_factory.view_my_cases.execute(
       user_id: my_cases_params[:user_id],
       page_number: my_cases_params[:page_number],
       number_per_page: my_cases_params[:number_per_page],
@@ -31,7 +31,7 @@ class MyCasesController < ApplicationController
   end
 
   def sync
-    income_use_case_factory.schedule_sync_cases.execute
+    rent_use_case_factory.schedule_sync_cases.execute
     render json: { success: true }
   end
 end

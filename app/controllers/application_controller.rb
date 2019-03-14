@@ -1,7 +1,7 @@
 class ApplicationController < ActionController::API
   before_action :set_raven_context
 
-  def income_use_case_factory
+  def rent_use_case_factory
     @rent_use_case_factory ||= Hackney::Rent::UseCaseFactory.new
   end
 

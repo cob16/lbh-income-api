@@ -1,6 +1,6 @@
 class UsersController < ApplicationController
   def create
-    render json: income_use_case_factory.find_or_create_user.execute(
+    render json: rent_use_case_factory.find_or_create_user.execute(
       provider_uid: params.fetch(:provider_uid),
       provider: params.fetch(:provider),
       name: params.fetch(:name),
