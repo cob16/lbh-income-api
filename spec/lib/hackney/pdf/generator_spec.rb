@@ -9,6 +9,16 @@ describe Hackney::PDF::Generator do
       gateway.generate_pdf(html)
     end
 
+    let(:source) { subject.source.instance_values['source'] }
+
+    it 'is a pdfkit' do
+      expect(subject).to be_a PDFKit
+    end
+
+    it 'pdf has the right source' do
+      expect(source).to eq(html)
+    end
+
     it 'pdf should have the right options' do
       expect(subject.options).to eq(
         '--quiet' => nil,
@@ -19,10 +29,6 @@ describe Hackney::PDF::Generator do
         '--margin-left' => '0.590551in',
         '--encoding' => 'UTF-8'
       )
-    end
-
-    it 'pdf has the right source' do
-      expect(subject.source.instance_values['source']).to eq(html)
     end
   end
 end

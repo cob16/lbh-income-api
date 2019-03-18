@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe PdfController, type: :controller do
+describe LettersController, type: :controller do
   let(:template_path) { 'path/to/temp' }
   let(:template_id) { 'letter_1_template' }
   let(:template_name) { 'Letter 1 template' }
@@ -26,14 +26,19 @@ describe PdfController, type: :controller do
     end
   end
 
-  describe '#send_letter' do
+  describe '#send' do
+    # TODO: expect to send
+    # expect_any_instance_of(Hackney::Notification::SendManualPrecompiledLetter).to receive(:execute)
+  end
+
+  describe '#create' do
     context 'when all data is is found' do
       let(:found_payment_ref) { Faker::Number.number(4) }
 
-      it 'generates pdf preview with template details, case and empty errors' do
+      it 'generates pdf(html) preview with template details, case and empty errors' do
         expect_any_instance_of(Hackney::PDF::PreviewGenerator).to receive(:execute).and_return(html: preview_html, errors: [])
 
-        post :send_letter, params: { payment_ref: found_payment_ref, template_id: template_id }
+        post :create, params: { payment_ref: found_payment_ref, template_id: template_id }
 
         response_json = JSON.parse(response.body)
 
@@ -49,7 +54,7 @@ describe PdfController, type: :controller do
       let(:missing_mandatory_data) { 222 }
 
       it 'no errors when only optional data is missing' do
-        post :send_letter, params: { payment_ref: missing_optional_data, template_id: template_id }
+        post :create, params: { payment_ref: missing_optional_data, template_id: template_id }
 
         response_json = JSON.parse(response.body)
 
@@ -57,7 +62,7 @@ describe PdfController, type: :controller do
       end
 
       it 'returns errors when mandatory data is missing' do
-        post :send_letter, params: { payment_ref: missing_mandatory_data, template_id: template_id }
+        post :create, params: { payment_ref: missing_mandatory_data, template_id: template_id }
 
         response_json = JSON.parse(response.body)
 
@@ -72,7 +77,7 @@ describe PdfController, type: :controller do
       let(:not_found_payment_ref) { 123 }
 
       it 'returns 404' do
-        post :send_letter, params: { payment_ref: not_found_payment_ref, template_id: template_id }
+        post :create, params: { payment_ref: not_found_payment_ref, template_id: template_id }
 
         expect(response.status).to eq(404)
       end
