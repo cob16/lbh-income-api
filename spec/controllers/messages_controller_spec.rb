@@ -73,7 +73,7 @@ describe MessagesController, type: :controller do
   end
 
   it 'gets email templates' do
-    expect_any_instance_of(Hackney::Rent::GetTemplates).to receive(:execute).with(
+    expect_any_instance_of(Hackney::Income::GetTemplates).to receive(:execute).with(
       type: 'email'
     ).and_call_original
 
@@ -83,7 +83,7 @@ describe MessagesController, type: :controller do
   end
 
   it 'gets sms templates' do
-    expect_any_instance_of(Hackney::Rent::GetTemplates).to receive(:execute).with(
+    expect_any_instance_of(Hackney::Income::GetTemplates).to receive(:execute).with(
       type: 'sms'
     ).and_call_original
 
