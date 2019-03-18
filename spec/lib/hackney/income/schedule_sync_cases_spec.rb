@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 # TODO: RENAME from ScheduleSyncCases to descriptive schedule and delete
-describe Hackney::Rent::ScheduleSyncCases do
+describe Hackney::Income::ScheduleSyncCases do
   subject { sync_cases.execute }
 
   let(:uh_tenancies_gateway) { instance_double(Hackney::Rent::UniversalHousingTenanciesGateway) }

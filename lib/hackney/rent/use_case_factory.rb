@@ -9,7 +9,7 @@ module Hackney
       end
 
       def schedule_sync_cases
-        Hackney::Rent::ScheduleSyncCases.new(
+        Hackney::Income::ScheduleSyncCases.new(
           uh_tenancies_gateway: uh_tenancies_gateway,
           background_job_gateway: background_job_gateway
         )

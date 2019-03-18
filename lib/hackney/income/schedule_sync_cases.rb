@@ -1,5 +1,5 @@
 module Hackney
-  module Rent
+  module Income
     # TODO: RENAME from ScheduleSyncCases to descriptive schedule and delete
     class ScheduleSyncCases
       def initialize(uh_tenancies_gateway:, background_job_gateway:)

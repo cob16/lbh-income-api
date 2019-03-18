@@ -84,12 +84,12 @@ describe MyCasesController do
 
   describe '#sync' do
     it 'creates the sync tenancies use case' do
-      expect(Hackney::Rent::ScheduleSyncCases).to receive(:new).with(
+      expect(Hackney::Income::ScheduleSyncCases).to receive(:new).with(
         uh_tenancies_gateway: instance_of(Hackney::Rent::UniversalHousingTenanciesGateway),
         background_job_gateway: instance_of(Hackney::Income::BackgroundJobGateway)
       ).and_call_original
 
-      allow_any_instance_of(Hackney::Rent::ScheduleSyncCases)
+      allow_any_instance_of(Hackney::Income::ScheduleSyncCases)
         .to receive(:execute)
         .and_return(cases: [], number_per_page: 1)
 
@@ -97,7 +97,7 @@ describe MyCasesController do
     end
 
     it 'calls the sync tenancies use case' do
-      expect_any_instance_of(Hackney::Rent::ScheduleSyncCases)
+      expect_any_instance_of(Hackney::Income::ScheduleSyncCases)
         .to receive(:execute)
         .and_return(cases: [], number_per_page: 1)
 
@@ -105,7 +105,7 @@ describe MyCasesController do
     end
 
     it 'responds with { success: true }' do
-      allow_any_instance_of(Hackney::Rent::ScheduleSyncCases)
+      allow_any_instance_of(Hackney::Income::ScheduleSyncCases)
         .to receive(:execute)
         .and_return(cases: [], number_per_page: 1)
 
