@@ -15,6 +15,12 @@ module Hackney
           leasehold_information_gateway: Hackney::ServiceCharge::UseCaseFactory.new.get_leasehold_information
         )
       end
+
+      def generate_pdf
+        generator = Hackney::PDF::PDFGateway.new
+        html_preview = get_preview.html
+        generator.generate_pdf(html_preview)
+      end
     end
   end
 end

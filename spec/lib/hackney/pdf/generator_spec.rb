@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe Hackney::PDF::PDFGateway do
+describe Hackney::PDF::Generator do
   let(:gateway) { described_class.new }
   let(:html) { "<h1>#{Faker::RickAndMorty.quote}</h1>" }
 
