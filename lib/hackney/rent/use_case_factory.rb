@@ -153,7 +153,7 @@ module Hackney
       end
 
       def users_gateway
-        Hackney::Rent::SqlUsersGateway.new
+        Hackney::Income::SqlUsersGateway.new
       end
 
       def user_assignment_gateway

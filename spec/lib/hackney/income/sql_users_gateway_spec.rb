@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe Hackney::Rent::SqlUsersGateway do
+describe Hackney::Income::SqlUsersGateway do
   let(:gateway) { described_class.new }
 
   context 'when finding or creating a User' do

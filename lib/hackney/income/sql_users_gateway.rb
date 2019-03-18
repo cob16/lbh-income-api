@@ -1,5 +1,5 @@
 module Hackney
-  module Rent
+  module Income
     class SqlUsersGateway
       def find_or_create_user(provider_uid:, provider:, name:, email:, first_name:, last_name:, provider_permissions:)
         user = Hackney::Income::Models::User.find_or_create_by!(provider_uid: provider_uid, provider: provider)
