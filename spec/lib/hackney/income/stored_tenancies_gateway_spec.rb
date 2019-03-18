@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe Hackney::Rent::StoredTenanciesGateway do
+describe Hackney::Income::StoredTenanciesGateway do
   let(:gateway) { described_class.new }
 
   let(:tenancy_model) { Hackney::Rent::Models::CasePriority }

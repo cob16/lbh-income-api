@@ -149,7 +149,7 @@ module Hackney
       end
 
       def stored_tenancies_gateway
-        Hackney::Rent::StoredTenanciesGateway.new
+        Hackney::Income::StoredTenanciesGateway.new
       end
 
       def users_gateway
