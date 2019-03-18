@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe Hackney::Rent::SqlTenancyCaseGateway do
+describe Hackney::Income::SqlTenancyCaseGateway do
   subject { described_class.new }
 
   let(:gateway_model) { described_class::GatewayModel }

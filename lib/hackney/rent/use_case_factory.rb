@@ -157,7 +157,7 @@ module Hackney
       end
 
       def user_assignment_gateway
-        Hackney::Rent::SqlTenancyCaseGateway.new
+        Hackney::Income::SqlTenancyCaseGateway.new
       end
 
       def uh_tenancies_gateway

@@ -1,5 +1,5 @@
 module Hackney
-  module Rent
+  module Income
     class SqlTenancyCaseGateway
       GatewayModel = Hackney::Income::Models::CasePriority
 
