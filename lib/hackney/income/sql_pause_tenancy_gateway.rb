@@ -2,7 +2,7 @@ require 'time'
 require 'active_record/errors'
 
 module Hackney
-  module Rent
+  module Income
     class SqlPauseTenancyGateway
       GatewayModel = Hackney::Income::Models::CasePriority
 

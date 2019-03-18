@@ -25,7 +25,7 @@ describe TenanciesController, type: :controller do
   let(:dummy_action_diary_usecase) { double(Hackney::Tenancy::AddActionDiaryEntry) }
 
   before do
-    stub_const('Hackney::Rent::SqlPauseTenancyGateway', StubSqlPauseTenancyGateway)
+    stub_const('Hackney::Income::SqlPauseTenancyGateway', StubSqlPauseTenancyGateway)
     stub_const('Hackney::Tenancy::AddActionDiaryEntry', dummy_action_diary_usecase)
     allow(dummy_action_diary_usecase).to receive(:new).and_return(dummy_action_diary_usecase)
     allow(dummy_action_diary_usecase).to receive(:execute)
