@@ -16,12 +16,12 @@ describe UsersController do
   let(:rando_id) { Faker::Number.number(2) }
 
   before do
-    stub_const('Hackney::Rent::FindOrCreateUser', Hackney::Rent::StubFindOrCreateUser)
+    stub_const('Hackney::Income::FindOrCreateUser', Hackney::Rent::StubFindOrCreateUser)
   end
 
   context 'when receiving valid params' do
     it 'passes the correct params to the use case' do
-      expect_any_instance_of(Hackney::Rent::FindOrCreateUser).to receive(:execute).with(
+      expect_any_instance_of(Hackney::Income::FindOrCreateUser).to receive(:execute).with(
         provider_uid: params.fetch(:provider_uid),
         provider: params.fetch(:provider),
         name: params.fetch(:name),
@@ -42,7 +42,7 @@ describe UsersController do
     end
 
     it 'returns the response as json' do
-      expect_any_instance_of(Hackney::Rent::FindOrCreateUser).to receive(:execute).with(
+      expect_any_instance_of(Hackney::Income::FindOrCreateUser).to receive(:execute).with(
         provider_uid: params.fetch(:provider_uid),
         provider: params.fetch(:provider),
         name: params.fetch(:name),

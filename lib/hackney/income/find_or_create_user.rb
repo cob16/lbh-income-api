@@ -1,5 +1,5 @@
 module Hackney
-  module Rent
+  module Income
     class FindOrCreateUser
       def initialize(users_gateway:)
         @users_gateway = users_gateway

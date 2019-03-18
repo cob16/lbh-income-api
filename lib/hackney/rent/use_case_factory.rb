@@ -23,7 +23,7 @@ module Hackney
       end
 
       def find_or_create_user
-        Hackney::Rent::FindOrCreateUser.new(users_gateway: users_gateway)
+        Hackney::Income::FindOrCreateUser.new(users_gateway: users_gateway)
       end
 
       def add_action_diary

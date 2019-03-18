@@ -1,4 +1,4 @@
-describe Hackney::Rent::FindOrCreateUser do
+describe Hackney::Income::FindOrCreateUser do
   let(:users_gateway) { Hackney::Rent::StubSqlUsersGateway.new }
   let(:subject) { described_class.new(users_gateway: users_gateway) }
 
