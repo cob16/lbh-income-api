@@ -25,15 +25,15 @@ describe Hackney::Notification::SendAutomatedMessageToTenancy do
     let(:email) { Faker::Internet.safe_email }
     let(:contacts) do
       [
-        Hackney::Rent::Domain::Contact.new.tap do |c|
+        Hackney::Income::Domain::Contact.new.tap do |c|
           c.phone_numbers = [phone_number, phone_number]
           c.email = email
         end,
-        Hackney::Rent::Domain::Contact.new.tap do |c|
+        Hackney::Income::Domain::Contact.new.tap do |c|
           c.phone_numbers = [phone_number]
           c.email = email
         end,
-        Hackney::Rent::Domain::Contact.new # empty contact
+        Hackney::Income::Domain::Contact.new # empty contact
       ]
     end
 

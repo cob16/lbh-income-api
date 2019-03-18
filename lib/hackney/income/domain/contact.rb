@@ -1,5 +1,5 @@
 module Hackney
-  module Rent
+  module Income
     module Domain
       class Contact
         attr_accessor :phone_numbers, :email
