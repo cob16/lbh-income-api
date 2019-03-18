@@ -37,7 +37,7 @@ describe TenanciesController, type: :controller do
 
   context 'when receiving valid params' do
     it 'passes the correct params to the use case' do
-      expect_any_instance_of(Hackney::Rent::SetTenancyPausedStatus).to receive(:execute).with(
+      expect_any_instance_of(Hackney::Income::SetTenancyPausedStatus).to receive(:execute).with(
         user_id: paused_parms.fetch(:user_id),
         tenancy_ref: paused_parms.fetch(:tenancy_ref),
         until_date: paused_parms.fetch(:is_paused_until),
@@ -52,7 +52,7 @@ describe TenanciesController, type: :controller do
     end
 
     it 'returns a 200 response' do
-      expect_any_instance_of(Hackney::Rent::SetTenancyPausedStatus).to receive(:execute).with(
+      expect_any_instance_of(Hackney::Income::SetTenancyPausedStatus).to receive(:execute).with(
         user_id: params2.fetch(:user_id),
         tenancy_ref: params2.fetch(:tenancy_ref),
         until_date: params2.fetch(:is_paused_until).to_s,

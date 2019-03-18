@@ -1,5 +1,5 @@
 module Hackney
-  module Rent
+  module Income
     class SetTenancyPausedStatus
       def initialize(gateway:, add_action_diary_usecase:)
         @gateway = gateway

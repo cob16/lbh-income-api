@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe Hackney::Rent::SetTenancyPausedStatus do
+describe Hackney::Income::SetTenancyPausedStatus do
   subject { described_class.new(gateway: PauseGatewayDouble.new, add_action_diary_usecase: action_diary_gateway) }
 
   let(:action_diary_gateway) { double(Hackney::Tenancy::Gateway::ActionDiaryGateway) }
