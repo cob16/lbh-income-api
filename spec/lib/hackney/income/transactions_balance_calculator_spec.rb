@@ -1,7 +1,7 @@
 require 'rails_helper'
 require 'active_support/core_ext/numeric/time'
 
-describe Hackney::Rent::TransactionsBalanceCalculator do
+describe Hackney::Income::TransactionsBalanceCalculator do
   subject do
     described_class.new.with_final_balances(
       current_balance: current_balance,

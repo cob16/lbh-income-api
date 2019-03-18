@@ -1,5 +1,5 @@
 module Hackney
-  module Rent
+  module Income
     class TransactionsBalanceCalculator
       def with_final_balances(current_balance:, transactions:)
         desc_sort(transactions).reduce([]) do |final_transactions, transaction|
