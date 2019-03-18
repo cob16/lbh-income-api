@@ -4,7 +4,7 @@ require 'active_record/errors'
 module Hackney
   module Rent
     class SqlPauseTenancyGateway
-      GatewayModel = Hackney::Rent::Models::CasePriority
+      GatewayModel = Hackney::Income::Models::CasePriority
 
       def set_paused_until(tenancy_ref:, until_date:, pause_reason:, pause_comment:)
         tenancy = GatewayModel.find_by(tenancy_ref: tenancy_ref)

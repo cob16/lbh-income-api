@@ -3,7 +3,7 @@ require 'rails_helper'
 describe Hackney::Income::StoredTenanciesGateway do
   let(:gateway) { described_class.new }
 
-  let(:tenancy_model) { Hackney::Rent::Models::CasePriority }
+  let(:tenancy_model) { Hackney::Income::Models::CasePriority }
 
   context 'when storing a tenancy' do
     subject(:store_tenancy) do

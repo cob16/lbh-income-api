@@ -1,7 +1,7 @@
 module Hackney
   module Rent
     class SqlTenancyCaseGateway
-      GatewayModel = Hackney::Rent::Models::CasePriority
+      GatewayModel = Hackney::Income::Models::CasePriority
 
       # TODO: rename from tenancies
       def persist(tenancies:)
@@ -33,11 +33,11 @@ module Hackney
       private
 
       def next_available_user_for(band:)
-        counts = Hackney::Rent::Models::User.with_tenancy_counts(of_priority_band: band)
+        counts = Hackney::Income::Models::User.with_tenancy_counts(of_priority_band: band)
 
-        return Hackney::Rent::Models::User.where(role: :credit_controller).first if counts.empty?
+        return Hackney::Income::Models::User.where(role: :credit_controller).first if counts.empty?
 
-        Hackney::Rent::Models::User.find_by(id: counts.min_by { |r| r[:count] }[:id])
+        Hackney::Income::Models::User.find_by(id: counts.min_by { |r| r[:count] }[:id])
       end
 
       PRIORITY_BANDS = %w[red amber green].freeze

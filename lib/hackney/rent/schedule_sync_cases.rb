@@ -5,7 +5,7 @@ module Hackney
       def initialize(uh_tenancies_gateway:, background_job_gateway:)
         @uh_tenancies_gateway = uh_tenancies_gateway
         @background_job_gateway = background_job_gateway
-        @case_priority_gateway = Hackney::Rent::Models::CasePriority
+        @case_priority_gateway = Hackney::Income::Models::CasePriority
       end
 
       def execute

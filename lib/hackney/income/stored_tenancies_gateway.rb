@@ -1,7 +1,7 @@
 module Hackney
   module Income
     class StoredTenanciesGateway
-      GatewayModel = Hackney::Rent::Models::CasePriority
+      GatewayModel = Hackney::Income::Models::CasePriority
 
       def store_tenancy(tenancy_ref:, priority_band:, priority_score:, criteria:, weightings:)
         score_calculator = Hackney::Rent::TenancyPrioritiser::Score.new(

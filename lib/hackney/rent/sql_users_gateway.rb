@@ -2,7 +2,7 @@ module Hackney
   module Rent
     class SqlUsersGateway
       def find_or_create_user(provider_uid:, provider:, name:, email:, first_name:, last_name:, provider_permissions:)
-        user = Hackney::Rent::Models::User.find_or_create_by!(provider_uid: provider_uid, provider: provider)
+        user = Hackney::Income::Models::User.find_or_create_by!(provider_uid: provider_uid, provider: provider)
         user.update!(name: name, email: email, first_name: first_name, last_name: last_name, provider_permissions: provider_permissions)
         {
           id: user.id,
@@ -15,7 +15,7 @@ module Hackney
       end
 
       def find_user(id:)
-        Hackney::Rent::Models::User.find_by(id: id)
+        Hackney::Income::Models::User.find_by(id: id)
       end
     end
   end

@@ -1,8 +1,8 @@
 require 'rails_helper'
 
-describe Hackney::Rent::Models::CasePriority do
+describe Hackney::Income::Models::CasePriority do
   before {
-    Hackney::Rent::Models::Case.delete_all
+    Hackney::Income::Models::Case.delete_all
   }
 
   context 'when creating a tenancy, the parent case is created' do
@@ -10,7 +10,7 @@ describe Hackney::Rent::Models::CasePriority do
 
     it do
       described_class.create!(tenancy_ref: tenancy_ref)
-      expect(Hackney::Rent::Models::Case.find_by(tenancy_ref: tenancy_ref)).to be_truthy
+      expect(Hackney::Income::Models::Case.find_by(tenancy_ref: tenancy_ref)).to be_truthy
     end
   end
 
@@ -22,7 +22,7 @@ describe Hackney::Rent::Models::CasePriority do
       test_priority.create_case
     end
 
-    it { expect(described_class.first.case).to be_a Hackney::Rent::Models::Case }
+    it { expect(described_class.first.case).to be_a Hackney::Income::Models::Case }
 
     it 'throws an RecordNotUnique exception on the second insert' do
       expect do

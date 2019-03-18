@@ -1,5 +1,5 @@
 FactoryBot.define do
-  factory :user, class: Hackney::Rent::Models::User, aliases: [:assigned_user] do
+  factory :user, class: Hackney::Income::Models::User, aliases: [:assigned_user] do
     role { :base_user }
 
     trait :credit_controller do

@@ -20,7 +20,7 @@ describe Hackney::Rent::SqlUsersGateway do
       before { subject }
 
       it 'creates a new User instance for that user' do
-        expect(Hackney::Rent::Models::User.first).to have_attributes(
+        expect(Hackney::Income::Models::User.first).to have_attributes(
           provider_uid: 'close-to-me',
           provider: 'universal',
           name: 'Robert Smith',
@@ -34,7 +34,7 @@ describe Hackney::Rent::SqlUsersGateway do
 
     context 'when this user exists' do
       before do
-        Hackney::Rent::Models::User.create!(
+        Hackney::Income::Models::User.create!(
           provider_uid: 'close-to-me',
           provider: 'universal',
           name: 'Robert Smith',
@@ -48,11 +48,11 @@ describe Hackney::Rent::SqlUsersGateway do
       end
 
       it 'does not create a duplicate user' do
-        expect(Hackney::Rent::Models::User.count).to eq(1)
+        expect(Hackney::Income::Models::User.count).to eq(1)
       end
 
       it 'updates the record found' do
-        expect(Hackney::Rent::Models::User.first.email).to eq('exploding-boy@the-cure.com')
+        expect(Hackney::Income::Models::User.first.email).to eq('exploding-boy@the-cure.com')
       end
     end
 
@@ -73,7 +73,7 @@ describe Hackney::Rent::SqlUsersGateway do
 
     context 'when this user does not exist' do
       let(:user) do
-        Hackney::Rent::Models::User.new(
+        Hackney::Income::Models::User.new(
           provider_uid: 'close-to-me',
           provider: 'universal',
           name: 'Robert Smith',

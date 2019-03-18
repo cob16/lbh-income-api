@@ -1,5 +1,5 @@
 module Hackney
-  module Rent
+  module Income
     module Models
       class User < ApplicationRecord
         # TODO: use appropriate convention user_id
@@ -10,7 +10,7 @@ module Hackney
         def self.with_tenancy_counts(of_priority_band:)
           where(role: :credit_controller).all.map do |u|
             # TODO: rework .where query to use relationship
-            { id: u.id, count: Hackney::Rent::Models::CasePriority.where(assigned_user_id: u.id, priority_band: of_priority_band).count }
+            { id: u.id, count: Hackney::Income::Models::CasePriority.where(assigned_user_id: u.id, priority_band: of_priority_band).count }
           end
         end
       end

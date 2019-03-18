@@ -3,7 +3,7 @@ FactoryBot.define do
     Faker::Lorem.characters(10) + n.to_s
   end
 
-  factory :case_priority, class: Hackney::Rent::Models::CasePriority do
+  factory :case_priority, class: Hackney::Income::Models::CasePriority do
     assigned_user
     # association :case
 
