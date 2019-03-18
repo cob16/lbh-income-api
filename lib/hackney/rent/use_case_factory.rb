@@ -90,7 +90,7 @@ module Hackney
       end
 
       def get_tenancy_pause
-        Hackney::Rent::GetTenancyPause.new(
+        Hackney::Income::GetTenancyPause.new(
           gateway: sql_pause_tenancy_gateway
         )
       end

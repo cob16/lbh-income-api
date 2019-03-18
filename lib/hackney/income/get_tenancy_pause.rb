@@ -1,5 +1,5 @@
 module Hackney
-  module Rent
+  module Income
     class GetTenancyPause
       def initialize(gateway:)
         @gateway = gateway
