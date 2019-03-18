@@ -2,7 +2,7 @@ module Hackney
   module Rent
     class UseCaseFactory
       def view_my_cases
-        Hackney::Rent::ViewMyCases.new(
+        Hackney::Income::ViewMyCases.new(
           tenancy_api_gateway: tenancy_api_gateway,
           stored_tenancies_gateway: stored_tenancies_gateway
         )

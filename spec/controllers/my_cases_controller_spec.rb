@@ -2,10 +2,10 @@ require 'rails_helper'
 
 describe MyCasesController do
   describe '#index' do
-    let(:view_my_cases_instance) { instance_double(Hackney::Rent::ViewMyCases) }
+    let(:view_my_cases_instance) { instance_double(Hackney::Income::ViewMyCases) }
 
     before do
-      allow(Hackney::Rent::ViewMyCases).to receive(:new).with(
+      allow(Hackney::Income::ViewMyCases).to receive(:new).with(
         tenancy_api_gateway: instance_of(Hackney::Tenancy::Gateway::TenanciesGateway),
         stored_tenancies_gateway: instance_of(Hackney::Rent::StoredTenanciesGateway)
       ).and_return(view_my_cases_instance)

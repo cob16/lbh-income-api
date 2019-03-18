@@ -1,5 +1,5 @@
 module Hackney
-  module Rent
+  module Income
     class ViewMyCases
       Response = Struct.new(:cases, :number_of_pages)
 

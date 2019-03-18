@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe Hackney::Rent::ViewMyCases do
+describe Hackney::Income::ViewMyCases do
   subject { view_my_cases.execute(user_id: user_id, page_number: page_number, number_per_page: number_per_page) }
 
   let(:user_id) { Faker::Number.number(2).to_i }
