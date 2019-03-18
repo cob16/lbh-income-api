@@ -5,7 +5,7 @@ describe Hackney::Rent::ScheduleSyncCases do
   subject { sync_cases.execute }
 
   let(:uh_tenancies_gateway) { instance_double(Hackney::Rent::UniversalHousingTenanciesGateway) }
-  let(:background_job_gateway) { instance_double(Hackney::Rent::BackgroundJobGateway) }
+  let(:background_job_gateway) { instance_double(Hackney::Income::BackgroundJobGateway) }
   let!(:removed_case_priority) { create(:case_priority) }
 
   let(:sync_cases) do

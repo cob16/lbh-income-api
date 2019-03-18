@@ -2,7 +2,7 @@ require 'rails_helper'
 
 require 'sidekiq/testing'
 
-describe Hackney::Rent::BackgroundJobGateway do
+describe Hackney::Income::BackgroundJobGateway do
   context 'when scheduling a job to sync priority for a case' do
     subject { described_class.new.schedule_case_priority_sync(tenancy_ref: tenancy_ref) }
 

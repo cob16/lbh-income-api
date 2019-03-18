@@ -2,7 +2,7 @@ require 'rails_helper'
 
 describe Hackney::Notification::SendAutomatedEmail do
   let(:notification_gateway) { Hackney::Rent::StubNotificationsGateway.new }
-  let(:background_job_gateway) { double(Hackney::Rent::BackgroundJobGateway) }
+  let(:background_job_gateway) { double(Hackney::Income::BackgroundJobGateway) }
   let(:send_email) { described_class.new(notification_gateway: notification_gateway, background_job_gateway: background_job_gateway) }
   let(:tenancy_1) { create_tenancy_model }
 

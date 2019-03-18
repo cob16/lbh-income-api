@@ -193,7 +193,7 @@ module Hackney
       end
 
       def background_job_gateway
-        Hackney::Rent::BackgroundJobGateway.new
+        Hackney::Income::BackgroundJobGateway.new
       end
     end
   end

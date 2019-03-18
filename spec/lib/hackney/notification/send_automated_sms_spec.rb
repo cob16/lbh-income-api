@@ -4,7 +4,7 @@ describe Hackney::Notification::SendAutomatedSms do
   let(:tenancy) { create_tenancy_model }
   let(:notification_gateway) { instance_double(Hackney::Notification::GovNotifyGateway) }
   let(:send_responce) { Hackney::Notification::Domain::NotificationReceipt.new(body: nil) }
-  let(:background_job_gateway) { double(Hackney::Rent::BackgroundJobGateway) }
+  let(:background_job_gateway) { double(Hackney::Income::BackgroundJobGateway) }
   let(:gov_notify_template_name) { Faker::Superhero.name }
   let(:send_sms) do
     described_class.new(

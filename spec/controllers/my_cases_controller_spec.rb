@@ -86,7 +86,7 @@ describe MyCasesController do
     it 'creates the sync tenancies use case' do
       expect(Hackney::Rent::ScheduleSyncCases).to receive(:new).with(
         uh_tenancies_gateway: instance_of(Hackney::Rent::UniversalHousingTenanciesGateway),
-        background_job_gateway: instance_of(Hackney::Rent::BackgroundJobGateway)
+        background_job_gateway: instance_of(Hackney::Income::BackgroundJobGateway)
       ).and_call_original
 
       allow_any_instance_of(Hackney::Rent::ScheduleSyncCases)
