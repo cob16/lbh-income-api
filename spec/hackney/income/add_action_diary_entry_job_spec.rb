@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe Hackney::Rent::Jobs::AddActionDiaryEntryJob do
+describe Hackney::Income::Jobs::AddActionDiaryEntryJob do
   subject(:action_diary_job) { described_class }
 
   let(:mock_action_diary_usecase) { double(Hackney::Tenancy::AddActionDiaryEntry) }

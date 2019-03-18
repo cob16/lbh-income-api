@@ -33,7 +33,7 @@ describe Hackney::Income::BackgroundJobGateway do
     let(:comment) { Faker::Lorem.paragraph }
 
     it 'enqueues the job to run as soon as possible' do
-      expect { subject }.to have_enqueued_job(Hackney::Rent::Jobs::AddActionDiaryEntryJob).with(
+      expect { subject }.to have_enqueued_job(Hackney::Income::Jobs::AddActionDiaryEntryJob).with(
         tenancy_ref: tenancy_ref,
         action_code: action_code,
         comment: comment

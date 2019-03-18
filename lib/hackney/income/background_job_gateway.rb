@@ -10,7 +10,7 @@ module Hackney
       end
 
       def add_action_diary_entry(tenancy_ref:, action_code:, comment:)
-        Hackney::Rent::Jobs::AddActionDiaryEntryJob.perform_later(tenancy_ref: tenancy_ref, action_code: action_code, comment: comment)
+        Hackney::Income::Jobs::AddActionDiaryEntryJob.perform_later(tenancy_ref: tenancy_ref, action_code: action_code, comment: comment)
       end
     end
   end

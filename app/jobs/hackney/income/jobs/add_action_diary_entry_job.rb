@@ -1,5 +1,5 @@
 module Hackney
-  module Rent
+  module Income
     module Jobs
       class AddActionDiaryEntryJob < ApplicationJob
         queue_as :action_diary_writer
