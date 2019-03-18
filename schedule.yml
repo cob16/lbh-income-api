@@ -7,5 +7,5 @@
 
   tenancy_sync:
     class: TenancySync
-    cron: '0 0 3 * * 1-5' # 3am m-f
+    cron: '0 0 3 * * *' # 3am everyday
 
