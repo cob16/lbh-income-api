@@ -77,7 +77,7 @@ module Hackney
       end
 
       def get_templates
-        Hackney::Income::GetTemplates.new(
+        Hackney::Notification::GetTemplates.new(
           notification_gateway: notifications_gateway
         )
       end

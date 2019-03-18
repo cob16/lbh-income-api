@@ -1,5 +1,5 @@
 module Hackney
-  module Income
+  module Notification
     class GetTemplates
       def initialize(notification_gateway:)
         @notification_gateway = notification_gateway
