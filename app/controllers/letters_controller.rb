@@ -13,6 +13,10 @@ class LettersController < ApplicationController
   rescue Hackney::ServiceCharge::Exceptions::ServiceChargeException
     head(404)
   end
+
+  def send_letter
+
+  end
 end
 
 
