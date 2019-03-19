@@ -41,7 +41,7 @@ describe Hackney::PDF::Preview do
 
     preview = subject.execute(payment_ref: test_pay_ref, template_id: test_template_id)
 
-    expect(preview).to eq(
+    expect(preview).to include(
       case: test_letter_params,
       template: test_template,
       preview: translated_html,
@@ -73,7 +73,7 @@ describe Hackney::PDF::Preview do
 
       preview = subject.execute(payment_ref: test_pay_ref, template_id: test_template_id)
 
-      expect(preview).to eq(
+      expect(preview).to include(
         case: test_letter_params,
         template: test_template,
         preview: translated_html,
