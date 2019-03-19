@@ -34,6 +34,7 @@ describe LettersController, type: :controller do
   describe '#create' do
     context 'when all data is is found' do
       let(:found_payment_ref) { Faker::Number.number(4) }
+      let(:preview_uuid) { SecureRandom.uuid }
 
       it 'generates pdf(html) preview with template details, case and empty errors' do
         expect_any_instance_of(Hackney::PDF::PreviewGenerator).to receive(:execute).and_return(html: preview_html, errors: [])
@@ -45,7 +46,10 @@ describe LettersController, type: :controller do
         expect(response_json['case']['payment_ref']).to eq(found_payment_ref)
         expect(response_json['template']['id']).to eq(template_id)
         expect(response_json['preview']).to eq(preview_html)
+        expect(response_json['uuid']).not_to be_nil
         expect(response_json['errors']).to eq([])
+
+        expect(Rails.cache.read(response_json['uuid'])).to eq(preview_html)
       end
     end
 

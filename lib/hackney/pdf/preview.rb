@@ -14,15 +14,24 @@ module Hackney
           template_path: template[:path]
         ).execute(letter_params: leasehold_info)
 
+        uuid = save_to_cache(preview_with_errors[:html])
+
         {
           case: leasehold_info,
           template: template,
+          uuid: uuid,
           preview: preview_with_errors[:html],
           errors: preview_with_errors[:errors]
         }
       end
 
       private
+
+      def save_to_cache(html)
+        cache_key = SecureRandom.uuid
+        Rails.cache.write(cache_key, html, expires_in: 12.hours)
+        cache_key
+      end
 
       def get_leasehold_info(payment_ref)
         @leasehold_information_gateway.execute(payment_ref: payment_ref).first
