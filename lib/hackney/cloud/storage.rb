@@ -10,6 +10,7 @@ module Hackney
       end
 
       def save(filename)
+        # FIXME: save metadata!!
         raise "No such file: #{filename}" unless File.exist?(filename)
 
         uuid = SecureRandom.uuid

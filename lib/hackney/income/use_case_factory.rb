@@ -47,6 +47,13 @@ module Hackney
         )
       end
 
+      def send_letter
+        Hackney::Income::ProcessLetter.new(
+          pdf_generator: Hackney::PDF::Generator.new,
+          cloud_storage: cloud_storage
+        )
+      end
+
       def send_precompiled_letter
         Hackney::Income::Notification::SendPrecompiledLetter.new(
           notification_gateway: notifications_gateway,
@@ -125,6 +132,13 @@ module Hackney
       end
 
       private
+
+      def cloud_storage
+        Hackney::Cloud::Storage.new(
+          Rails.configuration.cloud_adapter,
+          Hackney::Cloud::Document
+        )
+      end
 
       def notifications_gateway
         Hackney::Notification::GovNotifyGateway.new(

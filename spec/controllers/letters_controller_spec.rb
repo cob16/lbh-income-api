@@ -26,27 +26,28 @@ describe LettersController, type: :controller do
     end
   end
 
-  describe '#send' do
-    before { post :send_letter, params: { uuid: uuid, user_id: user_id } }
+  describe '#send_letter' do
+    # before { post :send_letter, params: { uuid: uuid, user_id: user_id } }
 
     context 'user "accepts" the preview' do
       let(:user_id) { Faker::Number.number }
       let(:uuid) { SecureRandom.uuid }
 
-      it { expect(response).to be_successful }
+      it 'calls succefully' do
+        post :send_letter, params: { uuid: uuid, user_id: user_id }
 
-      it 'enqueues the job to save the file to the cloud' do
-        expect {
-          subject
-        }.to(have_enqueued_job.with { |params|
-          expect(params[:uuid]).to eq uuid
-          expect(params[:user_id]).to eq user_id
-          expect(params[:html]).to be_a String
-         })
+        expect(response).to be_successful
       end
 
-    # TODO: expect to send
-    # expect_any_instance_of(Hackney::Notification::SendManualPrecompiledLetter).to receive(:execute)
+      it 'calls the usecase' do
+        expect_any_instance_of(Hackney::Income::ProcessLetter)
+          .to receive(:execute).with(uuid: uuid, user_id: user_id)
+
+        post :send_letter, params: { uuid: uuid, user_id: user_id }
+      end
+
+      # TODO: expect to send
+      # expect_any_instance_of(Hackney::Notification::SendManualPrecompiledLetter).to receive(:execute)
     end
   end
 
