@@ -14,7 +14,7 @@ describe Hackney::Income::ProcessLetter do
   end
 
   it 'calls storage.save' do
-    expect(pdf_generator).to receive(:generate_pdf).with(html).and_return(html)
+    expect(pdf_generator).to receive(:execute).with(html).and_return(html)
     expect(cloud_storage).to receive(:save).with(
       pdf: html,
       metadata: { user_id: user_id }
@@ -25,7 +25,7 @@ describe Hackney::Income::ProcessLetter do
 
   it 'creates pdf' do
     allow(cloud_storage).to receive(:save)
-    expect(pdf_generator).to receive(:generate_pdf).with(html)
+    expect(pdf_generator).to receive(:execute).with(html)
 
     subject.execute(uuid: uuid, user_id: user_id)
   end
