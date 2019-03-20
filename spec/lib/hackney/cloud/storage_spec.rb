@@ -6,7 +6,7 @@ describe Hackney::Cloud::Storage, type: :model do
 
   describe '#upload' do
     it 'saves the file and return the ID' do
-      expect(cloud_adapter_fake).to receive(:upload).with('my-bucket', 'my-file', 'new-filename')
+      expect(cloud_adapter_fake).to receive(:upload).with(bucket_name: 'my-bucket', content: 'my-file', filename: 'new-filename')
 
       storage.upload('my-bucket', 'my-file', 'new-filename')
     end
@@ -26,11 +26,11 @@ describe Hackney::Cloud::Storage, type: :model do
         doc = Hackney::Cloud::Document.last
 
         expect(doc.uuid).not_to be_empty
-        expect(doc.extension).to eq('.txt')
-        expect(doc.filename).to include('.txt')
-        expect(doc.mime_type).to eq('text/plain')
+        expect(doc.extension).to eq File.extname(file)
+        expect(doc.filename).to eq File.basename(file)
+        expect(doc.mime_type).to eq('application/pdf')
         expect(doc.status).to eq 'uploading'
-        expect(doc.status).to eq metadata
+        expect(doc.metadata).to eq metadata.to_json
       end
 
       it 'enqueues the job to save the file to the cloud' do
