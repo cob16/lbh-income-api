@@ -5,23 +5,24 @@ describe Hackney::Cloud::Adapter::AwsS3 do
 
   let(:encryption_client_double) { double }
 
-  let(:new_filename) { 'new_filename.txt' }
-
-  let(:filename) { './spec/lib/hackney/cloud/adapter/upload_test.txt' }
-  let(:content) { File.read(filename) }
+  let(:filename) { "#{SecureRandom.uuid}.pdf" }
+  let(:file) { File.open('spec/test_files/test_pdf.pdf', 'rb') }
+  let(:content) { file.read }
 
   context 'when there are NOT upload errors' do
     let(:upload_response) { double(successful?: true) }
 
     it 'successfully uploads the S3' do
       allow(encryption_client_double).to receive(:put_object)
-        .with(body: content, bucket: 'my-bucket', key: new_filename)
+        .with(body: content, bucket: 'my-bucket', key: filename)
         .and_return(upload_response)
+
+      file.rewind
 
       expect(
         s3.upload(bucket_name: 'my-bucket',
-                  filename: filename,
-                  new_filename: new_filename)
+                  content: file.read,
+                  filename: filename)
       ).to be true
     end
   end
@@ -31,13 +32,15 @@ describe Hackney::Cloud::Adapter::AwsS3 do
 
     it 'raises an exception' do
       allow(encryption_client_double).to receive(:put_object)
-        .with(body: content, bucket: 'my-bucket', key: new_filename)
+        .with(body: content, bucket: 'my-bucket', key: filename)
         .and_return(upload_response)
+
+      file.rewind
 
       expect {
         s3.upload(bucket_name: 'my-bucket',
-                  filename: filename,
-                  new_filename: new_filename)
+                  content: file.read,
+                  filename: filename)
       }.to raise_exception('Cloud Storage Error!')
     end
   end
