@@ -11,15 +11,15 @@ describe Hackney::PDF::Generator do
 
     let(:source) { subject.source.instance_values['source'] }
 
-    xit 'is a pdfkit' do
+    it 'is a pdfkit' do
       expect(subject).to be_a PDFKit
     end
 
-    xit 'pdf has the right source' do
+    it 'pdf has the right source' do
       expect(source).to eq(html)
     end
 
-    xit 'pdf should have the right options' do
+    it 'pdf should have the right options' do
       expect(subject.options).to eq(
         '--quiet' => nil,
         '--page-size' => 'A4',

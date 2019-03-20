@@ -8,7 +8,7 @@ module Hackney
       def execute(html)
         kit = PDFKit.new(html, pdf_options)
         kit.stylesheets << PDF_STYLES
-        kit.to_pdf
+        kit
       end
 
       private
