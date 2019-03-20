@@ -16,10 +16,12 @@ describe Hackney::Cloud::Storage, type: :model do
     context 'when the file exists' do
       before { ActiveJob::Base.queue_adapter = :test }
 
-      let(:filename) { './spec/lib/hackney/cloud/adapter/upload_test.txt' }
+      let(:file) { File.open('spec/test_files/test_pdf.pdf', 'rb') }
+      let(:uuid) { SecureRandom.uuid }
+      let(:metadata) { {bunnies: true} }
 
       it 'creates a new entry' do
-        expect { storage.save(filename) }.to(change(Hackney::Cloud::Document, :count).by(1))
+        expect { storage.save(file: file, uuid: uuid, metadata: metadata) }.to(change(Hackney::Cloud::Document, :count).by(1))
 
         doc = Hackney::Cloud::Document.last
 
@@ -28,37 +30,21 @@ describe Hackney::Cloud::Storage, type: :model do
         expect(doc.filename).to include('.txt')
         expect(doc.mime_type).to eq('text/plain')
         expect(doc.status).to eq 'uploading'
+        expect(doc.status).to eq metadata
       end
 
       it 'enqueues the job to save the file to the cloud' do
         expect {
-          storage.save(filename)
+          storage.save(file: file, uuid: uuid, metadata: metadata)
         }.to(have_enqueued_job.with { |params|
+          file.rewind
           expect(params[:bucket_name]).to eq 'hackney-docs-test'
-          expect(params[:filename]).to eq './spec/lib/hackney/cloud/adapter/upload_test.txt'
-          expect(params[:model_document]).to eq 'Hackney::Cloud::Document'
-          expect(params[:uuid]).not_to be_nil
-          expect(params[:new_filename]).to include('.txt')
+          expect(params[:filename]).to eq File.basename(file)
+          expect(params[:document_id]).not_to be_nil
+          expect(params[:content]).to eq file.read
         })
       end
     end
 
-    context 'when the file DOES NOT exist' do
-      let(:filename) { 'non-existent-file.txt' }
-
-      it 'raises an exception AND does not create a new entry in Cloud::Document' do
-        expect { storage.save(filename) }.to raise_exception('No such file: non-existent-file.txt')
-      end
-
-      it 'does not create a new entry in Cloud::Document' do
-        expect {
-          begin
-            storage.save(filename)
-          rescue StandardError
-            nil
-          end
-        }.not_to change(Hackney::Cloud::Document, :count)
-      end
-    end
   end
 end

@@ -6,14 +6,12 @@ module Hackney
           @client = encryption_client
         end
 
-        def upload(bucket_name:, filename:, new_filename:)
-          content = File.read(filename)
-
+        def upload(bucket_name:, content:, filename:)
           # Add encrypted item to bucket
           resp = client.put_object(
             body: content,
             bucket: bucket_name,
-            key: new_filename
+            key: filename
           )
 
           resp.successful? || raise('Cloud Storage Error!')

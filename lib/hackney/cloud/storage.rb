@@ -9,33 +9,34 @@ module Hackney
         @document_model = document_model
       end
 
-      def save(filename)
-        # FIXME: save metadata!!
-        raise "No such file: #{filename}" unless File.exist?(filename)
+      def save(file:, uuid:, metadata:)
+        extension = File.extname(file)
+        filename = File.basename(file)
 
-        uuid = SecureRandom.uuid
-        extension = File.extname(filename)
-        new_filename = "#{uuid}#{extension}"
-
-        new_doc = document_model.create(filename: filename,
-                                        uuid: uuid,
-                                        extension: extension,
-                                        mime_type: Rack::Mime.mime_type(extension),
-                                        status: UPLOADING_CLOUD_STATUS)
+        new_doc = document_model.create(
+          filename: filename,
+          uuid: uuid,
+          extension: extension,
+          mime_type: Rack::Mime.mime_type(extension),
+          status: UPLOADING_CLOUD_STATUS,
+          metadata: metadata.to_json
+        )
 
         if new_doc.errors.empty?
-          Hackney::Cloud::Jobs::SaveToCloudJob.perform_later(bucket_name: HACKNEY_BUCKET_DOCS,
-                                                             filename: filename,
-                                                             new_filename: new_filename,
-                                                             model_document: document_model.name,
-                                                             uuid: uuid)
+          file.rewind
+          Hackney::Cloud::Jobs::SaveToCloudJob.perform_later(
+            bucket_name: HACKNEY_BUCKET_DOCS,
+            content: file.read,
+            filename: filename,
+            document_id: new_doc.id
+          )
         end
 
         { errors: new_doc.errors.full_messages }
       end
 
-      def upload(bucket_name, filename, new_filename)
-        @storage_adapter.upload(bucket_name, filename, new_filename)
+      def upload(bucket_name, content, filename)
+        @storage_adapter.upload(bucket_name: bucket_name, content: content, filename: filename)
       end
 
       private

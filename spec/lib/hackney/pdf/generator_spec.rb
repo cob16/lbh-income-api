@@ -12,6 +12,9 @@ describe Hackney::PDF::Generator do
     let(:source) { subject.source.instance_values['source'] }
 
     it 'is a pdfkit' do
+      # byebug
+      # pdf_obj.to_file('magic_thing.pdf')
+      # File.open('magic_thing.pdf')
       expect(subject).to be_a PDFKit
     end
 

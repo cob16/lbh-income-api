@@ -6,12 +6,12 @@ module Hackney
 
         queue_as :cloud_storage
 
-        def perform(bucket_name:, filename:, new_filename:, model_document:, uuid:)
+        def perform(bucket_name:, filename:, content:, document_id:)
           url = cloud_provider.upload(bucket_name: bucket_name,
-                                      filename: filename,
-                                      new_filename: new_filename)
+                                      content: content,
+                                      new_filename: filename)
 
-          document(model_document, uuid).update(url: url, status: UPLOADED_CLOUD_STATUS)
+          document(document_id).update!(url: url, status: UPLOADED_CLOUD_STATUS)
         end
 
         def cloud_provider
@@ -20,8 +20,8 @@ module Hackney
 
         private
 
-        def document(model_document, uuid)
-          model_document.constantize.find_by(uuid: uuid)
+        def document(document_id)
+          Hackney::Cloud::Document.find(document_id)
         end
       end
     end

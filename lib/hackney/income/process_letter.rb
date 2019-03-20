@@ -8,10 +8,13 @@ module Hackney
 
       def execute(uuid:, user_id:)
         html = Rails.cache.read(uuid)
-        # FIXME: delete from cache now
         pdf_obj = @pdf_generator.execute(html)
 
-        @cloud_storage.save(pdf: pdf_obj, metadata: { user_id: user_id })
+        file_obj = pdf_obj.to_file("tmp/#{uuid}.pdf")
+        File.delete("tmp/#{uuid}.pdf")
+        # FIXME: delete from cache now
+
+        @cloud_storage.save(file: file_obj, uuid: uuid, metadata: {user_id: user_id, bunny: true})
       end
     end
   end
