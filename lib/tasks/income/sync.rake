@@ -1,4 +1,4 @@
-namespace :rent do
+namespace :income do
   namespace :sync do
     # manual_sync and enqueue_sync are identical except enqueue_sync passes the load off to active_job
     desc 'enqueues workers for income_use_case_factory.schedule_sync_cases.execute'
