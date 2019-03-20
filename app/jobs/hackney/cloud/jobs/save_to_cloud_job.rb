@@ -9,7 +9,7 @@ module Hackney
         def perform(bucket_name:, filename:, content:, document_id:)
           url = cloud_provider.upload(bucket_name: bucket_name,
                                       content: content,
-                                      new_filename: filename)
+                                      filename: filename)
 
           document(document_id).update!(url: url, status: UPLOADED_CLOUD_STATUS)
         end
