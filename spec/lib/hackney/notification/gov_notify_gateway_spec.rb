@@ -91,6 +91,7 @@ describe Hackney::Notification::GovNotifyGateway do
     let(:unique_reference) { SecureRandom.uuid }
     let(:fake_response) { OpenStruct.new(reference: unique_reference, postage: 'second') }
 
+
     it 'sends default second class letter' do
       allow(File).to receive(:open).and_return(pdf_file)
       expect(mock_gov_notify).to receive(:send_precompiled_letter).with(
@@ -99,7 +100,7 @@ describe Hackney::Notification::GovNotifyGateway do
 
       subject.send_precompiled_letter(
         unique_reference: unique_reference,
-        letter_pdf_location: pdf_file
+        letter_pdf: pdf_file
       )
     end
   end

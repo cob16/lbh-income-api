@@ -34,11 +34,9 @@ module Hackney
         create_notification_receipt(responce)
       end
 
-      def send_precompiled_letter(unique_reference:, letter_pdf_location:)
-        # letter_pdf = 'spec/test_files/test_pdf.pdf'
-        file = File.open(letter_pdf_location, 'rb')
+      def send_precompiled_letter(unique_reference:, letter_pdf:)
         postage = 'second' # second is the default
-        response = @client.send_precompiled_letter(unique_reference, file, postage)
+        response = @client.send_precompiled_letter(unique_reference, letter_pdf, postage)
         # success returns a reference and postage
         body = "#{response.reference} sent via #{response.postage} postage"
         Hackney::Notification::Domain::NotificationReceipt.new(body: body)
