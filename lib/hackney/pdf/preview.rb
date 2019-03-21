@@ -14,23 +14,25 @@ module Hackney
           template_path: template[:path]
         ).execute(letter_params: leasehold_info)
 
-        uuid = save_to_cache(preview_with_errors[:html])
+        uuid = SecureRandom.uuid
 
-        {
-          case: leasehold_info,
-          template: template,
-          uuid: uuid,
-          preview: preview_with_errors[:html],
-          errors: preview_with_errors[:errors]
-        }
+        save_to_cache(
+          cache_key: uuid,
+          cache_value: {
+            case: leasehold_info,
+            template: template,
+            uuid: uuid,
+            preview: preview_with_errors[:html],
+            errors: preview_with_errors[:errors]
+          }
+        )
       end
 
       private
 
-      def save_to_cache(html)
-        cache_key = SecureRandom.uuid
-        Rails.cache.write(cache_key, html, expires_in: 12.hours)
-        cache_key
+      def save_to_cache(cache_key:, cache_value:)
+        Rails.cache.write(cache_key, cache_value, expires_in: 12.hours)
+        cache_value
       end
 
       def get_leasehold_info(payment_ref)

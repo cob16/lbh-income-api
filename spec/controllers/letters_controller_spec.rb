@@ -65,8 +65,6 @@ describe LettersController, type: :controller do
         expect(response_json['preview']).to eq(preview_html)
         expect(response_json['uuid']).not_to be_nil
         expect(response_json['errors']).to eq([])
-
-        expect(Rails.cache.read(response_json['uuid'])).to eq(preview_html)
       end
     end
 
