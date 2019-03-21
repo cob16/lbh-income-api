@@ -24,7 +24,7 @@ module Hackney
 
         if new_doc.errors.empty?
           file.rewind
-          Hackney::Cloud::Jobs::SaveToCloudJob.perform_later(
+          Hackney::Income::Jobs::SaveAndSendLetterJob.perform_later(
             bucket_name: HACKNEY_BUCKET_DOCS,
             content: file.read,
             filename: filename,

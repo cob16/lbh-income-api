@@ -36,7 +36,7 @@ describe Hackney::Cloud::Storage, type: :model do
       it 'enqueues the job to save the file to the cloud' do
         expect {
           storage.save(file: file, uuid: uuid, metadata: metadata)
-        }.to(have_enqueued_job.with { |params|
+        }.to(have_enqueued_job(Hackney::Income::Jobs::SaveAndSendLetterJob).with { |params|
           file.rewind
           expect(params[:bucket_name]).to eq 'hackney-docs-test'
           expect(params[:filename]).to eq File.basename(file)
