@@ -9,7 +9,6 @@ describe Hackney::Income::ProcessLetter do
   let(:html) { "<h1>#{Faker::RickAndMorty.quote}</h1>" }
   let(:uuid) { SecureRandom.uuid }
 
-
   let(:pdf_file) { File.open('spec/test_files/test_pdf.pdf', 'rb') }
 
   before do
@@ -23,7 +22,7 @@ describe Hackney::Income::ProcessLetter do
     expect(cloud_storage).to receive(:save).with(
       file: pdf_file,
       uuid: uuid,
-      metadata: { user_id: user_id}
+      metadata: { user_id: user_id }
     )
 
     subject.execute(uuid: uuid, user_id: user_id)

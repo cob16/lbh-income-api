@@ -15,7 +15,7 @@ module Hackney
         File.delete("tmp/#{uuid}.pdf")
         Rails.cache.delete(uuid)
 
-        @cloud_storage.save(file: file_obj, uuid: uuid, metadata: {user_id: user_id, bunny: true})
+        @cloud_storage.save(file: file_obj, uuid: uuid, metadata: { user_id: user_id, bunny: true })
       end
     end
   end

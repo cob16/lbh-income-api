@@ -18,7 +18,7 @@ describe Hackney::Cloud::Storage, type: :model do
 
       let(:file) { File.open('spec/test_files/test_pdf.pdf', 'rb') }
       let(:uuid) { SecureRandom.uuid }
-      let(:metadata) { {bunnies: true} }
+      let(:metadata) { { bunnies: true } }
 
       it 'creates a new entry' do
         expect { storage.save(file: file, uuid: uuid, metadata: metadata) }.to(change(Hackney::Cloud::Document, :count).by(1))
@@ -45,6 +45,5 @@ describe Hackney::Cloud::Storage, type: :model do
         })
       end
     end
-
   end
 end

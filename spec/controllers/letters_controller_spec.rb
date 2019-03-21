@@ -29,7 +29,7 @@ describe LettersController, type: :controller do
   describe '#send_letter' do
     # before { post :send_letter, params: { uuid: uuid, user_id: user_id } }
 
-    context 'user "accepts" the preview' do
+    context 'when user "accepts" the preview' do
       let(:user_id) { Faker::Number.number }
       let(:uuid) { SecureRandom.uuid }
 

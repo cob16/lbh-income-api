@@ -13,8 +13,7 @@ describe Hackney::Cloud::Jobs::SaveToCloudJob do
     subject.perform_now(bucket_name: bucket_name,
                         filename: file_name,
                         content: file.read,
-                        document_id: doc.id
-                        )
+                        document_id: doc.id)
 
     uploaded_doc = Hackney::Cloud::Document.find(doc.id)
 

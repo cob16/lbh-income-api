@@ -2,7 +2,7 @@ require 'pdfkit'
 
 module Hackney
   module PDF
-    class Generator # FIXME: generator
+    class Generator
       PDF_STYLES = 'lib/hackney/pdf/templates/pdf_styles.css'.freeze
 
       def execute(html)
