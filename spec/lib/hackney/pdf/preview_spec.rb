@@ -56,11 +56,11 @@ describe Hackney::PDF::Preview do
     preview = subject.execute(payment_ref: test_pay_ref, template_id: test_template_id)
 
     expect(Rails.cache.read(preview[:uuid])).to include(
-                                                  case: test_letter_params,
-                                                  template: test_template,
-                                                  preview: translated_html,
-                                                  errors: []
-                                                )
+      case: test_letter_params,
+      template: test_template,
+      preview: translated_html,
+      errors: []
+    )
   end
 
   context 'when there\'s missing data' do

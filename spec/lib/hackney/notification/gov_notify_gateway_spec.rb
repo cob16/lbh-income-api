@@ -91,7 +91,6 @@ describe Hackney::Notification::GovNotifyGateway do
     let(:unique_reference) { SecureRandom.uuid }
     let(:fake_response) { OpenStruct.new(reference: unique_reference, postage: 'second') }
 
-
     it 'sends default second class letter' do
       allow(File).to receive(:open).and_return(pdf_file)
       expect(mock_gov_notify).to receive(:send_precompiled_letter).with(

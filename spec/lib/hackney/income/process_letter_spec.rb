@@ -14,7 +14,7 @@ describe Hackney::Income::ProcessLetter do
   let(:cache_obj) do
     {
       case: {
-        payment_ref: 12342123,
+        payment_ref: 12_342_123,
         lessee_full_name: 'Mr Philip Banks',
         correspondence_address_1: '508 Saint Cloud Road',
         correspondence_address_2: 'Southwalk',
