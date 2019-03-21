@@ -11,8 +11,9 @@ module Hackney
         pdf_obj = @pdf_generator.execute(html)
 
         file_obj = pdf_obj.to_file("tmp/#{uuid}.pdf")
+
         File.delete("tmp/#{uuid}.pdf")
-        # FIXME: delete from cache now
+        Rails.cache.delete(uuid)
 
         @cloud_storage.save(file: file_obj, uuid: uuid, metadata: {user_id: user_id, bunny: true})
       end
