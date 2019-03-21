@@ -4,8 +4,8 @@ module Hackney
   module Notification
     class GovNotifyGateway
       def initialize(sms_sender_id:, api_key:, send_live_communications:, test_phone_number: nil, test_email_address: nil)
+        @api_key = api_key
         @sms_sender_id = sms_sender_id
-        @client = Notifications::Client.new(api_key)
         @send_live_communications = send_live_communications
 
         # TODO: do something with these
@@ -14,7 +14,7 @@ module Hackney
       end
 
       def send_text_message(phone_number:, template_id:, reference:, variables:)
-        responce = @client.send_sms(
+        responce = client.send_sms(
           phone_number: pre_release_phone_number(phone_number),
           template_id: template_id,
           personalisation: variables,
@@ -25,7 +25,7 @@ module Hackney
       end
 
       def send_email(recipient:, template_id:, reference:, variables:)
-        responce = @client.send_email(
+        responce = client.send_email(
           email_address: pre_release_email(recipient),
           template_id: template_id,
           personalisation: variables,
@@ -36,7 +36,7 @@ module Hackney
 
       def send_precompiled_letter(unique_reference:, letter_pdf:)
         postage = 'second' # second is the default
-        response = @client.send_precompiled_letter(unique_reference, letter_pdf, postage)
+        response = client.send_precompiled_letter(unique_reference, letter_pdf, postage)
         # success returns a reference and postage
         body = "#{response.reference} sent via #{response.postage} postage"
         Hackney::Notification::Domain::NotificationReceipt.new(body: body)
@@ -57,13 +57,17 @@ module Hackney
 
       private
 
+      def client
+        @client ||= Notifications::Client.new(@api_key)
+      end
+
       def create_notification_receipt(responce)
         body = responce.content&.fetch('body', nil)
         Hackney::Notification::Domain::NotificationReceipt.new(body: body)
       end
 
       def all_templates_request
-        @client.get_all_templates.collection.map do |template|
+        client.get_all_templates.collection.map do |template|
           { id: template.id, type: template.type, name: template.name, body: template.body }
         end
       end

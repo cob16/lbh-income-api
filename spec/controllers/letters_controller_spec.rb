@@ -45,9 +45,6 @@ describe LettersController, type: :controller do
 
         post :send_letter, params: { uuid: uuid, user_id: user_id }
       end
-
-      # TODO: expect to send
-      # expect_any_instance_of(Hackney::Notification::SendManualPrecompiledLetter).to receive(:execute)
     end
   end
 

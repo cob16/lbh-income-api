@@ -10,7 +10,7 @@ describe Hackney::Notification::SendManualPrecompiledLetter do
     )
   end
 
-  let(:test_file_path) { 'spec/test_files/test_pdf.pdf' }
+  let(:test_file) { File.open('spec/test_files/test_pdf.pdf', 'rb') }
   let(:unique_reference) { SecureRandom.uuid }
 
   context 'when sending an letters manually' do
@@ -19,7 +19,7 @@ describe Hackney::Notification::SendManualPrecompiledLetter do
         # user_id: user_id,
         # payment_ref: payment_ref,
         unique_reference: unique_reference,
-        letter_pdf_location: test_file_path
+        letter_pdf: test_file
       )
     end
 

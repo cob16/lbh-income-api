@@ -55,7 +55,7 @@ module Hackney
       end
 
       def send_precompiled_letter
-        Hackney::Income::Notification::SendPrecompiledLetter.new(
+        Hackney::Notification::SendManualPrecompiledLetter.new(
           notification_gateway: notifications_gateway,
           add_action_diary_usecase: add_action_diary
         )
