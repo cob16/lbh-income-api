@@ -11,8 +11,28 @@ describe Hackney::Income::ProcessLetter do
 
   let(:pdf_file) { File.open('spec/test_files/test_pdf.pdf', 'rb') }
 
+  let(:cache_obj) do
+    {
+      case: {
+        payment_ref: 12342123,
+        lessee_full_name: 'Mr Philip Banks',
+        correspondence_address_1: '508 Saint Cloud Road',
+        correspondence_address_2: 'Southwalk',
+        correspondence_address_3: 'London',
+        correspondence_postcode: 'SE1 0SW',
+        lessee_short_name: 'Philip',
+        property_address: '1 Hillman St, London, E8 1DY',
+        arrears_letter_1_date: '20th Feb 2019',
+        total_collectable_arrears_balance: '3506.90'
+      },
+      uuid: uuid,
+      preview: html,
+      template: { template_id: Faker::Number.number }
+    }
+  end
+
   before do
-    Rails.cache.write(uuid, html)
+    Rails.cache.write(uuid, cache_obj)
     allow(File).to receive(:delete)
   end
 
@@ -22,7 +42,11 @@ describe Hackney::Income::ProcessLetter do
     expect(cloud_storage).to receive(:save).with(
       file: pdf_file,
       uuid: uuid,
-      metadata: { user_id: user_id }
+      metadata: {
+        user_id: user_id,
+        payment_ref: cache_obj[:case][:payment_ref],
+        template: cache_obj[:template]
+      }
     )
 
     subject.execute(uuid: uuid, user_id: user_id)

@@ -7,7 +7,10 @@ module Hackney
       end
 
       def execute(uuid:, user_id:)
-        html = Rails.cache.read(uuid)
+        cached_letter = Rails.cache.read(uuid)
+
+        html = cached_letter[:preview]
+
         pdf_obj = @pdf_generator.execute(html)
 
         file_obj = pdf_obj.to_file("tmp/#{uuid}.pdf")
@@ -15,7 +18,11 @@ module Hackney
         File.delete("tmp/#{uuid}.pdf")
         Rails.cache.delete(uuid)
 
-        @cloud_storage.save(file: file_obj, uuid: uuid, metadata: { user_id: user_id })
+        @cloud_storage.save(file: file_obj, uuid: uuid, metadata: {
+          user_id: user_id,
+          payment_ref: cached_letter[:case][:payment_ref],
+          template: cached_letter[:template]
+        })
       end
     end
   end
