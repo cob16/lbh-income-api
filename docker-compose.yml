@@ -9,6 +9,7 @@ services:
       - UH_DATABASE_HOST=universal_housing_simulator
       - UH_DATABASE_PORT=1433
       - REDIS_URL=redis:6379
+      - AWS_REGION=eu-west-2
     ports:
       - 3000:3000
     links:
