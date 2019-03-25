@@ -60,6 +60,7 @@ group :development, :test do
   gem 'sqlite3'
   gem 'timecop'
   gem 'webmock'
+  gem 'pry'
 end
 
 group :development do
