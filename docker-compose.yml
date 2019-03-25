@@ -10,6 +10,9 @@ services:
       - UH_DATABASE_PORT=1433
       - REDIS_URL=redis:6379
       - AWS_REGION=eu-west-2
+      - CUSTOMER_MANAGED_KEY=
+      - AWS_SECRET_ACCESS_KEY=
+      - AWS_ACCESS_KEY_ID=
     ports:
       - 3000:3000
     links:

@@ -13,26 +13,19 @@ describe Hackney::Income::Jobs::SendLetterToGovNotifyJob do
 
   after { described_class.perform_now(document_id: document_id) }
 
-  # it do
-  # end
-
   it do
-    expect_any_instance_of(Hackney::Cloud::Adapter::Fake).to receive(:download).and_return('thing')
+    expect_any_instance_of(Aws::S3::Encryption::Client).to receive(:get_object).and_return(AwsResponse.new)
+
     expect_any_instance_of(Hackney::Notification::SendManualPrecompiledLetter).to receive(:execute).once
-    expect_any_instance_of(Hackney::Notification::GovNotifyGateway).to receive(:send_precompiled_letter).once
+    # expect_any_instance_of(Hackney::Notification::GovNotifyGateway).to receive(:send_precompiled_letter).once
   end
 
-
 end
+class AwsResponse
+  def key
+  end
 
-# subject(:s3) { described_class.new(encryption_client_double) }
-#
-# let(:encryption_client_double) { double }
-#
-# it 'downloads a file from S3' do
-#   expect(encryption_client_double).to receive(:get_object).with(
-#     bucket: 'my-bucket',
-#     key: filename
-#   )
-#   s3.download('my-bucket', filename)
-# end
+  def body
+    StringIO.new
+  end
+end

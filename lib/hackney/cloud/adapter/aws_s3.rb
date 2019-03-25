@@ -17,7 +17,7 @@ module Hackney
           resp.successful? || raise('Cloud Storage Error!')
         end
 
-        def download(bucket_name, filename)
+        def download(bucket_name:, filename:)
           client.get_object(bucket: bucket_name, key: filename)
         end
 

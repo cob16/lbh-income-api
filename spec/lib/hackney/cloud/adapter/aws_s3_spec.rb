@@ -1,54 +1,54 @@
 require 'rails_helper'
 
+# Aws::S3::Encryption::Client
+class FakeAwsS3Client < Aws::S3::Encryption::Client
+  def initialize(options = {})
+    binding.pry
+    super
+    @client = Aws::S3::Client.new(stub_responses: true)
+  end
+end
+
 describe Hackney::Cloud::Adapter::AwsS3 do
-  subject(:s3) { described_class.new(encryption_client_double) }
 
-  let(:encryption_client_double) { double }
-
-  let(:filename) { "#{SecureRandom.uuid}.pdf" }
+  let(:s3) { Hackney::Cloud::Adapter::AwsS3.new Hackney::Cloud::EncryptionClient.new(ENV['CUSTOMER_MANAGED_KEY']).create}
+  let(:filename) { "test_key.pdf" }
   let(:file) { File.open('spec/test_files/test_pdf.pdf', 'rb') }
   let(:content) { file.read }
 
-  context 'when there are NOT upload errors' do
-    let(:upload_response) { double(successful?: true) }
+  let(:bucket_name) {'hackney-docs-development'}
 
-    it 'successfully uploads the S3' do
-      allow(encryption_client_double).to receive(:put_object)
-        .with(body: content, bucket: 'my-bucket', key: filename)
-        .and_return(upload_response)
+  context 'upload' do
+
+    it 'is successful' do
+      expect_any_instance_of(Aws::S3::Encryption::Client).to receive(:put_object).and_return(OpenStruct.new(successful?: true))
 
       file.rewind
-
-      expect(
-        s3.upload(bucket_name: 'my-bucket',
+      s3.upload(bucket_name: bucket_name,
                   content: file.read,
                   filename: filename)
-      ).to be true
+    end
+
+    context 'when there are upload errors' do
+      it 'raises an exception' do
+        expect_any_instance_of(Aws::S3::Encryption::Client).to receive(:put_object).and_return(OpenStruct.new(successful?: false))
+
+        expect {
+          s3.upload(bucket_name: bucket_name,
+                    content: file.read,
+                    filename: filename)
+        }.to raise_exception('Cloud Storage Error!')
+      end
     end
   end
 
-  context 'when there are upload errors' do
-    let(:upload_response) { double(successful?: false) }
+  context 'download' do
+    it 'a file from S3' do
+      expect_any_instance_of(Aws::S3::Encryption::Client).to receive(:get_object).and_return(OpenStruct.new(successful?: true))
 
-    it 'raises an exception' do
-      allow(encryption_client_double).to receive(:put_object)
-        .with(body: content, bucket: 'my-bucket', key: filename)
-        .and_return(upload_response)
-
-      file.rewind
-
-      expect {
-        s3.upload(bucket_name: 'my-bucket',
-                  content: file.read,
-                  filename: filename)
-      }.to raise_exception('Cloud Storage Error!')
+      download = s3.download(bucket_name: bucket_name, filename: filename)
+      expect(download.successful?).to be_truthy
     end
   end
 
-  it 'downloads a file from S3' do
-    expect(encryption_client_double).to receive(:get_object)
-      .with(bucket: 'my-bucket', key: filename)
-
-    s3.download('my-bucket', filename)
-  end
 end
