@@ -8,16 +8,12 @@ module Hackney
 
           document = Hackney::Cloud::Document.find(document_id)
 
-          unique_reference = document.uuid
-
-          document_metadata = get_metadata(document)
-
           letter_pdf = pdf_file_from_s3(document.filename)
 
           income_use_case_factory.send_precompiled_letter.execute(
-            user_id: document_metadata[:user_id],
-            payment_ref: document_metadata[:payment_ref],
-            unique_reference: unique_reference,
+            user_id: get_metadata(document)[:user_id],
+            payment_ref: get_metadata(document)[:payment_ref],
+            unique_reference: document.uuid,
             letter_pdf: letter_pdf
           )
         end
@@ -25,12 +21,10 @@ module Hackney
         private
 
         def pdf_file_from_s3(filename)
-          # FIXME:
-          # FIXME:
-          # FIXME:
-          # raise 'implement me'
-
-          Rails.configuration.cloud_adapter.download(HACKNEY_BUCKET_DOCS, filename)
+          Rails.configuration
+               .cloud_adapter
+               .download(bucket_name: HACKNEY_BUCKET_DOCS, filename: filename)
+               .body
         end
 
         def get_metadata(document)
