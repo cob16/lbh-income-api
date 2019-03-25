@@ -5,7 +5,6 @@ module Hackney
         HACKNEY_BUCKET_DOCS = Rails.application.config_for('cloud_storage')['bucket_docs']
 
         def perform(document_id:)
-
           document = Hackney::Cloud::Document.find(document_id)
 
           letter_pdf = pdf_file_from_s3(document.filename)
@@ -34,4 +33,3 @@ module Hackney
     end
   end
 end
-
