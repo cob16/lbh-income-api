@@ -48,3 +48,8 @@ h2 {
   top: 592.12pt;
   z-index: -1;
 }
+td, th {
+  border: 1px solid black;
+  width: 250px;
+  padding: 10px;
+}
