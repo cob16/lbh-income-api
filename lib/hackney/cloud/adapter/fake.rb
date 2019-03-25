@@ -5,6 +5,10 @@ module Hackney
         def upload(bucket_name:, content:, filename:)
           "https://#{bucket_name}/#{filename}"
         end
+
+        def download(bucket_name, filename)
+
+        end
       end
     end
   end
