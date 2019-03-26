@@ -21,16 +21,3 @@ class LettersController < ApplicationController
     )
   end
 end
-
-
-__END__
-FIXME: REMOVE
-document_uuid = params.fetch(:document_uuid)
-letter_document = DocumentCache.find_by(uuid: document_uuid)
-
-s = Hackney::Notification::SendManualPrecompiledLetter.new(
-  user_id: params.fetch(:user_id, nil), payment_ref: params.fetch(:payment_ref),
-  unique_reference: document_uuid, letter_pdf: letter_pdf
-)
-
-s.execute

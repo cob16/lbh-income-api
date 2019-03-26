@@ -6,8 +6,6 @@ module Hackney
         queue_as :cloud_storage
 
         after_perform do |_job|
-          # self.send("callback_#{}")
-          # UserMailer.notify_video_processed(job.arguments.first)
           Rails.logger.info 'after_perform enqueuing send letter to gov notify'
           Hackney::Income::Jobs::SendLetterToGovNotifyJob.perform_later
         end

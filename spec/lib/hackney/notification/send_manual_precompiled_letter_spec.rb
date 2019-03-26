@@ -16,8 +16,6 @@ describe Hackney::Notification::SendManualPrecompiledLetter do
   context 'when sending an letters manually' do
     subject do
       send_precompiled_letter.execute(
-        # user_id: user_id,
-        # payment_ref: payment_ref,
         unique_reference: unique_reference,
         letter_pdf: test_file
       )
