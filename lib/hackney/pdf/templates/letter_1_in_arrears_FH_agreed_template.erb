@@ -20,7 +20,9 @@
 
   <p>
     020 8326 2299 <br>
-    service.charges@hackney.gov.uk
+    service.charges@hackney.gov.uk <br>
+    Your ref: <%= params.fetch(:payment_ref) %> <br>
+    Our ref:
   </p>
 
   <p>
@@ -55,7 +57,7 @@
     <h1>£<%= params.fetch(:total_collectable_arrears_balance) %></h1>
   </div>
 
-  <p class = "red_text">
+  <p class ="red_text">
     <strong>
       It is important that your accounts are kept up to date as non-payment of your service charge
       is a breach of your lease agreement with Hackney Council.
