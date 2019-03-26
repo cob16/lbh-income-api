@@ -12,20 +12,28 @@ describe Hackney::Income::Jobs::SendLetterToGovNotifyJob do
     ).id
   end
 
-  after { described_class.perform_now(document_id: document_id) }
+  before {
+    expect_any_instance_of(Aws::S3::Encryption::Client).to receive(:get_object).and_return(AwsResponse.new)
+  }
+
+  after {
+    described_class.perform_now(document_id: document_id)
+    expect(File).not_to exist('tmp/test_file.txt')
+  }
 
   it do
-    expect_any_instance_of(Aws::S3::Encryption::Client).to receive(:get_object).and_return(AwsResponse.new)
-
     expect_any_instance_of(Hackney::Notification::SendManualPrecompiledLetter).to receive(:execute).once
-    # expect_any_instance_of(Hackney::Notification::GovNotifyGateway).to receive(:send_precompiled_letter).once
   end
-end
 
-class AwsResponse
-  def key; end
+  it do
+    expect_any_instance_of(Hackney::Notification::GovNotifyGateway).to receive(:send_precompiled_letter).once
+  end
 
-  def body
-    StringIO.new
+  class AwsResponse
+    def key; end
+
+    def body
+      StringIO.new
+    end
   end
 end

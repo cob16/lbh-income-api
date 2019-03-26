@@ -2,7 +2,6 @@ require 'rails_helper'
 
 describe Hackney::Income::Jobs::SaveAndSendLetterJob do
   include ActiveJob::TestHelper
-  subject { described_class }
 
   let(:file) { File.open('spec/test_files/test_pdf.pdf', 'rb') }
   let(:bucket_name) { 'my-bucket' }
@@ -11,10 +10,10 @@ describe Hackney::Income::Jobs::SaveAndSendLetterJob do
   let(:doc) { Hackney::Cloud::Document.create(filename: 'my-doc.pdf') }
 
   let(:enqueue_save_send) {
-    subject.perform_now(bucket_name: bucket_name,
-                        filename: file_name,
-                        content: file.read,
-                        document_id: doc.id)
+    described_class.perform_now(bucket_name: bucket_name,
+                                filename: file_name,
+                                content: file.read,
+                                document_id: doc.id)
   }
 
   before {

@@ -18,7 +18,15 @@ module Hackney
         end
 
         def download(bucket_name:, filename:)
-          client.get_object(bucket: bucket_name, key: filename)
+          # NOTE: MUST open and save a tmp file otherwise aws loses the encoding
+          temp_file_location = "tmp/#{filename}"
+          File.open(temp_file_location, 'wb') do |file|
+            client.get_object(bucket: bucket_name, key: filename) do |chunk|
+              file.write(chunk)
+            end
+          end
+
+          temp_file_location
         end
 
         private

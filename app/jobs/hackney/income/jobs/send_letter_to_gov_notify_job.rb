@@ -21,11 +21,13 @@ module Hackney
         private
 
         def pdf_file_from_s3(filename)
-          Rails.configuration
-               .cloud_adapter
-               .download(bucket_name: HACKNEY_BUCKET_DOCS, filename: filename)
-               .body # StringIO
-          # FIXME: FIND OUT if needs to be convered to File object
+          temp_file_location =
+            Rails.configuration
+                 .cloud_adapter
+                 .download(bucket_name: HACKNEY_BUCKET_DOCS, filename: filename)
+          pdf = File.open(temp_file_location)
+          File.delete(temp_file_location)
+          pdf
         end
 
         def get_metadata(document)
