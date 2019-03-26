@@ -8,13 +8,13 @@ module Hackney
 
         def upload(bucket_name:, content:, filename:)
           # Add encrypted item to bucket
-          resp = client.put_object(
+          response = client.put_object(
             body: content,
             bucket: bucket_name,
             key: filename
           )
 
-          resp.successful? || raise('Cloud Storage Error!')
+          parse_response_context(response)
         end
 
         def download(bucket_name:, filename:)
@@ -24,6 +24,15 @@ module Hackney
         private
 
         attr_reader :client
+
+        def parse_response_context(response)
+          http_request_context = response.context.http_request
+
+          uploaded_at = Time.parse(http_request_context.headers['x-amz-date'])
+
+          url = http_request_context.endpoint
+          { url: url, uploaded_at: uploaded_at }
+        end
 
         def customer_managed_key
           Rails.application.config_for('cloud_storage')['customer_managed_key']

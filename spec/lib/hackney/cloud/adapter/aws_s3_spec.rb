@@ -10,24 +10,12 @@ describe Hackney::Cloud::Adapter::AwsS3 do
 
   context 'when upload' do
     it 'is successful' do
-      expect_any_instance_of(Aws::S3::Encryption::Client).to receive(:put_object).and_return(OpenStruct.new(successful?: true))
+      stub_const('Aws::S3::Encryption::Client', AwsEncryptionClientDouble)
+      response = s3.upload(bucket_name: bucket_name,
+                           content: file.read,
+                           filename: filename)
 
-      file.rewind
-      s3.upload(bucket_name: bucket_name,
-                content: file.read,
-                filename: filename)
-    end
-
-    context 'when there are upload errors' do
-      it 'raises an exception' do
-        expect_any_instance_of(Aws::S3::Encryption::Client).to receive(:put_object).and_return(OpenStruct.new(successful?: false))
-
-        expect {
-          s3.upload(bucket_name: bucket_name,
-                    content: file.read,
-                    filename: filename)
-        }.to raise_exception('Cloud Storage Error!')
-      end
+      expect(response).to eq(url: 'blah.com', uploaded_at: Time.new(2002))
     end
   end
 

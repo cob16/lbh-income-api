@@ -8,10 +8,11 @@ module Hackney
           document = Hackney::Cloud::Document.find(document_id)
 
           letter_pdf = pdf_file_from_s3(document.filename)
+          metadata = get_metadata(document)
 
           income_use_case_factory.send_precompiled_letter.execute(
-            user_id: get_metadata(document)[:user_id],
-            payment_ref: get_metadata(document)[:payment_ref],
+            user_id: metadata[:user_id],
+            payment_ref: metadata[:payment_ref],
             unique_reference: document.uuid,
             letter_pdf: letter_pdf
           )
@@ -23,7 +24,8 @@ module Hackney
           Rails.configuration
                .cloud_adapter
                .download(bucket_name: HACKNEY_BUCKET_DOCS, filename: filename)
-               .body
+               .body # StringIO
+          # FIXME: FIND OUT if needs to be convered to File object
         end
 
         def get_metadata(document)

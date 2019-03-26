@@ -17,10 +17,14 @@ describe Hackney::Income::Jobs::SaveAndSendLetterJob do
                         document_id: doc.id)
   }
 
+  before {
+    expect_any_instance_of(Aws::S3::Encryption::Client).to receive(:put_object).and_return(AwsEncryptionClientDouble.new(nil).send(:put_object))
+  }
+
   it 'uploads to clouds' do
     enqueue_save_send
     uploaded_doc = Hackney::Cloud::Document.find(doc.id)
-    expect(uploaded_doc.url).to eq "https://#{bucket_name}/#{file_name}"
+    expect(uploaded_doc.url).to eq 'blah.com'
     expect(uploaded_doc.status).to eq('uploaded')
   end
 
