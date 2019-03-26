@@ -45,6 +45,7 @@ describe Hackney::Cloud::Adapter::AwsS3 do
   it 'downloads a file from S3' do
     expect(encryption_client_double).to receive(:get_object)
       .with(bucket: 'my-bucket', key: filename)
+      .and_return(double(body: double(read: content)))
 
     s3.download('my-bucket', filename)
   end

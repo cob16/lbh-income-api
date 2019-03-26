@@ -20,7 +20,8 @@ module Hackney
         end
 
         def download(bucket_name, filename)
-          client.get_object(bucket: bucket_name, key: filename)
+          s3_obj = client.get_object(bucket: bucket_name, key: filename)
+          s3_obj.body.read
         end
 
         private

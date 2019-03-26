@@ -33,8 +33,20 @@ module Hackney
         { errors: new_doc.errors.full_messages }
       end
 
+      def read_document(uuid)
+        doc = document_model.find_by(uuid: uuid)
+
+        raise 'File does not exist!' if doc.nil?
+
+        response = @storage_adapter.download(HACKNEY_BUCKET_DOCS, doc.uuid + doc.extension)
+
+        { content: response }
+      end
+
       def upload(bucket_name, filename, new_filename)
-        @storage_adapter.upload(bucket_name, filename, new_filename)
+        @storage_adapter.upload(bucket_name: bucket_name,
+                                filename: filename,
+                                new_filename: new_filename)
       end
 
       private

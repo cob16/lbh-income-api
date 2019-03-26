@@ -13,5 +13,7 @@ Rails.application.routes.draw do
     get '/messages/get_templates', to: 'messages#get_templates'
     get '/pdf/get_templates', to: 'pdf#get_templates'
     post '/pdf/send_letter', to: 'pdf#send_letter'
+
+    get '/letters/:uuid', to: 'letters#download'
   end
 end
