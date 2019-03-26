@@ -48,6 +48,11 @@ h2 {
   top: 592.12pt;
   z-index: -1;
 }
+
+.red_text{
+  color: red
+}
+
 td, th {
   border: 1px solid black;
   width: 250px;
