@@ -31,7 +31,11 @@ describe LettersController, type: :controller do
       let(:user_id) { Faker::Number.number }
       let(:uuid) { SecureRandom.uuid }
 
-      xit 'calls succefully' do
+      before do
+        Rails.cache.write(uuid, preview: preview_html, case: { payment_ref: 123 })
+      end
+
+      it 'calls succefully' do
         post :send_letter, params: { uuid: uuid, user_id: user_id }
 
         expect(response).to be_successful
