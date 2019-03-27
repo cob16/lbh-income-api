@@ -17,7 +17,7 @@ module Hackney
         end
 
         def self.read(key)
-          @cloud_storage [key]
+          @cloud_storage[key]
         end
       end
     end
