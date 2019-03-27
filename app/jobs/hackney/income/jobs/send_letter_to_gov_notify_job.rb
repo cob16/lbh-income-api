@@ -21,9 +21,11 @@ module Hackney
         private
 
         def pdf_file_from_s3(filename)
-          Rails.configuration
-               .cloud_adapter
-               .download(bucket_name: HACKNEY_BUCKET_DOCS, filename: filename)
+          tempfile =
+            Rails.configuration
+                 .cloud_adapter
+                 .download(bucket_name: HACKNEY_BUCKET_DOCS, filename: filename)
+          tempfile.is_a?(Tempfile || File) ? tempfile : raise('Unsupported file format')
         end
 
         def get_metadata(document)
