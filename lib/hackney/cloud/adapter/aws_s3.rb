@@ -18,20 +18,22 @@ module Hackney
         end
 
         def download(bucket_name:, filename:)
-          # NOTE: MUST open and save a tmp file otherwise aws loses the encoding
-          temp_file_location = "tmp/#{filename}"
-          File.open(temp_file_location, 'wb') do |file|
-            client.get_object(bucket: bucket_name, key: filename) do |chunk|
-              file.write(chunk)
-            end
-          end
-
-          temp_file_location
+          response = client.get_object(bucket: bucket_name, key: filename)
+          convert_response_to_tempfile(filename: filename, response: response)
         end
 
         private
 
         attr_reader :client
+
+        def convert_response_to_tempfile(filename:, response:)
+          tempfile = Tempfile.open(filename, 'tmp/')
+          tempfile.binmode
+
+          tempfile.write response.body.read
+          tempfile.rewind
+          tempfile
+        end
 
         def parse_response_context(response)
           http_request_context = response.context.http_request

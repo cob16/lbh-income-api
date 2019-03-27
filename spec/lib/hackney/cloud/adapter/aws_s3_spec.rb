@@ -20,11 +20,27 @@ describe Hackney::Cloud::Adapter::AwsS3 do
   end
 
   context 'when download' do
-    it 'a file from S3' do
-      expect_any_instance_of(Aws::S3::Encryption::Client).to receive(:get_object).and_return('tmp/test_key.pdf')
 
+    before do
+      expect_any_instance_of(Aws::S3::Encryption::Client).to receive(:get_object).and_return(ResponseMock.new(content))
+    end
+
+    it 'a file from S3' do
       download = s3.download(bucket_name: bucket_name, filename: filename)
-      expect(download).to eq 'tmp/test_key.pdf'
+      expect(download).to be_a Tempfile
+      expect(download.read).to eq content
     end
   end
+
+  # rubocop:disable RSpec/InstanceVariable
+  class ResponseMock
+    def initialize(content)
+      @content = content
+    end
+
+    def body
+      OpenStruct.new(read: @content)
+    end
+  end
+  # rubocop:enable RSpec/InstanceVariable
 end
