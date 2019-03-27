@@ -18,7 +18,6 @@ describe Hackney::Income::Jobs::SendLetterToGovNotifyJob do
 
   after {
     described_class.perform_now(document_id: document_id)
-    expect(File).not_to exist('tmp/test_file.txt')
   }
 
   it do

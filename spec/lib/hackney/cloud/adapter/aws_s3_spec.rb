@@ -20,7 +20,6 @@ describe Hackney::Cloud::Adapter::AwsS3 do
   end
 
   context 'when download' do
-
     before do
       expect_any_instance_of(Aws::S3::Encryption::Client).to receive(:get_object).and_return(ResponseMock.new(content))
     end
