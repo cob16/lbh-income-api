@@ -24,9 +24,12 @@ module Hackney
 
         if new_doc.errors.empty?
           file.rewind
+          file_content = file.read
+          file_content = file_content.encode("UTF-8", invalid: :replace)
+
           Hackney::Income::Jobs::SaveAndSendLetterJob.perform_later(
             bucket_name: HACKNEY_BUCKET_DOCS,
-            content: file.read,
+            content: file_content,
             filename: filename,
             document_id: new_doc.id
           )
