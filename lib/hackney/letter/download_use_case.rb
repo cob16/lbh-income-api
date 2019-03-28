@@ -5,8 +5,8 @@ module Hackney
         @cloud_storage = cloud_storage
       end
 
-      def execute(uuid:)
-        @cloud_storage.read_document(uuid)
+      def execute(id:)
+        @cloud_storage.read_document(id)
       end
     end
   end

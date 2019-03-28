@@ -1,11 +1,5 @@
 require 'rails_helper'
 
-class CloudDocumentFake
-  def self.find_by(uuid:)
-    Struct.new(:uuid, :extension).new(uuid, '.pdf')
-  end
-end
-
 describe Hackney::Cloud::Storage, type: :model do
   let(:storage) { described_class.new(cloud_adapter_fake, Hackney::Cloud::Document) }
   let(:cloud_adapter_fake) { Rails.configuration.cloud_adapter }
@@ -50,13 +44,13 @@ describe Hackney::Cloud::Storage, type: :model do
     end
 
     describe '#read_document' do
-      let(:filename) { './spec/lib/hackney/cloud/adapter/upload_test.txt' }
-      let(:file_content) { File.read(filename) }
-      let(:uuid) { SecureRandom.uuid }
+      let(:id) { 123 }
 
       context 'when the file exists' do
         it 'retrieves the content' do
           stub_const('Hackney::Cloud::Document', CloudDocumentFake)
+
+          uuid = CloudDocumentFake.find_by(id: id).uuid
 
           expect(cloud_adapter_fake).to receive(:download)
             .with('hackney-docs-test', "#{uuid}.pdf")
@@ -94,5 +88,14 @@ describe Hackney::Cloud::Storage, type: :model do
         }.not_to change(Hackney::Cloud::Document, :count)
       end
     end
+  end
+end
+
+class CloudDocumentFake
+  @document = nil
+
+  def self.find_by(id:)
+    @document ||= Struct.new(:uuid, :extension)
+                        .new(SecureRandom.uuid, '.pdf')
   end
 end

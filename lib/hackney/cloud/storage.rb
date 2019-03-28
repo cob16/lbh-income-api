@@ -23,18 +23,18 @@ module Hackney
                                         status: UPLOADING_CLOUD_STATUS)
 
         if new_doc.errors.empty?
-          Hackney::Cloud::Jobs::SaveToCloudJob.perform_later(bucket_name: HACKNEY_BUCKET_DOCS,
-                                                             filename: filename,
-                                                             new_filename: new_filename,
-                                                             model_document: document_model.name,
-                                                             uuid: uuid)
+          Hackney::Cloud::Jobs::SaveToCloudJob.perform_now(bucket_name: HACKNEY_BUCKET_DOCS,
+                                                           filename: filename,
+                                                           new_filename: new_filename,
+                                                           model_document: document_model.name,
+                                                           uuid: uuid)
         end
 
         { errors: new_doc.errors.full_messages }
       end
 
-      def read_document(uuid)
-        doc = document_model.find_by(uuid: uuid)
+      def read_document(id)
+        doc = document_model.find_by(id: id)
 
         raise 'File does not exist!' if doc.nil?
 

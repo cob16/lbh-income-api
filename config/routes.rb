@@ -14,6 +14,6 @@ Rails.application.routes.draw do
     get '/pdf/get_templates', to: 'pdf#get_templates'
     post '/pdf/send_letter', to: 'pdf#send_letter'
 
-    get '/letters/:uuid', to: 'letters#download'
+    get '/letters/:id/download/', to: 'letters#download'
   end
 end

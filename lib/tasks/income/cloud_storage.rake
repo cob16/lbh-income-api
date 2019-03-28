@@ -35,7 +35,7 @@ namespace :cloud do
   end
 
   def print_last_upload
-    last_upload = Hackney::Cloud::Document.last(id: :asc)
+    last_upload = Hackney::Cloud::Document.last
 
     if last_upload.present?
       puts '- - - Last document upload - - -'
