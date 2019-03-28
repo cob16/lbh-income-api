@@ -37,10 +37,9 @@ module Hackney
 
         def parse_response_context(response)
           http_request_context = response.context.http_request
-
           uploaded_at = Time.parse(http_request_context.headers['x-amz-date'])
-
           url = http_request_context.endpoint
+
           { url: url, uploaded_at: uploaded_at }
         end
 
