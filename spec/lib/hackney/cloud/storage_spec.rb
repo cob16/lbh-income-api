@@ -92,10 +92,10 @@ describe Hackney::Cloud::Storage, type: :model do
 end
 
 class CloudDocumentFake
-  @document = nil
+  @uuid = SecureRandom.uuid
 
   def self.find_by(id:)
-    @document ||= Struct.new(:uuid, :extension)
-                        .new(SecureRandom.uuid, '.pdf')
+    Struct.new(:uuid, :extension)
+          .new(@uuid, '.pdf')
   end
 end
