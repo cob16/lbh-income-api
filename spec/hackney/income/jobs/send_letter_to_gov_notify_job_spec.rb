@@ -13,7 +13,7 @@ describe Hackney::Income::Jobs::SendLetterToGovNotifyJob do
   end
 
   before {
-    expect_any_instance_of(Aws::S3::Encryption::Client).to receive(:get_object).and_return(AwsResponse.new)
+    expect_any_instance_of(Aws::S3::Encryption::Client).to receive(:get_object).and_return(AwsClientResponse.new)
   }
 
   after {
@@ -26,13 +26,5 @@ describe Hackney::Income::Jobs::SendLetterToGovNotifyJob do
 
   it do
     expect_any_instance_of(Hackney::Notification::GovNotifyGateway).to receive(:send_precompiled_letter).once
-  end
-
-  class AwsResponse
-    def key; end
-
-    def body
-      StringIO.new
-    end
   end
 end

@@ -13,3 +13,11 @@ class AwsEncryptionClientDouble
     )
   end
 end
+
+class AwsClientResponse
+  def key; end
+
+  def body
+    StringIO.new
+  end
+end

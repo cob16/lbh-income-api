@@ -5,12 +5,13 @@ module Hackney
         UPLOADED_CLOUD_STATUS = :uploaded
         queue_as :cloud_storage
 
-        after_perform do |_job|
+        after_perform do
           Rails.logger.info 'after_perform enqueuing send letter to gov notify'
-          Hackney::Income::Jobs::SendLetterToGovNotifyJob.perform_later
+          Hackney::Income::Jobs::SendLetterToGovNotifyJob.perform_now(document_id: @document_id)
         end
 
         def perform(bucket_name:, filename:, content:, document_id:)
+          @document_id = document_id
           response = cloud_provider.upload(bucket_name: bucket_name,
                                            content: content,
                                            filename: filename)

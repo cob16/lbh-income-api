@@ -21,13 +21,26 @@ describe Hackney::Income::Jobs::SaveAndSendLetterJob do
   }
 
   it 'uploads to clouds' do
+    expect_any_instance_of(Aws::S3::Encryption::Client).to receive(:get_object).and_return(AwsClientResponse.new)
+    expect_any_instance_of(Hackney::Notification::GovNotifyGateway).to receive(:send_precompiled_letter).once
+
     enqueue_save_send
     uploaded_doc = Hackney::Cloud::Document.find(doc.id)
     expect(uploaded_doc.url).to eq 'blah.com'
     expect(uploaded_doc.status).to eq('uploaded')
   end
 
-  it 'enqueues sending to gov notify for delivery' do
-    expect { enqueue_save_send }.to enqueue_job(Hackney::Income::Jobs::SendLetterToGovNotifyJob)
+  it 'perform_now on SendLetterToGovNotifyJob' do
+    expect_any_instance_of(Hackney::Income::Jobs::SendLetterToGovNotifyJob).to receive(:perform_now).once
+    enqueue_save_send
+  end
+
+  xit 'enqueues sending to gov notify for delivery' do
+    # TODO: problem with perform_later from within SaveAndSendLetterJob
+    expect {
+      enqueue_save_send
+    }.to(have_enqueued_job(Hackney::Income::Jobs::SendLetterToGovNotifyJob).with { |params|
+      expect(params[:document_id]).to be_present
+    })
   end
 end
