@@ -24,12 +24,14 @@ module Hackney
 
         if new_doc.errors.empty?
           file.rewind
-          file_content = file.read
-          file_content = file_content.encode("UTF-8", invalid: :replace)
+
+          sio = StringIO.open do |_s|
+            file.read
+          end
 
           Hackney::Income::Jobs::SaveAndSendLetterJob.perform_later(
             bucket_name: HACKNEY_BUCKET_DOCS,
-            content: file_content,
+            content: sio,
             filename: filename,
             document_id: new_doc.id
           )
@@ -39,6 +41,15 @@ module Hackney
       end
 
       def upload(bucket_name, content, filename)
+        if content.is_a? StringIO
+          sio = Tempfile.open(filename, 'tmp/')
+          sio.binmode
+
+          sio.write content.read
+          sio.rewind
+          content = sio
+        end
+
         @storage_adapter.upload(bucket_name: bucket_name, content: content, filename: filename)
       end
 
