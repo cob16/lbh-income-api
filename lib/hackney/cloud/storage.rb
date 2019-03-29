@@ -9,9 +9,8 @@ module Hackney
         @document_model = document_model
       end
 
-      def save(file:, uuid:, metadata:)
-        extension = File.extname(file)
-        filename = File.basename(file)
+      def save(letter_html:, uuid:, filename:, metadata:)
+        extension = File.extname(filename)
 
         new_doc = document_model.create(
           filename: filename,
@@ -23,15 +22,9 @@ module Hackney
         )
 
         if new_doc.errors.empty?
-          file.rewind
-
-          sio = StringIO.open do |_s|
-            file.read
-          end
-
           Hackney::Income::Jobs::SaveAndSendLetterJob.perform_later(
             bucket_name: HACKNEY_BUCKET_DOCS,
-            content: sio,
+            letter_html: letter_html,
             filename: filename,
             document_id: new_doc.id
           )

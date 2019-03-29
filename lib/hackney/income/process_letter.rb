@@ -1,25 +1,23 @@
 module Hackney
   module Income
     class ProcessLetter
-      def initialize(pdf_generator:, cloud_storage:)
-        @pdf_generator = pdf_generator
+      def initialize(cloud_storage:)
         @cloud_storage = cloud_storage
       end
 
       def execute(uuid:, user_id:)
-        cached_letter = pop_from_cache(uuid)
+        cached_letter_object = pop_from_cache(uuid)
 
-        html = cached_letter[:preview]
-
-        file_obj = generate_pdf_binary(html, uuid)
+        letter_html = cached_letter_object[:preview]
 
         @cloud_storage.save(
-          file: file_obj,
+          letter_html: letter_html,
+          filename:"#{uuid}.pdf",
           uuid: uuid,
           metadata: {
             user_id: user_id,
-            payment_ref: cached_letter[:case][:payment_ref],
-            template: cached_letter[:template]
+            payment_ref: cached_letter_object[:case][:payment_ref],
+            template: cached_letter_object[:template]
           }
         )
       end
@@ -30,13 +28,6 @@ module Hackney
         result = Rails.cache.read(uuid)
         Rails.cache.delete(uuid)
         result
-      end
-
-      def generate_pdf_binary(html, uuid)
-        pdf_obj = @pdf_generator.execute(html)
-        file_obj = pdf_obj.to_file("tmp/#{uuid}.pdf")
-        File.delete("tmp/#{uuid}.pdf")
-        file_obj
       end
     end
   end

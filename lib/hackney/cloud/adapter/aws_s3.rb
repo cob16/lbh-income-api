@@ -6,10 +6,10 @@ module Hackney
           @client = encryption_client
         end
 
-        def upload(bucket_name:, content:, filename:)
+        def upload(bucket_name:, binary_letter_content:, filename:)
           # Add encrypted item to bucket
           response = client.put_object(
-            body: content,
+            body: binary_letter_content,
             bucket: bucket_name,
             key: filename
           )

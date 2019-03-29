@@ -12,16 +12,19 @@ describe Hackney::Cloud::Storage, type: :model do
     end
   end
 
+
   describe '#save' do
     context 'when the file exists' do
       before { ActiveJob::Base.queue_adapter = :test }
 
       let(:file) { File.open('spec/test_files/test_pdf.pdf', 'rb') }
+      let(:filename) { File.basename(file) }
       let(:uuid) { SecureRandom.uuid }
       let(:metadata) { { bunnies: true } }
+      let(:letter_html) { "<h1>#{Faker::RickAndMorty.quote}</h1>" }
 
       it 'creates a new entry' do
-        expect { storage.save(file: file, uuid: uuid, metadata: metadata) }.to(change(Hackney::Cloud::Document, :count).by(1))
+        expect { storage.save(letter_html: letter_html, uuid: uuid, filename: filename, metadata: metadata) }.to(change(Hackney::Cloud::Document, :count).by(1))
 
         doc = Hackney::Cloud::Document.last
 
@@ -35,13 +38,13 @@ describe Hackney::Cloud::Storage, type: :model do
 
       it 'enqueues the job to save the file to the cloud' do
         expect {
-          storage.save(file: file, uuid: uuid, metadata: metadata)
+          storage.save(letter_html: letter_html, uuid: uuid, filename: filename, metadata: metadata)
         }.to(have_enqueued_job(Hackney::Income::Jobs::SaveAndSendLetterJob).with { |params|
           file.rewind
           expect(params[:bucket_name]).to eq 'hackney-docs-test'
           expect(params[:filename]).to eq File.basename(file)
           expect(params[:document_id]).not_to be_nil
-          expect(params[:content]).to eq file.read
+          expect(params[:letter_html]).to eq letter_html
         })
       end
     end

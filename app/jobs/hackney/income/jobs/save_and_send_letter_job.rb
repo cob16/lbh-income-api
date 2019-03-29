@@ -10,13 +10,15 @@ module Hackney
           Hackney::Income::Jobs::SendLetterToGovNotifyJob.perform_now(document_id: @document_id)
         end
 
-        def perform(bucket_name:, filename:, content:, document_id:)
+        def perform(letter_html:, bucket_name:, filename:, document_id:)
           @document_id = document_id
+          binary_letter_content = generate_pdf_binary(letter_html, document.uuid)
+
           response = cloud_provider.upload(bucket_name: bucket_name,
-                                           content: content,
+                                           binary_letter_content: binary_letter_content,
                                            filename: filename)
 
-          document(document_id).update!(url: response[:url], status: UPLOADED_CLOUD_STATUS)
+          document.update!(url: response[:url], status: UPLOADED_CLOUD_STATUS)
         end
 
         def cloud_provider
@@ -25,8 +27,18 @@ module Hackney
 
         private
 
-        def document(document_id)
-          Hackney::Cloud::Document.find(document_id)
+
+        def document
+          @document ||= Hackney::Cloud::Document.find(@document_id)
+        end
+
+        def generate_pdf_binary(letter_html, uuid)
+          @pdf_generator = Hackney::PDF::Generator.new
+          pdf_obj = @pdf_generator.execute(letter_html)
+          file_obj = pdf_obj.to_file("tmp/#{uuid}.pdf")
+# FIXME: USE Tempfile, close and unlink
+          File.delete("tmp/#{uuid}.pdf")
+          file_obj
         end
       end
     end

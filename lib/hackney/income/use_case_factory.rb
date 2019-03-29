@@ -49,7 +49,6 @@ module Hackney
 
       def send_letter
         Hackney::Income::ProcessLetter.new(
-          pdf_generator: Hackney::PDF::Generator.new,
           cloud_storage: cloud_storage
         )
       end

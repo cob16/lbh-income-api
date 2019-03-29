@@ -4,6 +4,7 @@ module Hackney
       class SendLetterToGovNotifyJob < ApplicationJob
         HACKNEY_BUCKET_DOCS = Rails.application.config_for('cloud_storage')['bucket_docs']
 
+
         def perform(document_id:)
           Rails.logger.info "JOB: Performing SendLetterToGovNotifyJob on document_id: #{document_id}"
 

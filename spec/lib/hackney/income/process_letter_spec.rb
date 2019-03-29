@@ -1,10 +1,9 @@
 require 'rails_helper'
 
 describe Hackney::Income::ProcessLetter do
-  let(:pdf_generator) { instance_double(Hackney::PDF::Generator) }
   let(:cloud_storage) { instance_double(Hackney::Cloud::Storage) }
 
-  let(:subject) { described_class.new(pdf_generator: pdf_generator, cloud_storage: cloud_storage) }
+  let(:subject) { described_class.new(cloud_storage: cloud_storage) }
   let(:user_id) { Faker::Number.number }
   let(:html) { "<h1>#{Faker::RickAndMorty.quote}</h1>" }
   let(:uuid) { SecureRandom.uuid }
@@ -37,24 +36,16 @@ describe Hackney::Income::ProcessLetter do
   end
 
   it 'calls storage.save' do
-    expect(pdf_generator).to receive(:execute).with(html).and_return(FakePDFKit.new(pdf_file))
-
     expect(cloud_storage).to receive(:save).with(
-      file: pdf_file,
       uuid: uuid,
+      letter_html: html,
+      filename:"#{uuid}.pdf",
       metadata: {
         user_id: user_id,
         payment_ref: cache_obj[:case][:payment_ref],
         template: cache_obj[:template]
       }
     )
-
-    subject.execute(uuid: uuid, user_id: user_id)
-  end
-
-  it 'creates pdf' do
-    allow(cloud_storage).to receive(:save)
-    expect(pdf_generator).to receive(:execute).with(html).and_return(FakePDFKit.new(pdf_file))
 
     subject.execute(uuid: uuid, user_id: user_id)
   end
