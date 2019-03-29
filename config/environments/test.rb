@@ -46,5 +46,8 @@ Rails.application.configure do
   config.active_job.queue_adapter = :test
 
   # Configure the Cloud storage service
-  config.cloud_adapter = Hackney::Cloud::Adapter::Fake.new
+  # config.cloud_adapter = Hackney::Cloud::Adapter::Fake.new
+
+  encryption_client = Hackney::Cloud::EncryptionClient.new(config_for('cloud_storage')['customer_managed_key']).create
+  config.cloud_adapter = Hackney::Cloud::Adapter::AwsS3.new(encryption_client)
 end

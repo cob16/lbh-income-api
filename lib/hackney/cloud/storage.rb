@@ -9,32 +9,41 @@ module Hackney
         @document_model = document_model
       end
 
-      def save(filename)
-        raise "No such file: #{filename}" unless File.exist?(filename)
-
-        uuid = SecureRandom.uuid
+      def save(letter_html:, uuid:, filename:, metadata:)
         extension = File.extname(filename)
-        new_filename = "#{uuid}#{extension}"
 
-        new_doc = document_model.create(filename: filename,
-                                        uuid: uuid,
-                                        extension: extension,
-                                        mime_type: Rack::Mime.mime_type(extension),
-                                        status: UPLOADING_CLOUD_STATUS)
+        new_doc = document_model.create(
+          filename: filename,
+          uuid: uuid,
+          extension: extension,
+          mime_type: Rack::Mime.mime_type(extension),
+          status: UPLOADING_CLOUD_STATUS,
+          metadata: metadata.to_json
+        )
 
         if new_doc.errors.empty?
-          Hackney::Cloud::Jobs::SaveToCloudJob.perform_later(bucket_name: HACKNEY_BUCKET_DOCS,
-                                                             filename: filename,
-                                                             new_filename: new_filename,
-                                                             model_document: document_model.name,
-                                                             uuid: uuid)
+          Hackney::Income::Jobs::SaveAndSendLetterJob.perform_later(
+            bucket_name: HACKNEY_BUCKET_DOCS,
+            letter_html: letter_html,
+            filename: filename,
+            document_id: new_doc.id
+          )
         end
 
         { errors: new_doc.errors.full_messages }
       end
 
-      def upload(bucket_name, filename, new_filename)
-        @storage_adapter.upload(bucket_name, filename, new_filename)
+      def upload(bucket_name, content, filename)
+        if content.is_a? StringIO
+          sio = Tempfile.open(filename, 'tmp/')
+          sio.binmode
+
+          sio.write content.read
+          sio.rewind
+          content = sio
+        end
+
+        @storage_adapter.upload(bucket_name: bucket_name, content: content, filename: filename)
       end
 
       private
