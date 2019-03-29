@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe PdfController, type: :controller do
+describe LettersController, type: :controller do
   let(:template_path) { 'path/to/temp' }
   let(:template_id) { 'letter_1_template' }
   let(:template_name) { 'Letter 1 template' }
@@ -27,19 +27,45 @@ describe PdfController, type: :controller do
   end
 
   describe '#send_letter' do
+    context 'when user "accepts" the preview' do
+      let(:user_id) { Faker::Number.number }
+      let(:uuid) { SecureRandom.uuid }
+
+      before do
+        Rails.cache.write(uuid, preview: preview_html, case: { payment_ref: 123 })
+      end
+
+      it 'calls succefully' do
+        post :send_letter, params: { uuid: uuid, user_id: user_id }
+
+        expect(response).to be_successful
+      end
+
+      it 'calls the usecase' do
+        expect_any_instance_of(Hackney::Income::ProcessLetter)
+          .to receive(:execute).with(uuid: uuid, user_id: user_id)
+
+        post :send_letter, params: { uuid: uuid, user_id: user_id }
+      end
+    end
+  end
+
+  describe '#create' do
     context 'when all data is is found' do
       let(:found_payment_ref) { Faker::Number.number(4) }
+      let(:preview_uuid) { SecureRandom.uuid }
 
-      it 'generates pdf preview with template details, case and empty errors' do
+      it 'generates pdf(html) preview with template details, case and empty errors' do
         expect_any_instance_of(Hackney::PDF::PreviewGenerator).to receive(:execute).and_return(html: preview_html, errors: [])
 
-        post :send_letter, params: { payment_ref: found_payment_ref, template_id: template_id }
+        post :create, params: { payment_ref: found_payment_ref, template_id: template_id }
 
         response_json = JSON.parse(response.body)
 
         expect(response_json['case']['payment_ref']).to eq(found_payment_ref)
         expect(response_json['template']['id']).to eq(template_id)
         expect(response_json['preview']).to eq(preview_html)
+        expect(response_json['uuid']).not_to be_nil
         expect(response_json['errors']).to eq([])
       end
     end
@@ -49,7 +75,7 @@ describe PdfController, type: :controller do
       let(:missing_mandatory_data) { 222 }
 
       it 'no errors when only optional data is missing' do
-        post :send_letter, params: { payment_ref: missing_optional_data, template_id: template_id }
+        post :create, params: { payment_ref: missing_optional_data, template_id: template_id }
 
         response_json = JSON.parse(response.body)
 
@@ -57,7 +83,7 @@ describe PdfController, type: :controller do
       end
 
       it 'returns errors when mandatory data is missing' do
-        post :send_letter, params: { payment_ref: missing_mandatory_data, template_id: template_id }
+        post :create, params: { payment_ref: missing_mandatory_data, template_id: template_id }
 
         response_json = JSON.parse(response.body)
 
@@ -72,7 +98,7 @@ describe PdfController, type: :controller do
       let(:not_found_payment_ref) { 123 }
 
       it 'returns 404' do
-        post :send_letter, params: { payment_ref: not_found_payment_ref, template_id: template_id }
+        post :create, params: { payment_ref: not_found_payment_ref, template_id: template_id }
 
         expect(response.status).to eq(404)
       end

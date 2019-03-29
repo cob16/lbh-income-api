@@ -52,7 +52,7 @@ module Hackney
         Hackney::Notification::Domain::NotificationReceipt.new(body: body)
       end
 
-      def send_precompiled_letter(unique_reference:, letter_pdf_location:)
+      def send_precompiled_letter(unique_reference:, letter_pdf:)
         # TODO: build from actual response
         # @last_precompiled_letter = 'meh'
         # body = 'meh'

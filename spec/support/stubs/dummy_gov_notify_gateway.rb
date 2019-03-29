@@ -16,7 +16,7 @@ module Hackney
         Hackney::Notification::Domain::NotificationReceipt.new(body: 'DummyGovNotifyGateway body')
       end
 
-      def send_precompiled_letter(unique_reference:, letter_pdf_location:)
+      def send_precompiled_letter(unique_reference:, letter_pdf:)
         Hackney::Notification::Domain::NotificationReceipt.new(body: 'DummyGovNotifyGateway body')
       end
 
