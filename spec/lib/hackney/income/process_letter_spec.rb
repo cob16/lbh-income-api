@@ -39,7 +39,7 @@ describe Hackney::Income::ProcessLetter do
     expect(cloud_storage).to receive(:save).with(
       uuid: uuid,
       letter_html: html,
-      filename:"#{uuid}.pdf",
+      filename: "#{uuid}.pdf",
       metadata: {
         user_id: user_id,
         payment_ref: cache_obj[:case][:payment_ref],
@@ -48,15 +48,5 @@ describe Hackney::Income::ProcessLetter do
     )
 
     subject.execute(uuid: uuid, user_id: user_id)
-  end
-end
-
-class FakePDFKit
-  def initialize(return_file)
-    @return_file = return_file
-  end
-
-  def to_file(html)
-    @return_file
   end
 end

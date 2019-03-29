@@ -12,7 +12,7 @@ module Hackney
 
         @cloud_storage.save(
           letter_html: letter_html,
-          filename:"#{uuid}.pdf",
+          filename: "#{uuid}.pdf",
           uuid: uuid,
           metadata: {
             user_id: user_id,

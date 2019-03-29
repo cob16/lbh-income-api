@@ -3,12 +3,12 @@ require 'rails_helper'
 describe Hackney::Income::Jobs::SaveAndSendLetterJob do
   include ActiveJob::TestHelper
 
-  # let(:file) { File.open('spec/test_files/test_pdf.pdf', 'rb') }
+  let(:pdf_file) { File.open('spec/test_files/test_pdf.pdf', 'rb') }
   # let(:stringio) { StringIO.new(file.read)}
   let(:file_name) { 'test_pdf.pdf' }
   let(:bucket_name) { 'my-bucket' }
   let(:letter_html) { "<h1>#{Faker::RickAndMorty.quote}</h1>" }
-
+  let(:uuid) { SecureRandom.uuid }
   let(:doc) { Hackney::Cloud::Document.create(filename: 'my-doc.pdf') }
 
   let(:enqueue_save_send) {
@@ -37,14 +37,16 @@ describe Hackney::Income::Jobs::SaveAndSendLetterJob do
     enqueue_save_send
   end
 
-# TODO:
-    # expect(pdf_generator).to receive(:execute).with(html).and_return(FakePDFKit.new(pdf_file))
-  # it 'creates pdf' do
-  #   allow(cloud_storage).to receive(:save)
-  #   expect(pdf_generator).to receive(:execute).with(html).and_return(FakePDFKit.new(pdf_file))
+  it 'creates pdf' do
+    # expect_any_instance_of(Aws::S3::Encryption::Client).to receive(:put_object).and_return(AwsEncryptionClientDouble.new(nil).send(:put_object))
+    expect_any_instance_of(Aws::S3::Encryption::Client).to receive(:get_object).and_return(AwsClientResponse.new)
+    expect_any_instance_of(Hackney::Notification::GovNotifyGateway).to receive(:send_precompiled_letter).once
 
-  #   subject.execute(uuid: uuid, user_id: user_id)
-  # end
+    allow(File).to receive(:delete)
+    expect_any_instance_of(Hackney::PDF::Generator).to receive(:execute).with(letter_html).and_return(FakePDFKit.new(pdf_file))
+    # expect(Hackney::PDF::Generator.new).to receive(:execute).with(letter_html) # .and_return(FakePDFKit.new(pdf_file))
+    enqueue_save_send
+  end
 
   xit 'enqueues sending to gov notify for delivery' do
     # TODO: problem with perform_later from within SaveAndSendLetterJob
@@ -53,5 +55,15 @@ describe Hackney::Income::Jobs::SaveAndSendLetterJob do
     }.to(have_enqueued_job(Hackney::Income::Jobs::SendLetterToGovNotifyJob).with { |params|
       expect(params[:document_id]).to be_present
     })
+  end
+end
+
+class FakePDFKit
+  def initialize(return_file)
+    @return_file = return_file
+  end
+
+  def to_file(html)
+    @return_file
   end
 end

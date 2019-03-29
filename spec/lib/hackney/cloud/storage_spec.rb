@@ -12,7 +12,6 @@ describe Hackney::Cloud::Storage, type: :model do
     end
   end
 
-
   describe '#save' do
     context 'when the file exists' do
       before { ActiveJob::Base.queue_adapter = :test }
