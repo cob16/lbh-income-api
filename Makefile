@@ -14,6 +14,14 @@ bundle:
 .PHONY: setup
 setup: docker-build bundle
 
+.PHONY: update-simulator
+update-simulator:
+	docker kill $(docker ps --filter "name=universal_housing_simulator" -q) || :
+	docker container prune -f
+	docker image prune -f
+	aws ecr get-login --no-include-email | sh
+	docker-compose pull universal_housing_simulator
+
 .PHONY: serve
 serve:
 	-rm tmp/pids/server.pid &> /dev/null
