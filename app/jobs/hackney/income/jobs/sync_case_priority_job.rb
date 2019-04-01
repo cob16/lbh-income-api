@@ -3,7 +3,11 @@ module Hackney
   module Income
     module Jobs
       class SyncCasePriorityJob < ApplicationJob
+        include Sidekiq::Worker
         queue_as :uh_sync_cases
+
+        # will retry 5 times and then disappear
+        sidekiq_options retry: 5, dead: false
 
         def perform(tenancy_ref:)
           if run_tenancy_sync_jobs?
