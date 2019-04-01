@@ -1,10 +1,15 @@
 namespace :cloud do
   desc 'Upload a Document to the cloud and keep track of it in Cloud::Document table'
-  task :save, [:filename] do |_task, args|
+  task :save, [:filename] do |_task, _args|
     puts 'Saving to the cloud'
 
     storage = Hackney::Cloud::Storage.new(Rails.configuration.cloud_adapter, Hackney::Cloud::Document)
-    response = storage.save(args[:filename])
+    uuid = SecureRandom.uuid
+
+    response = storage.save(letter_html: '<h1>Hello Hackney</h1>',
+                            uuid: uuid,
+                            filename: uuid,
+                            metadata: {})
 
     if response[:errors].empty?
       puts 'File successfully saved.'

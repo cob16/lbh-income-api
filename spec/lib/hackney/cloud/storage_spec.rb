@@ -11,10 +11,9 @@ describe Hackney::Cloud::Storage, type: :model do
       storage.upload('my-bucket', 'my-file', 'new-filename')
     end
   end
+
   describe '#save' do
     context 'when the file exists' do
-      # let(:filename) { './spec/lib/hackney/cloud/adapter/upload_test.txt' }
-
       let(:file) { File.open('spec/test_files/test_pdf.pdf', 'rb') }
       let(:filename) { File.basename(file) }
       let(:uuid) { SecureRandom.uuid }
@@ -54,23 +53,13 @@ describe Hackney::Cloud::Storage, type: :model do
         it 'retrieves the content' do
           stub_const('Hackney::Cloud::Document', CloudDocumentFake)
 
-          uuid = CloudDocumentFake.find_by(id: id).uuid
+          uuid = CloudDocumentFake.find(id).uuid
 
           expect(cloud_adapter_fake).to receive(:download)
-            .with('hackney-docs-test', "#{uuid}.pdf")
+            .with(bucket_name: 'hackney-docs-test', filename: "#{uuid}.pdf")
             .and_return('Hello Hackney')
 
           expect(storage.read_document(uuid)).to eq(content: 'Hello Hackney')
-        end
-      end
-
-      context 'when the file does NOT exists' do
-        let(:non_existent_uuid) { 'non_existent_uuid' }
-
-        it 'raises an exception' do
-          expect {
-            storage.read_document(non_existent_uuid)
-          }.to raise_exception('File does not exist!')
         end
       end
     end
@@ -80,7 +69,7 @@ end
 class CloudDocumentFake
   @uuid = SecureRandom.uuid
 
-  def self.find_by(id:)
+  def self.find(_id)
     Struct.new(:uuid, :extension)
           .new(@uuid, '.pdf')
   end

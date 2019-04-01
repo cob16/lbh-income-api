@@ -17,11 +17,6 @@ module Hackney
           parse_response_context(response)
         end
 
-        # def download(bucket_name, filename)
-        #   s3_obj = client.get_object(bucket: bucket_name, key: filename)
-        #   s3_obj.body.read
-        # end
-
         def download(bucket_name:, filename:)
           response = client.get_object(bucket: bucket_name, key: filename)
           convert_response_to_tempfile(filename: filename, response: response)

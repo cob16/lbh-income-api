@@ -34,11 +34,8 @@ module Hackney
       end
 
       def read_document(id)
-        doc = document_model.find_by(id: id)
-
-        raise 'File does not exist!' if doc.nil?
-
-        response = @storage_adapter.download(HACKNEY_BUCKET_DOCS, doc.uuid + doc.extension)
+        doc = document_model.find(id)
+        response = @storage_adapter.download(bucket_name: HACKNEY_BUCKET_DOCS, filename: doc.uuid + doc.extension)
 
         { content: response }
       end
