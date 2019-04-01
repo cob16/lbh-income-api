@@ -10,13 +10,11 @@ module Hackney
         tenancy_refs_in_legal_process = @legal_cases_gateway.get_tenancies_for_legal_process_for_patch(patch: patch)
         tenancy_refs_not_found = []
         tenancy_refs_in_legal_process.each do |ref|
-          begin
-            @user_assignment_gateway.assign_user(tenancy_ref: ref, user_id: user_id)
-          rescue
-            tenancy_refs_not_found << ref
-          end
+          @user_assignment_gateway.assign_user(tenancy_ref: ref, user_id: user_id)
+        rescue StandardError
+          tenancy_refs_not_found << ref
         end
-        {tenancy_refs_in_legal_process: tenancy_refs_in_legal_process, tenancy_refs_not_found: tenancy_refs_not_found}
+        { tenancy_refs_in_legal_process: tenancy_refs_in_legal_process, tenancy_refs_not_found: tenancy_refs_not_found }
       end
     end
   end
