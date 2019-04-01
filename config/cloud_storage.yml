@@ -11,5 +11,5 @@ production:
   customer_managed_key: <%= ENV['CUSTOMER_MANAGED_KEY'] %>
 
 staging:
-  bucket_docs: hackney-docs-staging
+  bucket_docs: hackney-income-document-staging
   customer_managed_key: <%= ENV['CUSTOMER_MANAGED_KEY'] %>
