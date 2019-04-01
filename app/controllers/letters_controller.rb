@@ -1,9 +1,23 @@
+require "#{Rails.root}/lib/hackney/service_charge/exceptions/service_charge_exception"
+
 class LettersController < ApplicationController
-  LETTER_FILE_NAME = 'letter.pdf'.freeze
+  def get_templates
+    render json: pdf_use_case_factory.get_templates.execute
+  end
 
-  def download
-    response = letter_use_case_factory.download.execute(id: params.fetch(:id))
+  def create
+    render json: pdf_use_case_factory.get_preview.execute(
+      payment_ref: params.fetch(:payment_ref),
+      template_id: params.fetch(:template_id)
+    )
+  rescue Hackney::ServiceCharge::Exceptions::ServiceChargeException
+    head(404)
+  end
 
-    send_data response[:content], filename: LETTER_FILE_NAME
+  def send_letter
+    income_use_case_factory.send_letter.execute(
+      uuid: params.fetch(:uuid),
+      user_id: params.fetch(:user_id)
+    )
   end
 end

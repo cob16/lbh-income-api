@@ -99,7 +99,7 @@ describe Hackney::Notification::GovNotifyGateway do
 
       subject.send_precompiled_letter(
         unique_reference: unique_reference,
-        letter_pdf_location: pdf_file
+        letter_pdf: pdf_file
       )
     end
   end

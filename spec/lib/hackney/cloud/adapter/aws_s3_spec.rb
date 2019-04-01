@@ -1,52 +1,46 @@
 require 'rails_helper'
 
 describe Hackney::Cloud::Adapter::AwsS3 do
-  subject(:s3) { described_class.new(encryption_client_double) }
+  let(:s3) { described_class.new Hackney::Cloud::EncryptionClient.new(ENV['CUSTOMER_MANAGED_KEY']).create }
+  let(:filename) { 'test_key.pdf' }
+  let(:file) { File.open('spec/test_files/test_pdf.pdf', 'rb') }
+  let(:binary_letter_content) { file.read }
 
-  let(:encryption_client_double) { double }
+  let(:bucket_name) { 'hackney-docs-development' }
 
-  let(:new_filename) { 'new_filename.txt' }
+  describe '#upload' do
+    it 'is successful' do
+      stub_const('Aws::S3::Encryption::Client', AwsEncryptionClientDouble)
+      response = s3.upload(bucket_name: bucket_name,
+                           binary_letter_content: file.read,
+                           filename: filename)
 
-  let(:filename) { './spec/lib/hackney/cloud/adapter/upload_test.txt' }
-  let(:content) { File.read(filename) }
-
-  context 'when there are NOT upload errors' do
-    let(:upload_response) { double(successful?: true) }
-
-    it 'successfully uploads the S3' do
-      allow(encryption_client_double).to receive(:put_object)
-        .with(body: content, bucket: 'my-bucket', key: new_filename)
-        .and_return(upload_response)
-
-      expect(
-        s3.upload(bucket_name: 'my-bucket',
-                  filename: filename,
-                  new_filename: new_filename)
-      ).to be true
+      expect(response).to eq(url: 'blah.com', uploaded_at: Time.new(2002))
     end
   end
 
-  context 'when there are upload errors' do
-    let(:upload_response) { double(successful?: false) }
+  describe '#download' do
+    before do
+      expect_any_instance_of(Aws::S3::Encryption::Client).to receive(:get_object).and_return(ResponseMock.new(binary_letter_content))
+    end
 
-    it 'raises an exception' do
-      allow(encryption_client_double).to receive(:put_object)
-        .with(body: content, bucket: 'my-bucket', key: new_filename)
-        .and_return(upload_response)
+    it 'is successful' do
+      download = s3.download(bucket_name: bucket_name, filename: filename)
 
-      expect {
-        s3.upload(bucket_name: 'my-bucket',
-                  filename: filename,
-                  new_filename: new_filename)
-      }.to raise_exception('Cloud Storage Error!')
+      expect(download).to be_a Tempfile
+      expect(download.read).to eq binary_letter_content
     end
   end
 
-  it 'downloads a file from S3' do
-    expect(encryption_client_double).to receive(:get_object)
-      .with(bucket: 'my-bucket', key: filename)
-      .and_return(double(body: double(read: content)))
+  # rubocop:disable RSpec/InstanceVariable
+  class ResponseMock
+    def initialize(binary_letter_content)
+      @binary_letter_content = binary_letter_content
+    end
 
-    s3.download('my-bucket', filename)
+    def body
+      OpenStruct.new(read: @binary_letter_content)
+    end
   end
+  # rubocop:enable RSpec/InstanceVariable
 end

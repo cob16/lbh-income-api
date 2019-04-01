@@ -6,27 +6,47 @@ module Hackney
           @client = encryption_client
         end
 
-        def upload(bucket_name:, filename:, new_filename:)
-          content = File.read(filename)
-
+        def upload(bucket_name:, binary_letter_content:, filename:)
           # Add encrypted item to bucket
-          resp = client.put_object(
-            body: content,
+          response = client.put_object(
+            body: binary_letter_content,
             bucket: bucket_name,
-            key: new_filename
+            key: filename
           )
 
-          resp.successful? || raise('Cloud Storage Error!')
+          parse_response_context(response)
         end
 
-        def download(bucket_name, filename)
-          s3_obj = client.get_object(bucket: bucket_name, key: filename)
-          s3_obj.body.read
+        # def download(bucket_name, filename)
+        #   s3_obj = client.get_object(bucket: bucket_name, key: filename)
+        #   s3_obj.body.read
+        # end
+
+        def download(bucket_name:, filename:)
+          response = client.get_object(bucket: bucket_name, key: filename)
+          convert_response_to_tempfile(filename: filename, response: response)
         end
 
         private
 
         attr_reader :client
+
+        def convert_response_to_tempfile(filename:, response:)
+          tempfile = Tempfile.open(filename, 'tmp/')
+          tempfile.binmode
+
+          tempfile.write response.body.read
+          tempfile.rewind
+          tempfile
+        end
+
+        def parse_response_context(response)
+          http_request_context = response.context.http_request
+          uploaded_at = Time.parse(http_request_context.headers['x-amz-date'])
+          url = http_request_context.endpoint
+
+          { url: url, uploaded_at: uploaded_at }
+        end
 
         def customer_managed_key
           Rails.application.config_for('cloud_storage')['customer_managed_key']

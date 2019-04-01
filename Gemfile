@@ -55,6 +55,7 @@ group :development, :test do
   gem 'factory_bot'
   gem 'guard-rspec', require: false
   gem 'guard-rubocop', require: false
+  gem 'pry'
   gem 'rspec-its'
   gem 'rspec-rails'
   gem 'sqlite3'
