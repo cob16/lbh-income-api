@@ -8,3 +8,7 @@
   tenancy_sync:
     class: TenancySync
     cron: '0 0 17 * * *' # 5pm everyday
+
+  green_in_arrears_messages:
+    class: GreenInArrearsMessages
+    cron: '0 0 9 * * 5' # 9am utc every friday
