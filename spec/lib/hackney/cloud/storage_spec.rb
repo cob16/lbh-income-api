@@ -14,8 +14,6 @@ describe Hackney::Cloud::Storage, type: :model do
 
   describe '#save' do
     context 'when the file exists' do
-      before { ActiveJob::Base.queue_adapter = :test }
-
       let(:file) { File.open('spec/test_files/test_pdf.pdf', 'rb') }
       let(:filename) { File.basename(file) }
       let(:uuid) { SecureRandom.uuid }
@@ -47,5 +45,32 @@ describe Hackney::Cloud::Storage, type: :model do
         })
       end
     end
+
+    describe '#read_document' do
+      let(:id) { 123 }
+
+      context 'when the file exists' do
+        it 'retrieves the content' do
+          stub_const('Hackney::Cloud::Document', CloudDocumentFake)
+
+          uuid = CloudDocumentFake.find(id).uuid
+
+          expect(cloud_adapter_fake).to receive(:download)
+            .with(bucket_name: 'hackney-docs-test', filename: "#{uuid}.pdf")
+            .and_return('Hello Hackney')
+
+          expect(storage.read_document(uuid)).to eq(content: 'Hello Hackney')
+        end
+      end
+    end
+  end
+end
+
+class CloudDocumentFake
+  @uuid = SecureRandom.uuid
+
+  def self.find(_id)
+    Struct.new(:uuid, :extension)
+          .new(@uuid, '.pdf')
   end
 end

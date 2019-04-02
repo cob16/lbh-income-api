@@ -1,6 +1,10 @@
 class ApplicationController < ActionController::API
   before_action :set_raven_context
 
+  def letter_use_case_factory
+    @letter_use_case_factory = Hackney::Letter::UseCaseFactory.new
+  end
+
   def income_use_case_factory
     @income_use_case_factory ||= Hackney::Income::UseCaseFactory.new
   end
