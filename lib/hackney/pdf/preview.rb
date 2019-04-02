@@ -14,6 +14,8 @@ module Hackney
           template_path: template[:path]
         ).execute(letter_params: leasehold_info)
 
+        Hackney::PDF::Generator.new.execute(preview_with_errors[:html]).to_file("#{Time.now}.pdf")
+
         uuid = SecureRandom.uuid
 
         cache_value = {

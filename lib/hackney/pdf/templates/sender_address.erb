@@ -1,0 +1,27 @@
+<div class="right">
+  <div class="sender_address">
+    <strong>Leasehold & Right To Buy Service</strong> <br>
+    Hackney Council <br>
+    Hackney Service Street <br>
+    1 Hillman Street <br>
+    London <br>
+    E8 1DY
+  </div>
+
+  <p>
+    020 8326 2299 <br>
+    service.charges@hackney.gov.uk <br>
+    Your ref: <%= params.fetch(:payment_ref) %> <br>
+    Our ref:
+  </p>
+
+  <p>
+    Date: <%= @sending_date %>
+  </p>
+
+  <p>
+    <strong>Your reference number:</strong>
+    <br>
+    <%= params.fetch(:payment_ref) %>
+  </p>
+</div>

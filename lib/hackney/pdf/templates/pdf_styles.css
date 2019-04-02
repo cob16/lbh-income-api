@@ -7,7 +7,7 @@
   height: 69.12pt;
 }
 
-.hackney-logo {
+.hackney_logo {
   margin-top: 25.92pt;
 }
 
@@ -41,20 +41,18 @@ h2 {
   margin-block-start: 37.44pt;
 }
 
-.hackney-lines{
-  width: 319.68pt;
-  margin-left: 286pt;
-  position: absolute;
-  top: 592.12pt;
-  z-index: -1;
-}
-
 .red_text{
   color: red
 }
 
 .centre{
   text-align: center;
+}
+
+.hackney_logo {
+  border-collapse: collapse;
+  border-spacing: 0;
+  width: 100%;
 }
 
 td, th {
