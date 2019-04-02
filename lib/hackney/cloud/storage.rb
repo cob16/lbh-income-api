@@ -33,6 +33,13 @@ module Hackney
         { errors: new_doc.errors.full_messages }
       end
 
+      def read_document(id)
+        doc = document_model.find(id)
+        response = @storage_adapter.download(bucket_name: HACKNEY_BUCKET_DOCS, filename: doc.uuid + doc.extension)
+
+        { content: response }
+      end
+
       def upload(bucket_name, content, filename)
         if content.is_a? StringIO
           sio = Tempfile.open(filename, 'tmp/')

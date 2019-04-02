@@ -3,6 +3,8 @@ module Hackney
   module Income
     module Jobs
       class SyncCasePriorityJob < ApplicationJob
+        retry_on Sequel::DatabaseConnectionError, wait: 1.minute, attempts: 3
+
         queue_as :uh_sync_cases
 
         def perform(tenancy_ref:)

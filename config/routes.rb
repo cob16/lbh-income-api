@@ -12,6 +12,8 @@ Rails.application.routes.draw do
     post '/messages/send_email', to: 'messages#send_email'
     get '/messages/get_templates', to: 'messages#get_templates'
 
+    get '/documents/:id/download/', to: 'documents#download'
+
     post '/messages/letters/send', to: 'letters#send_letter'
     post '/messages/letters', to: 'letters#create'
     get '/messages/letters/get_templates', to: 'letters#get_templates'
