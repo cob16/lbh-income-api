@@ -42,7 +42,6 @@ module Hackney
         Hackney::Notification::Domain::NotificationReceipt.new(body: body)
       end
 
-
       def precompiled_letter_state(unique_reference:)
         response = client.get_notification(unique_reference)
         { status: response.status }

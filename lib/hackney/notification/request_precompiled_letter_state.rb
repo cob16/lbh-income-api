@@ -13,7 +13,6 @@ module Hackney
 
       def update_document(unique_reference:, status:)
         # document_store = Hackney::Cloud::Document
-
         doc = document_store.find_by!(uuid: unique_reference)
         doc.status = status
         doc.save!

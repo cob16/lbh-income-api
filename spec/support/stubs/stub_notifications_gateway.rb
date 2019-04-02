@@ -59,7 +59,7 @@ module Hackney
       end
 
       def precompiled_letter_state(unique_reference:)
-        { status: StubNotification.new(reference:unique_reference, id: SecureRandom.uuid).status }
+        { status: StubNotification.new(reference: unique_reference, id: SecureRandom.uuid).status }
       end
 
       private
@@ -71,34 +71,36 @@ module Hackney
   end
 end
 
-#<Notifications::Client::Notification:0x000055faabc8b008
+# rubocop:disable Naming/VariableNumber
+# <Notifications::Client::Notification:0x000055faabc8b008
 class StubNotification
   attr_reader :status
   def initialize(reference:, id:)
-    @body="",
-    @completed_at=Time.now,
-    @created_at=Time.now,
-    @created_by_name=nil,
-    @email_address=nil,
-    @id=id,
-    @line_1=reference,
-    @line_2=nil,
-    @line_3=nil,
-    @line_4=nil,
-    @line_5=nil,
-    @line_6=nil,
-    @phone_number=nil,
-    @postage="second",
-    @postcode=nil,
-    @reference=reference,
-    @sent_at=nil,
-    @status="received",
-    @subject="Pre-compiled PDF",
-    @template=
-    {"id"=>reference,
-     "uri"=>
-      "https://api.notifications.service.gov.uk/v2/template/49b6d27b-ebea-4f5a-94e9-12aff73395df/version/1",
-     "version"=>1},
-    @type="letter"
+    @body = '',
+            @completed_at = Time.now,
+            @created_at = Time.now,
+            @created_by_name = nil,
+            @email_address = nil,
+            @id = id,
+            @line_1 = reference,
+            @line_2 = nil,
+            @line_3 = nil,
+            @line_4 = nil,
+            @line_5 = nil,
+            @line_6 = nil,
+            @phone_number = nil,
+            @postage = 'second',
+            @postcode = nil,
+            @reference = reference,
+            @sent_at = nil,
+            @status = 'received',
+            @subject = 'Pre-compiled PDF',
+            @template =
+              { 'id' => reference,
+                'uri' =>
+                'https://api.notifications.service.gov.uk/v2/template/49b6d27b-ebea-4f5a-94e9-12aff73395df/version/1',
+                'version' => 1 },
+            @type = 'letter'
   end
 end
+# rubocop:enable Naming/VariableNumber

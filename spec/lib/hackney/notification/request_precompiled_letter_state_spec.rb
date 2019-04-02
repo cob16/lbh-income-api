@@ -25,12 +25,12 @@ describe Hackney::Notification::RequestPrecompiledLetterState do
     let(:response) { notification_response.execute(unique_reference: document.uuid) }
 
     it 'gets request' do
-      expect(response[:status]).to eq "received"
+      expect(response[:status]).to eq 'received'
     end
 
     it 'updates document state' do
       doc = Hackney::Cloud::Document.find(document.id)
-      expect{ response }.to change{ doc.reload.status }.from('uploaded').to('received')
+      expect { response }.to change { doc.reload.status }.from('uploaded').to('received')
     end
   end
 end
