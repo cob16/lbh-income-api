@@ -4,16 +4,17 @@ describe Hackney::Notification::RequestPrecompiledLetterState do
   let!(:unique_reference) { SecureRandom.uuid }
   let(:notification_gateway) { Hackney::Income::StubNotificationsGateway.new }
   let(:add_action_diary_usecase) { double(Hackney::Tenancy::AddActionDiaryEntry) }
-
+  let(:document_store) { Hackney::Cloud::Document }
   let(:notification_response) do
     described_class.new(
       notification_gateway: notification_gateway,
-      add_action_diary_usecase: add_action_diary_usecase
+      add_action_diary_usecase: add_action_diary_usecase,
+      document_store: document_store
     )
   end
 
   let(:document) do
-    Hackney::Cloud::Document.create(
+    document_store.create(
       filename: 'test_file.txt',
       uuid: unique_reference,
       status: 'uploaded'
