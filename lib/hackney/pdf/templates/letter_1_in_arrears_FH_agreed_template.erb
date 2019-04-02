@@ -4,24 +4,24 @@
 <%= @sender_address %>
 
 <div class="lessee_address">
-  <strong><%= params.fetch(:lessee_full_name) %></strong> <br>
-  <%= params.fetch(:correspondence_address_1) %> <br>
-  <%= params.fetch(:correspondence_address_2) %> <br>
-  <%= params.fetch(:correspondence_address_3) %> <br>
-  <%= params.fetch(:correspondence_postcode) %>
+  <strong><%= @letter.lessee_full_name %></strong> <br>
+  <%= @letter.correspondence_address_1 %> <br>
+  <%= @letter.correspondence_address_2 %> <br>
+  <%= @letter.correspondence_address_3 %> <br>
+  <%= @letter.correspondence_postcode %>
 </div>
 
 <div>
-  Dear <%= params.fetch(:lessee_short_name) %>,
+  Dear <%= @letter.lessee_short_name %>,
 
   <p>
     <strong>Leaserholder of the property:</strong> <br>
-    <%= params.fetch(:property_address) %>
+    <%= @letter.property_address %>
   </p>
 
   <div class="green_box">
     Our records show that you still have the outstanding amount on your rent & service charge account:
-    <h1>£<%= params.fetch(:total_collectable_arrears_balance) %></h1>
+    <h1>£<%= @letter.total_collectable_arrears_balance %></h1>
   </div>
 
   <p class ="red_text">

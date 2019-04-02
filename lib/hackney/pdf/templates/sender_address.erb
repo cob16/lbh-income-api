@@ -11,7 +11,7 @@
   <p>
     020 8326 2299 <br>
     service.charges@hackney.gov.uk <br>
-    Your ref: <%= params.fetch(:payment_ref) %> <br>
+    Your ref: <%= @letter.payment_ref %> <br>
     Our ref:
   </p>
 
@@ -22,6 +22,6 @@
   <p>
     <strong>Your reference number:</strong>
     <br>
-    <%= params.fetch(:payment_ref) %>
+    <%= @letter.payment_ref %>
   </p>
 </div>
