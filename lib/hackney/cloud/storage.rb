@@ -37,7 +37,7 @@ module Hackney
         doc = document_model.find(id)
         response = @storage_adapter.download(bucket_name: HACKNEY_BUCKET_DOCS, filename: doc.uuid + doc.extension)
 
-        { content: response }
+        { filepath: response.path }
       end
 
       def upload(bucket_name, content, filename)
