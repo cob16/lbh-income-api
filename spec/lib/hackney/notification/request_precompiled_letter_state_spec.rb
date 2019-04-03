@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 describe Hackney::Notification::RequestPrecompiledLetterState do
-  let!(:unique_reference) { SecureRandom.uuid }
+  let!(:message_id) { SecureRandom.uuid }
   let(:notification_gateway) { Hackney::Income::StubNotificationsGateway.new }
   let(:add_action_diary_usecase) { double(Hackney::Tenancy::AddActionDiaryEntry) }
   let(:document_store) { Hackney::Cloud::Document }
@@ -16,13 +16,13 @@ describe Hackney::Notification::RequestPrecompiledLetterState do
   let(:document) do
     document_store.create(
       filename: 'test_file.txt',
-      uuid: unique_reference,
+      ext_message_id: message_id,
       status: 'uploaded'
     )
   end
 
   describe '#execute' do
-    let(:response) { notification_response.execute(unique_reference: document.uuid) }
+    let(:response) { notification_response.execute(message_id: document.uuid) }
 
     it 'gets request' do
       expect(response[:status]).to eq 'received'

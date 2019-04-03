@@ -55,11 +55,11 @@ module Hackney
       def send_precompiled_letter(unique_reference:, letter_pdf:)
         postage = 'second'
         body = "#{unique_reference} sent via #{postage} postage"
-        Hackney::Notification::Domain::NotificationReceipt.new(body: body)
+        Hackney::Notification::Domain::NotificationReceipt.new(body: body, message_id: SecureRandom.uuid)
       end
 
-      def precompiled_letter_state(unique_reference:)
-        { status: StubNotification.new(reference: unique_reference, id: SecureRandom.uuid).status }
+      def precompiled_letter_state(message_id:)
+        { status: StubNotification.new(reference: message_id, id: SecureRandom.uuid).status }
       end
 
       private

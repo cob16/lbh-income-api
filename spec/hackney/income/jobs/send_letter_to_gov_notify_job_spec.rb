@@ -12,19 +12,15 @@ describe Hackney::Income::Jobs::SendLetterToGovNotifyJob do
     ).id
   end
 
+  let(:message_receipt) { Hackney::Notification::Domain::NotificationReceipt.new(body: 'body', message_id: SecureRandom.uuid) }
+
   before {
     expect_any_instance_of(Aws::S3::Encryption::Client).to receive(:get_object).and_return(AwsClientResponse.new)
+    expect_any_instance_of(Hackney::Notification::SendManualPrecompiledLetter).to receive(:execute).and_return(message_receipt)
   }
 
-  after {
-    described_class.perform_now(document_id: document_id)
-  }
-
-  it do
-    expect_any_instance_of(Hackney::Notification::SendManualPrecompiledLetter).to receive(:execute).once
-  end
-
-  it do
-    expect_any_instance_of(Hackney::Notification::GovNotifyGateway).to receive(:send_precompiled_letter).once
+  it 'updates with message id' do
+    doc = Hackney::Cloud::Document.find(document_id)
+    expect { described_class.perform_now(document_id: document_id) }.to change { doc.reload.ext_message_id }.from(nil).to(message_receipt.message_id)
   end
 end

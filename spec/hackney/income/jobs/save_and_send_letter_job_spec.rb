@@ -17,6 +17,7 @@ describe Hackney::Income::Jobs::SaveAndSendLetterJob do
                                 letter_html: letter_html,
                                 document_id: doc.id)
   }
+  let(:message_receipt) { Hackney::Notification::Domain::NotificationReceipt.new(body: 'body', message_id: SecureRandom.uuid) }
 
   before {
     expect_any_instance_of(Aws::S3::Encryption::Client).to receive(:put_object).and_return(AwsEncryptionClientDouble.new(nil).send(:put_object))
@@ -24,7 +25,9 @@ describe Hackney::Income::Jobs::SaveAndSendLetterJob do
 
   it 'uploads to clouds' do
     expect_any_instance_of(Aws::S3::Encryption::Client).to receive(:get_object).and_return(AwsClientResponse.new)
-    expect_any_instance_of(Hackney::Notification::GovNotifyGateway).to receive(:send_precompiled_letter).once
+    # expect_any_instance_of(Hackney::Notification::GovNotifyGateway).to receive(:send_precompiled_letter).once
+
+    expect_any_instance_of(Hackney::Notification::SendManualPrecompiledLetter).to receive(:execute).and_return(message_receipt)
 
     enqueue_save_send
     uploaded_doc = Hackney::Cloud::Document.find(doc.id)
@@ -40,7 +43,7 @@ describe Hackney::Income::Jobs::SaveAndSendLetterJob do
   it 'creates pdf' do
     # expect_any_instance_of(Aws::S3::Encryption::Client).to receive(:put_object).and_return(AwsEncryptionClientDouble.new(nil).send(:put_object))
     expect_any_instance_of(Aws::S3::Encryption::Client).to receive(:get_object).and_return(AwsClientResponse.new)
-    expect_any_instance_of(Hackney::Notification::GovNotifyGateway).to receive(:send_precompiled_letter).once
+    expect_any_instance_of(Hackney::Notification::SendManualPrecompiledLetter).to receive(:execute).and_return(message_receipt)
 
     allow(File).to receive(:delete)
     expect_any_instance_of(Hackney::PDF::Generator).to receive(:execute).with(letter_html).and_return(FakePDFKit.new(pdf_file))
