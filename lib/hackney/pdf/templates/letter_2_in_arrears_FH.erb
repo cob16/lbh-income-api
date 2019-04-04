@@ -1,60 +1,27 @@
-<svg version="1.0" xmlns="http://www.w3.org/2000/svg" width="296px" height="53px" viewBox="0 0 2960 530" preserveAspectRatio="xMidYMid meet" class="hackney-logo">
-  <g id="layer101" fill="#08624c" stroke="none">
-    <path d="M2640 480 c0 -49 1 -50 29 -50 17 0 32 -4 35 -9 3 -5 -9 -49 -27 -98 -30 -83 -32 -86 -35 -50 l-3 37 -105 0 c-86 0 -104 3 -104 15 0 24 47 42 71 27 19 -12 139 -17 139 -6 0 3 -10 19 -21 36 -28 39 -75 58 -144 58 -88 0 -143 -36 -166 -110 -5 -18 -8 -5 -8 43 l-1 67 -65 0 -65 0 0 -105 c0 -89 -3 -107 -16 -112 -38 -14 -49 9 -52 116 l-3 101 -134 0 -134 0 -28 -50 c-15 -27 -31 -50 -35 -50 -5 0 -8 23 -8 50 l0 50 -65 0 -65 0 0 -41 0 -42 -21 27 c-30 39 -71 56 -131 56 -105 0 -168 -59 -168 -159 0 -103 59 -161 163 -161 69 0 122 22 142 59 13 24 14 19 15 -71 l0 -98 65 0 65 0 0 93 1 92 30 -37 c30 -37 32 -38 100 -38 38 0 69 4 69 8 0 4 -22 30 -50 57 -27 27 -50 53 -50 57 0 5 25 45 55 91 l55 82 0 -148 0 -147 60 0 c48 0 60 3 60 16 0 14 2 14 22 0 13 -10 44 -16 75 -16 67 0 100 26 112 90 5 25 9 37 10 26 2 -33 40 -83 77 -101 27 -13 55 -16 106 -13 67 4 72 6 106 43 19 21 32 31 29 21 -25 -65 -25 -66 47 -66 l65 0 16 57 c9 32 20 69 24 83 l8 25 7 -30 c4 -17 14 -54 22 -82 l15 -53 64 0 c36 0 65 2 65 5 0 3 -28 82 -62 177 -77 216 -87 228 -187 228 l-71 0 0 -50z m-1133 -150 c13 -15 30 -20 70 -20 52 0 53 0 53 -30 0 -30 0 -30 -59 -30 -50 0 -59 -3 -64 -20 -12 -47 -77 -5 -77 50 0 31 26 70 46 70 8 0 22 -9 31 -20z m1013 -98 c0 -28 -56 -42 -78 -20 -21 21 -13 28 33 28 25 0 45 -4 45 -8z"/>
-    <path d="M81 425 c-57 -52 -81 -110 -81 -195 0 -50 6 -83 21 -115 20 -43 89 -115 109 -115 6 0 10 35 10 85 l0 85 115 0 115 0 0 -85 c0 -54 4 -85 11 -85 23 0 77 53 105 102 25 46 29 64 29 128 0 88 -19 135 -78 192 -60 58 -67 53 -67 -47 l0 -85 -115 0 -115 0 0 85 c0 50 -4 85 -10 85 -5 0 -28 -16 -49 -35z"/>
-    <path d="M590 225 l0 -215 70 0 70 0 0 75 0 75 55 0 55 0 0 -75 0 -75 70 0 70 0 0 150 0 149 24 -23 c20 -21 60 -34 151 -48 25 -4 31 -33 9 -42 -9 -4 -27 0 -40 9 -13 8 -45 15 -74 15 -46 0 -50 -2 -50 -23 0 -13 12 -34 26 -48 22 -21 37 -24 113 -27 99 -4 147 12 156 51 2 12 6 69 8 127 2 58 7 113 11 123 7 15 1 17 -57 17 -40 0 -67 -4 -69 -11 -3 -9 -9 -9 -25 0 -28 14 -105 14 -137 0 -13 -6 -29 -21 -34 -33 -10 -19 -11 -18 -11 12 l-1 32 -70 0 -70 0 0 -85 0 -85 -55 0 -55 0 0 85 0 85 -70 0 -70 0 0 -215z m588 106 c3 -21 1 -23 -25 -17 -15 4 -32 11 -37 16 -15 14 5 31 32 28 20 -2 28 -10 30 -27z"/>
-  </g>
-</svg>
-
+<%= @logo %>
 <div class="top_space"></div>
 
-<div class="right">
-  <div class="sender_address">
-    <strong>Leasehold & Right To Buy Service</strong> <br>
-    Hackney Council <br>
-    Hackney Service Street <br>
-    1 Hillman Street <br>
-    London <br>
-    E8 1DY
-  </div>
-
-  <p>
-    020 8326 2299 <br>
-    service.charges@hackney.gov.uk <br>
-    Your ref: <%= params.fetch(:payment_ref) %> <br>
-    Our ref:
-  </p>
-
-  <p>
-    Date: <%= Time.now.strftime("%d %B %Y") %>
-  </p>
-
-  <p>
-    <strong>Your reference number:</strong>
-    <br>
-    <%= params.fetch(:payment_ref) %>
-  </p>
-</div>
+<%= @sender_address %>
 
 <div class="lessee_address">
-  <strong><%= params.fetch(:lessee_full_name) %></strong> <br>
-  <%= params.fetch(:correspondence_address_1) %> <br>
-  <%= params.fetch(:correspondence_address_2) %> <br>
-  <%= params.fetch(:correspondence_address_3) %> <br>
-  <%= params.fetch(:correspondence_postcode) %>
+  <strong><%= @letter.lessee_full_name %></strong> <br>
+  <%= @letter.correspondence_address_1 %> <br>
+  <%= @letter.correspondence_address_2 %> <br>
+  <%= @letter.correspondence_address_3 %> <br>
+  <%= @letter.correspondence_postcode %>
 </div>
 
 <div>
-  Dear <%= params.fetch(:lessee_short_name) %>,
+  Dear <%= @letter.lessee_short_name %>,
 
   <p>
     <strong>Leaserholder of the property:</strong> <br>
-    <%= params.fetch(:property_address) %>
+      <%= @letter.property_address %>
   </p>
 
   <div class="green_box">
     Our records show that you still have the outstanding amount on your rent & service charge account:
-    <h1>£<%= params.fetch(:total_collectable_arrears_balance) %></h1>
+    <h1>£<%= @letter.total_collectable_arrears_balance %></h1>
     <p>
         It is important that your accounts are kept up to date as non-payment of your service charge
         is a breach of your lease agreement with Hackney Council.
@@ -64,12 +31,12 @@
 
 
   <p>
-    We write further to our previous letter of the <%= params.fetch(:arrears_letter_1_date)%> informing you
+    We write further to our previous letter of the <%= @letter.arrears_letter_1_date %> informing you
     of the arrears on your Service Charge account in respect of the above mentioned property.
   </p>
 
   <p>
-    the amount of <%= params.fetch(:total_collectable_arrears_balance) %> remains outstanding. Please contact us within 7 days to
+    the amount of <%= @letter.total_collectable_arrears_balance %> remains outstanding. Please contact us within 7 days to
     inform us how you intend to pay.
   </p>
 
@@ -100,205 +67,9 @@
 
 </div>
 
-<div>
-  <h2>PAYMENT OPTIONS</h2>
+<%= @payment_options %>
 
-  <h2>BY POST & IN PERSON</h2>
-  <p class="no_top_margin">
-    Cheques and Postal Orders should be made payable to London Borough of Hackney
-    and sent to: Borough Treasurer, Ground Floor, The Annexe, 2 Hillman Street,
-    London E8 1FB or in person Monday to Friday between 9.00am to 5:00pm.
-  </p>
-
-  <h2>BY DIRECT DEBIT</h2>
-  <p class="no_top_margin">
-    You can pay by monthly standing order. Please call us to discuss a repayment term
-    prior to setting up a standing order.
-  </p>
-
-  <h2>BY PHONE & ONLINE</h2>
-  <p class="no_top_margin">
-    To pay over the phone or online, please have your Major Works payment reference
-    and your debit/credit card ready as you will need these to make payment.
-  </p>
-
-  <p>
-    <strong>
-      You can make a payment 24 hours a day by calling the automated line 020 8356
-      5050, please press option 2 twice <br>
-      You can call the Leasehold and Right to Buy Services during office hours
-      (Monday – Friday from 9am to 5pm) on 020 8356 2299 <br>
-      You can call Hackney Corporate Contact Centre during office hours (Monday–
-      Friday from 9am to 5pm) on 020 8356 3000. <br>
-      You can pay online via our website http://hackney.gov.uk/housingpayments#onlinepayments
-    </strong>
-  </p>
-
-  <p>
-    <strong>The following references are required when making payments via your banks
-      online or telephone banking service.</strong>
-    </p>
-
-    <p>
-      <strong>
-        Bank:     Lloyds Bank<br>
-        Council's bank account number:   00634021<br>
-        Council's bank sort-code number:  30-00-02<br>
-        Payment Reference number: <%= params.fetch(:payment_ref) %>
-      </strong>
-    </p>
-
-    <h2>ADVICE AND SUPPORT</h2>
-    <p class = "no_top_margin">
-      Citizens Advice Bureau – Provides free independent and confidential advice on
-      legal, financial and other matters.
-    </p>
-
-    <p>
-      <strong>
-        Tel: 0844 499 1195 Website: www.citizensadvice.org.uk
-      </strong>
-    </p>
-
-    <p>
-      <strong>
-        Stepchange – Provides free debt advice
-      </strong>
-    </p>
-
-    <p>
-      <strong>
-        Tel: 0800 138 1111 Website: www.stepchange.org.uk
-      </strong>
-    </p>
-
-    <p>
-      <strong>
-        Details of other agencies can be found via the website www.gov.uk or call our
-        Recovery Team on 020 8356 2299.
-      </strong>
-    </p>
-
-  </div>
-
-  <div>
-    <h2 class="centre">REPLY FORM</h2>
-    <p class="no_top_margin">
-      If you have any questions or would like to discuss the debt, please call Hackney
-      Council Leasehold & Right to Buy Services on 020 356 2299.
-    </p>
-
-      <p>
-        <strong>
-          Full Name: ………………………………………………………………………………….. <br>
-          Address: ………………………………………………………………………………….. <br>
-  …………………………………………………………………………………………………..<br>
-          Contact telephone numbers:……………………………………………………………… <br>
-          Email address:……………………………………………………………………………… <br>
-          Payment Reference: <%=params.fetch(:payment_ref)%>
-        </strong>
-      </p>
-
-    <h3 class="centre">How will you pay?</h3>
-    <p>
-      Only complete this section if you want to pay now
-    </p>
-
-
-    <p>
-      Please see our 'Payment Options' information sheet informing you how to pay. Keep
-      a record of the payments you make
-    </p>
-
-    <p>
-      <strong> o BOX A I will pay what I owe now.</strong><br>
-      Tick this box if you agree that you owe all or part of the debt and you are able to pay
-      what you owe now. You should pay using the payment details in the letter from the
-      business. Keep a copy of any proof of payment you receive.
-    </p>
-
-    <p>
-      <strong> o BOX B I will pay, but I need time to pay.</strong><br>
-      Tick this box if you agree you owe all or part of the debt, but you can't pay right
-      now.<br>
-      If you offer to make repayments, you must be able to afford them. You should
-      consider getting debt advice about how much you can afford to repay. If you are
-      seeking debt advice, complete the next section.
-    </p>
-
-    <p>
-      <strong> My proposals for repayment are ……...</strong> <br>
-      Explain on a separate piece of paper how you intend to pay the debt. Say how much
-      you could pay now and how you will pay the remainder. For example, say how much
-      you could pay each week, fortnight or month and when your first payment would be
-      made.
-    </p>
-
-    <p>
-      <strong>I have provided a Financial Statement showing my current financial situation:</strong><br>
-      Yes &nbsp;&nbsp; o &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; No &nbsp;&nbsp; o
-    </p>
-
-    <p>
-      To help the Council ensure you can afford your proposed repayments, fill out the
-      Financial Statement that is attached to this form. You should also attach a copy of
-      any budget or financial statement that a debt advice organisation has helped you
-      prepare.
-    </p>
-
-    <p>
-      <strong>Do you intend to seek, or are you already receiving, debt advice?</strong> <br>
-      Only complete this section if you are receiving debt advice about whether you owe
-      the debt or whether you can afford to pay.
-    </p>
-
-    <p>
-      <strong> o BOX C I am receiving or intend to seek debt advice</strong> <br>
-    </p>
-
-    <p>
-      I am receiving advice from ………………………………………………………………… <br>
-      ………………………………………………………………………………………………… <br>
-      Insert the name and contact details of the person or organisation giving you advice.
-    </p>
-
-    <p>
-      I am receiving advice about ………………<br>
-      Explain on a separate piece of paper what you are getting advice about,
-      for example whether you owe the debt or how you could pay.
-    </p>
-
-    <p>
-      I have an appointment with an adviser on ………….…………………………………… <br>
-      ………………………………………………………………………………………………….. <br>
-      If you have an appointment with a debt adviser, give the appointment date and time.
-    </p>
-
-    <p>
-      I can’t obtain advice within 30 days of returning this Reply Form because ……… .
-      If it will take you longer than 30 days to get debt advice, explain on a separate piece
-      of paper the reason for the delay and when you expect advice will be available.
-    </p>
-
-    <p>
-      <strong>Signature ……………………………………. &nbsp;&nbsp;&nbsp; Date……/….../……. </strong>
-    </p>
-
-    <p>
-      <strong>Print name …………………………………….</strong>
-    </p>
-
-    <p>
-      Sign and date this Reply Form once you have completed it. Then return it to the
-      address given in the letter.
-    </p>
-
-    <p>
-      Make sure you keep a copy of this form for reference in the future.
-      If your circumstances change, please update the business as soon as possible.
-    </p>
-
-  </div>
+<%= @reply_form %>
 
   <div>
     <h2>STANDARD FINANCIAL STATEMENT</h2>
