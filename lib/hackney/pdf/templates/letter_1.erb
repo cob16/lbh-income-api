@@ -1,0 +1,62 @@
+<%= @logo %>
+<div class="top_space"></div>
+
+<%= @sender_address %>
+
+<div class="lessee_address">
+  <strong><%= @letter.lessee_full_name %></strong> <br>
+  <%= @letter.correspondence_address_1 %> <br>
+  <%= @letter.correspondence_address_2 %> <br>
+  <%= @letter.correspondence_address_3 %> <br>
+  <%= @letter.correspondence_postcode %>
+</div>
+
+<div>
+  Dear <%= @letter.lessee_short_name %>,
+
+  <p>
+    <strong>Leaserholder of the property:</strong> <br>
+    <%= @letter.property_address %>
+  </p>
+
+  <div class="green_box">
+    Our records show that you still have the outstanding amount on your rent & service charge account:
+    <h1>£<%= @letter.total_collectable_arrears_balance %></h1>
+  </div>
+
+  <p>
+    <strong>
+      It is important that your accounts are kept up to date as non-payment of your service charge
+      is a breach of your lease agreement with Hackney Council.
+    </strong>
+
+  </p>
+
+  <h2>What if I cannot pay off all my debt at the moment?</h2>
+  <p class="no_top_margin">
+    If you are unable to settle your account in full and would like to discuss your arrears or to arrange
+    an instalment plan, please contact our Leasehold Services team on 020 8356 2299. Government
+    assistance maybe available towards payment of your service charges if you qualify.
+  </p>
+
+  <h2>What if I current experiencing financial difficulties?</h2>
+  <p class="no_top_margin">
+    If you are experiencing financial difficulties, please contact your local Citizen Advice Bureau
+    or contact us to discuss any assistance we may be able to offer.
+  </p>
+  <p>
+    Please find enclosed further information on methods of payment.
+  </p>
+  <p>
+    If you have already made a payment or entered into an arrangement to pay the balance,
+    please disregard this letter.
+  </p>
+  <p>
+    We look forward to receiving your payment within 14 days from the date of this letter.
+  </p>
+
+  <p>
+    Yours sincerely,<br>
+    Service Charge Team
+  </p>
+</div>
