@@ -1,7 +1,6 @@
 module Hackney
   module PDF
     class PreviewGenerator
-
       LOGO_PATH = 'lib/hackney/pdf/templates/logo.svg'.freeze
       SENDER_ADDRESS_PATH = 'lib/hackney/pdf/templates/sender_address.erb'.freeze
       PAYMENT_OPTIONS_PATH = 'lib/hackney/pdf/templates/payment_options.erb'.freeze

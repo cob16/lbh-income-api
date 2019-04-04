@@ -15,9 +15,9 @@ describe Hackney::Income::ProcessLetter do
       case: {
         payment_ref: 12_342_123,
         lessee_full_name: 'Mr Philip Banks',
-        correspondence_address_1: '508 Saint Cloud Road',
-        correspondence_address_2: 'Southwalk',
-        correspondence_address_3: 'London',
+        correspondence_address1: '508 Saint Cloud Road',
+        correspondence_address2: 'Southwalk',
+        correspondence_address3: 'London',
         correspondence_postcode: 'SE1 0SW',
         lessee_short_name: 'Philip',
         property_address: '1 Hillman St, London, E8 1DY',
