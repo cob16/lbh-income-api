@@ -88,7 +88,7 @@ describe LettersController, type: :controller do
         response_json = JSON.parse(response.body)
 
         expect(response_json['errors']).to eq([{
-          'name' => 'correspondence_address_1',
+          'name' => 'correspondence_address1',
           'message' => 'missing mandatory field'
         }])
       end

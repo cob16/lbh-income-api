@@ -93,10 +93,10 @@ describe Hackney::PDF::Preview do
         preview: translated_html,
         errors: [
           {
-            name: 'correspondence_address_1',
+            name: 'correspondence_address1',
             message: 'missing mandatory field'
           }, {
-            name: 'correspondence_address_2',
+            name: 'correspondence_address2',
             message: 'missing mandatory field'
           }, {
             name: 'correspondence_postcode',
