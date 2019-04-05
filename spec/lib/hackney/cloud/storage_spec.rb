@@ -57,9 +57,9 @@ describe Hackney::Cloud::Storage, type: :model do
 
           expect(cloud_adapter_fake).to receive(:download)
             .with(bucket_name: 'hackney-docs-test', filename: "#{uuid}.pdf")
-            .and_return('Hello Hackney')
+            .and_return(double(:tempfile, path: '/tmp/tempfile'))
 
-          expect(storage.read_document(uuid)).to eq(content: 'Hello Hackney')
+          expect(storage.read_document(uuid)[:filepath]).to eq('/tmp/tempfile')
         end
       end
     end

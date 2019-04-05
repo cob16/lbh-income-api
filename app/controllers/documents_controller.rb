@@ -4,6 +4,6 @@ class DocumentsController < ApplicationController
   def download
     response = letter_use_case_factory.download.execute(id: params.fetch(:id))
 
-    send_data response[:content], filename: LETTER_FILE_NAME
+    send_file response[:filepath], type: 'application/pdf', filename: LETTER_FILE_NAME
   end
 end
