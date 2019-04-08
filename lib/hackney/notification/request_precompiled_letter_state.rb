@@ -12,7 +12,7 @@ module Hackney
       end
 
       def update_document(message_id:, status:)
-        # document_store = Hackney::Cloud::Document
+        document_store = Hackney::Cloud::Document
         doc = document_store.find_by!(uuid: message_id)
         doc.status = status
         doc.save!
