@@ -39,7 +39,12 @@ module Hackney
         response = client.send_precompiled_letter(unique_reference, letter_pdf, postage)
         # success returns a reference and postage
         body = "#{response.reference} sent via #{response.postage} postage"
-        Hackney::Notification::Domain::NotificationReceipt.new(body: body)
+        Hackney::Notification::Domain::NotificationReceipt.new(body: body, message_id: response.id)
+      end
+
+      def precompiled_letter_state(message_id:)
+        response = client.get_notification(message_id)
+        { status: response.status }
       end
 
       def get_template_name(template_id)

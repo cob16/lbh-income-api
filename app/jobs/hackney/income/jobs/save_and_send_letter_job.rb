@@ -14,6 +14,7 @@ module Hackney
           @document_id = document_id
           binary_letter_content = generate_pdf_binary(letter_html, document.uuid)
 
+          Rails.logger.info "uploading document: #{document_id} - #{filename} to #{bucket_name}"
           response = cloud_provider.upload(bucket_name: bucket_name,
                                            binary_letter_content: binary_letter_content,
                                            filename: filename)

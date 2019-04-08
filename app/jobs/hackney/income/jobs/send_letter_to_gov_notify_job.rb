@@ -12,12 +12,16 @@ module Hackney
           letter_pdf = pdf_file_from_s3(document.filename)
           metadata = get_metadata(document)
 
-          income_use_case_factory.send_precompiled_letter.execute(
-            user_id: metadata[:user_id],
-            payment_ref: metadata[:payment_ref],
-            unique_reference: document.uuid,
-            letter_pdf: letter_pdf
-          )
+          letter_response =
+            income_use_case_factory.send_precompiled_letter.execute(
+              user_id: metadata[:user_id],
+              payment_ref: metadata[:payment_ref],
+              unique_reference: document.uuid,
+              letter_pdf: letter_pdf
+            )
+
+          document.ext_message_id = letter_response.message_id
+          document.save!
         end
 
         private

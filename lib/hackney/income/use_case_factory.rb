@@ -60,6 +60,15 @@ module Hackney
         )
       end
 
+      def request_precompiled_letter_state
+        document_store = Hackney::Cloud::Document
+        Hackney::Notification::RequestPrecompiledLetterState.new(
+          notification_gateway: notifications_gateway,
+          add_action_diary_usecase: add_action_diary,
+          document_store: document_store
+        )
+      end
+
       def send_automated_sms
         Hackney::Notification::SendAutomatedSms.new(
           notification_gateway: notifications_gateway,
