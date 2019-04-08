@@ -1,10 +1,10 @@
 module Hackney
   module PDF
     class PreviewGenerator
-      LOGO_PATH = 'lib/hackney/pdf/templates/logo.svg'.freeze
-      SENDER_ADDRESS_PATH = 'lib/hackney/pdf/templates/sender_address.erb'.freeze
-      PAYMENT_OPTIONS_PATH = 'lib/hackney/pdf/templates/payment_options.erb'.freeze
-      REPLY_FORM_PATH = 'lib/hackney/pdf/templates/reply_form.erb'.freeze
+      LOGO_PATH = 'lib/hackney/pdf/templates/layouts/logo.svg'.freeze
+      SENDER_ADDRESS_PATH = 'lib/hackney/pdf/templates/layouts/sender_address.erb'.freeze
+      PAYMENT_OPTIONS_PATH = 'lib/hackney/pdf/templates/layouts/payment_options.erb'.freeze
+      REPLY_FORM_PATH = 'lib/hackney/pdf/templates/layouts/reply_form.erb'.freeze
 
       def initialize(template_path:)
         @template_path = template_path
