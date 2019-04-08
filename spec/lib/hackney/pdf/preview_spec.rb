@@ -22,9 +22,9 @@ describe Hackney::PDF::Preview do
     {
       payment_ref: test_pay_ref,
       lessee_full_name: 'Mr Philip Banks',
-      correspondence_address_1: '508 Saint Cloud Road',
-      correspondence_address_2: 'Southwalk',
-      correspondence_address_3: 'London',
+      correspondence_address1: '508 Saint Cloud Road',
+      correspondence_address2: 'Southwalk',
+      correspondence_address3: 'London',
       correspondence_postcode: 'SE1 0SW',
       lessee_short_name: 'Philip',
       property_address: '1 Hillman St, London, E8 1DY',
@@ -68,9 +68,9 @@ describe Hackney::PDF::Preview do
       {
         payment_ref: test_pay_ref,
         lessee_full_name: 'P Banks',
-        correspondence_address_1: '',
-        correspondence_address_2: '',
-        correspondence_address_3: '',
+        correspondence_address1: '',
+        correspondence_address2: '',
+        correspondence_address3: '',
         correspondence_postcode: '',
         lessee_short_name: '',
         property_address: '1 Hillman St, London, E8 1DY',
@@ -93,10 +93,10 @@ describe Hackney::PDF::Preview do
         preview: translated_html,
         errors: [
           {
-            name: 'correspondence_address_1',
+            name: 'correspondence_address1',
             message: 'missing mandatory field'
           }, {
-            name: 'correspondence_address_2',
+            name: 'correspondence_address2',
             message: 'missing mandatory field'
           }, {
             name: 'correspondence_postcode',

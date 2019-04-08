@@ -7,7 +7,7 @@
   height: 69.12pt;
 }
 
-.hackney-logo {
+.hackney__letter_logo {
   margin-top: 25.92pt;
 }
 
@@ -41,10 +41,48 @@ h2 {
   margin-block-start: 37.44pt;
 }
 
-.hackney-lines{
-  width: 319.68pt;
-  margin-left: 286pt;
+.red_text{
+  color: red
+}
+
+.centre{
+  text-align: center;
+}
+
+.no_border {
+  border-collapse: collapse;
+  border-spacing: 0;
+  width: 100%;
+}
+
+.no_border td,
+.no_border th {
+  border: none;
+
+}
+
+td, th {
+  border: 1px solid black;
+  width: 250px;
+  padding: 10px;
+}
+
+.horizontal_dotted_line {
+  position: relative;
+}
+.horizontal_dotted_line span {
+  display: inline-block;
+  background: #fff;
+  position: relative;
+  padding-right: 4px;
+  z-index: 1;
+}
+.horizontal_dotted_line:after {
+  content: '';
   position: absolute;
-  top: 592.12pt;
+  top: 80%;
+  left: 0;
+  right: 0;
   z-index: -1;
+  border-top: 4px dotted black;
 }

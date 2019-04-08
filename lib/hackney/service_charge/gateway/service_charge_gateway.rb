@@ -30,9 +30,9 @@ module Hackney
           body['cases'].map do |sc_case|
             {
               tenancy_ref: sc_case.fetch('tenancy_ref'),
-              correspondence_address_1: sc_case.fetch('correspondence_address_1'),
-              correspondence_address_2: sc_case.fetch('correspondence_address_2'),
-              correspondence_address_3: sc_case.fetch('correspondence_address_3'),
+              correspondence_address1: sc_case.fetch('correspondence_address_1'),
+              correspondence_address2: sc_case.fetch('correspondence_address_2'),
+              correspondence_address3: sc_case.fetch('correspondence_address_3'),
               correspondence_postcode: sc_case.fetch('correspondence_postcode'),
               property_address: sc_case.fetch('property_address'),
               payment_ref: sc_case.fetch('payment_ref'),
@@ -41,7 +41,7 @@ module Hackney
               lba_expiry_date: sc_case.fetch('lba_expiry_date'),
               original_lease_date: sc_case.fetch('original_lease_date'),
               date_of_current_purchase_assignment: sc_case.fetch('date_of_current_purchase_assignment'),
-              original_Leaseholders: sc_case.fetch('original_Leaseholders'),
+              original_leaseholders: sc_case.fetch('original_Leaseholders'),
               full_names_of_current_lessees: sc_case.fetch('full_names_of_current_lessees'),
               previous_letter_sent: sc_case.fetch('previous_letter_sent'),
               arrears_letter_1_date: sc_case.fetch('arrears_letter_1_date'),
@@ -60,9 +60,9 @@ module Hackney
             sc_case = example_case(get_stub_options(ref))
             {
               tenancy_ref: sc_case.fetch(:tenancy_ref),
-              correspondence_address_1: sc_case.fetch(:correspondence_address_1),
-              correspondence_address_2: sc_case.fetch(:correspondence_address_2),
-              correspondence_address_3: sc_case.fetch(:correspondence_address_3),
+              correspondence_address1: sc_case.fetch(:correspondence_address_1),
+              correspondence_address2: sc_case.fetch(:correspondence_address_2),
+              correspondence_address3: sc_case.fetch(:correspondence_address_3),
               correspondence_postcode: sc_case.fetch(:correspondence_postcode),
               property_address: sc_case.fetch(:property_address),
               payment_ref: sc_case.fetch(:payment_ref),
@@ -71,7 +71,7 @@ module Hackney
               lba_expiry_date: sc_case.fetch(:lba_expiry_date),
               original_lease_date: sc_case.fetch(:original_lease_date),
               date_of_current_purchase_assignment: sc_case.fetch(:date_of_current_purchase_assignment),
-              original_Leaseholders: sc_case.fetch(:original_Leaseholders),
+              original_leaseholders: sc_case.fetch(:original_Leaseholders),
               previous_letter_sent: sc_case.fetch(:previous_letter_sent),
               arrears_letter_1_date: sc_case.fetch(:arrears_letter_1_date),
               international: international?(sc_case.fetch(:correspondence_postcode)),

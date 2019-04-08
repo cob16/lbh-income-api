@@ -24,7 +24,7 @@
     <h1>£<%= @letter.total_collectable_arrears_balance %></h1>
   </div>
 
-  <p>
+  <p class = "red_text">
     <strong>
       It is important that your accounts are kept up to date as non-payment of your service charge
       is a breach of your lease agreement with Hackney Council.
@@ -56,7 +56,10 @@
   </p>
 
   <p>
-    Yours sincerely,<br>
-    Service Charge Team
+    Yours sincerely (faithfully if a company)<br>
+    Leasehold Services
   </p>
+
 </div>
+
+<%= @payment_options %>
