@@ -6,4 +6,8 @@ class DocumentsController < ApplicationController
 
     send_file response[:filepath], type: 'application/pdf', filename: LETTER_FILE_NAME
   end
+
+  def index
+    render json: letter_use_case_factory.get_all_documents.execute
+  end
 end

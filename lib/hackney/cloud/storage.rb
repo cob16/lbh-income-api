@@ -40,6 +40,10 @@ module Hackney
         { filepath: response.path }
       end
 
+      def all_documents
+        document_model.all
+      end
+
       def upload(bucket_name, content, filename)
         if content.is_a? StringIO
           sio = Tempfile.open(filename, 'tmp/')
