@@ -24,7 +24,6 @@ describe DocumentsController do
   end
 
   describe '#index' do
-
     it 'returns all documents' do
       expect_any_instance_of(Hackney::Letter::AllDocumentsUseCase)
         .to receive(:execute)
