@@ -1,5 +1,6 @@
 module UniversalHousingHelper
-  def create_uh_tenancy_agreement(tenancy_ref:, current_balance: 0.0, property_ref: '', terminated: false, tenure_type: 'SEC', high_action: '111')
+  def create_uh_tenancy_agreement(tenancy_ref:, current_balance: 0.0, property_ref: '', terminated: false,
+                                  tenure_type: 'SEC', high_action: '111', u_saff_rentacc: '')
     Hackney::UniversalHousing::Client.connection[:tenagree].insert(
       tag_ref: tenancy_ref,
       cur_bal: current_balance,
@@ -29,7 +30,8 @@ module UniversalHousingHelper
       u_payment_expected: '?',
       dtstamp: DateTime.now,
       intro_date: DateTime.now,
-      intro_ext_date: DateTime.now
+      intro_ext_date: DateTime.now,
+      u_saff_rentacc: u_saff_rentacc
     )
   end
 

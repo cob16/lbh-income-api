@@ -12,7 +12,8 @@ module Hackney
       def get_preview
         Hackney::PDF::Preview.new(
           get_templates_gateway: get_templates,
-          leasehold_information_gateway: Hackney::ServiceCharge::UseCaseFactory.new.get_leasehold_information
+          leasehold_information_gateway: Hackney::Income::UniversalHousingLeaseholdGateway.new
+        # proposal: leasehold_information_gateway: Hackney::Income::UniversalHousingLeaseholdGateway
         )
       end
     end

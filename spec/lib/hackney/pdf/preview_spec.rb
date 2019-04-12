@@ -9,7 +9,7 @@ describe Hackney::PDF::Preview do
   end
 
   let(:get_templates_gateway) { instance_double(Hackney::PDF::GetTemplates) }
-  let(:leasehold_information_gateway) { instance_double(Hackney::ServiceCharge::GetLeaseholdInformation) }
+  let(:leasehold_information_gateway) { instance_double(Hackney::Income::UniversalHousingLeaseholdGateway) }
   let(:test_template_id) { 123_123 }
   let(:test_template) do
     {
@@ -36,7 +36,7 @@ describe Hackney::PDF::Preview do
   let(:translated_html) { File.open('spec/lib/hackney/pdf/translated_test_template.html').read }
 
   it 'generates letter preview' do
-    expect(leasehold_information_gateway).to receive(:execute).with(payment_ref: test_pay_ref).and_return([test_letter_params])
+    expect(leasehold_information_gateway).to receive(:get_leasehold_info).with(payment_ref: test_pay_ref).and_return(test_letter_params)
     expect(get_templates_gateway).to receive(:execute).and_return([test_template])
 
     preview = subject.execute(payment_ref: test_pay_ref, template_id: test_template_id)
@@ -50,7 +50,7 @@ describe Hackney::PDF::Preview do
   end
 
   it 'generated preview is saved in cache' do
-    expect(leasehold_information_gateway).to receive(:execute).with(payment_ref: test_pay_ref).and_return([test_letter_params])
+    expect(leasehold_information_gateway).to receive(:get_leasehold_info).with(payment_ref: test_pay_ref).and_return(test_letter_params)
     expect(get_templates_gateway).to receive(:execute).and_return([test_template])
 
     preview = subject.execute(payment_ref: test_pay_ref, template_id: test_template_id)
@@ -82,7 +82,7 @@ describe Hackney::PDF::Preview do
     let(:translated_html) { File.open('spec/lib/hackney/pdf/translated_test_template_with_blanks.html').read }
 
     it 'generates letter preview with errors' do
-      expect(leasehold_information_gateway).to receive(:execute).with(payment_ref: test_pay_ref).and_return([test_letter_params])
+      expect(leasehold_information_gateway).to receive(:get_leasehold_info).with(payment_ref: test_pay_ref).and_return(test_letter_params)
       expect(get_templates_gateway).to receive(:execute).and_return([test_template])
 
       preview = subject.execute(payment_ref: test_pay_ref, template_id: test_template_id)
