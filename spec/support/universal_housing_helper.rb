@@ -117,7 +117,7 @@ module UniversalHousingHelper
     )
   end
 
-  def create_uh_househ(house_ref:, corr_preamble:, corr_desig:)
+  def create_uh_househ(house_ref:, corr_preamble:, corr_desig:, post_code:, corr_postcode: corr_postcode)
     Hackney::UniversalHousing::Client.connection[:househ].insert(
       house_ref: house_ref,
       corr_preamble: corr_preamble,
@@ -136,7 +136,20 @@ module UniversalHousingHelper
       u_mutual_exchange: '',
       u_prev_kit: '',
       u_prev_br: '',
-      corr_desig: corr_desig
+      corr_desig: corr_desig,
+      post_code: post_code,
+      corr_postcode: corr_postcode
+    )
+  end
+
+  def create_uh_postcode(post_code:, aline1:, aline2:, aline3:, aline4:)
+    Hackney::UniversalHousing::Client.connection[:postcode].insert(
+      post_code: post_code,
+      aline1: aline1,
+      aline2: aline2,
+      aline3: aline3,
+      aline4: aline4,
+      ci_post_code: ''
     )
   end
 

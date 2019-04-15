@@ -4,12 +4,23 @@ module Hackney
       def get_leasehold_info(payment_ref:)
         tenagree = database[:tenagree]
 
-        res = tenagree.inner_join(:househ, house_ref: :house_ref).first
+        res = tenagree.
+          inner_join(:househ, house_ref: :house_ref).
+          inner_join(:postcode, post_code: :post_code).first
+
+        # househ.corr_desig + postcode.aline
 
         {
           tenancy_ref: res[:tag_ref],
+          balance: res[:cur_bal],
           correspondence_address_1: res[:corr_preamble],
-          balance: res[:cur_bal]
+          correspondence_address_2: res[:corr_desig] + ' - ' + res[:aline1],
+          correspondence_address_3: res[:aline2],
+          correspondence_address_4: res[:aline3],
+          correspondence_address_5: res[:aline4],
+          correspondence_address_6: res[:corr_postcode],
+          # correspondence_address_6: res[:aline3]
+
         }
       end
 
