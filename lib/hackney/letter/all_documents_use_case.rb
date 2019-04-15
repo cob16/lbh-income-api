@@ -10,10 +10,17 @@ module Hackney
           next unless doc.metadata
           metadata = JSON.parse(doc.metadata).deep_symbolize_keys
           if metadata[:user_id]
-            metadata[:user_name] = Hackney::Income::Models::User.find(metadata[:user_id]).name
+            metadata[:user_name] = user_name(metadata[:user_id])
             doc.metadata = metadata.to_json
           end
         end
+      end
+
+      private
+
+      def user_name(user_id)
+        user = Hackney::Income::Models::User.find_by(id: user_id)
+        user ? user.name : nil
       end
     end
   end
