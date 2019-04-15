@@ -15,11 +15,25 @@ describe Hackney::Income::UniversalHousingLeaseholdGateway, universal: true do
     context 'when payment_ref exists' do
       let(:payment_ref) { Random.rand(100).to_s }
       let(:tenancy_ref) { Random.rand(100).to_s }
+      let(:house_ref) { Random.rand(100).to_s }
+
+      let(:corr_preamble) { 'Corr Preamble' }
+      let(:corr_desig) { 'Corr Desig' }
+      let(:cur_bal) { Random.rand(100) }
 
       it 'get the prop_ref' do
-        create_uh_tenancy_agreement(tenancy_ref: tenancy_ref, u_saff_rentacc: payment_ref)
+        create_uh_tenancy_agreement(tenancy_ref: tenancy_ref, u_saff_rentacc: payment_ref,
+                                    house_ref: house_ref,
+                                    cur_bal: cur_bal)
 
-        expect(gateway.get_leasehold_info(payment_ref: payment_ref)).to eq({ tenancy_ref: tenancy_ref })
+        create_uh_househ(house_ref: house_ref, corr_preamble: corr_preamble,
+                         corr_desig: corr_desig )
+
+        result = gateway.get_leasehold_info(payment_ref: payment_ref)
+
+        expect(result).to eq(tenancy_ref: tenancy_ref,
+                             correspondence_address_1: corr_preamble,
+                             balance: cur_bal)
       end
     end
   end
@@ -31,7 +45,9 @@ end
 #   correspondence_address2: sc_case.fetch('correspondence_address_2'),
 #   correspondence_address3: sc_case.fetch('correspondence_address_3'),
 #   correspondence_postcode: sc_case.fetch('correspondence_postcode'),
+#
 #   property_address: sc_case.fetch('property_address'),
+#
 #   payment_ref: sc_case.fetch('payment_ref'),
 #   balance: sc_case.fetch('balance'),
 #   collectable_arrears_balance: sc_case.fetch('collectable_arrears_balance'),

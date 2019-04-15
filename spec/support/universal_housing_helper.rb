@@ -1,6 +1,7 @@
 module UniversalHousingHelper
   def create_uh_tenancy_agreement(tenancy_ref:, current_balance: 0.0, property_ref: '', terminated: false,
-                                  tenure_type: 'SEC', high_action: '111', u_saff_rentacc: '')
+                                  tenure_type: 'SEC', high_action: '111', u_saff_rentacc: '', house_ref: '',
+                                  cur_bal: 0)
     Hackney::UniversalHousing::Client.connection[:tenagree].insert(
       tag_ref: tenancy_ref,
       cur_bal: current_balance,
@@ -31,7 +32,9 @@ module UniversalHousingHelper
       dtstamp: DateTime.now,
       intro_date: DateTime.now,
       intro_ext_date: DateTime.now,
-      u_saff_rentacc: u_saff_rentacc
+      u_saff_rentacc: u_saff_rentacc,
+      house_ref: house_ref,
+      cur_bal: cur_bal
     )
   end
 
@@ -114,11 +117,35 @@ module UniversalHousingHelper
     )
   end
 
+  def create_uh_househ(house_ref:, corr_preamble:, corr_desig:)
+    Hackney::UniversalHousing::Client.connection[:househ].insert(
+      house_ref: house_ref,
+      corr_preamble: corr_preamble,
+      u_prev_br: '',
+      assn_address: '',
+      joint_ten: 0,
+      oap: 0,
+      fair_rights: 0,
+      protected_rights: 0,
+      house_size: 0,
+      info_refused: '',
+      auto_housedesc: '',
+      u_tranreq: '',
+      vulnerable: '',
+      full_ed: '',
+      u_mutual_exchange: '',
+      u_prev_kit: '',
+      u_prev_br: '',
+      corr_desig: corr_desig
+    )
+  end
+
   def truncate_uh_tables
     Hackney::UniversalHousing::Client.connection[:tenagree].truncate
     Hackney::UniversalHousing::Client.connection[:rtrans].truncate
     Hackney::UniversalHousing::Client.connection[:arag].truncate
     Hackney::UniversalHousing::Client.connection[:araction].truncate
     Hackney::UniversalHousing::Client.connection[:property].truncate
+    Hackney::UniversalHousing::Client.connection[:househ].truncate
   end
 end
