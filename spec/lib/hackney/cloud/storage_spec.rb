@@ -13,10 +13,6 @@ describe Hackney::Cloud::Storage, type: :model do
   end
 
   it 'retrieves all documents' do
-    stub_const('Hackney::Cloud::Document', CloudDocumentFake)
-
-    expect(CloudDocumentFake).to receive(:all)
-
     storage.all_documents
   end
 
@@ -55,32 +51,19 @@ describe Hackney::Cloud::Storage, type: :model do
     end
 
     describe '#read_document' do
-      let(:id) { 123 }
+      let(:document) { create(:document) }
 
       context 'when the file exists' do
         it 'retrieves the content' do
-          stub_const('Hackney::Cloud::Document', CloudDocumentFake)
-
-          uuid = CloudDocumentFake.find(id).uuid
+          uuid = document.uuid
 
           expect(cloud_adapter_fake).to receive(:download)
             .with(bucket_name: 'hackney-docs-test', filename: "#{uuid}.pdf")
             .and_return(double(:tempfile, path: '/tmp/tempfile'))
 
-          expect(storage.read_document(uuid)[:filepath]).to eq('/tmp/tempfile')
+          expect(storage.read_document(document.id)[:filepath]).to eq('/tmp/tempfile')
         end
       end
     end
   end
-end
-
-class CloudDocumentFake
-  @uuid = SecureRandom.uuid
-
-  def self.find(_id)
-    Struct.new(:uuid, :extension)
-          .new(@uuid, '.pdf')
-  end
-
-  def self.all; end
 end
