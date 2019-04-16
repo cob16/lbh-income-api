@@ -1,11 +1,12 @@
 module UniversalHousingHelper
-  def create_uh_tenancy_agreement(tenancy_ref:, current_balance: 0.0, property_ref: '', terminated: false,
+  def create_uh_tenancy_agreement(tenancy_ref:, current_balance: 0.0, prop_ref: '', terminated: false,
                                   tenure_type: 'SEC', high_action: '111', u_saff_rentacc: '', house_ref: '',
                                   cur_bal: 0)
+
     Hackney::UniversalHousing::Client.connection[:tenagree].insert(
       tag_ref: tenancy_ref,
       cur_bal: current_balance,
-      prop_ref: property_ref,
+      prop_ref: prop_ref,
       terminated: terminated ? 1 : 0,
       tenure: tenure_type,
       high_action: high_action,
@@ -45,7 +46,7 @@ module UniversalHousingHelper
     create_uh_tenancy_agreement(
       tenancy_ref: tenancy_ref,
       current_balance: current_balance,
-      property_ref: prop_ref,
+      prop_ref: prop_ref,
       terminated: terminated,
       tenure_type: tenure_type,
       high_action: high_action
@@ -92,7 +93,7 @@ module UniversalHousingHelper
     )
   end
 
-  def create_uh_property(property_ref:, patch_code:)
+  def create_uh_property(property_ref:, patch_code: '', post_preamble: '')
     Hackney::UniversalHousing::Client.connection[:property].insert(
       prop_ref: property_ref,
       arr_patch: patch_code,
@@ -113,13 +114,16 @@ module UniversalHousingHelper
       no_double_beds: 1,
       online_repairs: true,
       repairable: true,
-      dtstamp: DateTime.now
+      dtstamp: DateTime.now,
+      post_preamble: post_preamble
     )
   end
 
-  def create_uh_househ(house_ref:, corr_preamble:, corr_desig:, post_code:, corr_postcode: corr_postcode)
+  def create_uh_househ(house_ref:, corr_preamble:, corr_desig:, post_code:, corr_postcode: corr_postcode,
+                       prop_ref: prop_ref)
     Hackney::UniversalHousing::Client.connection[:househ].insert(
       house_ref: house_ref,
+      prop_ref: prop_ref,
       corr_preamble: corr_preamble,
       u_prev_br: '',
       assn_address: '',
@@ -153,6 +157,37 @@ module UniversalHousingHelper
     )
   end
 
+  def create_uh_rent(prop_ref:, sc_leasedate: )
+    Hackney::UniversalHousing::Client.connection[:rent].insert(
+      prop_ref: prop_ref,
+      sc_leasedate: sc_leasedate,
+      affordable_rent: '',
+      autoavail: '',
+      avail_on_alloc: '',
+      avail: '',
+      used: '',
+      wheelchair: '',
+      free_active: '',
+      mobility: '',
+      furnished: '',
+      sharedowner: 0,
+      localletting: '',
+      insurevalue: '',
+      valuation: '',
+      estvalue: '',
+      actvalue: '',
+      valuedate: '',
+      rtbelig: ''
+    )
+  end
+
+  def create_uh_u_letsvoids(payment_ref:, prop_ref:)
+    Hackney::UniversalHousing::Client.connection[:u_letsvoids].insert(
+      payment_ref: payment_ref,
+      prop_ref: prop_ref
+    )
+  end
+
   def truncate_uh_tables
     Hackney::UniversalHousing::Client.connection[:tenagree].truncate
     Hackney::UniversalHousing::Client.connection[:rtrans].truncate
@@ -160,5 +195,8 @@ module UniversalHousingHelper
     Hackney::UniversalHousing::Client.connection[:araction].truncate
     Hackney::UniversalHousing::Client.connection[:property].truncate
     Hackney::UniversalHousing::Client.connection[:househ].truncate
+    Hackney::UniversalHousing::Client.connection[:postcode].truncate
+    Hackney::UniversalHousing::Client.connection[:rent].truncate
+    Hackney::UniversalHousing::Client.connection[:u_letsvoids].truncate
   end
 end

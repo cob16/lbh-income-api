@@ -13,7 +13,6 @@ module Hackney
         Hackney::PDF::Preview.new(
           get_templates_gateway: get_templates,
           leasehold_information_gateway: Hackney::Income::UniversalHousingLeaseholdGateway.new
-        # proposal: leasehold_information_gateway: Hackney::Income::UniversalHousingLeaseholdGateway
         )
       end
     end

@@ -73,7 +73,7 @@ describe Hackney::Income::UniversalHousingTenanciesGateway, universal: true do
 
         context 'when a tenancy is not in an accepted patch' do
           before do
-            create_uh_tenancy_agreement(tenancy_ref: '00001/01', current_balance: 10.0, property_ref: 'PROP1')
+            create_uh_tenancy_agreement(tenancy_ref: '00001/01', current_balance: 10.0, prop_ref: 'PROP1')
             create_uh_property(property_ref: 'PROP1', patch_code: 'B01')
           end
 
@@ -84,7 +84,7 @@ describe Hackney::Income::UniversalHousingTenanciesGateway, universal: true do
 
         context 'when a tenancy is in one of the accepted patches' do
           before do
-            create_uh_tenancy_agreement(tenancy_ref: '00001/01', current_balance: 10.0, property_ref: 'PROP1')
+            create_uh_tenancy_agreement(tenancy_ref: '00001/01', current_balance: 10.0, prop_ref: 'PROP1')
             create_uh_property(property_ref: 'PROP1', patch_code: 'Z01')
           end
 
@@ -98,7 +98,7 @@ describe Hackney::Income::UniversalHousingTenanciesGateway, universal: true do
         let(:gateway) { described_class.new(restrict_patches: true) }
 
         before do
-          create_uh_tenancy_agreement(tenancy_ref: '00001/01', current_balance: 10.0, property_ref: 'PROP1')
+          create_uh_tenancy_agreement(tenancy_ref: '00001/01', current_balance: 10.0, prop_ref: 'PROP1')
           create_uh_property(property_ref: 'PROP1', patch_code: 'B01')
         end
 

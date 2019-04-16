@@ -2,29 +2,47 @@ module Hackney
   module Income
     class UniversalHousingLeaseholdGateway
       def get_leasehold_info(payment_ref:)
+        prop_ref = get_prop_ref(payment_ref)
+
         tenagree = database[:tenagree]
+        postcode = database[:postcode]
+        rent = database[:rent]
+        property = database[:property]
+        househ = database[:househ]
 
-        res = tenagree.
-          inner_join(:househ, house_ref: :house_ref).
-          inner_join(:postcode, post_code: :post_code).first
+        tenagree_res = tenagree.first(prop_ref: prop_ref)
+        rent_res = rent.first(prop_ref: prop_ref)
+        property_res = property.first(prop_ref: prop_ref)
 
-        # househ.corr_desig + postcode.aline
+        househ_res = househ.first(house_ref: tenagree_res[:house_ref])
+
+        corr_postcode_res = postcode.first(post_code: househ_res[:corr_postcode])
 
         {
-          tenancy_ref: res[:tag_ref],
-          balance: res[:cur_bal],
-          correspondence_address_1: res[:corr_preamble],
-          correspondence_address_2: res[:corr_desig] + ' - ' + res[:aline1],
-          correspondence_address_3: res[:aline2],
-          correspondence_address_4: res[:aline3],
-          correspondence_address_5: res[:aline4],
-          correspondence_address_6: res[:corr_postcode],
-          # correspondence_address_6: res[:aline3]
+          tenancy_ref: tenagree_res[:tag_ref],
+          balance: tenagree_res[:cur_bal],
+          original_lease_date: rent_res[:sc_leasedate],
 
+          correspondence_address_1: househ_res[:corr_preamble],
+          correspondence_address_2: househ_res[:corr_desig] + ' - ' + corr_postcode_res[:aline1],
+          correspondence_address_3: corr_postcode_res[:aline2],
+          correspondence_address_4: corr_postcode_res[:aline3],
+          correspondence_address_5: corr_postcode_res[:aline4],
+          correspondence_address_6: househ_res[:corr_postcode],
+
+          property_address_1: property_res[:post_preamble]
         }
       end
 
       private
+
+      def get_prop_ref(payment_ref)
+        u_letsvoids = database[:u_letsvoids].first(payment_ref: payment_ref)
+
+        raise ArgumentError.new('payment_ref does not exist!') unless u_letsvoids.present?
+
+        u_letsvoids[:prop_ref]
+      end
 
       def database
         Hackney::UniversalHousing::Client.connection.tap do |db|

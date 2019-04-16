@@ -10,7 +10,7 @@ class LettersController < ApplicationController
       payment_ref: params.fetch(:payment_ref),
       template_id: params.fetch(:template_id)
     )
-  rescue Hackney::ServiceCharge::Exceptions::ServiceChargeException
+  rescue ArgumentError
     head(404)
   end
 
