@@ -34,21 +34,11 @@ describe LettersController, type: :controller do
 
   describe '#get_templates' do
     it 'gets letter templates' do
-      # stub_const("Hackney::PDF::GetTemplates", StubGetTemplates)
-
       expect_any_instance_of(Hackney::PDF::GetTemplates).to receive(:execute).and_return({})
 
       get :get_templates
 
       expect(response.status).to eq(200)
-
-      # expect(response.body).to eq(
-      #   {
-      #     path: template_path,
-      #     id: template_id,
-      #     name: template_name
-      #   }.to_json
-      # )
     end
   end
 
@@ -82,57 +72,18 @@ describe LettersController, type: :controller do
       let(:preview_uuid) { SecureRandom.uuid }
 
       it 'generates pdf(html) preview with template details, case and empty errors' do
-        # stub_const("Hackney::PDF::Preview", StubHackneyPdfPreview)
-        #
         expect_any_instance_of(Hackney::PDF::Preview).to receive(:execute).and_return({})
-
-        # expect_any_instance_of(Hackney::PDF::PreviewGenerator).to receive(:execute).and_return(html: preview_html, errors: [])
 
         post :create, params: { payment_ref: found_payment_ref, template_id: template_id }
 
-
-        response_json = JSON.parse(response.body)
-
         expect(response.status).to eq 200
-
-        #
-        # expect(response_json['case']['payment_ref']).to eq(found_payment_ref)
-        # expect(response_json['template']['id']).to eq(template_id)
-        # expect(response_json['preview']).to eq(preview_html)
-        # expect(response_json['uuid']).not_to be_nil
-        # expect(response_json['errors']).to eq([])
       end
     end
-
-    # context 'when some data is missing' do
-    #   let(:missing_optional_data) { 111 }
-    #   let(:missing_mandatory_data) { 222 }
-    #
-    #   it 'no errors when only optional data is missing' do
-    #     post :create, params: { payment_ref: missing_optional_data, template_id: template_id }
-    #
-    #     response_json = JSON.parse(response.body)
-    #
-    #     expect(response_json['errors']).to eq([])
-    #   end
-    #
-    #   it 'returns errors when mandatory data is missing' do
-    #     post :create, params: { payment_ref: missing_mandatory_data, template_id: template_id }
-    #
-    #     response_json = JSON.parse(response.body)
-    #
-    #     expect(response_json['errors']).to eq([{
-    #       'name' => 'correspondence_address1',
-    #       'message' => 'missing mandatory field'
-    #     }])
-    #   end
-    # end
 
     context 'when payment_ref is not found' do
       let(:not_found_payment_ref) { 123 }
 
       it 'returns 404' do
-
         expect_any_instance_of(Hackney::PDF::Preview)
           .to receive(:execute)
           .and_raise(ArgumentError.new('payment_ref does not exist!'))

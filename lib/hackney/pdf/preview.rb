@@ -8,14 +8,13 @@ module Hackney
 
       def execute(payment_ref:, template_id:)
         template = get_template_by_id(template_id)
+        leasehold_info = get_leasehold_info(payment_ref)
 
         preview_with_errors = Hackney::PDF::PreviewGenerator.new(
           template_path: template[:path]
-        ).execute(letter_params: get_leasehold_info(payment_ref))
+        ).execute(letter_params: leasehold_info)
 
         uuid = SecureRandom.uuid
-
-        leasehold_info = get_leasehold_info(payment_ref)
 
         cache_value = {
           case: leasehold_info,

@@ -1,8 +1,7 @@
 module UniversalHousingHelper
+  # rubocop:disable Metrics/ParameterLists
   def create_uh_tenancy_agreement(tenancy_ref:, current_balance: 0.0, prop_ref: '', terminated: false,
-                                  tenure_type: 'SEC', high_action: '111', u_saff_rentacc: '', house_ref: '',
-                                  cur_bal: 0)
-
+                                  tenure_type: 'SEC', high_action: '111', u_saff_rentacc: '', house_ref: '')
     Hackney::UniversalHousing::Client.connection[:tenagree].insert(
       tag_ref: tenancy_ref,
       cur_bal: current_balance,
@@ -34,10 +33,10 @@ module UniversalHousingHelper
       intro_date: DateTime.now,
       intro_ext_date: DateTime.now,
       u_saff_rentacc: u_saff_rentacc,
-      house_ref: house_ref,
-      cur_bal: cur_bal
+      house_ref: house_ref
     )
   end
+  # rubocop:enable Metrics/ParameterLists
 
   def create_uh_tenancy_agreement_with_property(
     tenancy_ref:, current_balance: 0.0, prop_ref: '', arr_patch: '', terminated: false, tenure_type: 'SEC', high_action: '111'
@@ -119,8 +118,7 @@ module UniversalHousingHelper
     )
   end
 
-  def create_uh_househ(house_ref:, corr_preamble:, corr_desig:, post_code:, corr_postcode: corr_postcode,
-                       prop_ref: prop_ref)
+  def create_uh_househ(house_ref:, corr_preamble:, corr_desig:, post_code:, corr_postcode: '', prop_ref:)
     Hackney::UniversalHousing::Client.connection[:househ].insert(
       house_ref: house_ref,
       prop_ref: prop_ref,
@@ -139,7 +137,6 @@ module UniversalHousingHelper
       full_ed: '',
       u_mutual_exchange: '',
       u_prev_kit: '',
-      u_prev_br: '',
       corr_desig: corr_desig,
       post_code: post_code,
       corr_postcode: corr_postcode
@@ -157,7 +154,7 @@ module UniversalHousingHelper
     )
   end
 
-  def create_uh_rent(prop_ref:, sc_leasedate: )
+  def create_uh_rent(prop_ref:, sc_leasedate:)
     Hackney::UniversalHousing::Client.connection[:rent].insert(
       prop_ref: prop_ref,
       sc_leasedate: sc_leasedate,
