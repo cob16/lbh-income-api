@@ -17,7 +17,7 @@ class TenancySync
       retry_count += 1
       puts "[#{Time.now}] Oh no, we failed on #{err.inspect}."
 
-      pute "Retries left: #{max_retries - retry_count}"
+      puts "Retries left: #{max_retries - retry_count}"
       sleep delay += retry_count
       retry
     end
