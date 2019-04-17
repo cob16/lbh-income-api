@@ -25,7 +25,7 @@ module Hackney
           correspondence_address_5: corr_postcode_res[:aline4],
           correspondence_address_6: res[:corr_postcode],
 
-          property_address_1: property_res[:post_preamble]
+          property_address: property_res[:address1] + ', ' + property_res[:post_code]
         }
       end
 
