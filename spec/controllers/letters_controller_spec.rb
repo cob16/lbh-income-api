@@ -6,32 +6,6 @@ describe LettersController, type: :controller do
   let(:template_name) { 'Letter 1 template' }
   let(:preview_html) { "<p>#{Faker::HitchhikersGuideToTheGalaxy.quote}</p>" }
 
-  class StubGetTemplates
-    def initialize(template_directory_path:) end
-
-    def execute
-      {
-        path: 'path/to/temp',
-        id: 'letter_1_template',
-        name: 'Letter 1 template'
-      }
-    end
-  end
-
-  class StubHackneyPdfPreview
-    def initialize(get_templates_gateway:, leasehold_information_gateway:) end
-
-    def execute(payment_ref:, template_id:)
-      {
-        case: 'leasehold_info',
-        template: 'template',
-        uuid: 'uuid',
-        preview: 'preview_with_errors[:html],',
-        errors: 'preview_with_errors[:errors]'
-      }
-    end
-  end
-
   describe '#get_templates' do
     it 'gets letter templates' do
       expect_any_instance_of(Hackney::PDF::GetTemplates).to receive(:execute).and_return({})
@@ -86,7 +60,7 @@ describe LettersController, type: :controller do
       it 'returns 404' do
         expect_any_instance_of(Hackney::PDF::Preview)
           .to receive(:execute)
-          .and_raise(ArgumentError.new('payment_ref does not exist!'))
+          .and_raise(Hackney::Income::TenancyNotFoundError)
 
         post :create, params: { payment_ref: not_found_payment_ref, template_id: template_id }
 

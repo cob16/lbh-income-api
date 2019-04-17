@@ -17,10 +17,10 @@ describe Hackney::Income::UniversalHousingLeaseholdGateway, universal: true do
       let(:tenancy_ref) { Random.rand(100).to_s }
       let(:house_ref) { Random.rand(100).to_s }
 
-      let(:corr_preamble) { 'Corr Preamble' }
+      let(:corr_preamble) { '23' }
       let(:cur_bal) { Random.rand(100) }
 
-      let(:corr_desig) { 'Corr Desig' }
+      let(:corr_desig) { 'Some street' }
 
       let(:corr_address) {
         {
@@ -34,7 +34,7 @@ describe Hackney::Income::UniversalHousingLeaseholdGateway, universal: true do
 
       # let(:corr_postcode) { Faker::Address.postcode }
       let(:post_code) { Faker::Address.postcode }
-      let(:prop_ref) { '123' }
+      let(:prop_ref) { Random.rand(100).to_s }
 
       # Property address
       let(:post_preamble) { 'Post preamble' }
@@ -42,7 +42,6 @@ describe Hackney::Income::UniversalHousingLeaseholdGateway, universal: true do
       let(:sc_leasedate) { Faker::Date.forward(23) }
 
       before do
-        # create_uh_u_letsvoids(payment_ref: payment_ref, prop_ref: prop_ref)
         create_uh_tenancy_agreement(tenancy_ref: tenancy_ref, current_balance: cur_bal, u_saff_rentacc: payment_ref,
                                     house_ref: house_ref, prop_ref: prop_ref)
         create_uh_rent(sc_leasedate: sc_leasedate, prop_ref: prop_ref)
