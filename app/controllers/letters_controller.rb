@@ -10,7 +10,7 @@ class LettersController < ApplicationController
       payment_ref: params.fetch(:payment_ref),
       template_id: params.fetch(:template_id)
     )
-  rescue ArgumentError
+  rescue Hackney::Income::TenancyNotFoundError
     head(404)
   end
 

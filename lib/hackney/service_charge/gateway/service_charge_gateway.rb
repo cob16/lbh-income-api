@@ -23,8 +23,6 @@ module Hackney
         end
 
         def get_cases_by_refs(refs)
-          # TODO: retrieve the fields from UH DB
-          # using adapters
           return [] if refs.empty?
 
           body = @service_charge_adapter.request("tenancy_refs=#{refs}")
