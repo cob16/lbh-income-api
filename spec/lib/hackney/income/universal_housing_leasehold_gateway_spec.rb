@@ -36,15 +36,18 @@ describe Hackney::Income::UniversalHousingLeaseholdGateway, universal: true do
         }
       }
 
+      let(:house_desc) { 'house_desc' }
+
       let(:prop_post_code) { Faker::Address.postcode }
       let(:prop_ref) { Random.rand(100).to_s }
-      let(:sc_leasedate) { Faker::Date.forward(23) }
+      let(:sc_leasedate) { Faker::Date.forward(10) }
+      let(:cot) { Faker::Date.backward(10) } # Commencement Of Tenancy
 
       before do
         create_uh_tenancy_agreement(tenancy_ref: tenancy_ref, current_balance: cur_bal, u_saff_rentacc: payment_ref,
-                                    house_ref: house_ref, prop_ref: prop_ref)
+                                    house_ref: house_ref, prop_ref: prop_ref, cot: cot)
         create_uh_rent(sc_leasedate: sc_leasedate, prop_ref: prop_ref)
-        create_uh_househ(house_ref: house_ref, prop_ref: prop_ref,
+        create_uh_househ(house_ref: house_ref, prop_ref: prop_ref, house_desc: house_desc,
                          corr_preamble: corr_preamble, corr_desig: corr_desig,
                          post_code: prop_address[:post_code], corr_postcode: corr_address[:post_code])
         create_uh_postcode(corr_address)
@@ -55,9 +58,12 @@ describe Hackney::Income::UniversalHousingLeaseholdGateway, universal: true do
         result = gateway.get_leasehold_info(payment_ref: payment_ref)
 
         expect(result).to eq({
+          payment_ref: payment_ref,
           tenancy_ref: tenancy_ref,
           balance: cur_bal,
-          original_lease_date: sc_leasedate
+          original_lease_date: sc_leasedate,
+          lessee_full_name: house_desc,
+          date_of_current_purchase_assignment: cot
         }.merge(correspondence_address)
          .merge(property_address))
       end

@@ -1,6 +1,6 @@
 module UniversalHousingHelper
   # rubocop:disable Metrics/ParameterLists
-  def create_uh_tenancy_agreement(tenancy_ref:, current_balance: 0.0, prop_ref: '', terminated: false,
+  def create_uh_tenancy_agreement(tenancy_ref:, current_balance: 0.0, prop_ref: '', terminated: false, cot: '',
                                   tenure_type: 'SEC', high_action: '111', u_saff_rentacc: '', house_ref: '')
     Hackney::UniversalHousing::Client.connection[:tenagree].insert(
       tag_ref: tenancy_ref,
@@ -33,7 +33,8 @@ module UniversalHousingHelper
       intro_date: DateTime.now,
       intro_ext_date: DateTime.now,
       u_saff_rentacc: u_saff_rentacc,
-      house_ref: house_ref
+      house_ref: house_ref,
+      cot: cot
     )
   end
   # rubocop:enable Metrics/ParameterLists
@@ -120,7 +121,7 @@ module UniversalHousingHelper
     )
   end
 
-  def create_uh_househ(house_ref:, corr_preamble:, corr_desig:, post_code:, corr_postcode: '', prop_ref:)
+  def create_uh_househ(house_ref:, prop_ref:, corr_preamble:, corr_desig:, post_code:, corr_postcode: '', house_desc: '')
     Hackney::UniversalHousing::Client.connection[:househ].insert(
       house_ref: house_ref,
       prop_ref: prop_ref,
@@ -141,7 +142,8 @@ module UniversalHousingHelper
       u_prev_kit: '',
       corr_desig: corr_desig,
       post_code: post_code,
-      corr_postcode: corr_postcode
+      corr_postcode: corr_postcode,
+      house_desc: house_desc
     )
   end
 

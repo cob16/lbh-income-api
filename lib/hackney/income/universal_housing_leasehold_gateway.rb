@@ -15,9 +15,12 @@ module Hackney
         property_res = property.first(prop_ref: prop_ref)
 
         {
+          payment_ref: payment_ref,
           tenancy_ref: res[:tag_ref],
           balance: res[:cur_bal],
           original_lease_date: res[:sc_leasedate],
+          lessee_full_name: res[:house_desc],
+          date_of_current_purchase_assignment: res[:cot],
           correspondence_address_1: res[:corr_preamble],
           correspondence_address_2: res[:corr_desig] + ' ' + corr_postcode_res[:aline1],
           correspondence_address_3: corr_postcode_res[:aline2],
