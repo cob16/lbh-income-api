@@ -20,14 +20,14 @@ module Hackney
           balance: res[:cur_bal],
           original_lease_date: res[:sc_leasedate],
           lessee_full_name: res[:house_desc],
+          lessee_short_name: get_short_name(res[:house_desc]),
           date_of_current_purchase_assignment: res[:cot],
-          correspondence_address_1: res[:corr_preamble],
-          correspondence_address_2: res[:corr_desig] + ' ' + corr_postcode_res[:aline1],
-          correspondence_address_3: corr_postcode_res[:aline2],
-          correspondence_address_4: corr_postcode_res[:aline3],
-          correspondence_address_5: corr_postcode_res[:aline4],
-          correspondence_address_6: res[:corr_postcode],
-
+          correspondence_address1: res[:corr_preamble],
+          correspondence_address2: res[:corr_desig] + ' ' + corr_postcode_res[:aline1],
+          correspondence_address3: corr_postcode_res[:aline2],
+          correspondence_address4: corr_postcode_res[:aline3],
+          correspondence_address5: corr_postcode_res[:aline4],
+          correspondence_postcode: res[:corr_postcode],
           property_address: property_res[:address1] + ', ' + property_res[:post_code]
         }
       end
@@ -52,6 +52,10 @@ module Hackney
 
       def househ
         @househ ||= database[:househ]
+      end
+
+      def get_short_name(full_name)
+        full_name.split(' ').first
       end
 
       def database

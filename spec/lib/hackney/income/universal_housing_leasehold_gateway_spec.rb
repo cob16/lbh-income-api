@@ -36,7 +36,7 @@ describe Hackney::Income::UniversalHousingLeaseholdGateway, universal: true do
         }
       }
 
-      let(:house_desc) { 'house_desc' }
+      let(:house_desc) { 'Name1 Name2 Name3' }
 
       let(:prop_post_code) { Faker::Address.postcode }
       let(:prop_ref) { Random.rand(100).to_s }
@@ -63,6 +63,7 @@ describe Hackney::Income::UniversalHousingLeaseholdGateway, universal: true do
           balance: cur_bal,
           original_lease_date: sc_leasedate,
           lessee_full_name: house_desc,
+          lessee_short_name: 'Name1',
           date_of_current_purchase_assignment: cot
         }.merge(correspondence_address)
          .merge(property_address))
@@ -72,12 +73,12 @@ describe Hackney::Income::UniversalHousingLeaseholdGateway, universal: true do
 
   def correspondence_address
     {
-      correspondence_address_1: corr_preamble,
-      correspondence_address_2: corr_desig + ' ' + corr_address[:aline1],
-      correspondence_address_3: corr_address[:aline2],
-      correspondence_address_4: corr_address[:aline3],
-      correspondence_address_5: corr_address[:aline4],
-      correspondence_address_6: corr_address[:post_code]
+      correspondence_address1: corr_preamble,
+      correspondence_address2: corr_desig + ' ' + corr_address[:aline1],
+      correspondence_address3: corr_address[:aline2],
+      correspondence_address4: corr_address[:aline3],
+      correspondence_address5: corr_address[:aline4],
+      correspondence_postcode: corr_address[:post_code]
     }
   end
 
