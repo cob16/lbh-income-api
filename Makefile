@@ -1,15 +1,17 @@
+SHELL_UID ?= $(shell id -u)
+COMPOSE=SHELL_UID=$(SHELL_UID) docker-compose
 
 .PHONY: docker-build
 docker-build:
-	docker-compose build
+	$(COMPOSE) build
 
 .PHONY: docker-down
 docker-down:
-	docker-compose down
+	$(COMPOSE) down
 
 .PHONY: bundle
 bundle:
-	docker-compose run --rm app bundle
+	$(COMPOSE) run --rm app bundle
 
 .PHONY: setup
 setup: docker-build bundle
@@ -17,23 +19,23 @@ setup: docker-build bundle
 .PHONY: serve
 serve:
 	-rm tmp/pids/server.pid &> /dev/null
-	docker-compose up
+	$(COMPOSE) up
 
 .PHONY: test
 test:
-	docker-compose run --rm app rspec
+	$(COMPOSE) run --rm app rspec
 
 .PHONY: shell
 shell:
-	docker-compose run --rm app /bin/bash
+	$(COMPOSE) run --rm app /bin/bash
 
 .PHONY: lint
 lint:
-	docker-compose run --rm app rubocop
+	$(COMPOSE) run --rm app rubocop
 
 .PHONY: check
 check: lint test
 	echo 'Deployable!'
 
 guard:
-	docker-compose run --rm app guard
+	$(COMPOSE) run --rm app guard

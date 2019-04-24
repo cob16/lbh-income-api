@@ -1,7 +1,11 @@
 version: '3.1'
 services:
   app:
-    build: .
+    build:
+      context: .
+      args:
+        SHELL_UID: "${SHELL_UID}"
+    user: "${SHELL_UID}:${SHELL_UID}"
     environment:
       - UH_DATABASE_NAME=uhsimulator
       - UH_DATABASE_USERNAME=sa
