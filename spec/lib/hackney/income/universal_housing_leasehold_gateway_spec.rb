@@ -31,7 +31,7 @@ describe Hackney::Income::UniversalHousingLeaseholdGateway, universal: true do
   let(:prop_post_code) { Faker::Address.postcode }
   let(:prop_ref) { Random.rand(100).to_s }
   let(:sc_leasedate) { Faker::Date.forward(10) }
-  let(:cot) { Faker::Date.backward(10) } # Commencement Of Tenancy
+  let(:commencement_of_tenancy) { Faker::Date.backward(10) }
 
   after { truncate_uh_tables }
 
@@ -45,7 +45,7 @@ describe Hackney::Income::UniversalHousingLeaseholdGateway, universal: true do
     context 'when payment_ref exists' do
       before do
         create_uh_tenancy_agreement(tenancy_ref: tenancy_ref, current_balance: cur_bal, u_saff_rentacc: payment_ref,
-                                    house_ref: house_ref, prop_ref: prop_ref, cot: cot)
+                                    house_ref: house_ref, prop_ref: prop_ref, cot: commencement_of_tenancy)
         create_uh_rent(sc_leasedate: sc_leasedate, prop_ref: prop_ref)
         create_uh_househ(house_ref: house_ref, prop_ref: prop_ref, house_desc: house_desc,
                          corr_preamble: corr_preamble, corr_desig: corr_desig,
@@ -68,7 +68,7 @@ describe Hackney::Income::UniversalHousingLeaseholdGateway, universal: true do
             original_lease_date: sc_leasedate,
             lessee_full_name: house_desc,
             lessee_short_name: 'Mr John',
-            date_of_current_purchase_assignment: cot
+            date_of_current_purchase_assignment: commencement_of_tenancy
           }.merge(expected_correspondence_address)
            .merge(expected_property_address))
         end
@@ -85,7 +85,7 @@ describe Hackney::Income::UniversalHousingLeaseholdGateway, universal: true do
             original_lease_date: sc_leasedate,
             lessee_full_name: house_desc,
             lessee_short_name: 'Mr John',
-            date_of_current_purchase_assignment: cot,
+            date_of_current_purchase_assignment: commencement_of_tenancy,
             correspondence_address1: corr_preamble,
             correspondence_address2: corr_desig + ' ',
             correspondence_address3: '',
