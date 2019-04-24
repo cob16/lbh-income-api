@@ -4,6 +4,7 @@ module Hackney
       def get_leasehold_info(payment_ref:)
         res = tenagree
               .where(u_saff_rentacc: payment_ref)
+              .exclude(Sequel.trim(Sequel.qualify(:tenagree, :prop_ref)) => '')
               .join(rent, prop_ref: :prop_ref)
               .join(househ, prop_ref: :prop_ref)
               .first
@@ -11,24 +12,25 @@ module Hackney
         raise TenancyNotFoundError unless res.present?
 
         prop_ref = res[:prop_ref]
-        corr_postcode_res = postcode.first(post_code: res[:corr_postcode])
-        property_res = property.first(prop_ref: prop_ref)
+
+        corr_postcode_res = postcode.first(post_code: res[:corr_postcode]) || {}
+        property_res = property.first(prop_ref: prop_ref) || {}
 
         {
           payment_ref: payment_ref,
           tenancy_ref: res[:tag_ref],
-          balance: res[:cur_bal],
+          total_collectable_arrears_balance: res[:cur_bal], #TODO: curr_bal and total_collectable_arrears_balance might not be equal. This is acceptable for a first release.
           original_lease_date: res[:sc_leasedate],
           lessee_full_name: res[:house_desc],
           lessee_short_name: get_short_name(res[:house_desc]),
           date_of_current_purchase_assignment: res[:cot],
           correspondence_address1: res[:corr_preamble],
-          correspondence_address2: res[:corr_desig] + ' ' + corr_postcode_res[:aline1],
-          correspondence_address3: corr_postcode_res[:aline2],
-          correspondence_address4: corr_postcode_res[:aline3],
-          correspondence_address5: corr_postcode_res[:aline4],
-          correspondence_postcode: res[:corr_postcode],
-          property_address: property_res[:address1] + ', ' + property_res[:post_code]
+          correspondence_address2: "#{res[:corr_desig]} #{corr_postcode_res[:aline1]}",
+          correspondence_address3: corr_postcode_res[:aline2] || '',
+          correspondence_address4: corr_postcode_res[:aline3] || '',
+          correspondence_address5: corr_postcode_res[:aline4] || '',
+          correspondence_postcode: corr_postcode_res[:post_code] || '',
+          property_address: "#{property_res[:address1]}, #{property_res[:post_code]}"
         }
       end
 
@@ -55,7 +57,8 @@ module Hackney
       end
 
       def get_short_name(full_name)
-        full_name.split(' ').first
+        # 'Mr John Doe Smith' => Mr John'
+        full_name.split(' ').first(2).join ' '
       end
 
       def database

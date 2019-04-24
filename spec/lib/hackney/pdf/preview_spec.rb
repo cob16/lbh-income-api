@@ -22,14 +22,16 @@ describe Hackney::PDF::Preview do
     {
       payment_ref: test_pay_ref,
       lessee_full_name: 'Mr Philip Banks',
+      lessee_short_name: 'Philip',
       correspondence_address1: '508 Saint Cloud Road',
       correspondence_address2: 'Southwalk',
       correspondence_address3: 'London',
+      correspondence_address4: 'London',
+      correspondence_address5: 'England',
       correspondence_postcode: 'SE1 0SW',
-      lessee_short_name: 'Philip',
       property_address: '1 Hillman St, London, E8 1DY',
-      arrears_letter_1_date: '20th Feb 2019',
-      total_collectable_arrears_balance: '3506.90'
+      arrears_letter_1_date: '20th Feb 2019', # TODO: this will be necessary for letter2
+      total_collectable_arrears_balance: '3506.90' # TODO: change this to balance
     }
   end
 
