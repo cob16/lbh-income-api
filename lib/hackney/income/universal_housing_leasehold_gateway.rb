@@ -2,11 +2,11 @@ module Hackney
   module Income
     class UniversalHousingLeaseholdGateway
       def get_leasehold_info(payment_ref:)
-        res = tenagree
+        res = tenancy_agreement
               .where(u_saff_rentacc: payment_ref)
               .exclude(Sequel.trim(Sequel.qualify(:tenagree, :prop_ref)) => '')
               .join(rent, prop_ref: :prop_ref)
-              .join(househ, prop_ref: :prop_ref)
+              .join(household, prop_ref: :prop_ref)
               .first
 
         raise TenancyNotFoundError unless res.present?
@@ -19,7 +19,7 @@ module Hackney
         {
           payment_ref: payment_ref,
           tenancy_ref: res[:tag_ref],
-          total_collectable_arrears_balance: res[:cur_bal], #TODO: curr_bal and total_collectable_arrears_balance might not be equal. This is acceptable for a first release.
+          total_collectable_arrears_balance: res[:cur_bal], # TODO: curr_bal and total_collectable_arrears_balance might not be equal
           original_lease_date: res[:sc_leasedate],
           lessee_full_name: res[:house_desc],
           lessee_short_name: get_short_name(res[:house_desc]),
@@ -36,8 +36,8 @@ module Hackney
 
       private
 
-      def tenagree
-        @tenagree ||= database[:tenagree]
+      def tenancy_agreement
+        @tenancy_agreement ||= database[:tenagree]
       end
 
       def postcode
@@ -52,8 +52,8 @@ module Hackney
         @property ||= database[:property]
       end
 
-      def househ
-        @househ ||= database[:househ]
+      def household
+        @household ||= database[:househ]
       end
 
       def get_short_name(full_name)
