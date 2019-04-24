@@ -26,7 +26,7 @@ describe Hackney::Income::UniversalHousingLeaseholdGateway, universal: true do
     }
   }
 
-  let(:house_desc) { 'Mr John Doe Smith' }
+  let(:lessee_full_name) { 'Mr John Doe Smith' }
 
   let(:prop_post_code) { Faker::Address.postcode }
   let(:prop_ref) { Random.rand(100).to_s }
@@ -47,7 +47,7 @@ describe Hackney::Income::UniversalHousingLeaseholdGateway, universal: true do
         create_uh_tenancy_agreement(tenancy_ref: tenancy_ref, current_balance: cur_bal, u_saff_rentacc: payment_ref,
                                     house_ref: house_ref, prop_ref: prop_ref, cot: commencement_of_tenancy)
         create_uh_rent(sc_leasedate: sc_leasedate, prop_ref: prop_ref)
-        create_uh_househ(house_ref: house_ref, prop_ref: prop_ref, house_desc: house_desc,
+        create_uh_househ(house_ref: house_ref, prop_ref: prop_ref, house_desc: lessee_full_name,
                          corr_preamble: corr_preamble, corr_desig: corr_desig,
                          post_code: prop_address[:post_code], corr_postcode: corr_address[:post_code])
       end
@@ -66,8 +66,8 @@ describe Hackney::Income::UniversalHousingLeaseholdGateway, universal: true do
             tenancy_ref: tenancy_ref,
             total_collectable_arrears_balance: cur_bal,
             original_lease_date: sc_leasedate,
-            lessee_full_name: house_desc,
-            lessee_short_name: 'Mr John',
+            lessee_full_name: lessee_full_name,
+            lessee_short_name: lessee_full_name,
             date_of_current_purchase_assignment: commencement_of_tenancy
           }.merge(expected_correspondence_address)
            .merge(expected_property_address))
@@ -83,8 +83,8 @@ describe Hackney::Income::UniversalHousingLeaseholdGateway, universal: true do
             tenancy_ref: tenancy_ref,
             total_collectable_arrears_balance: cur_bal,
             original_lease_date: sc_leasedate,
-            lessee_full_name: house_desc,
-            lessee_short_name: 'Mr John',
+            lessee_full_name: lessee_full_name,
+            lessee_short_name: lessee_full_name,
             date_of_current_purchase_assignment: commencement_of_tenancy,
             correspondence_address1: corr_preamble,
             correspondence_address2: corr_desig + ' ',

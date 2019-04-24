@@ -22,7 +22,7 @@ module Hackney
           total_collectable_arrears_balance: res[:cur_bal], # TODO: curr_bal and total_collectable_arrears_balance might not be equal
           original_lease_date: res[:sc_leasedate],
           lessee_full_name: res[:house_desc],
-          lessee_short_name: get_short_name(res[:house_desc]),
+          lessee_short_name: res[:house_desc],
           date_of_current_purchase_assignment: res[:cot],
           correspondence_address1: res[:corr_preamble],
           correspondence_address2: "#{res[:corr_desig]} #{corr_postcode_res[:aline1]}",
@@ -54,11 +54,6 @@ module Hackney
 
       def household
         @household ||= database[:househ]
-      end
-
-      def get_short_name(full_name)
-        # 'Mr John Doe Smith' => Mr John'
-        full_name.split(' ').first(2).join ' '
       end
 
       def database
