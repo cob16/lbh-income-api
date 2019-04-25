@@ -7,14 +7,14 @@ RUN wget ftp://ftp.freetds.org/pub/freetds/stable/freetds-1.00.27.tar.gz && \
   make && \
   make install
 
-ARG SHELL_UID
+ARG SHELL_UID="${SHELL_UID}"
 
 ARG RAILS_ENV=development
 RUN useradd --create-home -u "${SHELL_UID}" -s /bin/bash app
 WORKDIR /home/app
-RUN chown -R "${SHELL_UID}:${SHELL_UID}" .
 
-USER app
+
+USER "${SHELL_UID}"
 # 50 MB stack needed in sync worker thread
 ENV RUBY_THREAD_VM_STACK_SIZE=50000000
 ENV RAILS_ENV ${RAILS_ENV}
@@ -22,4 +22,11 @@ COPY Gemfile Gemfile.lock ./
 RUN bundle check || bundle install
 
 COPY . /home/app
+
+USER root
+
+RUN chown -R app:app .
+
+USER "${SHELL_UID}"
+
 EXPOSE 3000
