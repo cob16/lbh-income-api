@@ -13,7 +13,7 @@ jobs:
       - run:
           name: Build projects
           command: |
-            SHELL_UID=0 docker-compose build
+            SHELL_UID=1000 docker-compose build
       - run:
           name: Run migrations
           command: docker-compose run -e RAILS_ENV=test --rm app rails db:migrate
