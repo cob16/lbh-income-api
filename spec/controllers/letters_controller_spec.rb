@@ -57,10 +57,12 @@ describe LettersController, type: :controller do
 
       it 'generates pdf(html) preview with template details, case and empty errors' do
         expect_any_instance_of(Hackney::PDF::PreviewGenerator).to receive(:execute).and_return(html: preview_html, errors: [])
+        expect_any_instance_of(Hackney::Income::UniversalHousingLeaseholdGateway)
+          .to receive(:get_leasehold_info).with(payment_ref: found_payment_ref).and_return(payment_ref: found_payment_ref)
 
         post :create, params: { payment_ref: found_payment_ref, template_id: template_id }
 
-        response_json = JSON.parse(response.body)
+        expect(response.status).to eq(200)
 
         expect(response_json['case']['payment_ref']).to eq(found_payment_ref)
         expect(response_json['template']['id']).to eq(template_id)
@@ -71,26 +73,51 @@ describe LettersController, type: :controller do
     end
 
     context 'when some data is missing' do
-      let(:missing_optional_data) { 111 }
-      let(:missing_mandatory_data) { 222 }
+      let(:letter_fields) {
+        {
+          payment_ref: Faker::Number.number(4),
+          lessee_full_name: '-',
+          correspondence_address1: '-',
+          correspondence_address2: '-',
+          correspondence_address3: '-',
+          correspondence_postcode: '-',
+          property_address: '-',
+          total_collectable_arrears_balance: '-'
+        }
+      }
 
-      it 'no errors when only optional data is missing' do
-        post :create, params: { payment_ref: missing_optional_data, template_id: template_id }
+      context 'when the missing data is optional' do
+        let(:payment_ref) { Faker::Number.number(4) }
 
-        response_json = JSON.parse(response.body)
+        let(:optional_fields) { %i[correspondence_address3] }
 
-        expect(response_json['errors']).to eq([])
+        it 'returns no errors' do
+          expect_any_instance_of(Hackney::Income::UniversalHousingLeaseholdGateway)
+            .to receive(:get_leasehold_info).with(payment_ref: payment_ref)
+                                            .and_return(letter_fields.except(*optional_fields))
+
+          post :create, params: { payment_ref: payment_ref, template_id: template_id }
+
+          expect(response_json['errors']).to eq([])
+        end
       end
 
-      it 'returns errors when mandatory data is missing' do
-        post :create, params: { payment_ref: missing_mandatory_data, template_id: template_id }
+      context 'when the missing data mandatory' do
+        let(:payment_ref) { Faker::Number.number(4) }
+        let(:mandatory_fields) { %i[correspondence_address1] }
 
-        response_json = JSON.parse(response.body)
+        it 'returns errors' do
+          expect_any_instance_of(Hackney::Income::UniversalHousingLeaseholdGateway)
+            .to receive(:get_leasehold_info).with(payment_ref: payment_ref).and_return(
+              letter_fields.except(*mandatory_fields)
+            )
 
-        expect(response_json['errors']).to eq([{
-          'name' => 'correspondence_address1',
-          'message' => 'missing mandatory field'
-        }])
+          post :create, params: { payment_ref: payment_ref, template_id: template_id }
+
+          expect(response_json['errors']).to eq(
+            [{ 'message' => 'missing mandatory field', 'name' => 'correspondence_address1' }]
+          )
+        end
       end
     end
 
@@ -103,5 +130,11 @@ describe LettersController, type: :controller do
         expect(response.status).to eq(404)
       end
     end
+  end
+
+  private
+
+  def response_json
+    JSON.parse(response.body)
   end
 end

@@ -39,7 +39,7 @@ module Hackney
       end
 
       def get_leasehold_info(payment_ref)
-        @leasehold_information_gateway.execute(payment_ref: payment_ref).first
+        @leasehold_information_gateway.get_leasehold_info(payment_ref: payment_ref)
       end
 
       def get_template_by_id(template_id)

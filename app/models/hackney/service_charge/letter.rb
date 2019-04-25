@@ -7,7 +7,8 @@ module Hackney
                                    total_collectable_arrears_balance].freeze
 
       attr_reader :tenancy_ref, :correspondence_address1, :correspondence_address2,
-                  :correspondence_address3, :correspondence_postcode, :property_address,
+                  :correspondence_address3, :correspondence_address4, :correspondence_address5,
+                  :correspondence_postcode, :property_address,
                   :payment_ref, :balance, :total_collectable_arrears_balance,
                   :lba_expiry_date, :original_lease_date, :date_of_current_purchase_assignment,
                   :original_leaseholders, :previous_letter_sent, :arrears_letter_1_date,
@@ -20,6 +21,8 @@ module Hackney
         @correspondence_address1 = validated_params[:correspondence_address1]
         @correspondence_address2 = validated_params[:correspondence_address2]
         @correspondence_address3 = validated_params[:correspondence_address3]
+        @correspondence_address4 = validated_params[:correspondence_address4]
+        @correspondence_address5 = validated_params[:correspondence_address5]
         @correspondence_postcode = validated_params[:correspondence_postcode]
         @property_address = validated_params[:property_address]
         @payment_ref = validated_params[:payment_ref]

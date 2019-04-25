@@ -6,7 +6,7 @@ module Hackney
       end
 
       def execute(payment_ref:)
-        @service_charge_gateway.fake_get_cases_by_refs([payment_ref])
+        @service_charge_gateway.get_leasehold_information(payment_ref)
       end
     end
   end
