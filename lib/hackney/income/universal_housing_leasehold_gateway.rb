@@ -19,7 +19,7 @@ module Hackney
         {
           payment_ref: payment_ref,
           tenancy_ref: res[:tag_ref],
-          total_collectable_arrears_balance: res[:cur_bal], # TODO: curr_bal and total_collectable_arrears_balance might not be equal
+          total_collectable_arrears_balance: res[:cur_bal],
           original_lease_date: res[:sc_leasedate],
           lessee_full_name: res[:house_desc],
           lessee_short_name: res[:house_desc],
@@ -30,7 +30,8 @@ module Hackney
           correspondence_address4: corr_postcode_res[:aline3] || '',
           correspondence_address5: corr_postcode_res[:aline4] || '',
           correspondence_postcode: corr_postcode_res[:post_code] || '',
-          property_address: "#{property_res[:address1]}, #{property_res[:post_code]}"
+          property_address: "#{property_res[:address1]}, #{property_res[:post_code]}",
+          international: international?(corr_postcode_res[:post_code])
         }
       end
 
@@ -54,6 +55,10 @@ module Hackney
 
       def household
         @household ||= database[:househ]
+      end
+
+      def international?(postcode)
+        postcode.nil? ? '' : !UKPostcode.parse(postcode).valid?
       end
 
       def database

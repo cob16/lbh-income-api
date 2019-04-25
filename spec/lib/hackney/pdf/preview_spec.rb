@@ -30,8 +30,8 @@ describe Hackney::PDF::Preview do
       correspondence_address5: 'England',
       correspondence_postcode: 'SE1 0SW',
       property_address: '1 Hillman St, London, E8 1DY',
-      arrears_letter_1_date: '20th Feb 2019', # TODO: this will be necessary for letter2
-      total_collectable_arrears_balance: '3506.90' # TODO: change this to balance
+      arrears_letter_1_date: '20th Feb 2019',
+      total_collectable_arrears_balance: '3506.90'
     }
   end
 

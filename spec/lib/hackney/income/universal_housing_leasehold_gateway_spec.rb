@@ -15,7 +15,7 @@ describe Hackney::Income::UniversalHousingLeaseholdGateway, universal: true do
       aline2: 'Address line 2',
       aline3: 'Address line 3',
       aline4: 'Address line 4',
-      post_code: Faker::Address.postcode
+      post_code: 'E8 1DY'
     }
   }
 
@@ -92,7 +92,8 @@ describe Hackney::Income::UniversalHousingLeaseholdGateway, universal: true do
             correspondence_address4: '',
             correspondence_address5: '',
             correspondence_postcode: '',
-            property_address: ', '
+            property_address: ', ',
+            international: ''
           )
         end
       end
@@ -106,7 +107,8 @@ describe Hackney::Income::UniversalHousingLeaseholdGateway, universal: true do
       correspondence_address3: corr_address[:aline2],
       correspondence_address4: corr_address[:aline3],
       correspondence_address5: corr_address[:aline4],
-      correspondence_postcode: corr_address[:post_code]
+      correspondence_postcode: corr_address[:post_code],
+      international: false
     }
   end
 
