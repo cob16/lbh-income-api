@@ -7,7 +7,7 @@ RUN wget ftp://ftp.freetds.org/pub/freetds/stable/freetds-1.00.27.tar.gz && \
   make && \
   make install
 
-ARG SHELL_UID
+ARG $(SHELL_UID || UID)
 
 ARG RAILS_ENV=development
 RUN useradd --create-home -u "${SHELL_UID}" -s /bin/bash app
