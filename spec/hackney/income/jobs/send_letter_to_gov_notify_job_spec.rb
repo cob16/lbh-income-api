@@ -4,7 +4,9 @@ describe Hackney::Income::Jobs::SendLetterToGovNotifyJob do
   let(:document_id) do
     Hackney::Cloud::Document.create(
       filename: 'test_file.txt',
+      extension: '.txt',
       uuid: SecureRandom.uuid,
+      mime_type: 'application/pdf',
       metadata: {
         user_id: 123,
         payment_ref: 1_234_567_890
