@@ -2,7 +2,7 @@ module Hackney
   module ServiceCharge
     class Letter
       MANDATORY_LETTER_FIELDS = %i[payment_ref lessee_full_name
-                                   correspondence_address1 correspondence_address2
+                                   correspondence_address2 correspondence_address3
                                    correspondence_postcode property_address
                                    total_collectable_arrears_balance].freeze
 
@@ -18,12 +18,12 @@ module Hackney
         validated_params = validate_mandatory_fields(params)
 
         @tenancy_ref = validated_params[:tenancy_ref]
-        @correspondence_address1 = validated_params[:correspondence_address1]
-        @correspondence_address2 = validated_params[:correspondence_address2]
-        @correspondence_address3 = validated_params[:correspondence_address3]
-        @correspondence_address4 = validated_params[:correspondence_address4]
-        @correspondence_address5 = validated_params[:correspondence_address5]
-        @correspondence_postcode = validated_params[:correspondence_postcode]
+        @correspondence_address1 = validated_params[:correspondence_address1] # corr_preamble ( the flat number/house Name)
+        @correspondence_address2 = validated_params[:correspondence_address2] # desig + aline1
+        @correspondence_address3 = validated_params[:correspondence_address3] # aline2
+        @correspondence_address4 = validated_params[:correspondence_address4] # aline3 (City)
+        @correspondence_address5 = validated_params[:correspondence_address5] # aline4 (Country)
+        @correspondence_postcode = validated_params[:correspondence_postcode] # corr_postcode
         @property_address = validated_params[:property_address]
         @payment_ref = validated_params[:payment_ref]
         @balance = validated_params[:balance]
