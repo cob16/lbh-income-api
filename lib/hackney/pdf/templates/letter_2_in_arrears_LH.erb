@@ -15,12 +15,12 @@
   Dear <%= @letter.lessee_short_name %>,
 
   <p>
-    <strong>Leaserholder of the property:</strong> <br>
+    <strong>The property address:</strong> <br>
     <%= @letter.property_address %>
   </p>
 
   <div class="green_box">
-    Our records show that you still have the outstanding amount on your rent & service charge account:
+    Our records show that you still have the outstanding amount on your service charge account:
     <h1>£<%= @letter.total_collectable_arrears_balance %></h1>
     <p>
         It is important that your accounts are kept up to date as non-payment of your service charge
@@ -36,7 +36,7 @@
   </p>
 
   <p>
-    the amount of <%= @letter.total_collectable_arrears_balance %> remains outstanding. Please contact us within 7 days to
+    The amount of £<%= @letter.total_collectable_arrears_balance %> remains outstanding. Please contact us within 7 days to
     inform us how you intend to pay.
   </p>
 
@@ -61,7 +61,7 @@
   </p>
 
   <p>
-    Yours sincerely (faithfully if a company)<br>
+    Yours sincerely<br>
     Leasehold Services
   </p>
 
