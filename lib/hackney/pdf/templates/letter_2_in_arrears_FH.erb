@@ -15,16 +15,15 @@
   Dear <%= @letter.lessee_short_name %>,
 
   <p>
-    <strong>Leaserholder of the property:</strong> <br>
+    <strong>The property address:</strong> <br>
       <%= @letter.property_address %>
   </p>
 
   <div class="green_box">
-    Our records show that you still have the outstanding amount on your rent & service charge account:
+    Our records show that you still have the outstanding amount on your service charge account:
     <h1>£<%= @letter.total_collectable_arrears_balance %></h1>
     <p>
-        It is important that your accounts are kept up to date as non-payment of your service charge
-        is a breach of your lease agreement with Hackney Council.
+        It is important that your accounts are kept up to date as non-payment is a breach of your transfer in part agreement with the council.
     </p>
   </div>
 
@@ -36,7 +35,7 @@
   </p>
 
   <p>
-    the amount of <%= @letter.total_collectable_arrears_balance %> remains outstanding. Please contact us within 7 days to
+    The amount of £<%= @letter.total_collectable_arrears_balance %> remains outstanding. Please contact us within 7 days to
     inform us how you intend to pay.
   </p>
 
@@ -46,8 +45,7 @@
     If we do not receive payment, or you do not contact us to agree a suitable payment
     arrangement, interest will be applied to your account and we will pass this debt to the
     Hackney Council’s Legal Department for recovery. Any legal costs incurred by Hackney
-    Council will be added to the balance claimed. Where applicable, we will write to your
-    Mortgage lender informing them of the breach of your Lease.
+    Council will be added to the balance claimed.
   </p>
 
   <h2>What if you are currently experiencing financial difficulties?</h2>
@@ -59,9 +57,11 @@
     addressing the repayment of this debt. You may also wish to seek independent
     guidance from your local Citizen’s Advice Bureau.
   </p>
-
+<p> 
+  Attached are the payment methods available to you.  If you have paid this demand already then please ignore this letter.
+</p>
   <p>
-    Yours sincerely (faithfully if a company)<br>
+    Yours sincerely<br>
     Leasehold Services
   </p>
 
