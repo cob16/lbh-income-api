@@ -15,12 +15,12 @@
   Dear <%= @letter.lessee_short_name %>,
 
   <p>
-    <strong>Leaserholder of the property:</strong> <br>
+    <strong>Property:</strong> <br>
     <%= @letter.property_address %>
   </p>
 
   <div class="green_box">
-    Our records show that you still have the outstanding amount on your rent & service charge account:
+    Our records show that you still have the outstanding amount on your service charge account:
     <h1>£<%= @letter.total_collectable_arrears_balance %></h1>
   </div>
 
@@ -42,21 +42,14 @@
   <h2>What if I current experiencing financial difficulties?</h2>
   <p class="no_top_margin">
     If you are experiencing financial difficulties, please contact your local Citizen Advice Bureau
-    or contact us to discuss any assistance we may be able to offer.
-  </p>
-  <p>
-    Please find enclosed further information on methods of payment.
-  </p>
-  <p>
-    If you have already made a payment or entered into an arrangement to pay the balance,
-    please disregard this letter.
+    or contact us to discuss any assistance we may be able to offer. Please find enclosed further information on methods of payment. If you have already made a payment or entered into an arrangement to pay the balance, please disregard this letter.
   </p>
   <p>
     We look forward to receiving your payment within 14 days from the date of this letter.
   </p>
 
   <p>
-    Yours sincerely (faithfully if a company)<br>
+    Yours sincerely<br>
     Leasehold Services
   </p>
 
