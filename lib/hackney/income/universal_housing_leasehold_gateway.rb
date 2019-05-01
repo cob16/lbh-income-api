@@ -22,7 +22,7 @@ module Hackney
 
         prop_ref = res[:prop_ref]
 
-        corr_postcode_res = postcode.first(post_code: res[:corr_postcode]) || {}
+        corr_address = get_correspondence_address(corr_postcode: res[:corr_postcode], prop_postcode: res[:post_code])
         property_res = property.first(prop_ref: prop_ref) || {}
 
         {
@@ -34,13 +34,13 @@ module Hackney
           lessee_short_name: res[:house_desc],
           date_of_current_purchase_assignment: res[:cot],
           correspondence_address1: res[:corr_preamble],
-          correspondence_address2: "#{res[:corr_desig]} #{corr_postcode_res[:aline1]}",
-          correspondence_address3: corr_postcode_res[:aline2] || '',
-          correspondence_address4: corr_postcode_res[:aline3] || '',
-          correspondence_address5: corr_postcode_res[:aline4] || '',
-          correspondence_postcode: corr_postcode_res[:post_code] || '',
+          correspondence_address2: "#{res[:corr_desig]} #{corr_address[:aline1]}",
+          correspondence_address3: corr_address[:aline2] || '',
+          correspondence_address4: corr_address[:aline3] || '',
+          correspondence_address5: corr_address[:aline4] || '',
+          correspondence_postcode: corr_address[:post_code] || '',
           property_address: "#{property_res[:address1]}, #{property_res[:post_code]}",
-          international: international?(corr_postcode_res[:post_code])
+          international: international?(corr_address[:post_code])
         }
       end
 
@@ -64,6 +64,15 @@ module Hackney
 
       def household
         @household ||= database[:househ]
+      end
+
+      def get_correspondence_address(corr_postcode:, prop_postcode:)
+        address = if corr_postcode.present? # we use the correspondence address
+                    postcode.first(post_code: corr_postcode)
+                  elsif prop_postcode.present? # we use the property address
+                    postcode.first(post_code: prop_postcode)
+                  end
+        address || {}
       end
 
       def international?(postcode)
