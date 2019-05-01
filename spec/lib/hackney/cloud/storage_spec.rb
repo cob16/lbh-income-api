@@ -20,23 +20,21 @@ describe Hackney::Cloud::Storage, type: :model do
     end
 
     context 'when payment_ref param is used' do
-      let(:payment_ref) { Faker::Number.number(10) }
+      subject { storage.all_documents(payment_ref: payment_ref_param) }
 
-      before do
-        Hackney::Cloud::Document.create(filename: '-', uuid: SecureRandom.uuid, extension: '-', mime_type: '-',
-                                        metadata: { payment_ref: payment_ref }.to_json)
-      end
+      let(:payment_ref) { Faker::Number.number(10) }
+      let!(:new_document) { create(:document, metadata: { payment_ref: payment_ref }.to_json) }
 
       context 'when payment_ref exists' do
-        it 'finds the correct documents' do
-          expect(storage.all_documents(payment_ref: payment_ref).count).to eq(1)
-        end
+        let(:payment_ref_param) { payment_ref }
+
+        it { is_expected.to include(new_document) }
       end
 
       context 'when payment_ref does not exist' do
-        it 'returns 0 entries' do
-          expect(storage.all_documents(payment_ref: 'NON-EXISTENT-PAYMENT-REF').count).to eq(0)
-        end
+        let(:payment_ref_param) { 'NON-EXISTENT-PAYMENT-REF' }
+
+        it { is_expected.not_to include(new_document) }
       end
     end
   end

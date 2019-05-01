@@ -5,8 +5,9 @@ module Hackney
         @cloud_storage = cloud_storage
       end
 
-      def execute
-        @cloud_storage.all_documents.each do |doc|
+      def execute(payment_ref: nil)
+        @cloud_storage.all_documents(payment_ref: payment_ref)
+                      .each do |doc|
           next unless doc.metadata
           metadata = JSON.parse(doc.metadata).deep_symbolize_keys
           if metadata[:user_id]
