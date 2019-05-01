@@ -12,8 +12,12 @@ describe Hackney::Cloud::Storage, type: :model do
     end
   end
 
-  it 'retrieves all documents' do
-    storage.all_documents
+  describe 'retrieve all document' do
+    it 'retrieves all documents' do
+      expect(Hackney::Cloud::Document).to receive(:all)
+
+      storage.all_documents
+    end
   end
 
   describe '#save' do
