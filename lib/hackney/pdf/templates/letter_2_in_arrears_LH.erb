@@ -1,7 +1,11 @@
 <%= @logo %>
 <div class="top_space"></div>
 
-<%= @sender_address %>
+<div class="right">
+  <%= @sender_address %>
+  <p>Our ref: SCARR2</p>
+  <%= @sending_date %>
+</div>
 
 <div class="lessee_address">
   <strong><%= @letter.lessee_full_name %></strong> <br>

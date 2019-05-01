@@ -1,7 +1,11 @@
 <%= @logo %>
 <div class="top_space"></div>
 
-<%= @sender_address %>
+<div class="right">
+  <%= @sender_address %>
+  <p>Our ref: FRARR2</p>
+  <%= @sending_date %>
+</div>
 
 <div class="lessee_address">
   <strong><%= @letter.lessee_full_name %></strong> <br>
@@ -57,7 +61,7 @@
     addressing the repayment of this debt. You may also wish to seek independent
     guidance from your local Citizen’s Advice Bureau.
   </p>
-<p> 
+<p>
   Attached are the payment methods available to you.  If you have paid this demand already then please ignore this letter.
 </p>
   <p>

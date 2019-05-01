@@ -3,6 +3,7 @@ module Hackney
     class PreviewGenerator
       LOGO_PATH = 'lib/hackney/pdf/templates/layouts/logo.svg'.freeze
       SENDER_ADDRESS_PATH = 'lib/hackney/pdf/templates/layouts/sender_address.erb'.freeze
+      SENDING_DATE_PATH = 'lib/hackney/pdf/templates/layouts/sending_date.erb'.freeze
       PAYMENT_OPTIONS_PATH = 'lib/hackney/pdf/templates/layouts/payment_options.erb'.freeze
       REPLY_FORM_PATH = 'lib/hackney/pdf/templates/layouts/reply_form.erb'.freeze
 
@@ -17,6 +18,8 @@ module Hackney
         @letter = Hackney::ServiceCharge::Letter.new(letter_params)
 
         @sender_address = ERB.new(File.open(SENDER_ADDRESS_PATH).read).result(binding)
+
+        @sending_date = ERB.new(File.open(SENDING_DATE_PATH).read).result(binding)
 
         @payment_options = ERB.new(File.open(PAYMENT_OPTIONS_PATH).read).result(binding)
 

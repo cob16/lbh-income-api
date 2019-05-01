@@ -1,7 +1,11 @@
 <%= @logo %>
 <div class="top_space"></div>
 
-<%= @sender_address %>
+<div class="right">
+  <%= @sender_address %>
+  <p>Our ref: SCARR1</p>
+  <%= @sending_date %>
+</div>
 
 <div class="lessee_address">
   <strong><%= @letter.lessee_full_name %></strong> <br>
@@ -39,7 +43,7 @@
     assistance maybe available towards payment of your service charges if you qualify.
   </p>
 
-  <h2>What if I current experiencing financial difficulties?</h2>
+  <h2>What if I am currently experiencing financial difficulties?</h2>
   <p class="no_top_margin">
     If you are experiencing financial difficulties, please contact your local Citizen Advice Bureau
     or contact us to discuss any assistance we may be able to offer. Please find enclosed further information on methods of payment. If you have already made a payment or entered into an arrangement to pay the balance, please disregard this letter.
