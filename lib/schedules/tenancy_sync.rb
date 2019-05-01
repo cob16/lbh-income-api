@@ -5,9 +5,9 @@ class TenancySync
   def perform
     puts '* TenancySync Running *'
     use_case_factory = Hackney::Income::UseCaseFactory.new
-
-    max_retries = 3
     retry_count = 0
+
+    max_retries = 5
     delay = 1.minute
 
     begin
@@ -15,10 +15,12 @@ class TenancySync
     rescue Sequel::DatabaseConnectionError => err
       raise 'All retries are exhausted' if retry_count >= max_retries
       retry_count += 1
+      delay *= retry_count
       puts "[#{Time.now}] Oh no, we failed on #{err.inspect}."
 
       puts "Retries left: #{max_retries - retry_count}"
-      sleep delay += retry_count
+      puts "Retrying in: #{delay} seconds"
+      sleep delay *= retry_count
       retry
     end
   end
