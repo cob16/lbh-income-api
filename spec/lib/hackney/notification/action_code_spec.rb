@@ -1,7 +1,6 @@
 require 'rails_helper'
 
 describe Hackney::Notification::ActionCode do
-  let(:action_codes) { Hackney::Tenancy::ActionCodes }
   let(:template_id) { '' }
 
   describe '#get_for_sms' do
@@ -22,19 +21,19 @@ describe Hackney::Notification::ActionCode do
       it { should eq(Hackney::Tenancy::ActionCodes::AUTOMATED_SMS_ACTION_CODE) }
     end
 
-    context 'With unknown SMS' do
+    context 'With unknown SMS', focus: true do
       let(:template_id) { 'fake-template-id' }
 
-      it { should eq(Hackney::Tenancy::ActionCodes::MANUAL_GREEN_SMS_ACTION_CODE) }
+      it { should eq(Hackney::Tenancy::ActionCodes::MANUAL_SMS_ACTION_CODE) }
 
-      it 'Should send a warning to the logger' do
-        expect(logger).to recieve(:warning).with("unknown sms template: #{template_id}")
+      xit 'Should send a warning to the logger' do
+        expect { subject }.to output("unknown sms template: #{template_id}").to_stderr
       end
     end
   end
 
   describe '#get_for_email' do
-    let(:subject) { described_class.get_for_sms(template_id: template_id) }
+    let(:subject) { described_class.get_for_email(template_id: template_id) }
 
     context 'With Manual Green Email' do
       let(:template_id) { Rails.configuration.x.green_in_arrears.manual_email_template_id }
@@ -51,8 +50,8 @@ describe Hackney::Notification::ActionCode do
 
       it { should eq(Hackney::Tenancy::ActionCodes::MANUAL_GREEN_EMAIL_ACTION_CODE) }
 
-      it 'Should send a warning to the logger' do
-        expect(logger).to recieve(:warning).with("unknown email template: #{template_id}")
+      xit 'Should send a warning to the logger' do
+        expect { subject }.to output("unknown email template: #{template_id}").to_stdout
       end
     end
   end
