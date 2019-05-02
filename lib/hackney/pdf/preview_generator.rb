@@ -34,8 +34,7 @@ module Hackney
       private
 
       def get_date
-        # FIX ME: figure out what date this exactly should be...
-        Time.now.strftime('%d %B %Y')
+        (Time.now + 1.day).strftime('%d %B %Y')
       end
     end
   end
