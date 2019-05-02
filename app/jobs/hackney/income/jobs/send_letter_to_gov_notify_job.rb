@@ -16,7 +16,7 @@ module Hackney
             income_use_case_factory.send_precompiled_letter.execute(
               user_id: metadata[:user_id],
               payment_ref: metadata[:payment_ref],
-              template_id: metadata[:name],
+              template_id: metadata.dig(:template, :id),
               unique_reference: document.uuid,
               letter_pdf: letter_pdf
             )
