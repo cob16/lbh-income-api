@@ -7,7 +7,7 @@ class DocumentsController < ApplicationController
   end
 
   def index
-    render json: letter_use_case_factory.get_all_documents.execute
+    render json: letter_use_case_factory.get_all_documents.execute(payment_ref: params.fetch(:payment_ref, nil))
   end
 
   private

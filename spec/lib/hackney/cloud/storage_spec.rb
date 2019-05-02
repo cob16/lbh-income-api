@@ -12,8 +12,31 @@ describe Hackney::Cloud::Storage, type: :model do
     end
   end
 
-  it 'retrieves all documents' do
-    storage.all_documents
+  describe 'retrieve all document' do
+    it 'retrieves all documents' do
+      expect(Hackney::Cloud::Document).to receive(:all)
+
+      storage.all_documents
+    end
+
+    context 'when payment_ref param is used' do
+      subject { storage.all_documents(payment_ref: payment_ref_param) }
+
+      let(:payment_ref) { Faker::Number.number(10) }
+      let!(:new_document) { create(:document, metadata: { payment_ref: payment_ref }.to_json) }
+
+      context 'when payment_ref exists' do
+        let(:payment_ref_param) { payment_ref }
+
+        it { is_expected.to include(new_document) }
+      end
+
+      context 'when payment_ref does not exist' do
+        let(:payment_ref_param) { 'NON-EXISTENT-PAYMENT-REF' }
+
+        it { is_expected.not_to include(new_document) }
+      end
+    end
   end
 
   describe '#save' do

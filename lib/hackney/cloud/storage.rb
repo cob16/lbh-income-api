@@ -40,8 +40,12 @@ module Hackney
         { filepath: response.path, document: document }
       end
 
-      def all_documents
-        document_model.all
+      def all_documents(payment_ref: nil)
+        if payment_ref.present?
+          document_model.where("JSON_EXTRACT(metadata, '$.payment_ref') = ?", payment_ref)
+        else
+          document_model.all
+        end
       end
 
       def upload(bucket_name, content, filename)
