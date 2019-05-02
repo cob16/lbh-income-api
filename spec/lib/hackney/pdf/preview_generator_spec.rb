@@ -18,7 +18,6 @@ describe Hackney::PDF::PreviewGenerator do
       correspondence_postcode: 'SE1 0SW',
       lessee_short_name: 'Philip',
       property_address: '1 Hillman St, London, E8 1DY',
-      arrears_letter_1_date: '20th Feb 2019',
       total_collectable_arrears_balance: '3506.90'
     }
   end
@@ -45,7 +44,6 @@ describe Hackney::PDF::PreviewGenerator do
         correspondence_postcode: '',
         lessee_short_name: '',
         property_address: '1 Hillman St, London, E8 1DY',
-        arrears_letter_1_date: '20th Feb 2019',
         total_collectable_arrears_balance: '3506.90',
         international: true
       }
