@@ -11,7 +11,7 @@ module Hackney
         # FIXME: this must be in a background job => UH is unreliable
         # TODO: create job to accept exact same args as add_action_diary_usecase
 
-        tenancy_ref = leasehold_gateway.new.get_tenancy_ref(payment_ref: payment_ref).dig(:tenancy_ref)
+        tenancy_ref = leasehold_gateway.get_tenancy_ref(payment_ref: payment_ref).dig(:tenancy_ref)
         add_action_diary_usecase.execute(
           user_id: user_id,
           tenancy_ref: tenancy_ref,

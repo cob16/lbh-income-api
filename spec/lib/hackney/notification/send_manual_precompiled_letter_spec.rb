@@ -8,7 +8,7 @@ describe Hackney::Notification::SendManualPrecompiledLetter do
     described_class.new(
       notification_gateway: notification_gateway,
       add_action_diary_usecase: add_action_diary_usecase,
-      leasehold_gateway: leasehold_gateway
+      leasehold_gateway: leasehold_gateway.new
     )
   end
 
