@@ -37,7 +37,7 @@ module Hackney
 
         def get_metadata(document)
           metadata = document.metadata
-          metadata ? JSON.parse(metadata).symbolize_keys : {}
+          metadata ? JSON.parse(metadata).deep_symbolize_keys : {}
         end
       end
     end
