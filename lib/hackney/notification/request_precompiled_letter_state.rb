@@ -15,10 +15,10 @@ module Hackney
         store = Hackney::Cloud::Document
         doc = store.find_by!(ext_message_id: message_id)
         doc.status = status
+        doc.save!
 
         Raven.send_event("Document has failed - id: #{doc.id}, uuid: #{doc.uuid}") if doc.failed?
 
-        doc.save!
       end
     end
   end
