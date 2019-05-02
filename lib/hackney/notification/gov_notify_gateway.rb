@@ -60,6 +60,16 @@ module Hackney
         end
       end
 
+      def get_messages(type: nil, status: nil)
+        messages = []
+        last_id = nil
+        while (collection = fetch_messages(type: type, status: status, older_than: last_id).collection.presence)
+          last_id = collection.last.id
+          messages += collection
+        end
+        messages
+      end
+
       private
 
       def client
@@ -85,6 +95,14 @@ module Hackney
       def pre_release_email(email)
         return email if @send_live_communications
         @test_email_address
+      end
+
+      def fetch_messages(type: nil, status: nil, older_than: nil)
+        client.get_notifications({
+          template_type: type,
+          status: status,
+          older_than: older_than
+        }.compact)
       end
     end
   end
