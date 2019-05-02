@@ -57,7 +57,7 @@ module Hackney
                        .where("JSON_EXTRACT(metadata, '$.template.name') Like  ?", '%Letter 1%')
                        .where("JSON_EXTRACT(metadata, '$.payment_ref') = ?", payment_ref)
 
-        sent_letter1.any? ? sent_letter1.last.updated_at : ''
+        sent_letter1.any? ? sent_letter1.last.updated_at.strftime('%d %B %Y') : ''
       end
     end
   end
