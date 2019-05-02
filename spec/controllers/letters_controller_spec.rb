@@ -2,8 +2,8 @@ require 'rails_helper'
 
 describe LettersController, type: :controller do
   let(:template_path) { 'path/to/temp' }
-  let(:template_id) { 'letter_1_template' }
-  let(:template_name) { 'Letter 1 template' }
+  let(:template_id) { 'letter_1_in_arrears_FH' }
+  let(:template_name) { 'Letter 1 In Arrears FH' }
   let(:preview_html) { "<p>#{Faker::HitchhikersGuideToTheGalaxy.quote}</p>" }
 
   describe '#get_templates' do
