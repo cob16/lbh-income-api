@@ -18,7 +18,11 @@ module Hackney
         doc.status = status
         doc.save!
 
-        Raven.send_event("Document has failed - id: #{doc.id}, uuid: #{doc.uuid}") if doc.failed?
+        message = "Document has been set to #{status} - id: #{doc.id}, uuid: #{doc.uuid}"
+        Rails.logger.info message
+
+        evt = Raven::Event.new(message: message)
+        Raven.send_event(evt) if doc.failed?
       end
     end
   end
