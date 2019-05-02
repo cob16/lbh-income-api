@@ -3,7 +3,7 @@
 
 <div class="right">
   <%= @sender_address %>
-  <p>Our ref: FRARR1</p>
+  <p>Our ref: </p>
   <%= @sending_date %>
 </div>
 
@@ -19,7 +19,7 @@
   Dear <%= @letter.lessee_short_name %>,
 
   <p>
-    <strong>Property:</strong> <br>
+    <strong>The property address:</strong> <br>
     <%= @letter.property_address %>
   </p>
 
@@ -28,15 +28,24 @@
     <h1 class="centre">£<%= @letter.total_collectable_arrears_balance %></h1>
   </div>
 
-  <p class ="red_text">
-    <strong>
-      It is important that your accounts are kept up to date as non-payment of your service charge
-      is a breach of your lease agreement with Hackney Council.
-    </strong>
 
+  <p>
+    We write further to our previous letter of the <%= @letter.arrears_letter_1_date %> informing you
+    of the arrears on your rent and Service Charge account in respect of the above mentioned property.
   </p>
 
-  <h2>What if I cannot pay off all my debt at the moment?</h2>
+  <p>
+    The amount of £<%= @letter.total_collectable_arrears_balance %> remains outstanding. Please contact us within 7 days to
+    inform us how you intend to pay.
+  </p>
+
+  <p>
+  <strong>It is important that your accounts are kept up to date as non-payment of your service
+    charge is a breach of your lease agreement with Hackney Council. </strong>
+  </p>
+
+
+  <h2>What happens if I cannot pay off all my debt at the moment?</h2>
   <p class="no_top_margin">
     If you are unable to settle your account in full and would like to discuss your arrears or to arrange
     an instalment plan, please contact our Leasehold Services team on 020 8356 2299. Government
