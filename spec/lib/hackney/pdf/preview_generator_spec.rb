@@ -46,7 +46,8 @@ describe Hackney::PDF::PreviewGenerator do
         lessee_short_name: '',
         property_address: '1 Hillman St, London, E8 1DY',
         arrears_letter_1_date: '20th Feb 2019',
-        total_collectable_arrears_balance: '3506.90'
+        total_collectable_arrears_balance: '3506.90',
+        international: true
       }
     end
 
@@ -61,6 +62,8 @@ describe Hackney::PDF::PreviewGenerator do
           message: 'missing mandatory field', name: 'correspondence_address3'
         }, {
           message: 'missing mandatory field', name: 'correspondence_postcode'
+        }, {
+          message: 'international address', name: 'address'
         }
       ])
     end

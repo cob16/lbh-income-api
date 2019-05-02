@@ -46,6 +46,8 @@ module Hackney
                   .reject { |field| letter_params[field].present? }
                   .map { |mandatory_field| { name: mandatory_field.to_s, message: 'missing mandatory field' } }
 
+        @errors << { name: 'address', message: 'international address' } if letter_params[:international] == true
+
         letter_params[:lessee_short_name] = letter_params[:lessee_full_name] unless letter_params[:lessee_short_name].present?
         letter_params
       end
