@@ -2,7 +2,7 @@ module Hackney
   module ServiceCharge
     class Letter
       MANDATORY_LETTER_FIELDS = %i[payment_ref lessee_full_name
-                                   correspondence_address2 correspondence_address3
+                                   correspondence_address1 correspondence_address2
                                    correspondence_postcode property_address
                                    total_collectable_arrears_balance].freeze
 
@@ -26,8 +26,8 @@ module Hackney
         @correspondence_postcode = validated_params[:correspondence_postcode] # corr_postcode
         @property_address = validated_params[:property_address]
         @payment_ref = validated_params[:payment_ref]
-        @balance = validated_params[:balance]
-        @total_collectable_arrears_balance = validated_params[:total_collectable_arrears_balance]
+        @balance = format('%.2f', (validated_params[:balance] || 0))
+        @total_collectable_arrears_balance = format('%.2f', (validated_params[:total_collectable_arrears_balance] || 0))
         @lba_expiry_date = validated_params[:lba_expiry_date]
         @original_lease_date = validated_params[:original_lease_date]
         @date_of_current_purchase_assignment = validated_params[:date_of_current_purchase_assignment]

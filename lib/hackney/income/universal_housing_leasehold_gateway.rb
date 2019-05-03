@@ -25,21 +25,27 @@ module Hackney
         corr_address = get_correspondence_address(corr_postcode: res[:corr_postcode], prop_postcode: res[:post_code])
         property_res = property.first(prop_ref: prop_ref) || {}
 
+        correspondence_address1 = res[:corr_preamble]&.strip
+        correspondence_address2 = "#{res[:corr_desig]&.strip} #{corr_address[:aline1]&.strip}"
+        correspondence_address3 = corr_address[:aline2]&.strip || ''
+        correspondence_address4 = corr_address[:aline3]&.strip || ''
+        correspondence_address5 = corr_address[:aline4]&.strip || ''
+
         {
           payment_ref: payment_ref,
-          tenancy_ref: res[:tag_ref],
+          tenancy_ref: res[:tag_ref].strip,
           total_collectable_arrears_balance: res[:cur_bal],
           original_lease_date: res[:sc_leasedate],
-          lessee_full_name: res[:house_desc],
-          lessee_short_name: res[:house_desc],
+          lessee_full_name: res[:house_desc]&.strip,
+          lessee_short_name: res[:house_desc]&.strip,
           date_of_current_purchase_assignment: res[:cot],
-          correspondence_address1: res[:corr_preamble],
-          correspondence_address2: "#{res[:corr_desig]} #{corr_address[:aline1]}",
-          correspondence_address3: corr_address[:aline2] || '',
-          correspondence_address4: corr_address[:aline3] || '',
-          correspondence_address5: corr_address[:aline4] || '',
-          correspondence_postcode: corr_address[:post_code] || '',
-          property_address: "#{property_res[:address1]}, #{property_res[:post_code]}",
+          correspondence_address1: correspondence_address1.present? ? correspondence_address1 : correspondence_address2,
+          correspondence_address2: correspondence_address2.present? ? correspondence_address2 : correspondence_address3,
+          correspondence_address3: correspondence_address3.present? ? correspondence_address3 : correspondence_address4,
+          correspondence_address4: correspondence_address4.present? ? correspondence_address4 : correspondence_address5,
+          correspondence_address5: correspondence_address5.present? ? correspondence_address5 : '',
+          correspondence_postcode: corr_address[:post_code]&.strip || '',
+          property_address: "#{property_res[:address1]&.strip}, #{property_res[:post_code]&.strip}",
           international: international?(corr_address[:post_code])
         }
       end
