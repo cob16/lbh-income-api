@@ -89,7 +89,7 @@ describe LettersController, type: :controller do
       context 'when the missing data is optional' do
         let(:payment_ref) { Faker::Number.number(4) }
 
-        let(:optional_fields) { %i[correspondence_address3] } # the address preamble
+        let(:optional_fields) { %i[correspondence_address4] } # the address preamble
 
         it 'returns no errors' do
           expect_any_instance_of(Hackney::Income::UniversalHousingLeaseholdGateway)
@@ -117,8 +117,8 @@ describe LettersController, type: :controller do
           expect(response_json['errors']).to eq(
             [{ 'message' => 'missing mandatory field', 'name' => 'payment_ref' },
              { 'message' => 'missing mandatory field', 'name' => 'lessee_full_name' },
-             { 'message' => 'missing mandatory field', 'name' => 'correspondence_address1' },
              { 'message' => 'missing mandatory field', 'name' => 'correspondence_address2' },
+             { 'message' => 'missing mandatory field', 'name' => 'correspondence_address3' },
              { 'message' => 'missing mandatory field', 'name' => 'correspondence_postcode' },
              { 'message' => 'missing mandatory field', 'name' => 'property_address' },
              { 'message' => 'missing mandatory field', 'name' => 'total_collectable_arrears_balance' }]

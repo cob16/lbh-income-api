@@ -2,7 +2,7 @@ module Hackney
   module ServiceCharge
     class Letter
       MANDATORY_LETTER_FIELDS = %i[payment_ref lessee_full_name
-                                   correspondence_address1 correspondence_address2
+                                   correspondence_address2 correspondence_address3
                                    correspondence_postcode property_address
                                    total_collectable_arrears_balance].freeze
 
