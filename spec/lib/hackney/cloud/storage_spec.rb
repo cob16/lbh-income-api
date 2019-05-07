@@ -14,7 +14,7 @@ describe Hackney::Cloud::Storage, type: :model do
 
   describe 'retrieve all document' do
     it 'retrieves all documents' do
-      expect(Hackney::Cloud::Document).to receive(:all)
+      expect(Hackney::Cloud::Document).to receive(:all).and_return(Hackney::Cloud::Document.none)
 
       storage.all_documents
     end

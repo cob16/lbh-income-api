@@ -42,9 +42,9 @@ module Hackney
 
       def all_documents(payment_ref: nil)
         if payment_ref.present?
-          document_model.where("JSON_EXTRACT(metadata, '$.payment_ref') = ?", payment_ref)
+          document_model.where("JSON_EXTRACT(metadata, '$.payment_ref') = ?", payment_ref).order(created_at: :DESC)
         else
-          document_model.all
+          document_model.all.order(created_at: :DESC)
         end
       end
 
