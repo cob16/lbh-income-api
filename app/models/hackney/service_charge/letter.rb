@@ -15,7 +15,7 @@ module Hackney
                   :international, :lessee_full_name, :lessee_short_name, :errors
 
       def initialize(params)
-        validated_params = validate_mandatory_fields(params)
+        validated_params = validate_mandatory_fields(reorganise_address(params))
 
         @tenancy_ref = validated_params[:tenancy_ref]
         @correspondence_address1 = validated_params[:correspondence_address1]
@@ -41,7 +41,7 @@ module Hackney
 
       private
 
-      def validate_mandatory_fields(letter_params)
+      def reorganise_address(letter_params)
         address1 = letter_params[:correspondence_address1] # corr_preamble ( the flat number/house Name)
         address2 = letter_params[:correspondence_address2] # desig + aline1
         address3 = letter_params[:correspondence_address3] # aline2
@@ -75,6 +75,10 @@ module Hackney
           letter_params[:correspondence_address4] = address5
         end
 
+        letter_params
+      end
+
+      def validate_mandatory_fields(letter_params)
         @errors = MANDATORY_LETTER_FIELDS
                   .reject { |field| letter_params[field].present? }
                   .map { |mandatory_field| { name: mandatory_field.to_s, message: 'missing mandatory field' } }
@@ -82,7 +86,6 @@ module Hackney
         @errors << { name: 'address', message: 'international address' } if letter_params[:international] == true
 
         letter_params[:lessee_short_name] = letter_params[:lessee_full_name] unless letter_params[:lessee_short_name].present?
-        # pp letter_params
         letter_params
       end
 
