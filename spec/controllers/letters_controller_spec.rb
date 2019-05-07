@@ -76,20 +76,20 @@ describe LettersController, type: :controller do
       let(:letter_fields) {
         {
           payment_ref: Faker::Number.number(4),
-          lessee_full_name: '-',
-          correspondence_address1: '-',
-          correspondence_address2: '-',
-          correspondence_address3: '-',
-          correspondence_postcode: '-',
-          property_address: '-',
-          total_collectable_arrears_balance: 0
+          lessee_full_name: Faker::Name.name,
+          correspondence_address1: Faker::Address.street_address,
+          correspondence_address2: Faker::Address.secondary_address,
+          correspondence_address3: Faker::Address.city,
+          correspondence_postcode: Faker::Address.zip_code,
+          property_address: Faker::Address.street_address,
+          total_collectable_arrears_balance: Faker::Number.number(3)
         }
       }
 
       context 'when the missing data is optional' do
         let(:payment_ref) { Faker::Number.number(4) }
 
-        let(:optional_fields) { %i[correspondence_address4] } # the address preamble
+        let(:optional_fields) { %i[correspondence_address3] }
 
         it 'returns no errors' do
           expect_any_instance_of(Hackney::Income::UniversalHousingLeaseholdGateway)
@@ -117,8 +117,7 @@ describe LettersController, type: :controller do
           expect(response_json['errors']).to eq(
             [{ 'message' => 'missing mandatory field', 'name' => 'payment_ref' },
              { 'message' => 'missing mandatory field', 'name' => 'lessee_full_name' },
-             { 'message' => 'missing mandatory field', 'name' => 'correspondence_address2' },
-             { 'message' => 'missing mandatory field', 'name' => 'correspondence_address3' },
+             { 'message' => 'missing mandatory field', 'name' => 'correspondence_address1' },
              { 'message' => 'missing mandatory field', 'name' => 'correspondence_postcode' },
              { 'message' => 'missing mandatory field', 'name' => 'property_address' },
              { 'message' => 'missing mandatory field', 'name' => 'total_collectable_arrears_balance' }]
