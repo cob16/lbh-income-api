@@ -8,6 +8,7 @@ describe Hackney::Tenancy::Gateway::ActionDiaryGateway do
   let(:tenancy_ref) { Faker::Lorem.characters(8) }
   let(:username) { Faker::Name.name }
   let(:action_code) { Faker::Internet.slug }
+  let(:action_category) { '' } # required by the API, but never set by us
   let(:comment) { Faker::Lorem.paragraph }
 
   let(:required_headers) do
@@ -36,6 +37,7 @@ describe Hackney::Tenancy::Gateway::ActionDiaryGateway do
         body: {
           tenancyAgreementRef: tenancy_ref,
           actionCode: action_code,
+          actionCategory: action_category,
           comment: comment
         }.to_json,
         times: 1
@@ -54,6 +56,7 @@ describe Hackney::Tenancy::Gateway::ActionDiaryGateway do
         body: {
           tenancyAgreementRef: tenancy_ref,
           actionCode: action_code,
+          actionCategory: action_category,
           comment: comment,
           username: username
         }.to_json,

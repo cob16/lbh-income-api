@@ -23,6 +23,7 @@ module Hackney
           body = {
             tenancyAgreementRef: tenancy_ref,
             actionCode: action_code,
+            actionCategory: '', # required by the API, but never set by us
             comment: comment
           }
           body[:username] = username unless username.nil?
