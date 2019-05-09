@@ -1,3 +1,7 @@
+.new_page{
+  page-break-before: always
+}
+
 .right{
   float: right;
   text-align: right;
