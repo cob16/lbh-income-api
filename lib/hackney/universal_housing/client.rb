@@ -6,6 +6,9 @@ module Hackney
           Sequel.connect(configuration)
         end
 
+        def with_connection(&block)
+          Sequel.connect(configuration) { |db| block.call(db) }
+        end
         private
 
         def configuration
