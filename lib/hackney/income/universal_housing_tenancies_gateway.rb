@@ -28,8 +28,6 @@ module Hackney
         end
       end
 
-      private
-
       SECURE_TENURE_TYPE = 'SEC'.freeze
     end
   end

@@ -7,8 +7,9 @@ module Hackney
         end
 
         def with_connection(&block)
-          Sequel.connect(configuration) { |db| block.call(db) }
+          Sequel.connect(configuration) { |db| yield db }
         end
+
         private
 
         def configuration
