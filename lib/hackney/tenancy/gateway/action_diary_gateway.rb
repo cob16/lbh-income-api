@@ -31,7 +31,7 @@ module Hackney
 
           unless responce.success?
             raise Hackney::Tenancy::Exceptions::TenancyApiException.new(responce),
-                  "when trying to create action diary entry for #{tenancy_ref}"
+                  "when trying to create action diary entry for #{tenancy_ref}\nDEBUG: #{body.to_json}"
           end
 
           responce
