@@ -23,8 +23,10 @@ module Hackney
           body = {
             tenancyAgreementRef: tenancy_ref,
             actionCode: action_code,
+            actionCategory: '9', # FIXME: Signifies follow up response is required in UH
             comment: comment
           }
+
           body[:username] = username unless username.nil?
           responce = self.class.post('/api/v2/tenancies/arrears-action-diary', @options.merge(body: body.to_json))
 

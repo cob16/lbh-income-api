@@ -36,6 +36,7 @@ describe Hackney::Tenancy::Gateway::ActionDiaryGateway do
         body: {
           tenancyAgreementRef: tenancy_ref,
           actionCode: action_code,
+          actionCategory: '9',
           comment: comment
         }.to_json,
         times: 1
@@ -54,6 +55,7 @@ describe Hackney::Tenancy::Gateway::ActionDiaryGateway do
         body: {
           tenancyAgreementRef: tenancy_ref,
           actionCode: action_code,
+          actionCategory: '9',
           comment: comment,
           username: username
         }.to_json,
