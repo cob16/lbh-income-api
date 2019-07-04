@@ -23,7 +23,7 @@ module Hackney
           body = {
             tenancyAgreementRef: tenancy_ref,
             actionCode: action_code,
-            actionCategory: "9", # FIXME Signifies follow up response is required in UH
+            actionCategory: '9', # FIXME: Signifies follow up response is required in UH
             comment: comment
           }
 
