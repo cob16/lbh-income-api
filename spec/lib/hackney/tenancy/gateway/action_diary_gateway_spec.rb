@@ -38,6 +38,7 @@ describe Hackney::Tenancy::Gateway::ActionDiaryGateway do
         body: {
           tenancyAgreementRef: tenancy_ref,
           actionCode: action_code,
+          actionCategory: '9',
           comment: comment,
           createdDate: date
         },
@@ -60,6 +61,7 @@ describe Hackney::Tenancy::Gateway::ActionDiaryGateway do
         body: {
           tenancyAgreementRef: tenancy_ref,
           actionCode: action_code,
+          actionCategory: '9',
           comment: comment,
           username: username,
           createdDate: date
