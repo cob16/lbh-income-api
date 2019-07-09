@@ -36,10 +36,10 @@ describe Hackney::Tenancy::Gateway::ActionDiaryGateway do
         :post, host + '/api/v2/tenancies/arrears-action-diary',
         headers: required_headers,
         body: {
-          TenancyAgreementRef: tenancy_ref,
-          ActionCode: action_code,
-          Comment: comment,
-          CreatedDate: date
+          tenancyAgreementRef: tenancy_ref,
+          actionCode: action_code,
+          comment: comment,
+          createdDate: date
         },
         times: 1
       )
@@ -58,11 +58,11 @@ describe Hackney::Tenancy::Gateway::ActionDiaryGateway do
         :post, host + '/api/v2/tenancies/arrears-action-diary',
         headers: required_headers,
         body: {
-          TenancyAgreementRef: tenancy_ref,
-          ActionCode: action_code,
-          Comment: comment,
-          Username: username,
-          CreatedDate: date
+          tenancyAgreementRef: tenancy_ref,
+          actionCode: action_code,
+          comment: comment,
+          username: username,
+          createdDate: date
         },
         times: 1
       )
