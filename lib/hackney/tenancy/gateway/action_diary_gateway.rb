@@ -19,13 +19,14 @@ module Hackney
           }
         end
 
-        def create_entry(tenancy_ref:, action_code:, comment:, username: nil)
+        def create_entry(tenancy_ref:, action_code:, comment:, date:, username: nil)
           body = {
-            tenancyAgreementRef: tenancy_ref,
-            actionCode: action_code,
-            comment: comment
+            TenancyAgreementRef: tenancy_ref,
+            ActionCode: action_code,
+            Comment: comment,
+            CreatedDate: date.iso8601
           }
-          body[:username] = username unless username.nil?
+          body[:Username] = username unless username.nil?
           responce = self.class.post('/api/v2/tenancies/arrears-action-diary', @options.merge(body: body.to_json))
 
           unless responce.success?
