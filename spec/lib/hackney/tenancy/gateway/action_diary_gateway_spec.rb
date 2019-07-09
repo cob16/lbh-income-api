@@ -9,6 +9,7 @@ describe Hackney::Tenancy::Gateway::ActionDiaryGateway do
   let(:username) { Faker::Name.name }
   let(:action_code) { Faker::Internet.slug }
   let(:comment) { Faker::Lorem.paragraph }
+  let(:date) { Faker::Time.backward }
 
   let(:required_headers) do
     {
@@ -27,27 +28,9 @@ describe Hackney::Tenancy::Gateway::ActionDiaryGateway do
       gateway.create_entry(
         tenancy_ref: tenancy_ref,
         action_code: action_code,
-        comment: comment
+        comment: comment,
+        date: date
       )
-
-      assert_requested(
-        :post, host + '/api/v2/tenancies/arrears-action-diary',
-        headers: required_headers,
-        body: {
-          tenancyAgreementRef: tenancy_ref,
-          actionCode: action_code,
-          actionCategory: '9',
-          comment: comment
-        }.to_json,
-        times: 1
-      )
-    end
-
-    it 'creates a entry with user user if username supplied' do
-      gateway.create_entry(tenancy_ref: tenancy_ref,
-                           action_code: action_code,
-                           comment: comment,
-                           username: username)
 
       assert_requested(
         :post, host + '/api/v2/tenancies/arrears-action-diary',
@@ -57,8 +40,32 @@ describe Hackney::Tenancy::Gateway::ActionDiaryGateway do
           actionCode: action_code,
           actionCategory: '9',
           comment: comment,
-          username: username
-        }.to_json,
+          createdDate: date
+        },
+        times: 1
+      )
+    end
+
+    it 'creates a entry with user user if username supplied' do
+      gateway.create_entry(
+        tenancy_ref: tenancy_ref,
+        action_code: action_code,
+        comment: comment,
+        username: username,
+        date: date
+      )
+
+      assert_requested(
+        :post, host + '/api/v2/tenancies/arrears-action-diary',
+        headers: required_headers,
+        body: {
+          tenancyAgreementRef: tenancy_ref,
+          actionCode: action_code,
+          actionCategory: '9',
+          comment: comment,
+          username: username,
+          createdDate: date
+        },
         times: 1
       )
     end
@@ -75,6 +82,7 @@ describe Hackney::Tenancy::Gateway::ActionDiaryGateway do
           tenancy_ref: tenancy_ref,
           action_code: action_code,
           comment: comment,
+          date: date,
           username: username
         )
       }.to raise_error(
