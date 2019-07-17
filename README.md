@@ -149,3 +149,4 @@ For more: [AWS Client Side encryption] https://docs.aws.amazon.com/AmazonS3/late
 [mt-ca]: https://github.com/madetech/clean-architecture
 [made-tech]: https://madetech.com/
 [rubocop]: https://github.com/rubocop-hq/rubocop
+
