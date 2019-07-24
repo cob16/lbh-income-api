@@ -1,13 +1,13 @@
 namespace :bau do
-  desc 'backfill message sate'
-  task :backfill_message_sate, [:document_uuid] do |_task, args|
-    backfill_message_sate(
+  desc 'backfill message state'
+  task :backfill_message_state, [:document_uuid] do |_task, args|
+    backfill_message_state(
       document_uuid: args.fetch(:document_uuid)
     )
   end
 end
 
-def backfill_message_sate(document_uuid:)
+def backfill_message_state(document_uuid:)
   use_cases = Hackney::Income::UseCaseFactory.new
 
   document = Hackney::Cloud::Document.find_by!(uuid: document_uuid)
