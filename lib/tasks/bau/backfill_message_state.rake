@@ -29,7 +29,10 @@ def backfill_message_state(document_uuid:)
       date: date,
       tenancy_ref: tenancy_ref,
       action_code: 'LL2',
-      comment: "Letter '#{document_uuid}' from 'letter_2_in_arrears_LH' letter was sent access it by visiting documents?payment_ref=#{payment_ref}. Please note the action diary balance for this entry is incorrect (the correct amount will be stated in the letter)."
+      comment: "Letter '#{document_uuid}' from 'letter_2_in_arrears_LH' \
+      letter was sent access it by visiting documents?payment_ref=#{payment_ref}. \
+      Please note the action diary balance for this entry is incorrect (the \
+      correct amount will be stated in the letter)."
     )
 
     document.status = 'received'
