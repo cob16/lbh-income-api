@@ -13,7 +13,7 @@ describe Hackney::PDF::Preview do
   let(:test_template_id) { 123_123 }
   let(:test_template) do
     {
-      path: 'spec/lib/hackney/pdf/test_template.erb',
+      path: 'spec/lib/hackney/pdf/test_template_1.erb',
       id: test_template_id
     }
   end

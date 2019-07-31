@@ -7,7 +7,7 @@ describe Hackney::PDF::PreviewGenerator do
     )
   end
 
-  let(:test_template_path) { 'spec/lib/hackney/pdf/test_template.erb' }
+  let(:test_template_path) { 'spec/lib/hackney/pdf/test_template_1.erb' }
   let(:test_letter_params) do
     {
       payment_ref: '1234567890',
