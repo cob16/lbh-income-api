@@ -1,4 +1,10 @@
 class TenanciesController < ApplicationController
+  def show
+    render json: income_use_case_factory.get_tenancy.execute(
+      tenancy_ref: params.fetch(:tenancy_ref)
+    )
+  end
+
   def update
     income_use_case_factory.set_tenancy_paused_status.execute(
       user_id: params.fetch(:user_id),

@@ -26,6 +26,7 @@ describe TenanciesController, type: :controller do
 
   before do
     stub_const('Hackney::Income::SqlPauseTenancyGateway', StubSqlPauseTenancyGateway)
+    stub_const('Hackney::Income::SqlTenancyGateway', StubSqlPauseTenancyGateway)
     stub_const('Hackney::Tenancy::AddActionDiaryEntry', dummy_action_diary_usecase)
     allow(dummy_action_diary_usecase).to receive(:new).and_return(dummy_action_diary_usecase)
     allow(dummy_action_diary_usecase).to receive(:execute)
@@ -33,6 +34,22 @@ describe TenanciesController, type: :controller do
 
   it 'is accessible from /' do
     assert_generates '/api/v1/tenancies/1234', controller: 'tenancies', action: 'update', tenancy_ref: 1234
+  end
+
+  context '#show' do
+    it 'is accessible from /' do
+      assert_generates '/api/v1/tenancies/1234', controller: 'tenancies', action: 'show', tenancy_ref: 1234
+    end
+
+    it do
+      expect_any_instance_of(Hackney::Income::GetTenancy).to receive(:execute).with(
+        tenancy_ref: 'some_ref'
+      ).and_call_original
+
+      get :show, params: { tenancy_ref: 'some_ref' }
+
+      expect(response.status).to eq(200)
+    end
   end
 
   context 'when receiving valid params' do
@@ -98,4 +115,42 @@ class StubSqlPauseTenancyGateway
   def set_paused_until(tenancy_ref:, until_date:, pause_reason:, pause_comment:); end
 
   def get_tenancy_pause(tenancy_ref:); end
+  def get_tenancy(tenancy_ref:);
+    {
+      "id"=>91945,
+      "tenancy_ref"=>"055593/01",
+      "priority_band"=>"red",
+      "priority_score"=>21563,
+      "created_at"=>"2019-04-02T03:26:35.000Z",
+      "updated_at"=>"2019-09-16T13:25:45.000Z",
+      "balance_contribution"=>517,
+      "days_in_arrears_contribution"=>1689,
+      "days_since_last_payment_contribution"=>214725,
+      "payment_amount_delta_contribution"=>-900,
+      "payment_date_delta_contribution"=>30,
+      "number_of_broken_agreements_contribution"=>0,
+      "active_agreement_contribution"=>nil,
+      "broken_court_order_contribution"=>nil,
+      "nosp_served_contribution"=>nil,
+      "active_nosp_contribution"=>nil,
+      "balance"=>"430.9",
+      "days_in_arrears"=>1126,
+      "days_since_last_payment"=>1227,
+      "payment_amount_delta"=>-900,
+      "payment_date_delta"=>6,
+      "number_of_broken_agreements"=>0,
+      "active_agreement"=>false,
+      "broken_court_order"=>false,
+      "nosp_served"=>false,
+      "active_nosp"=>false,
+      "assigned_user"=>{
+        user_id: 128,
+        name: 'George'
+      },
+      "is_paused_until"=>nil,
+      "pause_reason"=>nil,
+      "pause_comment"=>nil,
+      "case_id"=>7250
+    }
+  end
 end

@@ -121,6 +121,12 @@ module Hackney
         )
       end
 
+      def get_tenancy
+        Hackney::Income::GetTenancy.new(
+          gateway: sql_tenancy_gateway
+        )
+      end
+
       def sync_case_priority
         ActiveSupport::Deprecation.warn(
           "SyncCasePriorityJob is deprecated - use external scheduler via 'rake income:sync:enqueue'"
@@ -185,6 +191,10 @@ module Hackney
 
       def sql_pause_tenancy_gateway
         Hackney::Income::SqlPauseTenancyGateway.new
+      end
+
+      def sql_tenancy_gateway
+        Hackney::Income::SqlTenancyGateway.new
       end
 
       def stored_tenancies_gateway
