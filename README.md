@@ -21,15 +21,18 @@ We employ a variant of Clean Architecture, borrowing from [Made Tech Flavoured C
 1. Install [Docker][docker-download].
 2. Get a hackney aws account (see maintainers)
 3. Clone this repository.
-4. Login to ecr [Universal Housing Simulator][github-uh-simulator]:
+4. Login to ecr [Universal Housing Simulator][github-uh-simulator] [1]:
 ```bash
 $ aws configure
 $ aws ecr get-login --no-include-email --region $AWS_DEFAULT_REGION | sh
 ```
-5. Run setup
+5. Duplicate `.env.sample` to `.env` and replace placeholders with valid secrets.
+6. Run setup
 ```bash
 make setup
 ```
+
+[1] Need to login to your AWS Hackney account; if you have another you will need to use Profiles
 
 ### Development
 
