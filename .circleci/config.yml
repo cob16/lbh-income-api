@@ -23,6 +23,8 @@ jobs:
       - run:
           name: Run linting
           command: docker-compose run --rm app rubocop
+      - store_artifacts:
+          path: coverage
 
   staging_release:
     machine: true
