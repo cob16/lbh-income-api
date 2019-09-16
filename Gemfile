@@ -70,6 +70,8 @@ group :development do
   gem 'rubocop-rspec', '~> 1.31.0'
   gem 'spring'
   gem 'spring-watcher-listen', '~> 2.0.0'
+
+  gem 'simplecov', require: false
 end
 
 group :staging, :production do
