@@ -26,7 +26,6 @@ describe TenanciesController, type: :controller do
 
   before do
     stub_const('Hackney::Income::SqlPauseTenancyGateway', StubSqlPauseTenancyGateway)
-    stub_const('Hackney::Income::SqlTenancyGateway', StubSqlPauseTenancyGateway)
     stub_const('Hackney::Tenancy::AddActionDiaryEntry', dummy_action_diary_usecase)
     allow(dummy_action_diary_usecase).to receive(:new).and_return(dummy_action_diary_usecase)
     allow(dummy_action_diary_usecase).to receive(:execute)
@@ -40,15 +39,21 @@ describe TenanciesController, type: :controller do
     it 'is accessible from /' do
       assert_generates '/api/v1/tenancies/1234', controller: 'tenancies', action: 'show', tenancy_ref: 1234
     end
+    let(:tenancy_1) { create_tenancy_model }
+
+    before do
+      tenancy_1.save
+    end
 
     it do
       expect_any_instance_of(Hackney::Income::GetTenancy).to receive(:execute).with(
-        tenancy_ref: 'some_ref'
+        tenancy_ref: tenancy_1.tenancy_ref
       ).and_call_original
 
-      get :show, params: { tenancy_ref: 'some_ref' }
+      get :show, params: { tenancy_ref: tenancy_1.tenancy_ref }
 
       expect(response.status).to eq(200)
+      expect(response.body).to eq(tenancy_1.to_json)
     end
   end
 

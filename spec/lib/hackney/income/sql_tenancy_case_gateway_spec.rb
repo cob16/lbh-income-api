@@ -189,6 +189,29 @@ describe Hackney::Income::SqlTenancyCaseGateway do
         end
       end
     end
+
+    context 'when retrieving a case' do
+      let(:tenancy_1) { create_tenancy_model }
+
+      before do
+        tenancy_1.save
+      end
+
+      it 'gets a case' do
+        subject.get_tenancy(
+          tenancy_ref: tenancy_1.tenancy_ref
+        )
+      end
+
+      it 'raises and error when not found' do
+        expect{
+          subject.get_tenancy(
+            tenancy_ref: 'not_a_real_tenancy_ref',
+          )
+        }.to raise_error
+                .with_message("Unable to get tenancy: not_a_real_tenancy_ref - tenancy not found.")
+      end
+    end
   end
 
   def persist_new_tenancy

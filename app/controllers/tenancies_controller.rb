@@ -2,7 +2,7 @@ class TenanciesController < ApplicationController
   def show
     render json: income_use_case_factory.get_tenancy.execute(
       tenancy_ref: params.fetch(:tenancy_ref)
-    )
+    ).as_json(include: :assigned_user)
   end
 
   def update

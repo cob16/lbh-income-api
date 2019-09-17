@@ -123,7 +123,7 @@ module Hackney
 
       def get_tenancy
         Hackney::Income::GetTenancy.new(
-          gateway: sql_tenancy_gateway
+          gateway: Hackney::Income::SqlTenancyCaseGateway.new
         )
       end
 
@@ -191,10 +191,6 @@ module Hackney
 
       def sql_pause_tenancy_gateway
         Hackney::Income::SqlPauseTenancyGateway.new
-      end
-
-      def sql_tenancy_gateway
-        Hackney::Income::SqlTenancyGateway.new
       end
 
       def stored_tenancies_gateway
