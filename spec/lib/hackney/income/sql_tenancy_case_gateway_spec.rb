@@ -204,12 +204,12 @@ describe Hackney::Income::SqlTenancyCaseGateway do
       end
 
       it 'raises and error when not found' do
-        expect{
+        expect {
           subject.get_tenancy(
-            tenancy_ref: 'not_a_real_tenancy_ref',
+            tenancy_ref: 'not_a_real_tenancy_ref'
           )
         }.to raise_error
-                .with_message("Unable to get tenancy: not_a_real_tenancy_ref - tenancy not found.")
+          .with_message('Unable to get tenancy: not_a_real_tenancy_ref - tenancy not found.')
       end
     end
   end
