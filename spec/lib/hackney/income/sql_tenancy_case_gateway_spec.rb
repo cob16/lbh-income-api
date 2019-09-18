@@ -198,18 +198,9 @@ describe Hackney::Income::SqlTenancyCaseGateway do
       end
 
       it 'gets a case' do
-        subject.get_tenancy(
+        subject.find(
           tenancy_ref: tenancy_1.tenancy_ref
         )
-      end
-
-      it 'raises and error when not found' do
-        expect {
-          subject.get_tenancy(
-            tenancy_ref: 'not_a_real_tenancy_ref'
-          )
-        }.to raise_error
-          .with_message('Unable to get tenancy: not_a_real_tenancy_ref - tenancy not found.')
       end
     end
   end
