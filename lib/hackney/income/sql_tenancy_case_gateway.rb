@@ -30,12 +30,9 @@ module Hackney
         tenancy.assigned_user_id
       end
 
-      def get_tenancy(tenancy_ref:)
+      def find(tenancy_ref:)
         tenancy = GatewayModel.find_by(tenancy_ref: tenancy_ref)
-        if tenancy.nil?
-          Rails.logger.error("Failed to retrieve tenancy with tenancy_ref: '#{tenancy_ref}' ")
-          raise TenancyNotFoundError, "Unable to get tenancy: #{tenancy_ref} - tenancy not found."
-        end
+        Rails.logger.error("Failed to retrieve tenancy with tenancy_ref: '#{tenancy_ref}' ") if tenancy.nil?
         tenancy
       end
 

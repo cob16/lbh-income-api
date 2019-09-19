@@ -46,7 +46,7 @@ describe TenanciesController, type: :controller do
       assert_generates '/api/v1/tenancies/1234', controller: 'tenancies', action: 'show', tenancy_ref: 1234
     end
 
-    it do
+    it 'returns a tenancy' do
       expect_any_instance_of(Hackney::Income::GetTenancy).to receive(:execute).with(
         tenancy_ref: tenancy_1.tenancy_ref
       ).and_call_original
@@ -55,6 +55,13 @@ describe TenanciesController, type: :controller do
 
       expect(response.status).to eq(200)
       expect(response.body).to eq(tenancy_1.to_json)
+    end
+    context 'when tenancy is not found' do
+      it 'returns 404' do
+        get :show, params: { tenancy_ref: 'not a tenancy ref' }
+
+        expect(response.status).to eq(404)
+      end
     end
   end
 
@@ -122,7 +129,7 @@ class StubSqlPauseTenancyGateway
 
   def get_tenancy_pause(tenancy_ref:); end
 
-  def get_tenancy(tenancy_ref:)
+  def find(tenancy_ref:)
     {
       'id' => 91_945,
       'tenancy_ref' => '055593/01',

@@ -6,7 +6,7 @@ module Hackney
       end
 
       def execute(tenancy_ref:)
-        @gateway.get_tenancy(
+        @gateway.find(
           tenancy_ref: tenancy_ref
         )
       end
