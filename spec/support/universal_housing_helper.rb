@@ -1,10 +1,11 @@
 module UniversalHousingHelper
   # rubocop:disable Metrics/ParameterLists
-  def create_uh_tenancy_agreement(tenancy_ref:, current_balance: 0.0, prop_ref: '', terminated: false, cot: '',
+  def create_uh_tenancy_agreement(tenancy_ref:, current_balance: 0.0, rent: 5.0 ,prop_ref: '', terminated: false, cot: '',
                                   tenure_type: 'SEC', high_action: '111', u_saff_rentacc: '', house_ref: '')
     Hackney::UniversalHousing::Client.connection[:tenagree].insert(
       tag_ref: tenancy_ref,
       cur_bal: current_balance,
+      rent: rent,
       prop_ref: prop_ref,
       terminated: terminated ? 1 : 0,
       tenure: tenure_type,

@@ -28,6 +28,10 @@ module Hackney
               SELECT u_notice_expiry FROM [dbo].[tenagree] WHERE tag_ref = @TenancyRef
             )
 
+            DECLARE @WeeklyRent NUMERIC(9, 2) = (
+              SELECT rent FROM [dbo].[tenagree] WHERE tag_ref = @TenancyRef
+            )
+
 
             DECLARE @RemainingTransactions INT = (SELECT COUNT(tag_ref) FROM [dbo].[rtrans] WITH (NOLOCK) WHERE tag_ref = @TenancyRef)
             DECLARE @ActiveAgreementsCount INT = (SELECT COUNT(tag_ref) FROM [dbo].[arag] WITH (NOLOCK) WHERE tag_ref = @TenancyRef AND arag_status = @ActiveArrearsAgreementStatus)
@@ -61,6 +65,7 @@ module Hackney
 
             SELECT
               @CurrentBalance as current_balance,
+              @WeeklyRent as weekly_rent,
               @LastPaymentDate as last_payment_date,
               @ArrearsStartDate as arrears_start_date,
               @ActiveAgreementsCount as active_agreements_count,
@@ -97,6 +102,10 @@ module Hackney
           attributes.fetch(:current_balance).to_f
         end
 
+        def weekly_rent
+          attributes.fetch(:weekly_rent).to_f
+        end
+
         def nosp_served_date
           return if attributes[:nosp_served_date].nil?
 
@@ -110,6 +119,7 @@ module Hackney
         end
 
         def days_in_arrears
+          byebug
           day_difference(Date.today, attributes.fetch(:arrears_start_date))
         end
 

@@ -27,6 +27,14 @@ describe Hackney::Income::TenancyPrioritiser::UniversalHousingCriteria, universa
     end
   end
 
+  describe '#weekly_rent' do
+    subject { criteria.weekly_rent }
+
+    it 'returns the weekly rent of a tenancy' do
+      expect(subject).to eq(5)
+    end
+  end
+
   describe '#nosp_served_date' do
     subject { criteria.nosp_served_date }
 
@@ -48,7 +56,6 @@ describe Hackney::Income::TenancyPrioritiser::UniversalHousingCriteria, universa
 
     context 'when the tenancy is not in arrears' do
       let(:current_balance) { -50.00 }
-
       it { is_expected.to be_zero }
     end
 
