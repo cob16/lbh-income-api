@@ -119,7 +119,6 @@ module Hackney
         end
 
         def days_in_arrears
-          byebug
           day_difference(Date.today, attributes.fetch(:arrears_start_date))
         end
 
