@@ -66,6 +66,7 @@ describe Hackney::Income::StoredTenanciesGateway do
           active_nosp_contribution: score_calculator.active_nosp,
 
           balance: attributes.fetch(:criteria).balance,
+          weekly_rent: attributes.fetch(:criteria).weekly_rent,
           days_in_arrears: attributes.fetch(:criteria).days_in_arrears,
           days_since_last_payment: attributes.fetch(:criteria).days_since_last_payment,
           payment_amount_delta: attributes.fetch(:criteria).payment_amount_delta,
