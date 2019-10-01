@@ -12,6 +12,14 @@ module Stubs
       @balance || 100.00
     end
 
+    def last_communication_action
+      @last_communication_action
+    end
+
+    def last_communication_date
+      @last_communication_date
+    end
+
     def weekly_rent
       5.0
     end

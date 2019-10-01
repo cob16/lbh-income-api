@@ -37,7 +37,8 @@ module Hackney
               nosp_served: criteria.nosp_served?,
               nosp_served_date: criteria.nosp_served_date,
               nosp_expiry_date: criteria.nosp_expiry_date,
-
+              last_communication_action: criteria.last_communication_action,
+              last_communication_date: criteria.last_communication_date,
               active_nosp: criteria.active_nosp?
             )
           end
