@@ -132,18 +132,45 @@ describe Hackney::Income::TenancyPrioritiser::UniversalHousingCriteria, universa
   end
 
   describe '#last_communciation_type' do
-    subject { criteria.last_communciation_type }
+    subject { criteria.last_communication_action }
 
     context 'when the tenant has not been contacted' do
       it { is_expected.to be_nil }
     end
 
-    context 'when has been sent an' do
-      #before { create_uh_transaction(tenancy_ref: tenancy_ref, type: 'RPY', date: Date.today - 2.days) }
+    context 'can return action code for the latest communication action' do
+      before { 
+        create_uh_action(tenancy_ref: tenancy_ref, code: 'MML', date: Date.today)
+        create_uh_action(tenancy_ref: tenancy_ref, code: 'S0A', date: Date.today-2.days)
+       }
 
-      it { is_expected.to eq("Maysa") }
+      it { is_expected.to eq("MML") }
     end
 
+    context 'does not return action code if it is not a communication action code' do
+      before { 
+        create_uh_action(tenancy_ref: tenancy_ref, code: 'RBA', date: Date.today)
+       }
+
+      it { is_expected.to be_nil}
+    end
+  end
+
+  describe '#last_communciation_date' do
+    subject { criteria.last_communication_date }
+
+    context 'when the tenant has not been contacted' do
+      it { is_expected.to be_nil }
+    end
+
+    context 'can return action date for the latest communication action' do
+      before { 
+        create_uh_action(tenancy_ref: tenancy_ref, code: 'S0A', date: Date.yesterday)
+        create_uh_action(tenancy_ref: tenancy_ref, code: 'MML', date: Date.today)
+       }
+
+      it { is_expected.to eq(Date.today) }
+    end
   end
 
   describe '#active_agreement?' do

@@ -34,7 +34,6 @@ module Hackney
               SELECT rent FROM [dbo].[tenagree] WHERE tag_ref = @TenancyRef
             )
 
-
             DECLARE @RemainingTransactions INT = (SELECT COUNT(tag_ref) FROM [dbo].[rtrans] WITH (NOLOCK) WHERE tag_ref = @TenancyRef)
             DECLARE @ActiveAgreementsCount INT = (SELECT COUNT(tag_ref) FROM [dbo].[arag] WITH (NOLOCK) WHERE tag_ref = @TenancyRef AND arag_status = @ActiveArrearsAgreementStatus)
             DECLARE @BreachedAgreementsCount INT = (SELECT COUNT(tag_ref) FROM [dbo].[arag] WITH (NOLOCK) WHERE tag_ref = @TenancyRef AND arag_status = @BreachedArrearsAgreementStatus)
@@ -45,8 +44,17 @@ module Hackney
               SELECT TOP 1 action_code 
               FROM araction WITH (NOLOCK)
               WHERE tag_ref = @TenancyRef
-              AND action_code IN (SELECT action_code FROM @CommunicationTypes) 
+              AND action_code IN (SELECT communication_types FROM @CommunicationTypes) 
+              ORDER BY action_date DESC
             )
+            DECLARE @LastCommunicationDate SMALLDATETIME = (
+              SELECT TOP 1 action_date 
+              FROM araction WITH (NOLOCK)
+              WHERE tag_ref = @TenancyRef
+              AND action_code IN (SELECT communication_types FROM @CommunicationTypes) 
+              ORDER BY action_date DESC
+            )
+
             DECLARE @NextBalance NUMERIC(9, 2) = @CurrentBalance
             DECLARE @CurrentTransactionRow INT = 1
             DECLARE @ArrearsStartDate SMALLDATETIME = GETDATE()
@@ -88,7 +96,8 @@ module Hackney
               @Payment2Date as payment_2_date,
               @Payment3Value as payment_3_value,
               @Payment3Date as payment_3_date,
-              @LastCommunicationAction as last_communication_action
+              @LastCommunicationAction as last_communication_action,
+              @LastCommunicationDate as last_communication_date
           SQL
 
           attributes = universal_housing_client[
@@ -135,6 +144,16 @@ module Hackney
           return nil if attributes.fetch(:last_payment_date).nil?
 
           day_difference(Date.today, attributes.fetch(:last_payment_date))
+        end
+
+        def last_communication_action
+          return nil if attributes.fetch(:last_communication_action).nil?
+          attributes.fetch(:last_communication_action)
+        end
+
+        def last_communication_date
+          return nil if attributes.fetch(:last_communication_date).nil?
+          attributes.fetch(:last_communication_date)
         end
 
         def active_agreement?
