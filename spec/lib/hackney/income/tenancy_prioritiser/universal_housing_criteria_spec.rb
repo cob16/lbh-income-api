@@ -139,20 +139,20 @@ describe Hackney::Income::TenancyPrioritiser::UniversalHousingCriteria, universa
     end
 
     context 'can return action code for the latest communication action' do
-      before { 
+      before {
         create_uh_action(tenancy_ref: tenancy_ref, code: 'MML', date: Date.today)
-        create_uh_action(tenancy_ref: tenancy_ref, code: 'S0A', date: Date.today-2.days)
-       }
+        create_uh_action(tenancy_ref: tenancy_ref, code: 'S0A', date: Date.today - 2.days)
+      }
 
-      it { is_expected.to eq("MML") }
+      it { is_expected.to eq('MML') }
     end
 
     context 'does not return action code if it is not a communication action code' do
-      before { 
+      before {
         create_uh_action(tenancy_ref: tenancy_ref, code: 'RBA', date: Date.today)
-       }
+      }
 
-      it { is_expected.to be_nil}
+      it { is_expected.to be_nil }
     end
   end
 
@@ -164,10 +164,10 @@ describe Hackney::Income::TenancyPrioritiser::UniversalHousingCriteria, universa
     end
 
     context 'can return action date for the latest communication action' do
-      before { 
+      before {
         create_uh_action(tenancy_ref: tenancy_ref, code: 'S0A', date: Date.yesterday)
         create_uh_action(tenancy_ref: tenancy_ref, code: 'MML', date: Date.today)
-       }
+      }
 
       it { is_expected.to eq(Date.today) }
     end
