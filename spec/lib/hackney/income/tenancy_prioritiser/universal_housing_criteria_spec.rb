@@ -56,6 +56,7 @@ describe Hackney::Income::TenancyPrioritiser::UniversalHousingCriteria, universa
 
     context 'when the tenancy is not in arrears' do
       let(:current_balance) { -50.00 }
+
       it { is_expected.to be_zero }
     end
 
