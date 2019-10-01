@@ -131,6 +131,21 @@ describe Hackney::Income::TenancyPrioritiser::UniversalHousingCriteria, universa
     end
   end
 
+  describe '#last_communciation_type' do
+    subject { criteria.last_communciation_type }
+
+    context 'when the tenant has not been contacted' do
+      it { is_expected.to be_nil }
+    end
+
+    context 'when has been sent an' do
+      #before { create_uh_transaction(tenancy_ref: tenancy_ref, type: 'RPY', date: Date.today - 2.days) }
+
+      it { is_expected.to eq("Maysa") }
+    end
+
+  end
+
   describe '#active_agreement?' do
     subject { criteria.active_agreement? }
 

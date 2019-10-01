@@ -10,6 +10,8 @@ module Hackney
             DECLARE @NospActionDiaryCode VARCHAR(60) = ?
             DECLARE @PaymentTypes table(payment_type varchar(3))
             INSERT INTO @PaymentTypes VALUES ('RBA'), ('RBP'), ('RBR'), ('RCI'), ('RCO'), ('RCP'), ('RDD'), ('RDN'), ('RDP'), ('RDR'), ('RDS'), ('RDT'), ('REF'), ('RHA'), ('RHB'), ('RIT'), ('RML'), ('RPD'), ('RPO'), ('RPY'), ('RQP'), ('RRC'), ('RRP'), ('RSO'), ('RTM'), ('RUC'), ('RWA')
+            DECLARE @CommunicationTypes table(communication_types varchar(60))
+            INSERT INTO @CommunicationTypes VALUES ('C'), ('MML'), ('S0A'), ('REF'), ('ZW1'), ('ZW2'), ('ZW3'), ('MW1'), ('MW2'), ('MW3'), ('LF1'), ('LF2'), ('LL1'), ('LL2'), ('LS1'), ('LS2'), ('SMS'), ('GAT'), ('GAE'), ('GME'), ('GMS'), ('AMS')
 
             DECLARE @CurrentBalance NUMERIC(9, 2) = (SELECT cur_bal FROM [dbo].[tenagree] WITH (NOLOCK) WHERE tag_ref = @TenancyRef)
             DECLARE @LastPaymentDate SMALLDATETIME = (
@@ -38,7 +40,13 @@ module Hackney
             DECLARE @BreachedAgreementsCount INT = (SELECT COUNT(tag_ref) FROM [dbo].[arag] WITH (NOLOCK) WHERE tag_ref = @TenancyRef AND arag_status = @BreachedArrearsAgreementStatus)
             DECLARE @NospsInLastYear INT = (SELECT COUNT(tag_ref) FROM araction WITH (NOLOCK) WHERE tag_ref = @TenancyRef AND action_code = @NospActionDiaryCode AND action_date >= CONVERT(date, DATEADD(year, -1, GETDATE())))
             DECLARE @NospsInLastMonth INT = (SELECT COUNT(tag_ref) FROM araction WITH (NOLOCK) WHERE tag_ref = @TenancyRef AND action_code = @NospActionDiaryCode AND action_date >= CONVERT(date, DATEADD(month, -1, GETDATE())))
-
+        
+            DECLARE @LastCommunicationAction VARCHAR(60) = (
+              SELECT TOP 1 action_code 
+              FROM araction WITH (NOLOCK)
+              WHERE tag_ref = @TenancyRef
+              AND action_code IN (SELECT action_code FROM @CommunicationTypes) 
+            )
             DECLARE @NextBalance NUMERIC(9, 2) = @CurrentBalance
             DECLARE @CurrentTransactionRow INT = 1
             DECLARE @ArrearsStartDate SMALLDATETIME = GETDATE()
@@ -79,7 +87,8 @@ module Hackney
               @Payment2Value as payment_2_value,
               @Payment2Date as payment_2_date,
               @Payment3Value as payment_3_value,
-              @Payment3Date as payment_3_date;
+              @Payment3Date as payment_3_date,
+              @LastCommunicationAction as last_communication_action
           SQL
 
           attributes = universal_housing_client[
