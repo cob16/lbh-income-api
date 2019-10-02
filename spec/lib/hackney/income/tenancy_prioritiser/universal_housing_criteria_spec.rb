@@ -171,7 +171,7 @@ describe Hackney::Income::TenancyPrioritiser::UniversalHousingCriteria, universa
         create_uh_action(tenancy_ref: tenancy_ref, code: 'MML', date: Date.today)
       }
 
-      it 'return the latest communication code' do
+      it 'return the latest communication date' do
         expect(subject).to eq(Date.today)
       end
     end
