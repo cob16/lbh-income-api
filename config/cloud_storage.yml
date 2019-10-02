@@ -3,7 +3,7 @@ test:
   customer_managed_key: '-'
 
 development:
-  bucket_docs: hackney-income-document-staging
+  bucket_docs: hackney-income-document-development
   customer_managed_key: <%= ENV['CUSTOMER_MANAGED_KEY'] %>
 
 production:
