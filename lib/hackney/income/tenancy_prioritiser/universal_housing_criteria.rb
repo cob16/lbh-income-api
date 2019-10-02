@@ -10,6 +10,8 @@ module Hackney
             DECLARE @NospActionDiaryCode VARCHAR(60) = ?
             DECLARE @PaymentTypes table(payment_type varchar(3))
             INSERT INTO @PaymentTypes VALUES ('RBA'), ('RBP'), ('RBR'), ('RCI'), ('RCO'), ('RCP'), ('RDD'), ('RDN'), ('RDP'), ('RDR'), ('RDS'), ('RDT'), ('REF'), ('RHA'), ('RHB'), ('RIT'), ('RML'), ('RPD'), ('RPO'), ('RPY'), ('RQP'), ('RRC'), ('RRP'), ('RSO'), ('RTM'), ('RUC'), ('RWA')
+            DECLARE @CommunicationTypes table(communication_types varchar(60))
+            INSERT INTO @CommunicationTypes VALUES ('C'), ('MML'), ('S0A'), ('REF'), ('ZW1'), ('ZW2'), ('ZW3'), ('MW1'), ('MW2'), ('MW3'), ('LF1'), ('LF2'), ('LL1'), ('LL2'), ('LS1'), ('LS2'), ('SMS'), ('GAT'), ('GAE'), ('GME'), ('GMS'), ('AMS')
 
             DECLARE @CurrentBalance NUMERIC(9, 2) = (SELECT cur_bal FROM [dbo].[tenagree] WITH (NOLOCK) WHERE tag_ref = @TenancyRef)
             DECLARE @LastPaymentDate SMALLDATETIME = (
@@ -28,12 +30,30 @@ module Hackney
               SELECT u_notice_expiry FROM [dbo].[tenagree] WHERE tag_ref = @TenancyRef
             )
 
+            DECLARE @WeeklyRent NUMERIC(9, 2) = (
+              SELECT rent FROM [dbo].[tenagree] WHERE tag_ref = @TenancyRef
+            )
 
             DECLARE @RemainingTransactions INT = (SELECT COUNT(tag_ref) FROM [dbo].[rtrans] WITH (NOLOCK) WHERE tag_ref = @TenancyRef)
             DECLARE @ActiveAgreementsCount INT = (SELECT COUNT(tag_ref) FROM [dbo].[arag] WITH (NOLOCK) WHERE tag_ref = @TenancyRef AND arag_status = @ActiveArrearsAgreementStatus)
             DECLARE @BreachedAgreementsCount INT = (SELECT COUNT(tag_ref) FROM [dbo].[arag] WITH (NOLOCK) WHERE tag_ref = @TenancyRef AND arag_status = @BreachedArrearsAgreementStatus)
             DECLARE @NospsInLastYear INT = (SELECT COUNT(tag_ref) FROM araction WITH (NOLOCK) WHERE tag_ref = @TenancyRef AND action_code = @NospActionDiaryCode AND action_date >= CONVERT(date, DATEADD(year, -1, GETDATE())))
             DECLARE @NospsInLastMonth INT = (SELECT COUNT(tag_ref) FROM araction WITH (NOLOCK) WHERE tag_ref = @TenancyRef AND action_code = @NospActionDiaryCode AND action_date >= CONVERT(date, DATEADD(month, -1, GETDATE())))
+
+            DECLARE @LastCommunicationAction VARCHAR(60) = (
+              SELECT TOP 1 action_code
+              FROM araction WITH (NOLOCK)
+              WHERE tag_ref = @TenancyRef
+              AND action_code IN (SELECT communication_types FROM @CommunicationTypes)
+              ORDER BY action_date DESC
+            )
+            DECLARE @LastCommunicationDate SMALLDATETIME = (
+              SELECT TOP 1 action_date
+              FROM araction WITH (NOLOCK)
+              WHERE tag_ref = @TenancyRef
+              AND action_code IN (SELECT communication_types FROM @CommunicationTypes)
+              ORDER BY action_date DESC
+            )
 
             DECLARE @NextBalance NUMERIC(9, 2) = @CurrentBalance
             DECLARE @CurrentTransactionRow INT = 1
@@ -61,6 +81,7 @@ module Hackney
 
             SELECT
               @CurrentBalance as current_balance,
+              @WeeklyRent as weekly_rent,
               @LastPaymentDate as last_payment_date,
               @ArrearsStartDate as arrears_start_date,
               @ActiveAgreementsCount as active_agreements_count,
@@ -74,7 +95,9 @@ module Hackney
               @Payment2Value as payment_2_value,
               @Payment2Date as payment_2_date,
               @Payment3Value as payment_3_value,
-              @Payment3Date as payment_3_date;
+              @Payment3Date as payment_3_date,
+              @LastCommunicationAction as last_communication_action,
+              @LastCommunicationDate as last_communication_date
           SQL
 
           attributes = universal_housing_client[
@@ -97,6 +120,10 @@ module Hackney
           attributes.fetch(:current_balance).to_f
         end
 
+        def weekly_rent
+          attributes.fetch(:weekly_rent).to_f
+        end
+
         def nosp_served_date
           return if attributes[:nosp_served_date].nil?
 
@@ -117,6 +144,16 @@ module Hackney
           return nil if attributes.fetch(:last_payment_date).nil?
 
           day_difference(Date.today, attributes.fetch(:last_payment_date))
+        end
+
+        def last_communication_action
+          return nil if attributes[:last_communication_action].nil?
+          attributes[:last_communication_action]
+        end
+
+        def last_communication_date
+          return nil if attributes[:last_communication_date].nil?
+          attributes[:last_communication_date]
         end
 
         def active_agreement?

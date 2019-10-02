@@ -26,6 +26,7 @@ module Hackney
               active_nosp_contribution: score_calculator.active_nosp,
 
               balance: criteria.balance,
+              weekly_rent: criteria.weekly_rent,
               days_in_arrears: criteria.days_in_arrears,
               days_since_last_payment: criteria.days_since_last_payment,
               payment_amount_delta: criteria.payment_amount_delta,
@@ -36,7 +37,8 @@ module Hackney
               nosp_served: criteria.nosp_served?,
               nosp_served_date: criteria.nosp_served_date,
               nosp_expiry_date: criteria.nosp_expiry_date,
-
+              last_communication_action: criteria.last_communication_action,
+              last_communication_date: criteria.last_communication_date,
               active_nosp: criteria.active_nosp?
             )
           end

@@ -27,6 +27,14 @@ describe Hackney::Income::TenancyPrioritiser::UniversalHousingCriteria, universa
     end
   end
 
+  describe '#weekly_rent' do
+    subject { criteria.weekly_rent }
+
+    it 'returns the weekly rent of a tenancy' do
+      expect(subject).to eq(5)
+    end
+  end
+
   describe '#nosp_served_date' do
     subject { criteria.nosp_served_date }
 
@@ -120,6 +128,52 @@ describe Hackney::Income::TenancyPrioritiser::UniversalHousingCriteria, universa
       end
 
       it { is_expected.to eq(5) }
+    end
+  end
+
+  describe '#last_communciation_action' do
+    subject { criteria.last_communication_action }
+
+    context 'when the tenant has not been contacted' do
+      it { is_expected.to be_nil }
+    end
+
+    context 'when in communication with the tenant' do
+      before {
+        create_uh_action(tenancy_ref: tenancy_ref, code: 'MML', date: Date.today)
+        create_uh_action(tenancy_ref: tenancy_ref, code: 'S0A', date: Date.today - 2.days)
+      }
+
+      it 'return the latest communication code' do
+        expect(subject).to eq('MML')
+      end
+    end
+
+    context 'when an action code is not a communication action code' do
+      before {
+        create_uh_action(tenancy_ref: tenancy_ref, code: 'RBA', date: Date.today)
+      }
+
+      it { is_expected.to be_nil }
+    end
+  end
+
+  describe '#last_communciation_date' do
+    subject { criteria.last_communication_date }
+
+    context 'when the tenant has not been contacted' do
+      it { is_expected.to be_nil }
+    end
+
+    context 'when in communication with the tenant' do
+      before {
+        create_uh_action(tenancy_ref: tenancy_ref, code: 'S0A', date: Date.yesterday)
+        create_uh_action(tenancy_ref: tenancy_ref, code: 'MML', date: Date.today)
+      }
+
+      it 'return the latest communication date' do
+        expect(subject).to eq(Date.today)
+      end
     end
   end
 

@@ -12,6 +12,14 @@ module Stubs
       @balance || 100.00
     end
 
+    attr_reader :last_communication_action
+
+    attr_reader :last_communication_date
+
+    def weekly_rent
+      5.0
+    end
+
     def nosp_served_date
       '2019-12-13 12:43:10'.to_date
     end
