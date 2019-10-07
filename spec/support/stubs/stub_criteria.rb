@@ -1,20 +1,18 @@
 module Stubs
   class StubCriteria
     attr_writer :balance, :broken_court_order, :days_in_arrears,
-                :number_of_broken_agreements, :nosp_served,
+                :number_of_broken_agreements,
                 :payment_date_delta, :payment_amount_delta,
                 :active_agreement, :active_nosp, :nosp_served_date,
                 :nosp_expiry_date
 
-    attr_accessor :days_since_last_payment
+    attr_accessor :days_since_last_payment, :last_communication_date, :paused, :nosp_served, :last_communication_action
 
     def balance
       @balance || 100.00
     end
 
-    attr_reader :last_communication_action
-
-    attr_reader :last_communication_date
+    attr_reader
 
     def weekly_rent
       5.0
