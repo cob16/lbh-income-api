@@ -25,7 +25,7 @@ describe Hackney::Income::TenancyPrioritiser::TenancyClassification do
     it 'can classifiy a no action tenancy when the last action taken was over three months ago' do
       criteria.balance = 5.00
       criteria.nosp_served = false
-      criteria.last_communication_date = 3.months.ago.to_date - 1.days
+      criteria.last_communication_date = 3.months.ago.to_date - 1.day
       criteria.paused = false
       expect(subject).to eq(:no_action)
     end
@@ -102,7 +102,7 @@ describe Hackney::Income::TenancyPrioritiser::TenancyClassification do
     it 'can classify to send letter two when the tenant is over 1 weeks in arrears' do
       criteria.balance = criteria.weekly_rent
       criteria.nosp_served = false
-      criteria.last_communication_date = 8.days.ago.to_date + 1
+      criteria.last_communication_date = 8.days.ago.to_date + 1.day
       criteria.last_communication_action = 'C'
       criteria.paused = false
       expect(subject).to eq(:send_letter_two)
