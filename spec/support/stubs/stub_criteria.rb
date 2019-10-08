@@ -12,8 +12,6 @@ module Stubs
       @balance || 100.00
     end
 
-    attr_reader
-
     def weekly_rent
       5.0
     end
