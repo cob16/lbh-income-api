@@ -54,11 +54,10 @@ describe Hackney::Income::TenancyPrioritiser::TenancyClassification do
     }
     balances.each do |key, balance|
       it "can classifiy a send SMS tenancy when the arrear level is #{key}" do
-        last_week = 8.days.ago.to_date
         criteria.balance = balance
         criteria.last_communication_action = nil
         criteria.nosp_served = false
-        criteria.last_communication_date = last_week.to_date
+        criteria.last_communication_date = 8.days.ago.to_date
         criteria.paused = false
         expect(subject).to eq(:send_first_SMS)
       end
@@ -128,8 +127,7 @@ describe Hackney::Income::TenancyPrioritiser::TenancyClassification do
       expect(subject).to eq(:send_warning_letter)
     end
     it 'can classify to send a warning letter when the tenant has missed just under 4 weeks rent' do
-      weekly_rent = criteria.weekly_rent
-      criteria.balance = (weekly_rent * 4) - 1
+      criteria.balance = (criteria.weekly_rent * 4) - 1
       criteria.nosp_served = false
       criteria.last_communication_date = 8.days.ago.to_date
       criteria.last_communication_action = 'LL2'
