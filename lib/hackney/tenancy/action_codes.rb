@@ -17,6 +17,9 @@ module Hackney
       LETTER_2_IN_ARREARS_LH = 'LL2'.freeze
       LETTER_1_IN_ARREARS_SO = 'LS1'.freeze
       LETTER_2_IN_ARREARS_SO = 'LS2'.freeze
+
+      TEXT_MESSAGE_SENT = 'SMS'.freeze
+      FIRST_FTA_LETTER_SENT = 'C'.freeze
     end
   end
 end
