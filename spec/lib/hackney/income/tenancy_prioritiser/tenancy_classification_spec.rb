@@ -41,7 +41,7 @@ describe Hackney::Income::TenancyPrioritiser::TenancyClassification do
     end
   end
 
-  context 'when arrears level is more than or equal to £5 and less than £10' do
+  context 'when arrears level is greater than or equal to £5 and less than £10' do
     balances = {
       five_pounds: 5.00,
       just_over_five_pounds: 5.01,
@@ -76,7 +76,7 @@ describe Hackney::Income::TenancyPrioritiser::TenancyClassification do
     end
   end
 
-  context 'when the arrears are more than or equal to £10 and less than one week rent' do
+  context 'when the arrears are greater than or equal to £10 and less than one week rent' do
     it 'can classify to send letter one when arrears are more than £10' do
       last_week = 8.days.ago.to_date
       criteria.balance = 11.00
@@ -85,47 +85,85 @@ describe Hackney::Income::TenancyPrioritiser::TenancyClassification do
       criteria.last_communication_action = 'SMS'
       criteria.paused = false
       expect(subject).to eq(:send_letter_one)
-      
-    end
-  end
-  context 'when the arrears are more than week rent and less than 3 week rent' do
-    weekly_rent = criteria.weekly_rent
-    balances = {
-      weekly_rent: weekly_rent,
-      over_weekly_rent: weekly_rent + 1,
-      just_under_three_weeks_rent: (weekly_rent * 3) - 1.00
-    }
-    balances.each do |key, balance|
-      it "can classify to send letter two when the tenant has arrears up to #{key}" do
-        last_week = 8.days.ago.to_date
-        criteria.balance = balance
-        criteria.nosp_served = false
-        criteria.last_communication_date = last_week.to_date
-        criteria.last_communication_action = 'C'
-        criteria.paused = false
-        expect(subject).to eq(:send_letter_two)
-      end
     end
   end
 
-  it 'can classify to send a warning letter when the tenant has missed at least three weeks rent' do
-    last_week = 8.days.ago.to_date
-    weekly_rent = criteria.weekly_rent
-    criteria.balance = (weekly_rent * 3) + 1
-    criteria.nosp_served = false
-    criteria.last_communication_date = last_week.to_date
-    criteria.last_communication_action = 'LL2'
-    criteria.paused = false
-    expect(subject).to eq(:send_warning_letter)
+  context 'when the arrears are greater than or equal to one weeks rent and less than 3 week rent' do
+    it 'can classify to send letter two when the tenant has arreas of 1 week' do
+      last_week = 8.days.ago.to_date
+      weekly_rent = criteria.weekly_rent
+      criteria.balance = weekly_rent
+      criteria.nosp_served = false
+      criteria.last_communication_date = last_week.to_date
+      criteria.last_communication_action = 'C'
+      criteria.paused = false
+      expect(subject).to eq(:send_letter_two)
+    end
+    it 'can classify to send letter two when the tenant is over 1 weeks in arrears' do
+      last_week = 8.days.ago.to_date
+      weekly_rent = criteria.weekly_rent + 1
+      criteria.balance = weekly_rent
+      criteria.nosp_served = false
+      criteria.last_communication_date = last_week.to_date
+      criteria.last_communication_action = 'C'
+      criteria.paused = false
+      expect(subject).to eq(:send_letter_two)
+    end
+    it 'can classify to send letter two when the tenant has just under 3 weeks' do
+      last_week = 8.days.ago.to_date
+      weekly_rent = (criteria.weekly_rent * 3) - 1
+      criteria.balance = weekly_rent
+      criteria.nosp_served = false
+      criteria.last_communication_date = last_week.to_date
+      criteria.last_communication_action = 'C'
+      criteria.paused = false
+      expect(subject).to eq(:send_letter_two)
+    end
   end
-  it 'can classify to send a NOSP when the tenant has missed 4 weeks worth of rent' do
-    last_week = 8.days.ago.to_date
-    weekly_rent = criteria.weekly_rent
-    criteria.balance = (weekly_rent * 4) + 1
-    criteria.nosp_served = false
-    criteria.last_communication_date = last_week.to_date
-    criteria.last_communication_action = 'ZW2'
-    criteria.paused = false
-    expect(subject).to eq(:send_NOSP)
+
+  context 'when the arrears are greater than or equal to three weeks rent and less than 4 week rent' do
+    it 'can classify to send a warning letter when the tenant has missed three weeks rent' do
+      last_week = 8.days.ago.to_date
+      weekly_rent = criteria.weekly_rent
+      criteria.balance = (weekly_rent * 3)
+      criteria.nosp_served = false
+      criteria.last_communication_date = last_week.to_date
+      criteria.last_communication_action = 'LL2'
+      criteria.paused = false
+      expect(subject).to eq(:send_warning_letter)
+    end
+    it 'can classify to send a warning letter when the tenant has missed just under 4 weeks rent' do
+      last_week = 8.days.ago.to_date
+      weekly_rent = criteria.weekly_rent
+      criteria.balance = (weekly_rent * 4) - 1
+      criteria.nosp_served = false
+      criteria.last_communication_date = last_week.to_date
+      criteria.last_communication_action = 'LL2'
+      criteria.paused = false
+      expect(subject).to eq(:send_warning_letter)
+    end
+  end
+
+  context 'when the arrears are greater than or equal 4 week rent' do
+    it 'can classify to send a NOSP when the tenant has missed 4 weeks worth of rent' do
+      last_week = 8.days.ago.to_date
+      weekly_rent = criteria.weekly_rent
+      criteria.balance = weekly_rent * 4
+      criteria.nosp_served = false
+      criteria.last_communication_date = last_week.to_date
+      criteria.last_communication_action = 'ZW2'
+      criteria.paused = false
+      expect(subject).to eq(:send_NOSP)
+    end
+    it 'can classify to send a NOSP when the tenant has missed over 4 weeks worth of rent' do
+      last_week = 8.days.ago.to_date
+      weekly_rent = criteria.weekly_rent
+      criteria.balance = (weekly_rent * 4) + 1
+      criteria.nosp_served = false
+      criteria.last_communication_date = last_week.to_date
+      criteria.last_communication_action = 'ZW2'
+      criteria.paused = false
+      expect(subject).to eq(:send_NOSP)
+    end
   end
 end

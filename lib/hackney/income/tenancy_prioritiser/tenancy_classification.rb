@@ -37,7 +37,7 @@ module Hackney
 
         def send_letter_two?
           @criteria.last_communication_action == Hackney::Tenancy::ActionCodes::FIRST_FTA_LETTER_SENT &&
-            @criteria.balance > @criteria.weekly_rent &&
+            @criteria.balance >= @criteria.weekly_rent &&
             @criteria.balance < (@criteria.weekly_rent * 3) &&
             @criteria.nosp_served == false &&
             @criteria.last_communication_date <= 7.days.ago.to_date &&
@@ -46,7 +46,7 @@ module Hackney
 
         def send_warning_letter?
           @criteria.last_communication_action == Hackney::Tenancy::ActionCodes::LETTER_2_IN_ARREARS_LH &&
-            @criteria.balance > (@criteria.weekly_rent * 3) &&
+            @criteria.balance >= (@criteria.weekly_rent * 3) &&
             @criteria.nosp_served == false &&
             @criteria.last_communication_date <= 7.days.ago.to_date &&
             @criteria.last_communication_date >= 3.months.ago.to_date
@@ -54,7 +54,7 @@ module Hackney
 
         def send_nosp?
           @criteria.last_communication_action == 'ZW2' &&
-            @criteria.balance > (@criteria.weekly_rent * 4) &&
+            @criteria.balance >= (@criteria.weekly_rent * 4) &&
             @criteria.nosp_served == false &&
             @criteria.last_communication_date <= 7.days.ago.to_date &&
             @criteria.last_communication_date >= 3.months.ago.to_date
