@@ -1,4 +1,3 @@
-require_relative '../../tenancy/action_codes.rb'
 module Hackney
   module Income
     class TenancyPrioritiser
