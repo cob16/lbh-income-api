@@ -125,7 +125,6 @@ describe Hackney::Income::TenancyPrioritiser::TenancyClassification do
   end
 
   context 'when the arrears are greater than or equal to three weeks rent and less than 4 week rent' do
-
     it 'can classify to send a warning letter when the tenant has missed three weeks rent' do
       criteria.balance = criteria.weekly_rent * 3
       criteria.last_communication_date = 8.days.ago.to_date
