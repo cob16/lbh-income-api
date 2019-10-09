@@ -22,6 +22,7 @@ describe Hackney::Income::TenancyPrioritiser::TenancyClassification do
         expect(subject).to eq(:no_action)
       end
     end
+
     it 'can classifiy a no action tenancy when the last action taken was over three months ago' do
       criteria.balance = 5.00
       criteria.nosp_served = false
@@ -41,6 +42,13 @@ describe Hackney::Income::TenancyPrioritiser::TenancyClassification do
       criteria.nosp_served = false
       criteria.last_communication_date = 6.days.ago.to_date
       criteria.paused = true
+      expect(subject).to eq(:no_action)
+    end
+    it 'can classifiy a no action tenancy when a NOSP has been served' do
+      criteria.balance = 5.00
+      criteria.nosp_served = true
+      criteria.last_communication_date = 8.days.ago.to_date
+      criteria.paused = false
       expect(subject).to eq(:no_action)
     end
   end
