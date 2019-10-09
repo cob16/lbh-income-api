@@ -39,6 +39,7 @@ describe Hackney::Income::TenancyPrioritiser::TenancyClassification do
       criteria.paused = false
       expect(subject).to eq(:no_action)
     end
+
     it 'can classifiy a no action tenancy when the last communication date was less than a week ago' do
       criteria.balance = 5.00
       criteria.nosp_served = false
@@ -46,6 +47,7 @@ describe Hackney::Income::TenancyPrioritiser::TenancyClassification do
       criteria.paused = false
       expect(subject).to eq(:no_action)
     end
+
     it 'can classifiy a no action tenancy when the the case has been paused' do
       criteria.balance = 15.00
       criteria.nosp_served = false
@@ -53,6 +55,7 @@ describe Hackney::Income::TenancyPrioritiser::TenancyClassification do
       criteria.paused = true
       expect(subject).to eq(:no_action)
     end
+
     it 'can classifiy a no action tenancy when a NOSP has been served' do
       criteria.balance = 5.00
       criteria.nosp_served = true
@@ -77,6 +80,7 @@ describe Hackney::Income::TenancyPrioritiser::TenancyClassification do
         expect(subject).to eq(:send_first_SMS)
       end
     end
+
     last_communication_dates = {
       seven_days_ago: 7.days.ago.to_date,
       eight_days_ago: 8.days.ago.to_date,
@@ -108,12 +112,14 @@ describe Hackney::Income::TenancyPrioritiser::TenancyClassification do
       criteria.last_communication_action = 'C'
       expect(subject).to eq(:send_letter_two)
     end
+
     it 'can classify to send letter two when the tenant is over 1 weeks in arrears' do
       criteria.balance = criteria.weekly_rent
       criteria.last_communication_date = 8.days.ago.to_date + 1.day
       criteria.last_communication_action = 'C'
       expect(subject).to eq(:send_letter_two)
     end
+
     it 'can classify to send letter two when the tenant has just under 3 weeks' do
       criteria.balance = (criteria.weekly_rent * 3) - 1
       criteria.last_communication_date = 8.days.ago.to_date
@@ -128,6 +134,7 @@ describe Hackney::Income::TenancyPrioritiser::TenancyClassification do
       criteria.last_communication_action = 'LL2'
       expect(subject).to eq(:send_warning_letter)
     end
+
     it 'can classify to send a warning letter when the tenant has missed just under 4 weeks rent' do
       criteria.balance = (criteria.weekly_rent * 4) - 1
       criteria.last_communication_action = 'LL2'
