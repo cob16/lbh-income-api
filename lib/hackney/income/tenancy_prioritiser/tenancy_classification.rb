@@ -22,7 +22,7 @@ module Hackney
             @criteria.balance >= 5 &&
             @criteria.balance < 10 &&
             @criteria.nosp_served == false &&
-            last_communication_between_three_months_one_week &&
+            last_communication_between_three_months_one_week? &&
             @criteria.paused == false
         end
 
@@ -30,7 +30,7 @@ module Hackney
           @criteria.last_communication_action == Hackney::Tenancy::ActionCodes::TEXT_MESSAGE_SENT &&
             @criteria.balance > 10 &&
             @criteria.nosp_served == false &&
-            last_communication_between_three_months_one_week &&
+            last_communication_between_three_months_one_week? &&
             @criteria.paused == false
         end
 
@@ -39,7 +39,7 @@ module Hackney
             @criteria.balance >= @criteria.weekly_rent &&
             @criteria.balance < (@criteria.weekly_rent * 3) &&
             @criteria.nosp_served == false &&
-            last_communication_between_three_months_one_week &&
+            last_communication_between_three_months_one_week? &&
             @criteria.paused == false
         end
 
@@ -47,7 +47,7 @@ module Hackney
           @criteria.last_communication_action == Hackney::Tenancy::ActionCodes::LETTER_2_IN_ARREARS_LH &&
             @criteria.balance >= (@criteria.weekly_rent * 3) &&
             @criteria.nosp_served == false &&
-            last_communication_between_three_months_one_week &&
+            last_communication_between_three_months_one_week? &&
             @criteria.paused == false
         end
 
@@ -55,11 +55,11 @@ module Hackney
           @criteria.last_communication_action == 'ZW2' &&
             @criteria.balance >= (@criteria.weekly_rent * 4) &&
             @criteria.nosp_served == false &&
-            last_communication_between_three_months_one_week &&
+            last_communication_between_three_months_one_week? &&
             @criteria.paused == false
         end
 
-        def last_communication_between_three_months_one_week
+        def last_communication_between_three_months_one_week?
           @criteria.last_communication_date <= 7.days.ago.to_date &&
             @criteria.last_communication_date >= 3.months.ago.to_date
         end
