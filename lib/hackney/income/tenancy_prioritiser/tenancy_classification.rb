@@ -37,7 +37,7 @@ module Hackney
         def send_letter_two?
           @criteria.last_communication_action == Hackney::Tenancy::ActionCodes::FIRST_FTA_LETTER_SENT &&
             @criteria.balance >= @criteria.weekly_rent &&
-            @criteria.balance < (@criteria.weekly_rent * 3) &&
+            @criteria.balance < arrear_accumulation_by_number_weeks(3) &&
             @criteria.nosp_served == false &&
             last_communication_between_three_months_one_week? &&
             @criteria.paused == false
@@ -45,7 +45,7 @@ module Hackney
 
         def send_warning_letter?
           @criteria.last_communication_action == Hackney::Tenancy::ActionCodes::LETTER_2_IN_ARREARS_LH &&
-            @criteria.balance >= (@criteria.weekly_rent * 3) &&
+            @criteria.balance >= arrear_accumulation_by_number_weeks(3) &&
             @criteria.nosp_served == false &&
             last_communication_between_three_months_one_week? &&
             @criteria.paused == false
@@ -53,15 +53,21 @@ module Hackney
 
         def send_nosp?
           @criteria.last_communication_action == 'ZW2' &&
-            @criteria.balance >= (@criteria.weekly_rent * 4) &&
+            @criteria.balance >= arrear_accumulation_by_number_weeks(4) &&
             @criteria.nosp_served == false &&
             last_communication_between_three_months_one_week? &&
             @criteria.paused == false
         end
 
         def last_communication_between_three_months_one_week?
-          @criteria.last_communication_date <= 7.days.ago.to_date &&
-            @criteria.last_communication_date >= 3.months.ago.to_date
+          one_week = 7.days.ago.to_date
+          three_months = 3.months.ago.to_date
+          @criteria.last_communication_date <= one_week &&
+            @criteria.last_communication_date >= three_months
+        end
+
+        def arrear_accumulation_by_number_weeks(weeks)
+          @criteria.weekly_rent * weeks
         end
       end
     end
