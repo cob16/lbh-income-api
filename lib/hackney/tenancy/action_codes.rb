@@ -22,13 +22,13 @@ module Hackney
       GREEN_SMS_SENT_MANUAL = 'GMS'.freeze
 
       LETTER_1_IN_ARREARS_AUTO = 'IC1'.freeze
-      LETTER_1_IN_ARREARS_MANUAL ='IM1'.freeze
+      LETTER_1_IN_ARREARS_MANUAL = 'IM1'.freeze
 
       LETTER_2_IN_ARREARS_AUTO = 'IC2'.freeze
-      LETTER_2_IN_ARREARS_MANUAL ='IM2'.freeze
+      LETTER_2_IN_ARREARS_MANUAL = 'IM2'.freeze
 
       PRE_NOSP_WARNING_LETTER_AUTO = 'IC3'.freeze
-      PRE_NOSP_WARNING_LETTER_MANUAL ='IM3'.freeze
+      PRE_NOSP_WARNING_LETTER_MANUAL = 'IM3'.freeze
     end
   end
 end

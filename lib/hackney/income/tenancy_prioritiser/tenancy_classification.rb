@@ -27,8 +27,12 @@ module Hackney
         end
 
         def send_letter_one?
-          (@criteria.last_communication_action == Hackney::Tenancy::ActionCodes::GREEN_SMS_SENT_AUTO ||
-          @criteria.last_communication_action == Hackney::Tenancy::ActionCodes::GREEN_SMS_SENT_MANUAL) &&
+          valid_actions = [
+            Hackney::Tenancy::ActionCodes::GREEN_SMS_SENT_AUTO,
+            Hackney::Tenancy::ActionCodes::GREEN_SMS_SENT_MANUAL
+          ]
+
+          @criteria.last_communication_action.in?(valid_actions) &&
             @criteria.balance > 10 &&
             @criteria.nosp_served == false &&
             last_communication_between_three_months_one_week? &&
@@ -36,8 +40,12 @@ module Hackney
         end
 
         def send_letter_two?
-          (@criteria.last_communication_action == Hackney::Tenancy::ActionCodes::LETTER_1_IN_ARREARS_AUTO ||
-          @criteria.last_communication_action == Hackney::Tenancy::ActionCodes::LETTER_1_IN_ARREARS_MANUAL) &&
+          valid_actions = [
+            Hackney::Tenancy::ActionCodes::LETTER_1_IN_ARREARS_AUTO,
+            Hackney::Tenancy::ActionCodes::LETTER_1_IN_ARREARS_MANUAL
+          ]
+
+          @criteria.last_communication_action.in?(valid_actions) &&
             @criteria.balance >= @criteria.weekly_rent &&
             @criteria.balance < arrear_accumulation_by_number_weeks(3) &&
             @criteria.nosp_served == false &&
@@ -46,9 +54,12 @@ module Hackney
         end
 
         def send_warning_letter?
-          (@criteria.last_communication_action == Hackney::Tenancy::ActionCodes::LETTER_2_IN_ARREARS_AUTO ||
-          @criteria.last_communication_action == Hackney::Tenancy::ActionCodes::LETTER_2_IN_ARREARS_MANUAL) &&
+          valid_actions = [
+            Hackney::Tenancy::ActionCodes::LETTER_2_IN_ARREARS_AUTO,
+            Hackney::Tenancy::ActionCodes::LETTER_2_IN_ARREARS_MANUAL
+          ]
 
+          @criteria.last_communication_action.in?(valid_actions) &&
             @criteria.balance >= arrear_accumulation_by_number_weeks(3) &&
             @criteria.nosp_served == false &&
             last_communication_between_three_months_one_week? &&
@@ -56,8 +67,11 @@ module Hackney
         end
 
         def send_nosp?
-          (@criteria.last_communication_action == Hackney::Tenancy::ActionCodes::PRE_NOSP_WARNING_LETTER_AUTO ||
-          @criteria.last_communication_action == Hackney::Tenancy::ActionCodes::PRE_NOSP_WARNING_LETTER_MANUAL) &&
+          valid_actions = [
+            Hackney::Tenancy::ActionCodes::PRE_NOSP_WARNING_LETTER_AUTO,
+            Hackney::Tenancy::ActionCodes::PRE_NOSP_WARNING_LETTER_MANUAL
+          ]
+          @criteria.last_communication_action.in?(valid_actions) &&
             @criteria.balance >= arrear_accumulation_by_number_weeks(4) &&
             @criteria.nosp_served == false &&
             last_communication_between_three_months_one_week? &&
