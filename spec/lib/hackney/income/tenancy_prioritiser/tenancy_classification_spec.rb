@@ -14,7 +14,7 @@ describe Hackney::Income::TenancyPrioritiser::TenancyClassification do
     }
 
     balances.each do |key, balance|
-      it "can classifiy a no action tenancy when the arrear level is #{key}" do
+      it "can classify a no action tenancy when the arrear level is #{key}" do
         criteria.balance = balance
         criteria.nosp_served = false
         criteria.last_communication_date = 8.days.ago.to_date
@@ -23,7 +23,7 @@ describe Hackney::Income::TenancyPrioritiser::TenancyClassification do
       end
     end
 
-    it 'can classifiy a no action tenancy when the last action taken was over three months ago' do
+    it 'can classify a no action tenancy when the last action taken was over three months ago' do
       criteria.balance = 5.00
       criteria.nosp_served = false
       criteria.last_communication_date = 3.months.ago.to_date - 1.day
@@ -31,7 +31,7 @@ describe Hackney::Income::TenancyPrioritiser::TenancyClassification do
       expect(subject).to eq(:no_action)
     end
 
-    it 'can classifiy a no action tenancy when the last communication date was less than a week ago' do
+    it 'can classify a no action tenancy when the last communication date was less than a week ago' do
       criteria.balance = 5.00
       criteria.nosp_served = false
       criteria.last_communication_date = 6.days.ago.to_date
@@ -39,7 +39,7 @@ describe Hackney::Income::TenancyPrioritiser::TenancyClassification do
       expect(subject).to eq(:no_action)
     end
 
-    it 'can classifiy a no action tenancy when the the case has been paused' do
+    it 'can classify a no action tenancy when the the case has been paused' do
       criteria.balance = 15.00
       criteria.nosp_served = false
       criteria.last_communication_date = 6.days.ago.to_date
@@ -47,7 +47,7 @@ describe Hackney::Income::TenancyPrioritiser::TenancyClassification do
       expect(subject).to eq(:no_action)
     end
 
-    it 'can classifiy a no action tenancy when a NOSP has been served' do
+    it 'can classify a no action tenancy when a NOSP has been served' do
       criteria.balance = 5.00
       criteria.nosp_served = true
       criteria.last_communication_date = 8.days.ago.to_date
@@ -70,7 +70,7 @@ describe Hackney::Income::TenancyPrioritiser::TenancyClassification do
         just_under_ten_pounds: 9.99
       }
       balances.each do |key, balance|
-        it "can classifiy a send SMS tenancy when the arrear level is #{key}" do
+        it "can classify a send SMS tenancy when the arrear level is #{key}" do
           criteria.balance = balance
           criteria.last_communication_action = nil
           criteria.last_communication_date = 8.days.ago.to_date
@@ -84,7 +84,7 @@ describe Hackney::Income::TenancyPrioritiser::TenancyClassification do
         within_three_months: 3.months.ago.to_date
       }
       last_communication_dates.each do |key, last_communication_date|
-        it "can classifiy a send SMS tenancy when the last communication date is #{key}" do
+        it "can classify a send SMS tenancy when the last communication date is #{key}" do
           criteria.balance = 5
           criteria.last_communication_action = nil
           criteria.last_communication_date = last_communication_date
