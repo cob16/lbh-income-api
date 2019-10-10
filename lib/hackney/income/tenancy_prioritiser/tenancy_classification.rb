@@ -27,7 +27,8 @@ module Hackney
         end
 
         def send_letter_one?
-          @criteria.last_communication_action == Hackney::Tenancy::ActionCodes::TEXT_MESSAGE_SENT &&
+          (@criteria.last_communication_action == Hackney::Tenancy::ActionCodes::GREEN_SMS_SENT_AUTO ||
+          @criteria.last_communication_action == Hackney::Tenancy::ActionCodes::GREEN_SMS_SENT_MANUAL) &&
             @criteria.balance > 10 &&
             @criteria.nosp_served == false &&
             last_communication_between_three_months_one_week? &&
@@ -35,7 +36,8 @@ module Hackney
         end
 
         def send_letter_two?
-          @criteria.last_communication_action == Hackney::Tenancy::ActionCodes::FIRST_FTA_LETTER_SENT &&
+          (@criteria.last_communication_action == Hackney::Tenancy::ActionCodes::LETTER_1_IN_ARREARS_AUTO ||
+          @criteria.last_communication_action == Hackney::Tenancy::ActionCodes::LETTER_1_IN_ARREARS_MANUAL) &&
             @criteria.balance >= @criteria.weekly_rent &&
             @criteria.balance < arrear_accumulation_by_number_weeks(3) &&
             @criteria.nosp_served == false &&
@@ -44,7 +46,9 @@ module Hackney
         end
 
         def send_warning_letter?
-          @criteria.last_communication_action == Hackney::Tenancy::ActionCodes::LETTER_2_IN_ARREARS_LH &&
+          (@criteria.last_communication_action == Hackney::Tenancy::ActionCodes::LETTER_2_IN_ARREARS_AUTO ||
+          @criteria.last_communication_action == Hackney::Tenancy::ActionCodes::LETTER_2_IN_ARREARS_MANUAL) &&
+
             @criteria.balance >= arrear_accumulation_by_number_weeks(3) &&
             @criteria.nosp_served == false &&
             last_communication_between_three_months_one_week? &&
@@ -52,7 +56,8 @@ module Hackney
         end
 
         def send_nosp?
-          @criteria.last_communication_action == 'ZW2' &&
+          (@criteria.last_communication_action == Hackney::Tenancy::ActionCodes::PRE_NOSP_WARNING_LETTER_AUTO ||
+          @criteria.last_communication_action == Hackney::Tenancy::ActionCodes::PRE_NOSP_WARNING_LETTER_MANUAL) &&
             @criteria.balance >= arrear_accumulation_by_number_weeks(4) &&
             @criteria.nosp_served == false &&
             last_communication_between_three_months_one_week? &&
