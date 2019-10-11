@@ -6,6 +6,7 @@ module Hackney
       SENDING_DATE_PATH = 'lib/hackney/pdf/templates/layouts/sending_date.erb'.freeze
       PAYMENT_OPTIONS_PATH = 'lib/hackney/pdf/templates/layouts/payment_options.erb'.freeze
       REPLY_FORM_PATH = 'lib/hackney/pdf/templates/layouts/reply_form.erb'.freeze
+      PAYMENT_OPTIONS_LBA_PATH = 'lib/hackney/pdf/templates/layouts/payment_options_lba.erb'.freeze
 
       def initialize(template_path:)
         @template_path = template_path
@@ -24,6 +25,8 @@ module Hackney
         @payment_options = ERB.new(File.open(PAYMENT_OPTIONS_PATH).read).result(binding)
 
         @reply_form = ERB.new(File.open(REPLY_FORM_PATH).read).result(binding)
+
+        @payment_options_lba = ERB.new(File.open(PAYMENT_OPTIONS_LBA_PATH).read).result(binding)
 
         template = File.open(@template_path).read
         html = ERB.new(template).result(binding)
