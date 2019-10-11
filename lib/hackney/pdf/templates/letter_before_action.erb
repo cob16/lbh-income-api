@@ -1,0 +1,122 @@
+<div class="top_space"></div>
+
+<div class="right">
+<strong>Leasehold & Right To Buy Service</strong> <br>
+  Hackney Service Centre <br>
+  1 Hillman Street <br>
+  London E8 1DY
+
+<p>
+  020 8356 2299 <br>
+  service.charges@hackney.gov.uk <br>
+  <strong>Service Charge Account Number: <%= @letter.payment_ref %> <br></strong>
+  Our Ref: LBA/ST
+  <%= @sending_date + 1.day %>
+</p>
+</div>
+
+<div class="lessee_address">
+  <strong><%= @letter.lessee_full_name %></strong> <br>
+  <%= @letter.correspondence_address1 %> <br>
+  <%= @letter.correspondence_address2 %> <br>
+  <%= @letter.correspondence_address3 %> <br>
+  <%= @letter.correspondence_address4 %> <br>
+  
+  <%= @letter.correspondence_postcode %>
+</div>
+
+<div>
+Dear <%= @letter.lessee_short_name %>
+
+<p>
+<strong>RE: <%= @letter.property_address%> </strong>
+</p>
+
+<div class="blue_box">
+<strong class="centre">FINAL LETTER BEFORE LEGAL ACTION</strong><br>
+Our records show that you still have an outstanding balance on your service charge account of
+<p class="centre">£<%= @letter.total_collectable_arrears_balance %></p> 
+</div>
+
+<p>If you have made arrangements to pay your debt or have cleared your arrears in the last 7
+days, please ignore this letter.
+</p>
+
+<p>If you have not made any arragement to pay your debt despite reminders to you, payment 
+of the full amount is due.
+</p>
+
+<h2>What if I am currently experiencing financial difficulties?</h2>
+<p>
+We are currently aware of a valid reason for your non_payment. If you are facing financial
+difficulties, please complete the enclosed forms to allow us to assess your current 
+circumstances and the options available to uo
+<p>
+
+<h2>If you are intending to return these forms, please ensure they are received by the 
+Council no later than <%= @sending_date + 31.days %> </h2>
+<p>An Information Sheet is also enclosed detailing independent organisations who offer free,
+impartial and non-judgemental advice to you should you prefer this option.
+</p>
+
+<h2>What if I cannot pay off all my debt at the moment?</h2>
+<p> If  you  are  unable  to  settle  your  account  in  full  and  would  like  to  discuss  your  arrears  or  to arrange an instalment plan, please contact our Leasehold Services team on 020 8356 
+2299. Government  assistance  maybe  available  towards  payment  of  your  service  charges  if 
+you qualify.
+</p>
+
+<h2>What is the breach of lease?</h2>
+<p>By a lease/transfer dated <%= @letter.orginal_lease_date%> made between <%= @letter.orginal_leaseholders%> and the
+Mayor and Burgesses of the London Borough of Hackney for the premises known as <%= @letter.property_address%>. 
+This lease was assigned/transferred to <%= @letter.orginal_leaseholders%> on the <%= @letter.orginal_lease_date%>. Under the terms of this lease/transfer, you 
+covenanted to pay ground rent and service charge by way of additional rent.
+</p>
+
+<p> 
+In breach of said covenants, you have failed to pay service charge and there is a total sum
+of <%= @letter.total_collectable_arrears_balance %> outstanding in respect of these invoices
+</p>
+
+<h2>What are the Council's intentions?</h2>
+<p>
+Failure to make payment or contact us by <%= @sending_date + 31.days %> will result in the issue of 
+proceedings in the County Court without further notice. Should this be necessary, in addition 
+to Court costs, the Claim will be increased by up to 8% interest.
+</p>
+
+<p>
+If you wish to pay by debit or credit card over the phone then kindly call 020 8356 2299 
+between 9:00am to 5:00pm.  If you would like to pay by cheque, cheques should be made 
+payable to ‘London Borough of Hackney’. Details of these payment options are enclosed.
+</p>
+
+<p>
+Should you make payment after the 30 days has elapsed but before a Claim is sent for 
+issuing, you should contact the Council immediately or you may still be at risk for court costs. 
+Similarly, paying after a Claim has been sent for issuing will result in you being liable for 
+interest and costs.
+</p>
+
+<p>
+If a County Court Judgement is obtained and you still have not paid the arrears, we will have 
+no option but to take further action against you. This would include issuing a forfeiture notice 
+which will incur an additional cost of £120.00 and where applicable, we will contact your 
+mortgage lender to advise them of our intentions to pursue recovery of this debt. 
+</p>
+
+<p>
+We ask that you make arrangements for the payment within 30 days of this letter to avoid 
+this matter being referred to our legal advisors for the recovery of this debt.
+</p>
+
+<p>
+Should you have any queries in respect of this matter please contact <strong>Leasehold Services on 020 8356 2299.</strong>
+</p>
+
+<p>
+Yours sincerely,<br>
+Easton Davis<br>
+Income and Disputes Resolution Team Leader<br>
+<strong>Leasehold & Right to Buy Services</strong>
+</p>
+</div>

@@ -37,6 +37,13 @@ p {
   background-color: #ddefea;
 }
 
+.blue_box {
+  padding: 8.64pt 8.64pt 0 8.64pt;
+  border: 2pt #000000 solid;
+  text-align: justify;
+  background-color: #c2e4f1;
+}
+
 .no_top_margin{
   margin-block-start: 0;
 }
