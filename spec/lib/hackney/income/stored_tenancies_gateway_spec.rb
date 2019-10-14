@@ -75,7 +75,8 @@ describe Hackney::Income::StoredTenanciesGateway do
           active_agreement: attributes.fetch(:criteria).active_agreement?,
           broken_court_order: attributes.fetch(:criteria).broken_court_order?,
           nosp_served: attributes.fetch(:criteria).nosp_served?,
-          active_nosp: attributes.fetch(:criteria).active_nosp?
+          active_nosp: attributes.fetch(:criteria).active_nosp?,
+          patch_code: attributes.fetch(:criteria).patch_code
         )
       end
 
@@ -154,7 +155,8 @@ describe Hackney::Income::StoredTenanciesGateway do
           active_agreement: attributes.fetch(:criteria).active_agreement?,
           broken_court_order: attributes.fetch(:criteria).broken_court_order?,
           nosp_served: attributes.fetch(:criteria).nosp_served?,
-          active_nosp: attributes.fetch(:criteria).active_nosp?
+          active_nosp: attributes.fetch(:criteria).active_nosp?,
+          patch_code: attributes.fetch(:criteria).patch_code
         )
       end
 
@@ -443,7 +445,8 @@ describe Hackney::Income::StoredTenanciesGateway do
       active_agreement: attributes.fetch(:criteria).active_agreement?,
       broken_court_order: attributes.fetch(:criteria).broken_court_order?,
       nosp_served: attributes.fetch(:criteria).nosp_served?,
-      active_nosp: attributes.fetch(:criteria).active_nosp?
+      active_nosp: attributes.fetch(:criteria).active_nosp?,
+      patch_code: attributes.fetch(:criteria).patch_code
     }
   end
 end

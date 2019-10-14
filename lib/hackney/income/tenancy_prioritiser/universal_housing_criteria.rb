@@ -34,6 +34,13 @@ module Hackney
               SELECT rent FROM [dbo].[tenagree] WHERE tag_ref = @TenancyRef
             )
 
+            DECLARE @PatchCode VARCHAR(3) = (
+              SELECT arr_patch
+              FROM [dbo].[property]
+              INNER JOIN [dbo].[tenagree] ON [dbo].[property].prop_ref = [dbo].[tenagree].prop_ref
+              WHERE tag_ref = @TenancyRef
+            )
+
             DECLARE @RemainingTransactions INT = (SELECT COUNT(tag_ref) FROM [dbo].[rtrans] WITH (NOLOCK) WHERE tag_ref = @TenancyRef)
             DECLARE @ActiveAgreementsCount INT = (SELECT COUNT(tag_ref) FROM [dbo].[arag] WITH (NOLOCK) WHERE tag_ref = @TenancyRef AND arag_status = @ActiveArrearsAgreementStatus)
             DECLARE @BreachedAgreementsCount INT = (SELECT COUNT(tag_ref) FROM [dbo].[arag] WITH (NOLOCK) WHERE tag_ref = @TenancyRef AND arag_status = @BreachedArrearsAgreementStatus)
@@ -82,6 +89,7 @@ module Hackney
             SELECT
               @CurrentBalance as current_balance,
               @WeeklyRent as weekly_rent,
+              @PatchCode as patch_code,
               @LastPaymentDate as last_payment_date,
               @ArrearsStartDate as arrears_start_date,
               @ActiveAgreementsCount as active_agreements_count,
@@ -197,6 +205,10 @@ module Hackney
         # FIXME: implementation needs confirming, will return to later
         def broken_court_order?
           false
+        end
+
+        def patch_code
+          attributes.fetch(:patch_code)
         end
 
         private

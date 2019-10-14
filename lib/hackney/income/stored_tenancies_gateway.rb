@@ -42,7 +42,8 @@ module Hackney
               last_communication_action: criteria.last_communication_action,
               last_communication_date: criteria.last_communication_date,
               active_nosp: criteria.active_nosp?,
-              classification: classification_usecase.execute
+              classification: classification_usecase.execute,
+              patch_code: criteria.patch_code
             )
           end
         rescue ActiveRecord::RecordNotUnique
@@ -118,7 +119,8 @@ module Hackney
           active_agreement: model.active_agreement,
           broken_court_order: model.broken_court_order,
           nosp_served: model.nosp_served,
-          active_nosp: model.active_nosp
+          active_nosp: model.active_nosp,
+          patch_code: model.patch_code
         }
       end
     end
