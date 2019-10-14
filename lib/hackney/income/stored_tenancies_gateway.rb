@@ -39,7 +39,8 @@ module Hackney
               nosp_expiry_date: criteria.nosp_expiry_date,
               last_communication_action: criteria.last_communication_action,
               last_communication_date: criteria.last_communication_date,
-              active_nosp: criteria.active_nosp?
+              active_nosp: criteria.active_nosp?,
+              patch_code: criteria.patch_code
             )
           end
         rescue ActiveRecord::RecordNotUnique
@@ -115,7 +116,8 @@ module Hackney
           active_agreement: model.active_agreement,
           broken_court_order: model.broken_court_order,
           nosp_served: model.nosp_served,
-          active_nosp: model.active_nosp
+          active_nosp: model.active_nosp,
+          patch_code: model.patch_code
         }
       end
     end
