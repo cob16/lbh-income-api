@@ -431,33 +431,31 @@ describe Hackney::Income::TenancyPrioritiser::UniversalHousingCriteria, universa
   end
 
   describe '#patch_code' do
-    context 'when there is a patch code' do
-      let(:patch_tenancy_code) { '100000/11' }
-      let(:patch_code) { 'E01' }
+    let(:patch_tenancy_code) { '100000/11' }
 
+    context 'with an existing property reference' do
       before do
         create_uh_tenancy_agreement_with_property(tenancy_ref: patch_tenancy_code, arr_patch: patch_code)
       end
 
-      it 'contains the correct patch code' do
-        expect(criteria.patch_code).to eq(patch_code)
+      context 'with a patch code' do
+        let(:patch_code) { 'E01' }
+
+        it 'contains the correct patch code' do
+          expect(criteria.patch_code).to eq(patch_code)
+        end
+      end
+
+      context 'without a patch code' do
+        let(:patch_code) { nil }
+
+        it 'is nil' do
+          expect(criteria.patch_code).to be_nil
+        end
       end
     end
 
-    context 'when there is no property' do
-      it 'is nil' do
-        expect(criteria.patch_code).to be_nil
-      end
-    end
-
-    context 'when there is a property but no patch code' do
-      let(:patch_tenancy_code) { '100000/11' }
-      let(:patch_code) { nil }
-
-      before do
-        create_uh_tenancy_agreement_with_property(tenancy_ref: patch_tenancy_code, arr_patch: patch_code)
-      end
-
+    context "with a property reference that doesn't resolve" do
       it 'is nil' do
         expect(criteria.patch_code).to be_nil
       end
