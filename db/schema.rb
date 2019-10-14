@@ -48,6 +48,7 @@ ActiveRecord::Schema.define(version: 2019_10_14_112745) do
     t.decimal "weekly_rent", precision: 10, scale: 2
     t.string "last_communication_action"
     t.datetime "last_communication_date"
+    t.integer "classification"
     t.string "patch_code"
     t.index ["assigned_user_id"], name: "index_case_priorities_on_assigned_user_id"
     t.index ["case_id"], name: "index_case_priorities_on_case_id"

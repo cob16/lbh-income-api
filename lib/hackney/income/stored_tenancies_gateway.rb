@@ -8,6 +8,8 @@ module Hackney
           criteria,
           weightings
         )
+        classification_usecase = Hackney::Income::TenancyPrioritiser::TenancyClassification.new(criteria)
+
         begin
           GatewayModel.find_or_create_by(tenancy_ref: tenancy_ref).tap do |tenancy|
             tenancy.update(
@@ -40,6 +42,7 @@ module Hackney
               last_communication_action: criteria.last_communication_action,
               last_communication_date: criteria.last_communication_date,
               active_nosp: criteria.active_nosp?,
+              classification: classification_usecase.execute,
               patch_code: criteria.patch_code
             )
           end
