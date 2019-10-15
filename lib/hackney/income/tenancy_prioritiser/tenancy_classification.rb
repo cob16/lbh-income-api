@@ -28,8 +28,8 @@ module Hackney
 
         def send_letter_one?
           valid_actions = [
-            Hackney::Tenancy::ActionCodes::GREEN_SMS_SENT_AUTO,
-            Hackney::Tenancy::ActionCodes::GREEN_SMS_SENT_MANUAL
+            Hackney::Tenancy::ActionCodes::AUTOMATED_SMS_ACTION_CODE,
+            Hackney::Tenancy::ActionCodes::MANUAL_SMS_ACTION_CODE
           ]
 
           @criteria.last_communication_action.in?(valid_actions) &&
@@ -41,8 +41,7 @@ module Hackney
 
         def send_letter_two?
           valid_actions = [
-            Hackney::Tenancy::ActionCodes::LETTER_1_IN_ARREARS_AUTO,
-            Hackney::Tenancy::ActionCodes::LETTER_1_IN_ARREARS_MANUAL
+            Hackney::Tenancy::ActionCodes::LETTER_1_IN_ARREARS_SENT
           ]
 
           @criteria.last_communication_action.in?(valid_actions) &&
@@ -55,8 +54,7 @@ module Hackney
 
         def send_warning_letter?
           valid_actions = [
-            Hackney::Tenancy::ActionCodes::LETTER_2_IN_ARREARS_AUTO,
-            Hackney::Tenancy::ActionCodes::LETTER_2_IN_ARREARS_MANUAL
+            Hackney::Tenancy::ActionCodes::LETTER_2_IN_ARREARS_SENT
           ]
 
           @criteria.last_communication_action.in?(valid_actions) &&
@@ -68,8 +66,7 @@ module Hackney
 
         def send_nosp?
           valid_actions = [
-            Hackney::Tenancy::ActionCodes::PRE_NOSP_WARNING_LETTER_AUTO,
-            Hackney::Tenancy::ActionCodes::PRE_NOSP_WARNING_LETTER_MANUAL
+            Hackney::Tenancy::ActionCodes::PRE_NOSP_WARNING_LETTER_SENT
           ]
           @criteria.last_communication_action.in?(valid_actions) &&
             @criteria.balance >= arrear_accumulation_by_number_weeks(4) &&
