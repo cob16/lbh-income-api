@@ -1,0 +1,294 @@
+<div class="reply_form new_page">
+<h2 class="centre">REPLY FORM</h2>
+<p class="centre">
+  <strong>
+YOU HAVE 30 DAYS FROM THE DATE AT THE TOP OF THE ENCLOSED LETTER TO 
+FILL IN AND RETURN THIS FORM
+<br>
+<br>
+IF YOU DON'T IT COULD RESULT IN COURT PROCEEDINGS
+  </strong>
+</p>
+
+<p class="centre">
+If you have any questions or would like to discuss the debt, please call the business that
+sent you this form as soon as possible.
+</p>
+
+<table class="no_border"><tr>
+    <td colspan="2">
+     Full Name: <%= @letter.lessee_full_name%>
+    </td>
+  </tr>
+  <tr>
+    <td colspan='2'>
+      Address and postcode: <%= @letter.property_address%>
+    </td>
+  </tr>
+  <tr>
+    <td colspan='2'>
+      Contact telephone numbers:
+    </td>
+  </tr>
+  <tr>
+    <td colspan='2'>
+      Email address:
+    </td>
+  </tr>
+  <tr>
+    <td colspan='2'>
+        Payment Reference: <%= @letter.payment_ref %>
+    </td>
+  </tr>
+  </table>
+
+  <p class="centre">
+  <strong>
+  SECTION 1:Do you owe the debt?
+  <br>
+  Fill in one of the boxes in this section. use more pages if you need to
+  </strong>
+  </p>
+
+  <p class="centre">
+  <strong>It is recommended that you get debt advice if you have any doubt about 
+  whether you owe the debt and whether you can pay it now, or if you want advice on 
+  any rights and protections you may have.
+  <br>
+  <br>
+  Box G below asks about debt advice
+  </strong>
+  </p>
+
+  <div class="reply_box">
+  <strong>
+  &#9633; &nbsp; BOX A
+  <br>
+  I agree I owe the debt.
+  </strong>
+  <br>
+  <i>
+  Tick this box if you agree you owe the debt and agree the amount of the debt is correct.
+  </i>
+  <p>
+  IF YOU WILL PAY THE DEBT, GO TO SECTION 2.
+  <br>
+  <br>
+  IF YOU NEED DEBT OR LEGAL ADVICE, GO TO SECTION 3.
+  </p>
+  </div>
+
+  <div class="reply_box">
+  <strong>
+  &#9633; &nbsp; BOX B
+  <br>
+  I owe some of the debt, but not all of it.
+  </strong>
+  <br>
+  <i>
+  Tick this box if you agree you owe some of the debt, but not all of it, for example if you think too much
+  interest has been added or you haven't been credited for payments you made in the past.
+  </i>
+  <p class="horizontal_dotted_line">
+  <span>
+  The amount of debt you owe is £
+  </span>
+  </p>
+  <i>
+  Say how much you think you owe.
+  </i>
+  <p class="horizontal_dotted_line">
+  <span>
+  The don't owe any more than this because 
+  </span>
+  </p>
+  <i>
+  Explain on a separate piece of paper why you don't owe all of the debt. Give as much detail as possible
+  and provide copes of any supporting documents.
+  </i>
+  <p>
+  IF YOU WILL PAY THE PART OF THE DEBT YOU OWE, GO TO SECTION 2.
+  <br>
+  <br>
+  IF YOU NEED DEBT OR LEGAL ADVICE, GO TO SECTION 3.
+  <br>
+  <br>
+  OTHERWISE, GO TO SECTION 4.
+  </p>
+  </div>
+
+  <div class="reply_box">
+  <strong>
+  &#9633; &nbsp; BOX C
+  <br>
+  I don’t know whether I owe the debt. 
+  </strong>
+  <br>
+  <i>
+  Tick this box if you’re not sure whether you owe the debt and/or you need help from a debt adviser to work 
+  out whether you should pay.
+  </i>
+  <p>
+  NOW GO TO SECTION 3.
+  </p>
+  </div>
+
+  <div class="reply_box">
+  <strong>
+  &#9633; &nbsp; BOX D
+  <br>
+  I dispute the debt. 
+  </strong>
+  <br>
+  <i>
+  Tick this box if you don’t owe the debt, for example because the debt should be paid by someone else, 
+  because you have already paid it, or because there is a legal problem with the credit agreement.
+  </i>
+  <p class="horizontal_dotted_line">
+  <span>
+  I dispute the debt because
+  </span>
+  </p>
+  <i>
+  Explain on a separate piece of paper why you dispute the debt. Give as much detail as possible and provide 
+  copies of any supporting documents.
+  </i>
+  <p>
+  NOW GO TO SECTION 4.
+  </p>
+  </div>
+
+  <p class="centre">
+  <strong>
+  SECTION 2:How will you pay?
+  <br>
+  Only complete this section if you ticked Box A or Box B in Section 1 and you want to pay now.
+  </strong>
+  </p>
+
+  <p class="centre">
+  <strong>
+  The letter from the business will tell you how to pay. Keep a record of the payments 
+  you make.
+  </strong>
+  </p>
+
+  <div class="reply_box">
+  <strong>
+  &#9633; &nbsp; BOX E
+  <br>
+  <br>
+  I will pay what I owe now.
+  </strong>
+  <br>
+  <i>
+  Tick this box if you agree that you owe all or part of the debt and you are able to pay what you owe now. You should pay 
+  using the payment details in the letter from the business. Keep a copy of any proof of payment you receive.
+  </i>
+  </div>
+  <div class="reply_box">
+  <strong>
+  &#9633; &nbsp; BOX F
+  <br>
+  I will pay, but I need time to pay. 
+  </strong>
+  <br>
+  <i>
+  Tick this box if you agree that you owe all or part of the debt, but you can’t pay right now.
+  </i>
+  <p><strong>If you offer to make repayments, you must be able to afford them. You should consider getting debt 
+  advice about how much you can afford to repay.</strong> If you are seeking debt advice, complete Section 3.</p>
+  <p class="horizontal_dotted_line">
+  <span>
+  My proposals for repayment are
+  </span>
+  </p>
+  <i>
+  Explain on a separate piece of paper how you intend to pay the debt. Say how much you could pay now and how you will 
+  pay the remainder. For example, say how much you could pay each week, fortnight or month and when your first payment 
+  would be made.
+  </i>
+  <table class="no_border">
+  <tr>
+  <td colspan="2">
+  I have provided a Financial Statement showing my current financial situation:
+  </td>
+  </tr>
+  <tr>
+  <td>
+  Yes &nbsp; &nbsp; &#9633;
+  </td>
+  <td>
+  No &nbsp; &nbsp; &#9633;
+  </td>
+  </tr>
+  </table>
+  <i>
+  To help the business ensure you can afford your proposed repayments, fill out the Financial Statement that is attached to 
+  this form. You should also attach a copy of any budget or financial statement that a debt advice organisation has helped 
+  you prepare.
+  </i>
+  </div>
+
+  <p class="centre">
+  <strong>
+  SECTION 3:Do you intend to get, or are you already getting, debt advice?
+  <br>
+  Only complete this section if you are getting debt advice about whether you owe the debt or whether you 
+  can afford to pay.
+  </strong>
+  </p>
+
+  <div class="reply_box">
+  <strong>
+  &#9633; &nbsp; BOX G
+  <br>
+  <br>
+  I am getting or intend to get debt advice.  
+  </strong>
+  <p class="horizontal_dotted_line">
+  <span>
+  I am getting advice from
+  </span>
+  <p>
+  <p class="horizontal_dotted_line">
+  <p>
+  <br>
+  <i>
+  Insert the name and contact details of the person or organisation giving you advice.
+  </i>
+  <p class="horizontal_dotted_line">
+  <span>
+  I am getting advice about
+  </span>
+  </p>
+  <i>
+  Explain on a separate piece of paper what you are getting advice about, for example whether you owe the 
+  debt or how you could pay. 
+  </i>
+  <p class="horizontal_dotted_line">
+  <span>
+  I have an appointment with an adviser on
+  </span>
+  <p>
+  <p class="horizontal_dotted_line">
+  <p>
+  <br>
+  <i>
+  If you have an appointment with a debt adviser, give the appointment date and time.
+  </i>
+  <p class="horizontal_dotted_line">
+  <span>
+  I can’t obtain advice within 30 days of returning this Reply Form because
+  </span>
+  </p>
+  <i>
+  If it will take you longer than 30 days to get debt advice, explain on a separate piece of paper the reason 
+  for the delay and when you expect advice will be available.
+  </i>
+  <p>
+  NOW COMPLETE SECTION 4.
+  </p>
+  </div>
+
+</div>

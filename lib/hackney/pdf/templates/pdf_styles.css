@@ -98,3 +98,9 @@ td, th {
   z-index: -1;
   border-top: 4px dotted black;
 }
+
+.reply_box {
+  width:570px;
+  border: 1px solid black;
+  margin:auto;
+}
