@@ -125,7 +125,9 @@ describe Hackney::Income::ViewMyCases do
                                            active_agreement: tenancy_priority_factors.fetch(:active_agreement),
                                            broken_court_order: tenancy_priority_factors.fetch(:broken_court_order),
                                            nosp_served: tenancy_priority_factors.fetch(:nosp_served),
-                                           active_nosp: tenancy_priority_factors.fetch(:active_nosp)
+                                           active_nosp: tenancy_priority_factors.fetch(:active_nosp),
+
+                                           classification: tenancy_priority_factors.fetch(:classification)
                                          ))
       end
 
@@ -196,7 +198,9 @@ describe Hackney::Income::ViewMyCases do
       active_agreement: Faker::Number.between(0, 1),
       broken_court_order: Faker::Number.between(0, 1),
       nosp_served: Faker::Number.between(0, 1),
-      active_nosp: Faker::Number.between(0, 1)
+      active_nosp: Faker::Number.between(0, 1),
+
+      classification: 'no_action'
     }
   end
 

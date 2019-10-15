@@ -75,7 +75,9 @@ module Hackney
           active_agreement: assigned_tenancy.fetch(:active_agreement),
           broken_court_order: assigned_tenancy.fetch(:broken_court_order),
           nosp_served: assigned_tenancy.fetch(:nosp_served),
-          active_nosp: assigned_tenancy.fetch(:active_nosp)
+          active_nosp: assigned_tenancy.fetch(:active_nosp),
+
+          classification: assigned_tenancy.fetch(:classification)
         }
       end
     end

@@ -120,7 +120,9 @@ module Hackney
           broken_court_order: model.broken_court_order,
           nosp_served: model.nosp_served,
           active_nosp: model.active_nosp,
-          patch_code: model.patch_code
+          patch_code: model.patch_code,
+
+          classification: model.classification
         }
       end
     end
