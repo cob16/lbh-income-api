@@ -76,7 +76,10 @@ module Hackney
             correspondence_address5: corr_address[:aline4]&.strip || '',
             correspondence_postcode: corr_address[:post_code]&.strip || '',
             property_address: "#{property_res[:address1]&.strip}, #{property_res[:post_code]&.strip}",
-            international: international?(corr_address[:post_code])
+            international: international?(corr_address[:post_code]),
+            money_judgement: res[:u_money_judgement],
+            charging_order: res[:u_charging_order],
+            bal_dispute: res[:u_bal_dispute]
           }
         end
 

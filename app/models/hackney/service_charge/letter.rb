@@ -12,7 +12,7 @@ module Hackney
                   :payment_ref, :balance, :total_collectable_arrears_balance,
                   :lba_expiry_date, :original_lease_date, :date_of_current_purchase_assignment,
                   :original_leaseholders, :previous_letter_sent, :arrears_letter_1_date,
-                  :international, :lessee_full_name, :lessee_short_name, :errors
+                  :international, :lessee_full_name, :lessee_short_name, :errors, :lba_balance
 
       def initialize(params)
         validated_params = validate_mandatory_fields(reorganise_address(params))
@@ -37,6 +37,8 @@ module Hackney
         @international = validated_params[:international]
         @lessee_full_name = validated_params[:lessee_full_name]
         @lessee_short_name = validated_params[:lessee_short_name]
+        @lba_balance = format('%.2f',calculate_lba_balance(validated_params[:total_collectable_arrears_balance],
+                                             validated_params[:money_judgement], validated_params[:charging_order], validated_params[:bal_dispute]))
       end
 
       private
@@ -95,6 +97,9 @@ module Hackney
                        .where("JSON_EXTRACT(metadata, '$.payment_ref') = ?", payment_ref)
 
         sent_letter1.any? ? sent_letter1.last.updated_at.strftime('%d %B %Y') : ''
+      end
+      def calculate_lba_balance(arrears_balance, money_judgement, charging_order, bal_dispute)
+        arrears_balance.to_i - (money_judgement.to_i + charging_order.to_i + bal_dispute.to_i) 
       end
     end
   end
