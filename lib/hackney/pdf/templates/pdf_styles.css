@@ -104,3 +104,35 @@ td, th {
   border: 1px solid black;
   margin:auto;
 }
+
+.financial_statement {
+  border: none;
+  border-collapse: collapse;
+}
+
+.financial_statement td,
+.financial_statement th {
+border: none;
+text-align:left; 
+font-weight:normal;
+padding:5px;
+vertical-align:top;
+}
+
+.financial_statement tr {
+  border-bottom: 1px solid black;
+}
+
+.financial_statement .tick_box {
+  width: 70px;
+  border-left: 1px solid black;
+  border-right:1px solid black;
+  }
+
+  .financial_statement .tick_box-grey {
+  background:#aaa;
+}
+
+.address {
+  min-height:40px
+}

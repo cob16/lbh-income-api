@@ -8,6 +8,7 @@ module Hackney
       REPLY_FORM_PATH = 'lib/hackney/pdf/templates/layouts/reply_form.erb'.freeze
       PAYMENT_OPTIONS_LBA_PATH = 'lib/hackney/pdf/templates/layouts/payment_options_lba.erb'.freeze
       REPLY_FORM_LBA_PATH = 'lib/hackney/pdf/templates/layouts/reply_form_lba.erb'.freeze
+      FINANCIAL_STATEMENT_LBA_PATH = 'lib/hackney/pdf/templates/layouts/financial_statement_lba.erb'.freeze
 
       def initialize(template_path:)
         @template_path = template_path
@@ -30,6 +31,8 @@ module Hackney
         @payment_options_lba = ERB.new(File.open(PAYMENT_OPTIONS_LBA_PATH).read).result(binding)
 
         @reply_form_lba = ERB.new(File.open(REPLY_FORM_LBA_PATH).read).result(binding)
+
+        @financial_statement_lba = ERB.new(File.open(FINANCIAL_STATEMENT_LBA_PATH).read).result(binding)
 
         template = File.open(@template_path).read
         html = ERB.new(template).result(binding)
