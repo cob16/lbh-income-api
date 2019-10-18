@@ -61,6 +61,7 @@ describe Hackney::ServiceCharge::Letter do
 
   context 'when a money judgement and charging order exists' do
     let(:letter) { described_class.new(letter_params) }
+
     it 'subtract the money judgement and charging order from the total collectable balance' do
       balance = letter_params[:total_collectable_arrears_balance].to_i
       money_judgement = letter_params[:money_judgement].to_i

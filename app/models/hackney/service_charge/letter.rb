@@ -37,8 +37,12 @@ module Hackney
         @international = validated_params[:international]
         @lessee_full_name = validated_params[:lessee_full_name]
         @lessee_short_name = validated_params[:lessee_short_name]
-        @lba_balance = format('%.2f',calculate_lba_balance(validated_params[:total_collectable_arrears_balance],
-                                             validated_params[:money_judgement], validated_params[:charging_order], validated_params[:bal_dispute]))
+        @lba_balance = format('%.2f', calculate_lba_balance(
+                                        validated_params[:total_collectable_arrears_balance],
+                                        validated_params[:money_judgement],
+                                        validated_params[:charging_order],
+                                        validated_params[:bal_dispute]
+                                      ))
       end
 
       private
@@ -98,8 +102,9 @@ module Hackney
 
         sent_letter1.any? ? sent_letter1.last.updated_at.strftime('%d %B %Y') : ''
       end
+
       def calculate_lba_balance(arrears_balance, money_judgement, charging_order, bal_dispute)
-        arrears_balance.to_i - (money_judgement.to_i + charging_order.to_i + bal_dispute.to_i) 
+        arrears_balance.to_i - (money_judgement.to_i + charging_order.to_i + bal_dispute.to_i)
       end
     end
   end
