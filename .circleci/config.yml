@@ -105,13 +105,12 @@ workflows:
   continuous_delivery:
     jobs:
       - check
-      - staging_release
-#      - staging_release:
-#          requires:
-#            - check
-#          filters:
-#            branches:
-#              only: master
+      - staging_release:
+          requires:
+            - check
+          filters:
+            branches:
+              only: master
       - permit_production_release:
           type: approval
           requires:
