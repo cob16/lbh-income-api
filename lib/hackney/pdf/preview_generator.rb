@@ -10,7 +10,7 @@ module Hackney
       REPLY_FORM_LBA_PATH = 'lib/hackney/pdf/templates/layouts/reply_form_lba.erb'.freeze
       FINANCIAL_STATEMENT_LBA_PATH = 'lib/hackney/pdf/templates/layouts/financial_statement_lba.erb'.freeze
       PAYMENT_TABLES_LBA_PATH = 'lib/hackney/pdf/templates/layouts/payment_tables_lba.erb'.freeze
-  
+
       def initialize(template_path:)
         @template_path = template_path
         @errors = []
@@ -54,7 +54,7 @@ module Hackney
       end
 
       def get_return_date
-      (Time.now + 31.days).strftime('%d %B %Y')
+        (Time.now + 31.days).strftime('%d %B %Y')
       end
     end
   end
