@@ -279,7 +279,7 @@ describe Hackney::Income::StoredTenanciesGateway do
     let(:user) { create(:user) }
     let(:other_user) { create(:user) }
 
-    context 'with thr user having ten tenancies in arrears and ten not in arrears' do
+    context 'with the user having ten tenancies in arrears and ten not in arrears' do
       before do
         create_list(:case_priority, 10, assigned_user_id: user.id, balance: 1)
         create_list(:case_priority, 10, assigned_user_id: user.id, balance: -1)
@@ -397,7 +397,7 @@ describe Hackney::Income::StoredTenanciesGateway do
       context 'with is_paused set false' do
         let(:is_paused) { false }
 
-        it 'shows the number pages of of paused cases' do
+        it 'shows the number of pages of paused cases' do
           expect(subject).to eq(expected_num_pages(num_active_cases, num_pages))
         end
       end
@@ -405,15 +405,25 @@ describe Hackney::Income::StoredTenanciesGateway do
       context 'with is_paused set true' do
         let(:is_paused) { true }
 
-        it 'shows the number pages of of paused cases' do
+        it 'shows the number of pages of paused cases' do
           expect(subject).to eq(expected_num_pages(num_paused_cases, num_pages))
+        end
+
+        context 'with one no_action classification case' do
+          before do
+            create(:case_priority, assigned_user_id: user.id, balance: 40, is_paused_until: Faker::Date.forward(1), classification: :no_action)
+          end
+
+          it 'shows the number of pages of paused cases with one no_action classification' do
+            expect(subject).to eq(expected_num_pages(num_paused_cases + 1, num_pages))
+          end
         end
       end
 
       context 'with is_paused not set' do
         let(:is_paused) { nil }
 
-        it 'shows the number pages of of paused cases' do
+        it 'shows the number of pages of paused cases' do
           expect(subject).to eq(expected_num_pages((num_paused_cases + num_active_cases), num_pages))
         end
       end
@@ -448,16 +458,27 @@ describe Hackney::Income::StoredTenanciesGateway do
           page_number: 1,
           number_per_page: 50,
           filters: {
-            classification: classification
+            classification: classification,
+            full_patch: full_patch
           }
         )
       end
 
+      let(:full_patch) { false }
+
       context 'with no filter by classification' do
         let(:classification) { nil }
 
-        it 'returns all tenancies' do
-          expect(subject.count).to eq(cases_with_no_action + cases_with_warning_letter_action)
+        it 'only returns tenancies with warning letters as next action' do
+          expect(subject.count).to eq(cases_with_warning_letter_action)
+        end
+
+        context 'when the full_patch filter is set' do
+          let(:full_patch) { true }
+
+          it 'contains all cases' do
+            expect(subject.count).to eq(cases_with_no_action + cases_with_warning_letter_action)
+          end
         end
       end
 
