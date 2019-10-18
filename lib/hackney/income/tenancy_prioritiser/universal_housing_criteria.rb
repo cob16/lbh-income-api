@@ -11,7 +11,7 @@ module Hackney
             DECLARE @PaymentTypes table(payment_type varchar(3))
             INSERT INTO @PaymentTypes VALUES ('RBA'), ('RBP'), ('RBR'), ('RCI'), ('RCO'), ('RCP'), ('RDD'), ('RDN'), ('RDP'), ('RDR'), ('RDS'), ('RDT'), ('REF'), ('RHA'), ('RHB'), ('RIT'), ('RML'), ('RPD'), ('RPO'), ('RPY'), ('RQP'), ('RRC'), ('RRP'), ('RSO'), ('RTM'), ('RUC'), ('RWA')
             DECLARE @CommunicationTypes table(communication_types varchar(60))
-            INSERT INTO @CommunicationTypes VALUES ('C'), ('MML'), ('S0A'), ('REF'), ('ZW1'), ('ZW2'), ('ZW3'), ('MW1'), ('MW2'), ('MW3'), ('LF1'), ('LF2'), ('LL1'), ('LL2'), ('LS1'), ('LS2'), ('SMS'), ('GAT'), ('GAE'), ('GME'), ('GMS'), ('AMS')
+            INSERT INTO @CommunicationTypes VALUES ('C'), ('MML'), ('S0A'), ('REF'), ('ZW1'), ('ZW2'), ('ZW3'), ('MW1'), ('MW2'), ('MW3'), ('LF1'), ('LF2'), ('LL1'), ('LL2'), ('LS1'), ('LS2'), ('SMS'), ('GAT'), ('GAE'), ('GME'), ('GMS'), ('AMS'), ('ZR1'), ('ZR2')
 
             DECLARE @CurrentBalance NUMERIC(9, 2) = (SELECT cur_bal FROM [dbo].[tenagree] WITH (NOLOCK) WHERE tag_ref = @TenancyRef)
             DECLARE @LastPaymentDate SMALLDATETIME = (
