@@ -11,7 +11,7 @@
   service.charges@hackney.gov.uk <br>
   <strong>Service Charge Account Number: <%= @letter.payment_ref %> <br></strong>
   Our Ref: LBA/ST
-  <%= @sending_date + 1.day %>
+  <%= @sending_date %>
 </p>
 </div>
 
@@ -54,7 +54,7 @@ circumstances and the options available to uo
 <p>
 
 <h2>If you are intending to return these forms, please ensure they are received by the 
-Council no later than <%= @sending_date + 31.days %> </h2>
+Council no later than <%= @return_date_lba %> </h2>
 <p>An Information Sheet is also enclosed detailing independent organisations who offer free,
 impartial and non-judgemental advice to you should you prefer this option.
 </p>
@@ -79,7 +79,7 @@ of <%= @letter.total_collectable_arrears_balance %> outstanding in respect of th
 
 <h2>What are the Council's intentions?</h2>
 <p>
-Failure to make payment or contact us by <%= @sending_date + 31.days %> will result in the issue of 
+Failure to make payment or contact us by <%= @return_date_lba %> will result in the issue of 
 proceedings in the County Court without further notice. Should this be necessary, in addition 
 to Court costs, the Claim will be increased by up to 8% interest.
 </p>
