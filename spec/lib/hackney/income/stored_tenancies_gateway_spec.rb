@@ -508,6 +508,7 @@ describe Hackney::Income::StoredTenanciesGateway do
 
     let(:num_cases_in_patch_1) { Faker::Number.between(2, 10) }
     let(:num_cases_in_patch_2) { Faker::Number.between(2, 20) }
+    let(:num_cases_in_no_patches) { Faker::Number.between(1, 3) }
     let(:num_pages) { Faker::Number.between(1, 5) }
 
     before do
@@ -517,6 +518,10 @@ describe Hackney::Income::StoredTenanciesGateway do
 
       num_cases_in_patch_2.times do
         create(:case_priority, assigned_user_id: user.id, balance: 40, patch_code: patch_2)
+      end
+
+      num_cases_in_no_patches.times do
+        create(:case_priority, assigned_user_id: user.id, balance: 40, patch_code: nil)
       end
     end
 
@@ -536,7 +541,15 @@ describe Hackney::Income::StoredTenanciesGateway do
         let(:patch) { nil }
 
         it 'returns all tenancies' do
-          expect(subject.count).to eq(num_cases_in_patch_1 + num_cases_in_patch_2)
+          expect(subject.count).to eq(num_cases_in_patch_1 + num_cases_in_patch_2 + num_cases_in_no_patches)
+        end
+      end
+
+      context 'when filtering by assigned patches' do
+        let(:patch) { 'unassigned' }
+
+        it 'returns tenancies with no patches assigned' do
+          expect(subject.count).to eq(num_cases_in_no_patches)
         end
       end
 
@@ -588,7 +601,15 @@ describe Hackney::Income::StoredTenanciesGateway do
         let(:patch) { nil }
 
         it 'returns the number of pages of paused cases' do
-          expect(subject).to eq(expected_num_pages((num_cases_in_patch_1 + num_cases_in_patch_2), num_pages))
+          expect(subject).to eq(expected_num_pages((num_cases_in_patch_1 + num_cases_in_patch_2 + num_cases_in_no_patches), num_pages))
+        end
+      end
+
+      context 'when filtering by unassigned patches' do
+        let(:patch) { 'unassigned' }
+
+        it 'returns the number of pages of paused cases' do
+          expect(subject).to eq(expected_num_pages(num_cases_in_no_patches, num_pages))
         end
       end
     end

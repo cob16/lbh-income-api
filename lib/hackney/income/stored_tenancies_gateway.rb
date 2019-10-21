@@ -71,7 +71,13 @@ module Hackney
           assigned_user_id = ? AND
           balance > ?', user_id, 0)
 
-        query = query.where('patch_code = ?', filters[:patch]) if filters[:patch]
+        if filters[:patch].present?
+          if filters[:patch] == 'unassigned'
+            query = query.where(patch_code: nil)
+          else
+            query = query.where(patch_code: filters[:patch])
+          end
+        end
 
         if filters[:classification].present?
           query = query.where(classification: filters[:classification])
