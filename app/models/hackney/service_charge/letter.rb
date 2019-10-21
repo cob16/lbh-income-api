@@ -102,7 +102,7 @@ module Hackney
       end
 
       def calculate_lba_balance(arrears_balance, money_judgement)
-        arrears_balance.to_f - (money_judgement.to_f)
+        arrears_balance.to_f - money_judgement.to_f
       end
     end
   end

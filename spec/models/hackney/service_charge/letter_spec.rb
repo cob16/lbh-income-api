@@ -65,9 +65,7 @@ describe Hackney::ServiceCharge::Letter do
     it 'subtract the money judgement and charging order from the total collectable balance' do
       balance = letter_params[:total_collectable_arrears_balance].to_i
       money_judgement = letter_params[:money_judgement].to_i
-      charging_order = letter_params[:charging_order].to_i
-      bal_dispute = letter_params[:bal_dispute].to_i
-      expected_total_collectable_arrears_balance = format('%.2f', balance - (money_judgement))
+      expected_total_collectable_arrears_balance = format('%.2f', balance - money_judgement)
       expect(letter.lba_balance).to eq(expected_total_collectable_arrears_balance)
     end
   end
