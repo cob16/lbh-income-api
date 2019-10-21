@@ -105,7 +105,7 @@ workflows:
   continuous_delivery:
     jobs:
       - check
-      - staging_release:
+      - staging_release
       - permit_production_release:
           type: approval
           requires:
