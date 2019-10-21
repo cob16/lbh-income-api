@@ -7,6 +7,9 @@ describe Hackney::Income::UniversalHousingLeaseholdGateway, universal: true do
   let(:tenancy_ref) { Random.rand(100).to_s }
   let(:house_ref) { Random.rand(100).to_s }
   let(:cur_bal) { Random.rand(100) }
+  let(:money_judgement) { Random.rand(10) }
+  let(:charging_order) { Random.rand(10) }
+  let(:bal_dispute) { Random.rand(10) }
   let(:corr_preamble) { Faker::Address.secondary_address }
   let(:corr_desig) { Random.rand(100).to_s }
   let(:household_postcode) { Faker::Address.postcode }
@@ -70,7 +73,8 @@ describe Hackney::Income::UniversalHousingLeaseholdGateway, universal: true do
 
       before do
         create_uh_tenancy_agreement(tenancy_ref: tenancy_ref, current_balance: cur_bal, u_saff_rentacc: payment_ref,
-                                    house_ref: house_ref, prop_ref: prop_ref, cot: commencement_of_tenancy)
+                                    house_ref: house_ref, prop_ref: prop_ref, cot: commencement_of_tenancy,
+                                    money_judgement: money_judgement, charging_order: charging_order, bal_dispute: bal_dispute)
         create_uh_rent(sc_leasedate: sc_leasedate, prop_ref: prop_ref)
         create_uh_househ(house_ref: house_ref, prop_ref: '', house_desc: lessee_full_name,
                          corr_preamble: corr_preamble, corr_desig: corr_desig,
@@ -91,7 +95,10 @@ describe Hackney::Income::UniversalHousingLeaseholdGateway, universal: true do
             original_lease_date: sc_leasedate,
             lessee_full_name: lessee_full_name,
             lessee_short_name: lessee_full_name,
-            date_of_current_purchase_assignment: commencement_of_tenancy
+            date_of_current_purchase_assignment: commencement_of_tenancy,
+            money_judgement: money_judgement,
+            charging_order: charging_order,
+            bal_dispute: bal_dispute
           }.merge(expected_correspondence_address_when_household)
            .merge(expected_property_address))
         end
@@ -119,7 +126,10 @@ describe Hackney::Income::UniversalHousingLeaseholdGateway, universal: true do
             correspondence_address5: '',
             correspondence_postcode: '',
             property_address: ', ',
-            international: ''
+            international: '',
+            money_judgement: money_judgement,
+            charging_order: charging_order,
+            bal_dispute: bal_dispute
           )
         end
       end
@@ -137,7 +147,10 @@ describe Hackney::Income::UniversalHousingLeaseholdGateway, universal: true do
             original_lease_date: sc_leasedate,
             lessee_full_name: lessee_full_name,
             lessee_short_name: lessee_full_name,
-            date_of_current_purchase_assignment: commencement_of_tenancy
+            date_of_current_purchase_assignment: commencement_of_tenancy,
+            money_judgement: money_judgement,
+            charging_order: charging_order,
+            bal_dispute: bal_dispute
           }.merge(expected_correspondence_address_when_property)
            .merge(expected_property_address))
         end
