@@ -33,9 +33,13 @@ Dear <%= @letter.lessee_short_name %>
 </p>
 
 <div class="blue_box">
-  <strong class="centre">FINAL LETTER BEFORE LEGAL ACTION</strong><br>
+  <p class="centre">
+  <strong>FINAL LETTER BEFORE LEGAL ACTION</strong><br>
   Our records show that you still have an outstanding balance on your service charge account of
-  <p class="centre">£<%= @letter.lba_balance %></p>
+  </p>
+  <p class="centre">
+  £<%= @letter.lba_balance %>
+  </p>
 </div>
 
 <p>If you have made arrangements to pay your debt or have cleared your arrears in the last 7
@@ -81,7 +85,6 @@ of <%= @letter.total_collectable_arrears_balance %> outstanding in respect of th
 
 <h2>What are the Council's intentions?</h2>
 <p>
-
 Failure to make payment or contact us by <%= @return_date_lba %> will result in the issue of 
 proceedings in the County Court without further notice. Should this be necessary, in addition 
 to Court costs, the Claim will be increased by up to 8% interest.
