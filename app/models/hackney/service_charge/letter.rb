@@ -31,7 +31,7 @@ module Hackney
         @lba_expiry_date = validated_params[:lba_expiry_date]
         @original_lease_date = validated_params[:original_lease_date]
         @date_of_current_purchase_assignment = validated_params[:date_of_current_purchase_assignment]
-        @original_leaseholders = validated_params[:original_leaseholders]
+        @original_leaseholders = 'the original leaseholder'
         @previous_letter_sent = validated_params[:previous_letter_sent]
         @arrears_letter_1_date = fetch_previous_letter_date(validated_params[:payment_ref])
         @international = validated_params[:international]
@@ -39,9 +39,7 @@ module Hackney
         @lessee_short_name = validated_params[:lessee_short_name]
         @lba_balance = format('%.2f', calculate_lba_balance(
                                         validated_params[:total_collectable_arrears_balance],
-                                        validated_params[:money_judgement],
-                                        validated_params[:charging_order],
-                                        validated_params[:bal_dispute]
+                                        validated_params[:money_judgement]
                                       ))
       end
 
@@ -103,8 +101,8 @@ module Hackney
         sent_letter1.any? ? sent_letter1.last.updated_at.strftime('%d %B %Y') : ''
       end
 
-      def calculate_lba_balance(arrears_balance, money_judgement, charging_order, bal_dispute)
-        arrears_balance.to_f - (money_judgement.to_f + charging_order.to_f + bal_dispute.to_f)
+      def calculate_lba_balance(arrears_balance, money_judgement)
+        arrears_balance.to_f - (money_judgement.to_f)
       end
     end
   end
