@@ -267,8 +267,8 @@ describe Hackney::Income::StoredTenanciesGateway do
         create(:case_priority, assigned_user_id: other_user.id, balance: 1)
       end
 
-      it 'returns only the user\'s tenancies' do
-        expect(subject.count).to eq(2)
+      it 'returns all the tenancies' do
+        expect(subject.count).to eq(3)
       end
     end
   end
@@ -323,7 +323,7 @@ describe Hackney::Income::StoredTenanciesGateway do
       context 'when the number per page is three' do
         let(:number_per_page) { 3 }
 
-        it { is_expected.to eq(2) }
+        it { is_expected.to eq(4) }
       end
     end
   end

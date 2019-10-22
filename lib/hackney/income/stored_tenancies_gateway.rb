@@ -67,9 +67,7 @@ module Hackney
       private
 
       def tenancies_filtered_for(user_id, filters)
-        query = GatewayModel.where('
-          assigned_user_id = ? AND
-          balance > ?', user_id, 0)
+        query = GatewayModel.where('balance > ?', 0)
 
         query = query.where('patch_code = ?', filters[:patch]) if filters[:patch]
 
