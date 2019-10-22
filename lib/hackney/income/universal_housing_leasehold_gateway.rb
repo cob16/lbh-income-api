@@ -79,7 +79,8 @@ module Hackney
             international: international?(corr_address[:post_code]),
             money_judgement: res[:u_money_judgement],
             charging_order: res[:u_charging_order],
-            bal_dispute: res[:u_bal_dispute]
+            bal_dispute: res[:u_bal_dispute],
+            tenure_type: res[:tenure]
           }
         end
 
