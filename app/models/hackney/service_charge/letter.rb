@@ -31,7 +31,7 @@ module Hackney
         @lba_expiry_date = validated_params[:lba_expiry_date]
         @original_lease_date = validated_params[:original_lease_date]
         @date_of_current_purchase_assignment = validated_params[:date_of_current_purchase_assignment]
-        @original_leaseholders = 'the original leaseholder'
+        @original_leaseholders = validated_params[:original_leaseholders]
         @previous_letter_sent = validated_params[:previous_letter_sent]
         @arrears_letter_1_date = fetch_previous_letter_date(validated_params[:payment_ref])
         @international = validated_params[:international]
