@@ -45,7 +45,7 @@ module Hackney
       end
 
       def freehold?
-        @tenure_type == 'FRS'
+        @tenure_type == Hackney::Income::Domain::TenancyAgreement::TENURE_TYPE_FREEHOLD
       end
 
       private
@@ -107,7 +107,9 @@ module Hackney
       end
 
       def calculate_lba_balance(arrears_balance, money_judgement)
-        arrears_balance.to_f - money_judgement.to_f
+        return 0 if arrears_balance.nil? || money_judgement.nil?
+
+        BigDecimal(arrears_balance.to_s) - BigDecimal(money_judgement.to_s)
       end
     end
   end

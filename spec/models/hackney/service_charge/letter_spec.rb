@@ -76,7 +76,7 @@ describe Hackney::ServiceCharge::Letter do
     let(:letter) { described_class.new(letter_params) }
 
     context 'with a tenure type of FRS' do
-      let(:tenure_type) { 'FRS' }
+      let(:tenure_type) { Hackney::Income::Domain::TenancyAgreement::TENURE_TYPE_FREEHOLD }
 
       it 'is not a leasehold' do
         expect(letter.freehold?).to be true
@@ -84,7 +84,7 @@ describe Hackney::ServiceCharge::Letter do
     end
 
     context 'with a tenure type of LEA' do
-      let(:tenure_type) { 'LEA' }
+      let(:tenure_type) { Hackney::Income::Domain::TenancyAgreement::TENURE_TYPE_LEASEHOLD }
 
       it 'is a leasehold' do
         expect(letter.freehold?).to be false
@@ -92,7 +92,7 @@ describe Hackney::ServiceCharge::Letter do
     end
 
     context 'with a tenure type of SHO' do
-      let(:tenure_type) { 'SHO' }
+      let(:tenure_type) { Hackney::Income::Domain::TenancyAgreement::TENURE_TYPE_SHAREDOWNERSHIP }
 
       it 'is a sharedownership leasehold' do
         expect(letter.freehold?).to be false
