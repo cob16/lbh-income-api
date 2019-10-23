@@ -11,6 +11,10 @@ describe Hackney::Income::TenancyPrioritiser::UniversalHousingCriteria, universa
 
   let(:nosp_notice_expiry_date) { '2019-10-20 14:31:12' }
 
+  let(:courtdate) { '2019-10-20 14:31:12' }
+
+  let(:court_outcome) { nil }
+
   let(:current_balance) { Faker::Number.decimal.to_f }
 
   before {
@@ -18,7 +22,9 @@ describe Hackney::Income::TenancyPrioritiser::UniversalHousingCriteria, universa
       tenancy_ref: tenancy_ref,
       current_balance: current_balance,
       nosp_notice_served_date: nosp_notice_served_date,
-      nosp_notice_expiry_date: nosp_notice_expiry_date
+      nosp_notice_expiry_date: nosp_notice_expiry_date,
+      courtdate: courtdate,
+      court_outcome: court_outcome
     )
   }
 
@@ -39,6 +45,24 @@ describe Hackney::Income::TenancyPrioritiser::UniversalHousingCriteria, universa
 
     it 'returns the weekly rent of a tenancy' do
       expect(subject).to eq(5)
+    end
+  end
+
+  describe '#courtdate' do
+    subject { criteria.courtdate }
+
+    it 'returns the courtdate' do
+      expect(subject).to eq(courtdate.to_date)
+    end
+  end
+
+  describe '#court_outcome' do
+    subject { criteria.court_outcome }
+
+    let(:court_outcome) { 'AGE' }
+
+    it 'returns a court_outcome' do
+      expect(subject).to eq(court_outcome)
     end
   end
 
@@ -426,6 +450,38 @@ describe Hackney::Income::TenancyPrioritiser::UniversalHousingCriteria, universa
 
       it 'is true' do
         expect(subject.broken_court_order?).to be(true)
+      end
+    end
+  end
+
+  describe '#patch_code' do
+    let(:patch_tenancy_code) { '100000/11' }
+
+    context 'with an existing property reference' do
+      before do
+        create_uh_tenancy_agreement_with_property(tenancy_ref: patch_tenancy_code, arr_patch: patch_code)
+      end
+
+      context 'with a patch code' do
+        let(:patch_code) { 'E01' }
+
+        it 'contains the correct patch code' do
+          expect(criteria.patch_code).to eq(patch_code)
+        end
+      end
+
+      context 'without a patch code' do
+        let(:patch_code) { nil }
+
+        it 'is nil' do
+          expect(criteria.patch_code).to be_nil
+        end
+      end
+    end
+
+    context "with a property reference that doesn't resolve" do
+      it 'is nil' do
+        expect(criteria.patch_code).to be_nil
       end
     end
   end

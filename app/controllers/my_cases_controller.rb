@@ -6,7 +6,12 @@ class MyCasesController < ApplicationController
       user_id: my_cases_params[:user_id],
       page_number: my_cases_params[:page_number],
       number_per_page: my_cases_params[:number_per_page],
-      is_paused: my_cases_params[:is_paused]
+      filters: {
+        is_paused: my_cases_params[:is_paused],
+        classification: my_cases_params[:recommended_actions],
+        patch: my_cases_params[:patch],
+        full_patch: my_cases_params[:full_patch]
+      }
     )
 
     render json: response
@@ -14,11 +19,12 @@ class MyCasesController < ApplicationController
 
   def my_cases_params
     params.require(REQUIRED_INDEX_PARAMS)
-    allowed_params = params.permit(REQUIRED_INDEX_PARAMS + [:is_paused])
+    allowed_params = params.permit(REQUIRED_INDEX_PARAMS + %i[is_paused patch recommended_actions full_patch])
 
     allowed_params[:user_id] = allowed_params[:user_id].to_i
 
     allowed_params[:is_paused] = ActiveModel::Type::Boolean.new.cast(allowed_params[:is_paused])
+    allowed_params[:full_patch] = ActiveModel::Type::Boolean.new.cast(allowed_params[:full_patch])
 
     allowed_params[:page_number] = min_1(allowed_params[:page_number].to_i)
     allowed_params[:number_per_page] = min_1(allowed_params[:number_per_page].to_i)

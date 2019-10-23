@@ -75,7 +75,10 @@ describe Hackney::Income::StoredTenanciesGateway do
           active_agreement: attributes.fetch(:criteria).active_agreement?,
           broken_court_order: attributes.fetch(:criteria).broken_court_order?,
           nosp_served: attributes.fetch(:criteria).nosp_served?,
-          active_nosp: attributes.fetch(:criteria).active_nosp?
+          active_nosp: attributes.fetch(:criteria).active_nosp?,
+          patch_code: attributes.fetch(:criteria).patch_code,
+          courtdate: attributes.fetch(:criteria).courtdate,
+          court_outcome: attributes.fetch(:criteria).court_outcome
         )
       end
 
@@ -154,7 +157,10 @@ describe Hackney::Income::StoredTenanciesGateway do
           active_agreement: attributes.fetch(:criteria).active_agreement?,
           broken_court_order: attributes.fetch(:criteria).broken_court_order?,
           nosp_served: attributes.fetch(:criteria).nosp_served?,
-          active_nosp: attributes.fetch(:criteria).active_nosp?
+          active_nosp: attributes.fetch(:criteria).active_nosp?,
+          patch_code: attributes.fetch(:criteria).patch_code,
+          courtdate: attributes.fetch(:criteria).courtdate,
+          court_outcome: attributes.fetch(:criteria).court_outcome
         )
       end
 
@@ -171,7 +177,8 @@ describe Hackney::Income::StoredTenanciesGateway do
           multiple_attributes.append(
             tenancy_ref: Faker::Internet.slug,
             priority_band: Faker::Internet.slug,
-            priority_score: Faker::Number.number(5).to_i
+            priority_score: Faker::Number.number(5).to_i,
+            balance: Faker::Number.number(3).to_i
           )
         end
         multiple_attributes
@@ -185,7 +192,7 @@ describe Hackney::Income::StoredTenanciesGateway do
               tenancy_ref: attributes.fetch(:tenancy_ref),
               priority_band: attributes.fetch(:priority_band),
               priority_score: attributes.fetch(:priority_score),
-              balance: 1
+              balance: attributes.fetch(:balance)
             )
           end
         end
@@ -202,32 +209,32 @@ describe Hackney::Income::StoredTenanciesGateway do
           end
         end
 
-        context 'when cases are assigned different bands and scores' do
+        context 'when cases are assigned different bands, scores and balances' do
           let(:multiple_attributes) do
             [
               { tenancy_ref: Faker::Internet.slug, priority_band: 'red', priority_score: 1, balance: 1 },
-              { tenancy_ref: Faker::Internet.slug, priority_band: 'green', priority_score: 50, balance: 1 },
-              { tenancy_ref: Faker::Internet.slug, priority_band: 'amber', priority_score: 100, balance: 1 },
-              { tenancy_ref: Faker::Internet.slug, priority_band: 'green', priority_score: 100, balance: 1 },
-              { tenancy_ref: Faker::Internet.slug, priority_band: 'red', priority_score: 101, balance: 1 },
-              { tenancy_ref: Faker::Internet.slug, priority_band: 'amber', priority_score: 200, balance: 1 }
+              { tenancy_ref: Faker::Internet.slug, priority_band: 'green', priority_score: 50, balance: 3 },
+              { tenancy_ref: Faker::Internet.slug, priority_band: 'green', priority_score: 100, balance: 2 },
+              { tenancy_ref: Faker::Internet.slug, priority_band: 'amber', priority_score: 100, balance: 4 },
+              { tenancy_ref: Faker::Internet.slug, priority_band: 'amber', priority_score: 10, balance: 11 },
+              { tenancy_ref: Faker::Internet.slug, priority_band: 'red', priority_score: 101, balance: 10 }
             ]
           end
 
           let(:cases) do
             subject.map do |c|
-              { band: c.fetch(:priority_band), score: c.fetch(:priority_score).to_i }
+              { balance: c.fetch(:balance).to_i, priority_band: c.fetch(:priority_band), priority_score: c.fetch(:priority_score).to_i }
             end
           end
 
-          it 'sorts by band, then score' do
+          it 'sorts by balance' do
             expect(cases).to eq([
-              { band: 'red', score: 101 },
-              { band: 'red', score: 1 },
-              { band: 'amber', score: 200 },
-              { band: 'amber', score: 100 },
-              { band: 'green', score: 100 },
-              { band: 'green', score: 50 }
+              { priority_band: 'amber', priority_score: 10, balance: 11 },
+              { priority_band: 'red', priority_score: 101, balance: 10 },
+              { priority_band: 'amber', priority_score: 100, balance: 4 },
+              { priority_band: 'green', priority_score: 50, balance: 3 },
+              { priority_band: 'green', priority_score: 100, balance: 2 },
+              { priority_band: 'red', priority_score: 1, balance: 1 }
             ])
           end
 
@@ -236,8 +243,8 @@ describe Hackney::Income::StoredTenanciesGateway do
 
             it 'only return the first two' do
               expect(cases).to eq([
-                { band: 'red', score: 101 },
-                { band: 'red', score: 1 }
+                { priority_band: 'amber', priority_score: 10, balance: 11 },
+                { priority_band: 'red', priority_score: 101, balance: 10 }
               ])
             end
           end
@@ -247,9 +254,9 @@ describe Hackney::Income::StoredTenanciesGateway do
 
             it 'only return the last three' do
               expect(cases).to eq([
-                { band: 'amber', score: 100 },
-                { band: 'green', score: 100 },
-                { band: 'green', score: 50 }
+                { priority_band: 'green', priority_score: 50, balance: 3 },
+                { priority_band: 'green', priority_score: 100, balance: 2 },
+                { priority_band: 'red', priority_score: 1, balance: 1 }
               ])
             end
           end
@@ -276,7 +283,7 @@ describe Hackney::Income::StoredTenanciesGateway do
     let(:user) { create(:user) }
     let(:other_user) { create(:user) }
 
-    context 'with thr user having ten tenancies in arrears and ten not in arrears' do
+    context 'with the user having ten tenancies in arrears and ten not in arrears' do
       before do
         create_list(:case_priority, 10, assigned_user_id: user.id, balance: 1)
         create_list(:case_priority, 10, assigned_user_id: user.id, balance: -1)
@@ -325,7 +332,7 @@ describe Hackney::Income::StoredTenanciesGateway do
     end
   end
 
-  context 'when there are paused and paused tenancies' do
+  context 'when there are paused and not paused tenancies' do
     let(:is_paused) { nil }
     let(:user) { create(:user) }
 
@@ -351,7 +358,9 @@ describe Hackney::Income::StoredTenanciesGateway do
           user_id: user.id,
           page_number: 1,
           number_per_page: 50,
-          is_paused: is_paused
+          filters: {
+            is_paused: is_paused
+          }
         )
       end
 
@@ -364,7 +373,7 @@ describe Hackney::Income::StoredTenanciesGateway do
       context 'when and is_paused is set true' do
         let(:is_paused) { true }
 
-        it 'onlies return only paused tenancies' do
+        it 'only return only paused tenancies' do
           expect(subject.count).to eq(num_paused_cases)
         end
       end
@@ -372,7 +381,7 @@ describe Hackney::Income::StoredTenanciesGateway do
       context 'with is_paused set false' do
         let(:is_paused) { false }
 
-        it 'onlies return unpaused tenancies' do
+        it 'only return unpaused tenancies' do
           expect(subject.count).to eq(num_active_cases)
         end
       end
@@ -383,14 +392,16 @@ describe Hackney::Income::StoredTenanciesGateway do
         gateway.number_of_pages_for_user(
           user_id: user.id,
           number_per_page: num_pages,
-          is_paused: is_paused
+          filters: {
+            is_paused: is_paused
+          }
         )
       end
 
       context 'with is_paused set false' do
         let(:is_paused) { false }
 
-        it 'shows the number pages of of paused cases' do
+        it 'shows the number of pages of paused cases' do
           expect(subject).to eq(expected_num_pages(num_active_cases, num_pages))
         end
       end
@@ -398,16 +409,273 @@ describe Hackney::Income::StoredTenanciesGateway do
       context 'with is_paused set true' do
         let(:is_paused) { true }
 
-        it 'shows the number pages of of paused cases' do
+        it 'shows the number of pages of paused cases' do
           expect(subject).to eq(expected_num_pages(num_paused_cases, num_pages))
+        end
+
+        context 'with one no_action classification case' do
+          before do
+            create(:case_priority, assigned_user_id: user.id, balance: 40, is_paused_until: Faker::Date.forward(1), classification: :no_action)
+          end
+
+          it 'shows the number of pages of paused cases with one no_action classification' do
+            expect(subject).to eq(expected_num_pages(num_paused_cases + 1, num_pages))
+          end
         end
       end
 
       context 'with is_paused not set' do
         let(:is_paused) { nil }
 
-        it 'shows the number pages of of paused cases' do
+        it 'shows the number of pages of paused cases' do
           expect(subject).to eq(expected_num_pages((num_paused_cases + num_active_cases), num_pages))
+        end
+      end
+    end
+  end
+
+  context 'when there are tenancies with an upcoming courtdate' do
+    let(:user) { create(:user) }
+
+    let(:cases_with_courtdate_within_a_week) { 5 }
+    let(:cases_with_courtdate_outside_a_week) { 5 }
+
+    before do
+      cases_with_courtdate_within_a_week.times do
+        create(:case_priority, assigned_user_id: user.id, balance: 40, courtdate: Date.today + 5)
+      end
+
+      cases_with_courtdate_outside_a_week.times do
+        create(:case_priority, assigned_user_id: user.id, balance: 40, courtdate: Date.today + 29)
+      end
+    end
+
+    context 'when we call get_tenancies_for_user' do
+      subject do
+        gateway.get_tenancies_for_user(
+          user_id: user.id,
+          page_number: 1,
+          number_per_page: 50
+        )
+      end
+
+      it 'returns all tenancies' do
+        expect(subject.count).to eq(cases_with_courtdate_within_a_week + cases_with_courtdate_outside_a_week)
+      end
+    end
+  end
+
+  context 'when there are tenancies with an upcoming courtdate' do
+    let(:user) { create(:user) }
+
+    let(:cases_with_courtdate_within_a_week) { 5 }
+    let(:cases_with_courtdate_outside_a_week) { 5 }
+
+    before do
+      cases_with_courtdate_within_a_week.times do
+        create(:case_priority, assigned_user_id: user.id, balance: 40, courtdate: Date.today + 5)
+      end
+
+      cases_with_courtdate_outside_a_week.times do
+        create(:case_priority, assigned_user_id: user.id, balance: 40, courtdate: Date.today + 29)
+      end
+    end
+
+    context 'when we call get_tenancies_for_user' do
+      subject do
+        gateway.get_tenancies_for_user(
+          user_id: user.id,
+          page_number: 1,
+          number_per_page: 50
+        )
+      end
+
+      it 'returns all tenancies' do
+        expect(subject.count).to eq(cases_with_courtdate_within_a_week + cases_with_courtdate_outside_a_week)
+      end
+    end
+  end
+
+  context 'when there are tenancies with different immediate actions' do
+    let(:user) { create(:user) }
+
+    let(:no_action) { 'no_action' }
+    let(:send_letter_one) { 'send_letter_one' }
+
+    let(:cases_with_no_action) { 5 }
+    let(:cases_with_warning_letter_action) { 5 }
+
+    let(:num_pages) { Faker::Number.between(1, 5) }
+
+    before do
+      cases_with_no_action.times do
+        create(:case_priority, assigned_user_id: user.id, balance: 40, classification: no_action)
+      end
+
+      cases_with_warning_letter_action.times do
+        create(:case_priority, assigned_user_id: user.id, balance: 40, classification: send_letter_one)
+      end
+    end
+
+    context 'when we call get_tenancies_for_user' do
+      subject do
+        gateway.get_tenancies_for_user(
+          user_id: user.id,
+          page_number: 1,
+          number_per_page: 50,
+          filters: {
+            classification: classification,
+            full_patch: full_patch
+          }
+        )
+      end
+
+      let(:full_patch) { false }
+
+      context 'with no filter by classification' do
+        let(:classification) { nil }
+
+        it 'only returns tenancies with warning letters as next action' do
+          expect(subject.count).to eq(cases_with_warning_letter_action)
+        end
+
+        context 'when the full_patch filter is set' do
+          let(:full_patch) { true }
+
+          it 'contains all cases' do
+            expect(subject.count).to eq(cases_with_no_action + cases_with_warning_letter_action)
+          end
+        end
+      end
+
+      context 'when filtering by no_action' do
+        let(:classification) { no_action }
+
+        it 'only returns tennancies with then next immediate action of no_action' do
+          expect(subject.count).to eq(cases_with_no_action)
+        end
+      end
+
+      context 'when filtering by send_letter_one' do
+        let(:classification) { send_letter_one }
+
+        it 'only returns tennancies with then next immediate action of send_letter_one' do
+          expect(subject.count).to eq(cases_with_warning_letter_action)
+        end
+      end
+    end
+  end
+
+  context 'when there are tenancies with different patches' do
+    let(:patch_1) { Faker::Lorem.characters(3) }
+    let(:patch_2) { Faker::Lorem.characters(3) }
+
+    let(:user) { create(:user) }
+
+    let(:num_cases_in_patch_1) { Faker::Number.between(2, 10) }
+    let(:num_cases_in_patch_2) { Faker::Number.between(2, 20) }
+    let(:num_cases_in_no_patches) { Faker::Number.between(1, 3) }
+    let(:num_pages) { Faker::Number.between(1, 5) }
+
+    before do
+      num_cases_in_patch_1.times do
+        create(:case_priority, assigned_user_id: user.id, balance: 40, patch_code: patch_1)
+      end
+
+      num_cases_in_patch_2.times do
+        create(:case_priority, assigned_user_id: user.id, balance: 40, patch_code: patch_2)
+      end
+
+      num_cases_in_no_patches.times do
+        create(:case_priority, assigned_user_id: user.id, balance: 40, patch_code: nil)
+      end
+    end
+
+    context 'when we call get_tenancies_for_user' do
+      subject do
+        gateway.get_tenancies_for_user(
+          user_id: user.id,
+          page_number: 1,
+          number_per_page: 50,
+          filters: {
+            patch: patch
+          }
+        )
+      end
+
+      context 'with no filtering by patch' do
+        let(:patch) { nil }
+
+        it 'returns all tenancies' do
+          expect(subject.count).to eq(num_cases_in_patch_1 + num_cases_in_patch_2 + num_cases_in_no_patches)
+        end
+      end
+
+      context 'when filtering by assigned patches' do
+        let(:patch) { 'unassigned' }
+
+        it 'returns tenancies with no patches assigned' do
+          expect(subject.count).to eq(num_cases_in_no_patches)
+        end
+      end
+
+      context 'when filtering by patch 1' do
+        let(:patch) { patch_1 }
+
+        it 'only return only paused tenancies' do
+          expect(subject.count).to eq(num_cases_in_patch_1)
+        end
+      end
+
+      context 'when filtering by patch 2' do
+        let(:patch) { patch_2 }
+
+        it 'only return unpaused tenancies' do
+          expect(subject.count).to eq(num_cases_in_patch_2)
+        end
+      end
+    end
+
+    context 'when calling #number_of_pages_for_user' do
+      subject do
+        gateway.number_of_pages_for_user(
+          user_id: user.id,
+          number_per_page: num_pages,
+          filters: {
+            patch: patch
+          }
+        )
+      end
+
+      context 'when filtering by patch 1' do
+        let(:patch) { patch_1 }
+
+        it 'returns the number of pages of paused cases' do
+          expect(subject).to eq(expected_num_pages(num_cases_in_patch_1, num_pages))
+        end
+      end
+
+      context 'when filtering by patch 2' do
+        let(:patch) { patch_2 }
+
+        it 'returns the number of pages of paused cases' do
+          expect(subject).to eq(expected_num_pages(num_cases_in_patch_2, num_pages))
+        end
+      end
+
+      context 'when no filtering by patch' do
+        let(:patch) { nil }
+
+        it 'returns the number of pages of paused cases' do
+          expect(subject).to eq(expected_num_pages((num_cases_in_patch_1 + num_cases_in_patch_2 + num_cases_in_no_patches), num_pages))
+        end
+      end
+
+      context 'when filtering by unassigned patches' do
+        let(:patch) { 'unassigned' }
+
+        it 'returns the number of pages of paused cases' do
+          expect(subject).to eq(expected_num_pages(num_cases_in_no_patches, num_pages))
         end
       end
     end
@@ -443,7 +711,10 @@ describe Hackney::Income::StoredTenanciesGateway do
       active_agreement: attributes.fetch(:criteria).active_agreement?,
       broken_court_order: attributes.fetch(:criteria).broken_court_order?,
       nosp_served: attributes.fetch(:criteria).nosp_served?,
-      active_nosp: attributes.fetch(:criteria).active_nosp?
+      active_nosp: attributes.fetch(:criteria).active_nosp?,
+      patch_code: attributes.fetch(:criteria).patch_code,
+      courtdate: attributes.fetch(:criteria).courtdate,
+      court_outcome: attributes.fetch(:criteria).court_outcome
     }
   end
 end
