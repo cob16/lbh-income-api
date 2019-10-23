@@ -10,7 +10,7 @@ describe Hackney::Income::UniversalHousingLeaseholdGateway, universal: true do
   let(:money_judgement) { Random.rand(10) }
   let(:charging_order) { Random.rand(10) }
   let(:bal_dispute) { Random.rand(10) }
-  let(:tenure_type) {'SEC'}
+  let(:tenure_type) { 'SEC' }
   let(:corr_preamble) { Faker::Address.secondary_address }
   let(:corr_desig) { Random.rand(100).to_s }
   let(:household_postcode) { Faker::Address.postcode }
@@ -154,7 +154,7 @@ describe Hackney::Income::UniversalHousingLeaseholdGateway, universal: true do
             money_judgement: money_judgement,
             charging_order: charging_order,
             bal_dispute: bal_dispute,
-            tenure_type:tenure_type
+            tenure_type: tenure_type
           }.merge(expected_correspondence_address_when_property)
            .merge(expected_property_address))
         end

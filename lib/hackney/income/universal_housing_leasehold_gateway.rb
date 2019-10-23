@@ -61,7 +61,7 @@ module Hackney
             household_res: res,
             property_res: property_res
           )
-            
+
           {
             payment_ref: payment_ref,
             tenancy_ref: res[:tag_ref].strip,
