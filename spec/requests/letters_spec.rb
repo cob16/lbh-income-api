@@ -1,6 +1,14 @@
 require 'rails_helper'
 
 RSpec.describe 'Letters', type: :request do
+  let(:property_ref) { Faker::Number.number(4) }
+  let(:tenancy_ref) { "#{Faker::Number.number(6)}/#{Faker::Number.number(2)}" }
+  let(:payment_ref) { Faker::Number.number(4) }
+  let(:house_ref) { Faker::Number.number(4) }
+  let(:postcode) { Faker::Address.postcode }
+  let(:leasedate) { Time.zone.now.beginning_of_hour }
+  let(:template) { 'letter_1_in_arrears_FH' }
+
   describe 'POST /api/v1/messages/letters' do
     it 'returns 404 with bogus payment ref' do
       post messages_letters_path, params: {
@@ -19,13 +27,6 @@ RSpec.describe 'Letters', type: :request do
     end
 
     context 'with valid payment ref' do
-      let(:property_ref) { Faker::Number.number(4) }
-      let(:tenancy_ref) { "#{Faker::Number.number(6)}/#{Faker::Number.number(2)}" }
-      let(:payment_ref) { Faker::Number.number(4) }
-      let(:house_ref) { Faker::Number.number(4) }
-      let(:postcode) { Faker::Address.postcode }
-      let(:leasedate) { Time.zone.now.beginning_of_hour }
-
       let(:expected_json_response_as_hash) {
         {
           'case' => {
@@ -53,34 +54,12 @@ RSpec.describe 'Letters', type: :request do
       }
 
       before do
-        create_uh_property(
-          property_ref: property_ref,
-          post_code: postcode
-        )
-        create_uh_tenancy_agreement(
-          tenancy_ref: tenancy_ref,
-          u_saff_rentacc: payment_ref,
-          prop_ref: property_ref,
-          house_ref: house_ref
-        )
-        create_uh_househ(
-          house_ref: house_ref,
-          prop_ref: property_ref,
-          corr_preamble: 'Test',
-          corr_desig: 'Test',
-          corr_postcode: postcode,
-          house_desc: 'Test Name'
-        )
-        create_uh_postcode(
-          post_code: postcode,
-          aline1: 'Test Line 1'
-        )
-        create_uh_rent(prop_ref: property_ref, sc_leasedate: leasedate)
+        create_valid_uh_records_for_a_letter
       end
 
       it 'responds with a JSON object' do
         post messages_letters_path, params: {
-          payment_ref: payment_ref, template_id: 'letter_1_in_arrears_FH'
+          payment_ref: payment_ref, template_id: template
         }
 
         # UUID: is always different can ignore this.
@@ -92,5 +71,103 @@ RSpec.describe 'Letters', type: :request do
         expect(json_response).to eq(expected_json_response_as_hash)
       end
     end
+  end
+
+  describe 'POST /api/v1/messages/letters/send' do
+    let(:uuid) { existing_letter[:uuid] }
+    let(:user) { create(:user) }
+    let(:user_id) { user.id }
+    let(:existing_letter) { create_and_store_letter_in_cache(payment_ref: payment_ref, template_id: template) }
+
+    context 'when there is an existing letter' do
+      before do
+        create_valid_uh_records_for_a_letter
+        existing_letter
+      end
+
+      it 'is a No Content (204) status' do
+        post messages_letters_send_path, params: { uuid: uuid, user_id: user_id }
+
+        expect(response).to be_no_content
+      end
+
+      it 'adds a `Hackney::Income::Jobs::SaveAndSendLetterJob` to ActiveJob' do
+        expect {
+          post messages_letters_send_path, params: { uuid: uuid, user_id: user_id }
+        }.to have_enqueued_job(Hackney::Income::Jobs::SaveAndSendLetterJob)
+      end
+
+      it 'creates a `Hackney::Cloud::Document`' do
+        expect {
+          post messages_letters_send_path, params: { uuid: uuid, user_id: user_id }
+        }.to change { Hackney::Cloud::Document.count }.from(0).to(1)
+      end
+
+      it 'stores the User ID on metadata of the Document' do
+        post messages_letters_send_path, params: { uuid: uuid, user_id: user_id }
+
+        document = Hackney::Cloud::Document.last
+        expect(JSON.parse(document.metadata)['user_id'].to_i).to eq(user_id)
+      end
+
+      context 'with a bogus UUID' do
+        it 'throws a `NoMethodError`' do
+          expect {
+            post messages_letters_send_path, params: { uuid: SecureRandom.uuid, user_id: user_id }
+          }.to raise_error(NoMethodError)
+        end
+      end
+
+      context 'with a bogus User ID' do
+        it 'adds a `Hackney::Income::Jobs::SaveAndSendLetterJob` to ActiveJob' do
+          expect {
+            post messages_letters_send_path, params: { uuid: uuid, user_id: Faker::Number.number(4) }
+          }.to have_enqueued_job(Hackney::Income::Jobs::SaveAndSendLetterJob)
+        end
+      end
+    end
+
+    context 'when there is no existing letter' do
+      context 'with a random UUID' do
+        it 'throws a `NoMethodError`' do
+          expect {
+            post messages_letters_send_path, params: { uuid: SecureRandom.uuid, user_id: user_id }
+          }.to raise_error(NoMethodError)
+        end
+      end
+    end
+  end
+
+  def create_valid_uh_records_for_a_letter
+    create_uh_property(
+      property_ref: property_ref,
+      post_code: postcode
+    )
+    create_uh_tenancy_agreement(
+      tenancy_ref: tenancy_ref,
+      u_saff_rentacc: payment_ref,
+      prop_ref: property_ref,
+      house_ref: house_ref
+    )
+    create_uh_househ(
+      house_ref: house_ref,
+      prop_ref: property_ref,
+      corr_preamble: 'Test',
+      corr_desig: 'Test',
+      corr_postcode: postcode,
+      house_desc: 'Test Name'
+    )
+    create_uh_postcode(
+      post_code: postcode,
+      aline1: 'Test Line 1'
+    )
+    create_uh_rent(prop_ref: property_ref, sc_leasedate: leasedate)
+  end
+
+  def create_and_store_letter_in_cache(payment_ref:, template_id:)
+    Hackney::PDF::UseCaseFactory.new.get_preview.execute(
+      payment_ref: payment_ref,
+      template_id: template_id
+    )
   end
 end
