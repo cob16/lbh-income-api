@@ -110,8 +110,7 @@ describe Hackney::Income::TenancyPrioritiser::TenancyClassification do
 
     context 'when the arrears are greater than or equal to one weeks rent and less than 3 week rent' do
       last_communication_actions = {
-        letter_one_in_arrears_auto: 'IC1',
-        letter_one_in_arrears_manual: 'IM1'
+        letter_one_in_arrears_auto: 'ZR1'
       }
       last_communication_actions.each do |key, last_communication_action|
         it "can classify to send letter two when the tenant has arreas of 1 week with a last communication action of #{key}" do
@@ -143,8 +142,7 @@ describe Hackney::Income::TenancyPrioritiser::TenancyClassification do
 
     context 'when the arrears are greater than or equal to three weeks rent and less than 4 week rent' do
       last_communication_actions = {
-        letter_two_in_arrears_auto: 'IC2',
-        letter_two_in_arrears_manual: 'IM2'
+        letter_two_in_arrears: 'ZR2'
       }
       last_communication_actions.each do |key, last_communication_action|
         it "can classify to send a warning letter when the tenant has missed three weeks rent with a last communication action of #{key}" do
@@ -167,8 +165,7 @@ describe Hackney::Income::TenancyPrioritiser::TenancyClassification do
 
     context 'when the arrears are greater than or equal 4 week rent' do
       last_communication_actions = {
-        pre_nosp_warning_letter_auto: 'IC3',
-        pre_nosp_warning_letter_manual: 'IM3'
+        pre_nosp_warning_letter: 'not yet defined in UH' # this is a placeholder code defined in lib/hackney/tenancy/action_codes.rb
       }
       last_communication_actions.each do |key, last_communication_action|
         it "can classify to send a NOSP when the tenant has missed 4 weeks worth of rent with a last communication action of #{key}" do

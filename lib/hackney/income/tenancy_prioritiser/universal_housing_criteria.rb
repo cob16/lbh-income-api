@@ -11,7 +11,7 @@ module Hackney
             DECLARE @PaymentTypes table(payment_type varchar(3))
             INSERT INTO @PaymentTypes VALUES ('RBA'), ('RBP'), ('RBR'), ('RCI'), ('RCO'), ('RCP'), ('RDD'), ('RDN'), ('RDP'), ('RDR'), ('RDS'), ('RDT'), ('REF'), ('RHA'), ('RHB'), ('RIT'), ('RML'), ('RPD'), ('RPO'), ('RPY'), ('RQP'), ('RRC'), ('RRP'), ('RSO'), ('RTM'), ('RUC'), ('RWA')
             DECLARE @CommunicationTypes table(communication_types varchar(60))
-            INSERT INTO @CommunicationTypes VALUES ('C'), ('MML'), ('S0A'), ('REF'), ('ZW1'), ('ZW2'), ('ZW3'), ('MW1'), ('MW2'), ('MW3'), ('LF1'), ('LF2'), ('LL1'), ('LL2'), ('LS1'), ('LS2'), ('SMS'), ('GAT'), ('GAE'), ('GME'), ('GMS'), ('AMS')
+            INSERT INTO @CommunicationTypes VALUES ('C'), ('MML'), ('S0A'), ('REF'), ('ZW1'), ('ZW2'), ('ZW3'), ('MW1'), ('MW2'), ('MW3'), ('LF1'), ('LF2'), ('LL1'), ('LL2'), ('LS1'), ('LS2'), ('SMS'), ('GAT'), ('GAE'), ('GME'), ('GMS'), ('AMS'), ('ZR1'), ('ZR2')
 
             DECLARE @CurrentBalance NUMERIC(9, 2) = (SELECT cur_bal FROM [dbo].[tenagree] WITH (NOLOCK) WHERE tag_ref = @TenancyRef)
             DECLARE @LastPaymentDate SMALLDATETIME = (
@@ -29,9 +29,22 @@ module Hackney
             DECLARE @NospExpiryDate SMALLDATETIME = (
               SELECT u_notice_expiry FROM [dbo].[tenagree] WHERE tag_ref = @TenancyRef
             )
+            DECLARE @Courtdate SMALLDATETIME = (
+              SELECT courtdate FROM [dbo].[tenagree] WHERE tag_ref = @TenancyRef
+            )
+            DECLARE @CourtOutcome VARCHAR(3) = (
+              SELECT u_court_outcome FROM [dbo].[tenagree] WHERE tag_ref = @TenancyRef
+            )
 
             DECLARE @WeeklyRent NUMERIC(9, 2) = (
               SELECT rent FROM [dbo].[tenagree] WHERE tag_ref = @TenancyRef
+            )
+
+            DECLARE @PatchCode VARCHAR(3) = (
+              SELECT arr_patch
+              FROM [dbo].[property]
+              INNER JOIN [dbo].[tenagree] ON [dbo].[property].prop_ref = [dbo].[tenagree].prop_ref
+              WHERE tag_ref = @TenancyRef
             )
 
             DECLARE @RemainingTransactions INT = (SELECT COUNT(tag_ref) FROM [dbo].[rtrans] WITH (NOLOCK) WHERE tag_ref = @TenancyRef)
@@ -82,6 +95,7 @@ module Hackney
             SELECT
               @CurrentBalance as current_balance,
               @WeeklyRent as weekly_rent,
+              @PatchCode as patch_code,
               @LastPaymentDate as last_payment_date,
               @ArrearsStartDate as arrears_start_date,
               @ActiveAgreementsCount as active_agreements_count,
@@ -90,6 +104,8 @@ module Hackney
               @NospsInLastMonth as nosps_in_last_month,
               @NospServedDate as nosp_served_date,
               @NospExpiryDate as nosp_expiry_date,
+              @Courtdate as courtdate,
+              @CourtOutcome as court_outcome,
               @Payment1Value as payment_1_value,
               @Payment1Date as payment_1_date,
               @Payment2Value as payment_2_value,
@@ -134,6 +150,16 @@ module Hackney
           return nil if date_not_valid?(attributes[:nosp_expiry_date])
 
           attributes[:nosp_expiry_date].to_date
+        end
+
+        def courtdate
+          return nil if date_not_valid?(attributes[:courtdate])
+
+          attributes[:courtdate].to_date
+        end
+
+        def court_outcome
+          attributes[:court_outcome]
         end
 
         def days_in_arrears
@@ -197,6 +223,10 @@ module Hackney
         # FIXME: implementation needs confirming, will return to later
         def broken_court_order?
           false
+        end
+
+        def patch_code
+          attributes.fetch(:patch_code)
         end
 
         private

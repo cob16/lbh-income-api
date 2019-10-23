@@ -8,6 +8,8 @@ module Hackney
           criteria,
           weightings
         )
+        classification_usecase = Hackney::Income::TenancyPrioritiser::TenancyClassification.new(criteria)
+
         begin
           GatewayModel.find_or_create_by(tenancy_ref: tenancy_ref).tap do |tenancy|
             tenancy.update(
@@ -39,7 +41,11 @@ module Hackney
               nosp_expiry_date: criteria.nosp_expiry_date,
               last_communication_action: criteria.last_communication_action,
               last_communication_date: criteria.last_communication_date,
-              active_nosp: criteria.active_nosp?
+              active_nosp: criteria.active_nosp?,
+              classification: classification_usecase.execute,
+              patch_code: criteria.patch_code,
+              courtdate: criteria.courtdate,
+              court_outcome: criteria.court_outcome
             )
           end
         rescue ActiveRecord::RecordNotUnique
@@ -48,28 +54,42 @@ module Hackney
         end
       end
 
-      def get_tenancies_for_user(user_id:, page_number: nil, number_per_page: nil, is_paused: nil)
-        query = tenancy_filtered_by_paused_state_for(user_id, is_paused)
+      def get_tenancies_for_user(user_id:, page_number: nil, number_per_page: nil, filters: {})
+        query = tenancies_filtered_for(user_id, filters)
 
         query = query.offset((page_number - 1) * number_per_page).limit(number_per_page) if page_number.present? && number_per_page.present?
 
-        query.order(by_band_then_score).map(&method(:build_tenancy_list_item))
+        query.order(by_balance).map(&method(:build_tenancy_list_item))
       end
 
-      def number_of_pages_for_user(user_id:, number_per_page:, is_paused: nil)
-        (tenancy_filtered_by_paused_state_for(user_id, is_paused).count.to_f / number_per_page).ceil
+      def number_of_pages_for_user(user_id:, number_per_page:, filters: {})
+        (tenancies_filtered_for(user_id, filters).count.to_f / number_per_page).ceil
       end
 
       private
 
-      def tenancy_filtered_by_paused_state_for(user_id, is_paused)
+      def tenancies_filtered_for(user_id, filters)
         query = GatewayModel.where('
           assigned_user_id = ? AND
           balance > ?', user_id, 0)
 
-        return query if is_paused.nil?
+        if filters[:patch].present?
+          if filters[:patch] == 'unassigned'
+            query = query.where(patch_code: nil)
+          else
+            query = query.where(patch_code: filters[:patch])
+          end
+        end
 
-        if is_paused
+        if filters[:classification].present?
+          query = query.where(classification: filters[:classification])
+        elsif only_show_immediate_actions?(filters)
+          query = query.where.not(classification: :no_action).or(query.where(classification: nil))
+        end
+
+        return query if filters[:is_paused].nil?
+
+        if filters[:is_paused]
           query = query.where('is_paused_until >= ?', Date.today)
         else
           query = query.not_paused
@@ -77,16 +97,14 @@ module Hackney
         query
       end
 
-      def by_band_then_score
-        Arel.sql("
-        (
-          CASE priority_band
-            WHEN 'red' THEN 1
-            WHEN 'amber' THEN 2
-            WHEN 'green' THEN 3
-          END
-        ), priority_score DESC
-        ")
+      def only_show_immediate_actions?(filters)
+        filters_that_return_all_actions = [filters[:is_paused], filters[:full_patch]]
+
+        filters_that_return_all_actions.all? { |filter| filter == false || filter.nil? }
+      end
+
+      def by_balance
+        Arel.sql('balance DESC')
       end
 
       def build_tenancy_list_item(model)
@@ -115,7 +133,11 @@ module Hackney
           active_agreement: model.active_agreement,
           broken_court_order: model.broken_court_order,
           nosp_served: model.nosp_served,
-          active_nosp: model.active_nosp
+          active_nosp: model.active_nosp,
+          patch_code: model.patch_code,
+          classification: model.classification,
+          courtdate: model.courtdate,
+          court_outcome: model.court_outcome
         }
       end
     end

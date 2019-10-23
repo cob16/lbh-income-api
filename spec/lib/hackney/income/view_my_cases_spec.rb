@@ -125,23 +125,90 @@ describe Hackney::Income::ViewMyCases do
                                            active_agreement: tenancy_priority_factors.fetch(:active_agreement),
                                            broken_court_order: tenancy_priority_factors.fetch(:broken_court_order),
                                            nosp_served: tenancy_priority_factors.fetch(:nosp_served),
-                                           active_nosp: tenancy_priority_factors.fetch(:active_nosp)
+                                           active_nosp: tenancy_priority_factors.fetch(:active_nosp),
+
+                                           courtdate: tenancy_priority_factors.fetch(:courtdate),
+                                           court_outcome: tenancy_priority_factors.fetch(:court_outcome),
+
+                                           classification: tenancy_priority_factors.fetch(:classification)
                                          ))
       end
 
       context 'when filtering out paused cases' do
-        subject { view_my_cases.execute(user_id: user_id, page_number: page_number, number_per_page: number_per_page, is_paused: false) }
+        subject {
+          view_my_cases.execute(
+            user_id: user_id,
+            page_number: page_number,
+            number_per_page: number_per_page,
+            filters: {
+              is_paused: true
+            }
+          )
+        }
 
         it 'returns only paused cases' do
           expect(stored_tenancies_gateway)
             .to receive(:get_tenancies_for_user)
-            .with(a_hash_including(user_id: user_id, page_number: page_number, number_per_page: number_per_page, is_paused: false))
+            .with(a_hash_including(
+                    user_id: user_id,
+                    page_number: page_number,
+                    number_per_page: number_per_page,
+                    filters: {
+                      is_paused: true
+                    }
+                  ))
             .and_call_original
 
           expect(stored_tenancies_gateway)
             .to receive(:number_of_pages_for_user)
-            .with(a_hash_including(user_id: user_id, number_per_page: number_per_page, is_paused: false))
+            .with(a_hash_including(
+                    user_id: user_id,
+                    number_per_page: number_per_page,
+                    filters: {
+                      is_paused: true
+                    }
+                  ))
             .and_call_original
+
+          expect(subject.cases.count).to eq(1)
+        end
+      end
+
+      context 'when filtering cases by patch' do
+        subject {
+          view_my_cases.execute(
+            user_id: user_id,
+            page_number: page_number,
+            number_per_page: number_per_page,
+            filters: {
+              patch: patch
+            }
+          )
+        }
+
+        let(:patch) { Faker::Lorem.characters(3) }
+
+        it 'asks the gateway for cases filtered by patch' do
+          expect(stored_tenancies_gateway)
+            .to receive(:get_tenancies_for_user)
+            .with(a_hash_including(
+                    user_id: user_id,
+                    page_number: page_number,
+                    number_per_page: number_per_page,
+                    filters: {
+                      patch: patch
+                    }
+                  )).and_call_original
+
+          expect(stored_tenancies_gateway)
+            .to receive(:number_of_pages_for_user)
+            .with(a_hash_including(
+                    user_id: user_id,
+                    number_per_page: number_per_page,
+                    filters: {
+                      patch: patch
+                    }
+                  )).and_call_original
 
           expect(subject.cases.count).to eq(1)
         end
@@ -156,7 +223,7 @@ describe Hackney::Income::ViewMyCases do
       expect(stored_tenancies_gateway).to receive(:number_of_pages_for_user).with(
         user_id: user_id,
         number_per_page: number_per_page,
-        is_paused: nil
+        filters: {}
       ).and_call_original
       subject
     end
@@ -196,7 +263,12 @@ describe Hackney::Income::ViewMyCases do
       active_agreement: Faker::Number.between(0, 1),
       broken_court_order: Faker::Number.between(0, 1),
       nosp_served: Faker::Number.between(0, 1),
-      active_nosp: Faker::Number.between(0, 1)
+      active_nosp: Faker::Number.between(0, 1),
+
+      courtdate: Date.today - 5,
+      court_outcome: Faker::Lorem.word,
+
+      classification: 'no_action'
     }
   end
 

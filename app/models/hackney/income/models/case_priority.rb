@@ -2,6 +2,8 @@ module Hackney
   module Income
     module Models
       class CasePriority < ApplicationRecord
+        enum classification: %i[no_action send_letter_two send_letter_one send_first_SMS send_NOSP send_warning_letter]
+
         validates :case_id, presence: true, uniqueness: true
 
         before_validation :create_case_with_tenancy_ref
