@@ -111,6 +111,10 @@ workflows:
           filters:
             branches:
               only: master
+      - permit_production_release:
+          type: approval
+          requires:
+            - staging_release
       - production_release:
           requires:
             - permit_production_release
