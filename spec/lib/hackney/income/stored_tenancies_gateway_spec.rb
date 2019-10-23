@@ -77,7 +77,8 @@ describe Hackney::Income::StoredTenanciesGateway do
           nosp_served: attributes.fetch(:criteria).nosp_served?,
           active_nosp: attributes.fetch(:criteria).active_nosp?,
           patch_code: attributes.fetch(:criteria).patch_code,
-          courtdate: attributes.fetch(:criteria).courtdate
+          courtdate: attributes.fetch(:criteria).courtdate,
+          court_outcome: attributes.fetch(:criteria).court_outcome
         )
       end
 
@@ -158,7 +159,8 @@ describe Hackney::Income::StoredTenanciesGateway do
           nosp_served: attributes.fetch(:criteria).nosp_served?,
           active_nosp: attributes.fetch(:criteria).active_nosp?,
           patch_code: attributes.fetch(:criteria).patch_code,
-          courtdate: attributes.fetch(:criteria).courtdate
+          courtdate: attributes.fetch(:criteria).courtdate,
+          court_outcome: attributes.fetch(:criteria).court_outcome
         )
       end
 
@@ -463,6 +465,37 @@ describe Hackney::Income::StoredTenanciesGateway do
     end
   end
 
+  context 'when there are tenancies with an upcoming courtdate' do
+    let(:user) { create(:user) }
+
+    let(:cases_with_courtdate_within_a_week) { 5 }
+    let(:cases_with_courtdate_outside_a_week) { 5 }
+
+    before do
+      cases_with_courtdate_within_a_week.times do
+        create(:case_priority, assigned_user_id: user.id, balance: 40, courtdate: Date.today + 5)
+      end
+
+      cases_with_courtdate_outside_a_week.times do
+        create(:case_priority, assigned_user_id: user.id, balance: 40, courtdate: Date.today + 29)
+      end
+    end
+
+    context 'when we call get_tenancies_for_user' do
+      subject do
+        gateway.get_tenancies_for_user(
+          user_id: user.id,
+          page_number: 1,
+          number_per_page: 50
+        )
+      end
+
+      it 'returns all tenancies' do
+        expect(subject.count).to eq(cases_with_courtdate_within_a_week + cases_with_courtdate_outside_a_week)
+      end
+    end
+  end
+
   context 'when there are tenancies with different immediate actions' do
     let(:user) { create(:user) }
 
@@ -680,7 +713,8 @@ describe Hackney::Income::StoredTenanciesGateway do
       nosp_served: attributes.fetch(:criteria).nosp_served?,
       active_nosp: attributes.fetch(:criteria).active_nosp?,
       patch_code: attributes.fetch(:criteria).patch_code,
-      courtdate: attributes.fetch(:criteria).courtdate
+      courtdate: attributes.fetch(:criteria).courtdate,
+      court_outcome: attributes.fetch(:criteria).court_outcome
     }
   end
 end
