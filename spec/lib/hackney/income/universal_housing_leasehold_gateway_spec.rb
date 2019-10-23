@@ -74,7 +74,7 @@ describe Hackney::Income::UniversalHousingLeaseholdGateway, universal: true do
 
       before do
         create_uh_tenancy_agreement(tenancy_ref: tenancy_ref, current_balance: cur_bal, u_saff_rentacc: payment_ref,
-                                    house_ref: house_ref, prop_ref: prop_ref, cot: commencement_of_tenancy,
+                                    house_ref: house_ref, prop_ref: prop_ref, cot: commencement_of_tenancy, tenure_type: tenure_type,
                                     money_judgement: money_judgement, charging_order: charging_order, bal_dispute: bal_dispute)
         create_uh_rent(sc_leasedate: sc_leasedate, prop_ref: prop_ref)
         create_uh_househ(house_ref: house_ref, prop_ref: '', house_desc: lessee_full_name,

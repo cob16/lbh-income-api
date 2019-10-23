@@ -90,6 +90,9 @@ proceedings in the County Court without further notice. Should this be necessary
 to Court costs, the Claim will be increased by up to 8% interest.
 </p>
 
+
+ 
+
 <p>
 If you wish to pay by debit or credit card over the phone then kindly call 020 8356 2299
 between 9:00am to 5:00pm.  If you would like to pay by cheque, cheques should be made
@@ -103,12 +106,18 @@ Similarly, paying after a Claim has been sent for issuing will result in you bei
 interest and costs.
 </p>
 
+<% if @letter.freehold? %>
+<p>
+If a County Court Judgement is obtained and you still have not paid the arrears, we will have no option but to take further action against you. This would include placing a charge on your property, summonsing you to attend court where you will need to provide details of account, which will incur an additional cost of £120.00 and where applicable, we will contact your mortgage lender to advise them of our intentions to pursue recovery of this debt.
+</p>
+<% else %>
 <p>
 If a County Court Judgement is obtained and you still have not paid the arrears, we will have
 no option but to take further action against you. This would include issuing a forfeiture notice
 which will incur an additional cost of £120.00 and where applicable, we will contact your
 mortgage lender to advise them of our intentions to pursue recovery of this debt.
 </p>
+<%end%>
 
 <p>
 We ask that you make arrangements for the payment within 30 days of this letter to avoid

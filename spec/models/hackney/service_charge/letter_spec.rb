@@ -13,9 +13,11 @@ describe Hackney::ServiceCharge::Letter do
       total_collectable_arrears_balance: Faker::Number.number(3),
       money_judgement: Faker::Number.number(2),
       charging_order: Faker::Number.number(2),
-      bal_dispute: Faker::Number.number(2)
-    }
+      bal_dispute: Faker::Number.number(2),
+      tenure_type: tenure_type
+    } 
   }
+  let(:tenure_type) { nil }
 
   context 'when no errors are present' do
     let(:letter) { described_class.new(letter_params.merge(correspondence_address3: '')) }
@@ -61,12 +63,40 @@ describe Hackney::ServiceCharge::Letter do
 
   context 'when a money judgement and charging order exists' do
     let(:letter) { described_class.new(letter_params) }
-
+    
     it 'subtract the money judgement and charging order from the total collectable balance' do
       balance = letter_params[:total_collectable_arrears_balance].to_i
       money_judgement = letter_params[:money_judgement].to_i
       expected_total_collectable_arrears_balance = format('%.2f', balance - money_judgement)
       expect(letter.lba_balance).to eq(expected_total_collectable_arrears_balance)
+    end
+  end
+
+  describe 'tenure type' do
+    let(:letter) { described_class.new(letter_params) }
+
+    context 'with a tenure type of FRS' do
+      let(:tenure_type) { 'FRS' }
+      
+      it 'is not a leasehold' do
+        expect(letter.freehold?).to be true
+      end
+    end
+
+    context 'with a tenure type of LEA' do
+      let(:tenure_type) { 'LEA' }
+     
+      it 'is a leasehold' do
+        expect(letter.freehold?).to be false
+      end
+    end
+
+    context 'with a tenure type of SHO' do
+    let(:tenure_type) {'SHO'}
+
+    it 'is a sharedownership leasehold' do
+      expect(letter.freehold?).to be false
+      end
     end
   end
 end

@@ -12,7 +12,7 @@ module Hackney
                   :payment_ref, :balance, :total_collectable_arrears_balance,
                   :lba_expiry_date, :original_lease_date, :date_of_current_purchase_assignment,
                   :original_leaseholders, :previous_letter_sent, :arrears_letter_1_date,
-                  :international, :lessee_full_name, :lessee_short_name, :errors, :lba_balance
+                  :international, :lessee_full_name, :lessee_short_name, :errors, :lba_balance, :tenure_type
 
       def initialize(params)
         validated_params = validate_mandatory_fields(reorganise_address(params))
@@ -41,6 +41,11 @@ module Hackney
                                         validated_params[:total_collectable_arrears_balance],
                                         validated_params[:money_judgement]
                                       ))
+        @tenure_type = validated_params[:tenure_type]
+      end
+
+      def freehold?
+        @tenure_type == 'FRS'
       end
 
       private
