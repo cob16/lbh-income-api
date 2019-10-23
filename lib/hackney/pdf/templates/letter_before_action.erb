@@ -37,9 +37,9 @@ Dear <%= @letter.lessee_short_name %>
   <strong>FINAL LETTER BEFORE LEGAL ACTION</strong><br>
   Our records show that you still have an outstanding balance on your service charge account of
   </p>
-  <p class="centre">
+  <h1 class="centre">
   £<%= @letter.lba_balance %>
-  </p>
+  </h1>
 </div>
 
 <p>If you have made arrangements to pay your debt or have cleared your arrears in the last 7
@@ -58,7 +58,7 @@ circumstances and the options available to uo
 <p>
 
 
-<h2>If you are intending to return these forms, please ensure they are received by the 
+<h2>If you are intending to return these forms, please ensure they are received by the
 Council no later than <%= @return_date_lba %> </h2>
 
 <p>An Information Sheet is also enclosed detailing independent organisations who offer free,
@@ -74,8 +74,11 @@ you qualify.
 <h2>What is the breach of lease?</h2>
 <p>By a lease/transfer dated <%= @letter.original_lease_date%> made between <%= @letter.original_leaseholders%> and the
 Mayor and Burgesses of the London Borough of Hackney for the premises known as <%= @letter.property_address%>.
-This lease was assigned/transferred to <%= @letter.original_leaseholders%> on the <%= @letter.original_lease_date%>. Under the terms of this lease/transfer, you
+This lease was assigned/transferred to <%= @letter.original_leaseholders%> on the <%= @letter.original_lease_date%>.
+<% unless @letter.freehold?%>
+Under the terms of this lease/transfer, you
 covenanted to pay ground rent and service charge by way of additional rent.
+<% end %>
 </p>
 
 <p>
@@ -85,13 +88,13 @@ of <%= @letter.total_collectable_arrears_balance %> outstanding in respect of th
 
 <h2>What are the Council's intentions?</h2>
 <p>
-Failure to make payment or contact us by <%= @return_date_lba %> will result in the issue of 
-proceedings in the County Court without further notice. Should this be necessary, in addition 
+Failure to make payment or contact us by <%= @return_date_lba %> will result in the issue of
+proceedings in the County Court without further notice. Should this be necessary, in addition
 to Court costs, the Claim will be increased by up to 8% interest.
 </p>
 
 
- 
+
 
 <p>
 If you wish to pay by debit or credit card over the phone then kindly call 020 8356 2299
@@ -117,7 +120,7 @@ no option but to take further action against you. This would include issuing a f
 which will incur an additional cost of £120.00 and where applicable, we will contact your
 mortgage lender to advise them of our intentions to pursue recovery of this debt.
 </p>
-<%end%>
+<% end %>
 
 <p>
 We ask that you make arrangements for the payment within 30 days of this letter to avoid
@@ -224,7 +227,7 @@ back the Reply Form. If the business does not get your Reply Form withing 30 day
 could <strong>take you to court</strong> in relation to the debt. Make sure you allow time for posting.
 <br>
 <br>
-If a court orders you to pay an amounr of money (called "having judgement entered against
+If a court orders you to pay an amount of money (called "having judgement entered against
 you"), details of the judgement will usually be entered on the Register of Judgements,
 Orders and Fines. Most entries stay on the Register for six years unless you pay the
 amount you owe within one month of the judgment

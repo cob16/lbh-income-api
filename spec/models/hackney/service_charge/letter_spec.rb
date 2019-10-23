@@ -98,5 +98,11 @@ describe Hackney::ServiceCharge::Letter do
         expect(letter.freehold?).to be false
       end
     end
+
+    context 'with a tenure type of nil' do
+      it 'has not got a tenure type' do
+        expect(letter.freehold?).to be false
+      end
+    end
   end
 end
