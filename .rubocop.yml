@@ -39,7 +39,7 @@ Metrics/ParameterLists:
   Max: 7
 
 Metrics/ModuleLength:
-  Max: 200
+  Enabled: false
 
 Naming/AccessorMethodName:
   Enabled: false
@@ -53,7 +53,7 @@ Style/FrozenStringLiteralComment:
 Metrics/CyclomaticComplexity: # todo this finds nasty parts of the code, please enable and fix
   Enabled: false
 
-Metrics/PerceivedComplexity:  # todo this finds nasty parts of the code, please enable and fix
+Metrics/PerceivedComplexity: # todo this finds nasty parts of the code, please enable and fix
   Enabled: false
 
 Style/MultilineBlockChain:
