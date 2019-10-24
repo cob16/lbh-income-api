@@ -12,7 +12,7 @@ module Hackney
                   :payment_ref, :balance, :total_collectable_arrears_balance,
                   :lba_expiry_date, :original_lease_date, :date_of_current_purchase_assignment,
                   :original_leaseholders, :previous_letter_sent, :arrears_letter_1_date,
-                  :international, :lessee_full_name, :lessee_short_name, :errors
+                  :international, :lessee_full_name, :lessee_short_name, :errors, :lba_balance, :tenure_type
 
       def initialize(params)
         validated_params = validate_mandatory_fields(reorganise_address(params))
@@ -31,12 +31,21 @@ module Hackney
         @lba_expiry_date = validated_params[:lba_expiry_date]
         @original_lease_date = validated_params[:original_lease_date]
         @date_of_current_purchase_assignment = validated_params[:date_of_current_purchase_assignment]
-        @original_leaseholders = validated_params[:original_leaseholders]
+        @original_leaseholders = 'the original leaseholder' # Placeholder - field does not exist within UH yet
         @previous_letter_sent = validated_params[:previous_letter_sent]
         @arrears_letter_1_date = fetch_previous_letter_date(validated_params[:payment_ref])
         @international = validated_params[:international]
         @lessee_full_name = validated_params[:lessee_full_name]
         @lessee_short_name = validated_params[:lessee_short_name]
+        @lba_balance = format('%.2f', calculate_lba_balance(
+                                        validated_params[:total_collectable_arrears_balance],
+                                        validated_params[:money_judgement]
+                                      ))
+        @tenure_type = validated_params[:tenure_type]
+      end
+
+      def freehold?
+        @tenure_type == Hackney::Income::Domain::TenancyAgreement::TENURE_TYPE_FREEHOLD
       end
 
       private
@@ -95,6 +104,12 @@ module Hackney
                        .where("JSON_EXTRACT(metadata, '$.payment_ref') = ?", payment_ref)
 
         sent_letter1.any? ? sent_letter1.last.updated_at.strftime('%d %B %Y') : ''
+      end
+
+      def calculate_lba_balance(arrears_balance, money_judgement)
+        return 0 if arrears_balance.nil? || money_judgement.nil?
+
+        BigDecimal(arrears_balance.to_s) - BigDecimal(money_judgement.to_s)
       end
     end
   end

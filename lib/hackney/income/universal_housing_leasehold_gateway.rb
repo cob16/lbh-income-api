@@ -43,6 +43,7 @@ module Hackney
         def get_leasehold_info(payment_ref:)
           res = tenancy_agreement
                 .select_append(Sequel.qualify(:tenagree, :prop_ref).as(:tenancy_prop_ref))
+                .select_append(Sequel.qualify(:tenagree, :tenure).as(:tenure_type))
                 .where(u_saff_rentacc: payment_ref)
                 .exclude(Sequel.trim(Sequel.qualify(:tenagree, :prop_ref)) => '')
                 .join(rent, prop_ref: Sequel.qualify(:tenagree, :prop_ref))
@@ -76,7 +77,11 @@ module Hackney
             correspondence_address5: corr_address[:aline4]&.strip || '',
             correspondence_postcode: corr_address[:post_code]&.strip || '',
             property_address: "#{property_res[:address1]&.strip}, #{property_res[:post_code]&.strip}",
-            international: international?(corr_address[:post_code])
+            international: international?(corr_address[:post_code]),
+            money_judgement: res[:u_money_judgement],
+            charging_order: res[:u_charging_order],
+            bal_dispute: res[:u_bal_dispute],
+            tenure_type: res[:tenure_type]
           }
         end
 

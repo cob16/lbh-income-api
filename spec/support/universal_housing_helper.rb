@@ -3,7 +3,7 @@ module UniversalHousingHelper
   def create_uh_tenancy_agreement(tenancy_ref:, current_balance: 0.0, rent: 5.0, prop_ref: '', terminated: false, cot: '',
                                   tenure_type: 'SEC', high_action: '111', u_saff_rentacc: '', house_ref: '',
                                   nosp_notice_served_date: '1900-01-01 00:00:00 +0000', nosp_notice_expiry_date: '1900-01-01 00:00:00 +0000',
-                                  courtdate: '1900-01-01 00:00:00 +0000', court_outcome: nil)
+                                  money_judgement: 0.0, charging_order: 0.0, bal_dispute: 0.0, courtdate: '1900-01-01 00:00:00 +0000', court_outcome: nil)
     Hackney::UniversalHousing::Client.connection[:tenagree].insert(
       tag_ref: tenancy_ref,
       cur_bal: current_balance,
@@ -41,7 +41,10 @@ module UniversalHousingHelper
       intro_ext_date: DateTime.now,
       u_saff_rentacc: u_saff_rentacc,
       house_ref: house_ref,
-      cot: cot
+      cot: cot,
+      u_money_judgement: money_judgement,
+      u_charging_order: charging_order,
+      u_bal_dispute: bal_dispute
     )
   end
   # rubocop:enable Metrics/ParameterLists
