@@ -30,6 +30,10 @@ RSpec.describe 'Letters', type: :request do
       let(:expected_json_response_as_hash) {
         {
           'case' => {
+            'bal_dispute' => '0.0',
+            'charging_order' => '0.0',
+            'money_judgement' => '0.0',
+            'tenure_type' => 'SEC',
             'payment_ref' => payment_ref,
             'tenancy_ref' => tenancy_ref,
             'total_collectable_arrears_balance' => '0.0',
