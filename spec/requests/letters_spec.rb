@@ -112,6 +112,8 @@ RSpec.describe 'Letters', type: :request do
 
         document = Hackney::Cloud::Document.last
         expect(JSON.parse(document.metadata)['user_id'].to_i).to eq(user_id)
+        expect(JSON.parse(document.metadata)['template']['id']).to eq(template)
+        expect(JSON.parse(document.metadata)['payment_ref']).to eq(payment_ref)
       end
 
       context 'with a bogus UUID' do

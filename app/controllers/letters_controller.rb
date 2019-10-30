@@ -23,20 +23,17 @@ class LettersController < ApplicationController
   end
 
   def send_letter
-    # letter_data will be a hash of form { html_content:, payment_ref:, template:}
-    letter_data = UseCases::PopLetterFromCache.new.execute(
-      uuid: params.fetch(:uuid),
-      user_id: params.fetch(:user_id)
-    )
+    pop_letter_from_cache = UseCases::PopLetterFromCache.new(cache: Rails.cache)
+    letter = pop_letter_from_cache.execute(uuid: params.fetch(:uuid))
+    cloud_location = UseCases::SaveLetterToCloud.new.execute(letter)
 
-    cloud_location = UseCases::SaveLetterToCloud.new.execute(letter_data)
-
-    # this calls the ProcessLetter use case
-    # we'll have to include some data from the previous
-    # use cases to get this response right
+    # this calls the ProcessLetter use case, which also sends the letter
     income_use_case_factory.send_letter.execute(
       uuid: params.fetch(:uuid),
-      user_id: params.fetch(:user_id)
+      user_id: params.fetch(:user_id),
+      payment_ref: letter[:case][:payment_ref],
+      template_name: letter[:template],
+      letter_content: letter[:preview]
     )
   end
 end

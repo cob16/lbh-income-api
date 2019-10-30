@@ -26,30 +26,6 @@ describe LettersController, type: :controller do
     end
   end
 
-  describe '#send_letter' do
-    context 'when user "accepts" the preview' do
-      let(:user_id) { Faker::Number.number }
-      let(:uuid) { SecureRandom.uuid }
-
-      before do
-        Rails.cache.write(uuid, preview: preview_html, case: { payment_ref: 123 })
-      end
-
-      it 'calls succefully' do
-        post :send_letter, params: { uuid: uuid, user_id: user_id }
-
-        expect(response).to be_successful
-      end
-
-      it 'calls the usecase' do
-        expect_any_instance_of(Hackney::Income::ProcessLetter)
-          .to receive(:execute).with(uuid: uuid, user_id: user_id)
-
-        post :send_letter, params: { uuid: uuid, user_id: user_id }
-      end
-    end
-  end
-
   describe '#create' do
     context 'when all data is is found' do
       let(:found_payment_ref) { Faker::Number.number(4) }
