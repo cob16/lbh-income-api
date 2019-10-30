@@ -1,5 +1,11 @@
 module UseCases
   class SaveLetterToCloud
-    def execute(letter_data); end
+    def initialize(cloud_gateway:)
+
+    end
+
+    def execute(letter_data)
+
+    end
   end
 end

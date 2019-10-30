@@ -25,7 +25,8 @@ class LettersController < ApplicationController
   def send_letter
     pop_letter_from_cache = UseCases::PopLetterFromCache.new(cache: Rails.cache)
     letter = pop_letter_from_cache.execute(uuid: params.fetch(:uuid))
-    cloud_location = UseCases::SaveLetterToCloud.new.execute(letter)
+
+    cloud_location = UseCases::SaveLetterToCloud.new(letters_gateway: letters_gateway).execute(letter)
 
     # this calls the ProcessLetter use case, which also sends the letter
     income_use_case_factory.send_letter.execute(
