@@ -8,7 +8,7 @@ class LettersController < ApplicationController
   def create
     # letter_data will be a hash of form { html_content:, payment_ref:, template:}
     letter_data = UseCases::ViewLetter.new.execute
-    uuid = UseCases::SaveToCache.new.execute(letter_data)
+    uuid = UseCases::SaveToCache.new(cache: Rails.cache).execute(data: letter_data)
 
     # we'll have to include some data from the previous
     # use cases to get this response right
