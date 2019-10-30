@@ -1,7 +1,6 @@
 require 'rails_helper'
 
-describe 'downloading a letter PDF' do
-  # This has to be a template ID that reflects the files on disk
+xdescribe 'downloading a letter PDF' do
   let(:real_template_id) { 'letter_before_action' }
   let(:payment_ref) { Faker::Number.number(6) }
   let(:house_ref) { Faker::Number.number(6) }
@@ -14,9 +13,7 @@ describe 'downloading a letter PDF' do
     create_uh_rent(prop_ref: prop_ref, sc_leasedate: '')
     create_uh_postcode(post_code: postcode, aline1: '')
 
-    post messages_letters_path, params: {
-      payment_ref: payment_ref, template_id: real_template_id
-    }
+    post messages_letters_path, params: { payment_ref: payment_ref, template_id: real_template_id }
 
     get documents_path(response.body['document_id'])
 
