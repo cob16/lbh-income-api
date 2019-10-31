@@ -29,11 +29,24 @@ class LettersController < ApplicationController
     pdf = generate_pdf.execute(uuid: params.fetch(:uuid), letter_html: letter[:preview])
 
     save_letter = UseCases::SaveLetterToCloud.new(Rails.configuration.cloud_adapter)
-    _cloud_location = save_letter.execute(
+    file_location = save_letter.execute(
       uuid: params.fetch(:uuid),
       bucket_name: Rails.application.config_for('cloud_storage')['bucket_docs'],
       pdf: pdf
     )
+
+    find_letter = UseCases::FindLetterInCloud.new(Rails.configuration.cloud_adapter)
+    pdf = find_letter.execute(
+      file_location: file_location,
+      bucket_name: Rails.application.config_for('cloud_storage')['bucket_docs']
+    )
+
+    # adding two more use cases to finally get rid of process letter
+    # send_letter = UseCases::SendLetter.new(notify_gateway: nil)
+    # send_letter.execute(letter: pdf)
+
+    # write_to_action_diary = UseCases::RecordLetterSent(action_diary_gateway: nil)
+    # write_to_action_diary.execute(letter: letter)
 
     # this calls the ProcessLetter use case, which also sends the letter
     income_use_case_factory.send_letter.execute(
