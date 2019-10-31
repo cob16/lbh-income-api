@@ -126,6 +126,13 @@ RSpec.describe 'Letters', type: :request do
         }.to have_enqueued_job(Hackney::Income::Jobs::SendLetterToGovNotifyJob)
       end
 
+      it 'stores the User ID on metadata of the Document' do
+        post messages_letters_send_path, params: { uuid: uuid, user_id: user_id }
+
+        document = Hackney::Cloud::Document.last
+        expect(JSON.parse(document.metadata)['user_id']).to eq(user_id)
+      end
+
       context 'with a bogus UUID' do
         it 'throws a `ActiveRecord::RecordNotFound`' do
           expect {
