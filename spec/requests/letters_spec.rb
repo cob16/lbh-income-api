@@ -87,6 +87,7 @@ RSpec.describe 'Letters', type: :request do
       before do
         create_valid_uh_records_for_a_letter
         existing_letter
+        mock_aws_client
       end
 
       it 'is a No Content (204) status' do
@@ -175,5 +176,15 @@ RSpec.describe 'Letters', type: :request do
       payment_ref: payment_ref,
       template_id: template_id
     )
+  end
+
+  def mock_aws_client
+    allow_any_instance_of(Aws::S3::Encryption::Client)
+      .to receive_message_chain(:put_object, :context, :http_request, :headers)
+      .and_return({ 'x-amz-date' => Time.new(2002).to_s })
+
+    allow_any_instance_of(Aws::S3::Encryption::Client)
+      .to receive_message_chain(:put_object, :context, :http_request, :endpoint)
+      .and_return('blah.com')
   end
 end

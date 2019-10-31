@@ -6,9 +6,8 @@ class LettersController < ApplicationController
   end
 
   def create
-    # letter_data will be a hash of form { html_content:, payment_ref:, template:}
     letter_data = UseCases::ViewLetter.new.execute
-    uuid = UseCases::SaveToCache.new(cache: Rails.cache).execute(data: letter_data)
+    _uuid = UseCases::SaveToCache.new(cache: Rails.cache).execute(data: letter_data)
 
     # we'll have to include some data from the previous
     # use cases to get this response right
@@ -26,7 +25,15 @@ class LettersController < ApplicationController
     pop_letter_from_cache = UseCases::PopLetterFromCache.new(cache: Rails.cache)
     letter = pop_letter_from_cache.execute(uuid: params.fetch(:uuid))
 
-    cloud_location = UseCases::SaveLetterToCloud.new(letters_gateway: letters_gateway).execute(letter)
+    generate_pdf = UseCases::GeneratePdf.new
+    pdf = generate_pdf.execute(uuid: params.fetch(:uuid), letter_html: letter[:preview])
+
+    save_letter = UseCases::SaveLetterToCloud.new(Rails.configuration.cloud_adapter)
+    _cloud_location = save_letter.execute(
+      uuid: params.fetch(:uuid),
+      bucket_name: Rails.application.config_for('cloud_storage')['bucket_docs'],
+      pdf: pdf
+    )
 
     # this calls the ProcessLetter use case, which also sends the letter
     income_use_case_factory.send_letter.execute(
