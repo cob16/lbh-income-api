@@ -12,6 +12,8 @@ module Hackney
       def save(letter_html:, uuid:, filename:, metadata:)
         extension = File.extname(filename)
 
+        user = Hackney::Income::Models::User.find_by(id: metadata[:user_id])
+
         new_doc   = document_model.find_by(uuid: uuid)
         new_doc ||= document_model.create(
           filename: filename,
@@ -19,7 +21,9 @@ module Hackney
           extension: extension,
           mime_type: Rack::Mime.mime_type(extension),
           status: UPLOADING_CLOUD_STATUS,
-          metadata: metadata.to_json
+          metadata: metadata.to_json,
+          email: user&.email,
+          username: user&.name
         )
 
         if new_doc.errors.empty?
