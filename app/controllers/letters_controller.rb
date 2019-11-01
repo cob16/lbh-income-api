@@ -22,11 +22,21 @@ class LettersController < ApplicationController
   end
 
   def send_letter
+    # 1. Pop from cache x
+    # 2. Generate PDF x
+    # 3. Create Document Model
+    # 4. Upload to S3 x
+    # 5. Update document with S3 URL
+    # 6. Send to notify
+    # 7. Write to action diary
+
     pop_letter_from_cache = UseCases::PopLetterFromCache.new(cache: Rails.cache)
     letter = pop_letter_from_cache.execute(uuid: params.fetch(:uuid))
 
     generate_pdf = UseCases::GeneratePdf.new
     pdf = generate_pdf.execute(uuid: params.fetch(:uuid), letter_html: letter[:preview])
+
+    create_document_model = UseCases::CreateDocumentModel.new(Hackney::Cloud::Document)
 
     save_letter = UseCases::SaveLetterToCloud.new(Rails.configuration.cloud_adapter)
     file_location = save_letter.execute(
@@ -36,10 +46,7 @@ class LettersController < ApplicationController
     )
 
     find_letter = UseCases::FindLetterInCloud.new(Rails.configuration.cloud_adapter)
-    pdf = find_letter.execute(
-      file_location: file_location,
-      bucket_name: Rails.application.config_for('cloud_storage')['bucket_docs']
-    )
+    pdf = find_letter.execute(file_location: file_location)
 
     # adding two more use cases to finally get rid of process letter
     # send_letter = UseCases::SendLetter.new(notify_gateway: nil)

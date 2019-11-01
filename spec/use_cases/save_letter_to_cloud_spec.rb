@@ -13,7 +13,7 @@ describe UseCases::SaveLetterToCloud do
     it 'passes the correct information to the gateway' do
       subject.execute(uuid: uuid, bucket_name: bucket_name, pdf: pdf)
 
-      expect(spy_gateway).to have_received(:upload).with(
+    expect(spy_gateway).to have_received(:upload).with(
         bucket_name: bucket_name,
         binary_letter_content: pdf,
         filename: "#{uuid}.pdf"
