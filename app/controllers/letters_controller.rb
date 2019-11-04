@@ -24,11 +24,11 @@ class LettersController < ApplicationController
   def send_letter
     # 1. Pop from cache x
     # 2. Generate PDF x
-    # 3. Create Document Model
+    # 3. Create Document Model x
     # 4. Upload to S3 x
-    # 5. Update document with S3 URL
-    # 6. Send to notify
-    # 7. Write to action diary
+    # 5. Update document with S3 URL x
+    # 6. Send to notify (via job)
+    # 7. Write to action diary (via job on success of 6)
 
     pop_letter_from_cache = UseCases::PopLetterFromCache.new(cache: Rails.cache)
     letter = pop_letter_from_cache.execute(uuid: params.fetch(:uuid))
@@ -44,14 +44,17 @@ class LettersController < ApplicationController
     })
 
     save_letter = UseCases::SaveLetterToCloud.new(Rails.configuration.cloud_adapter)
-    file_location = save_letter.execute(
+    document_data = save_letter.execute(
       uuid: params.fetch(:uuid),
       bucket_name: Rails.application.config_for('cloud_storage')['bucket_docs'],
       pdf: pdf
     )
 
-    find_letter = UseCases::FindLetterInCloud.new(Rails.configuration.cloud_adapter)
-    pdf = find_letter.execute(file_location: file_location)
+    update_document_s3_url = UseCases::UpdateDocumentS3Url.new
+    update_model = update_document_s3_url.execute(document_model: document_model, document_data: document_data)
+
+    # find_letter = UseCases::FindLetterInCloud.new(Rails.configuration.cloud_adapter)
+    # pdf = find_letter.execute(document_data: document_data)
 
     # send_letter = UseCases::SendLetter.new(notify_gateway: nil)
     # send_letter.execute(letter: pdf)
