@@ -1,12 +1,22 @@
 module UseCases
   class CreateDocumentModel
+    UPLOADING_CLOUD_STATUS = :uploading
+
     def initialize(document_model)
       @document_model = document_model
     end
 
-    def execute
+    def execute(letter_html: letter_html, uuid: uuid, filename: filename, metadata: metadata)
+      extension = File.extname(filename)
 
+      new_document = @document_model.create(
+        filename: filename,
+        uuid: uuid,
+        extension: extension,
+        mime_type: Rack::Mime.mime_type(extension),
+        status: UPLOADING_CLOUD_STATUS,
+        metadata: metadata.to_json
+      )
     end
-
   end
 end

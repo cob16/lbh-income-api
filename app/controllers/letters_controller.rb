@@ -37,6 +37,11 @@ class LettersController < ApplicationController
     pdf = generate_pdf.execute(uuid: params.fetch(:uuid), letter_html: letter[:preview])
 
     create_document_model = UseCases::CreateDocumentModel.new(Hackney::Cloud::Document)
+    document_model = create_document_model.execute(letter_html: letter[:preview], uuid: params.fetch(:uuid), filename: params.fetch(:uuid), metadata: {
+      user_id: params.fetch(:user_id),
+      payment_ref: letter[:case][:payment_ref],
+      template: letter[:template]
+    })
 
     save_letter = UseCases::SaveLetterToCloud.new(Rails.configuration.cloud_adapter)
     file_location = save_letter.execute(
@@ -48,7 +53,6 @@ class LettersController < ApplicationController
     find_letter = UseCases::FindLetterInCloud.new(Rails.configuration.cloud_adapter)
     pdf = find_letter.execute(file_location: file_location)
 
-    # adding two more use cases to finally get rid of process letter
     # send_letter = UseCases::SendLetter.new(notify_gateway: nil)
     # send_letter.execute(letter: pdf)
 
