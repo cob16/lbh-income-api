@@ -1,0 +1,43 @@
+version: '3.1'
+services:
+  incomeapi:
+    image: incomeapi
+    environment:
+      - UH_DATABASE_NAME=uhsimulator
+      - UH_DATABASE_USERNAME=sa
+      - UH_DATABASE_PASSWORD=Rooty-Tooty
+      - UH_DATABASE_HOST=universal_housing_simulator
+      - UH_DATABASE_PORT=1433
+      - REDIS_URL=redis://redis:6379
+      - AWS_REGION=eu-west-2
+      - CUSTOMER_MANAGED_KEY=${CUSTOMER_MANAGED_KEY}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - GOV_NOTIFY_API_KEY=${GOV_NOTIFY_API_KEY}
+      - DATABASE_URL=mysql2://incomeapi:incomeapi@mysql/incomeapi?pool=5
+      - TENANCY_API_HOST=http://tenancyapi:3100/
+      - TENANCY_API_KEY=''
+    ports:
+      - 3000:3000
+    volumes:
+      - ${INCOME_API_DIR}:/app
+    working_dir: /app
+    command: sh -c 'rails db:migrate && rails s'
+    depends_on:
+      - universal_housing_simulator
+      - redis
+      - mysql
+      - tenancyapi
+  redis:
+    image: redis:5.0.3-alpine
+    command: ["redis-server", "--appendonly", "yes"]
+    hostname: redis
+    ports:
+      - 6379:6379
+  mysql:
+    image: mysql:5.7
+    environment:
+      - MYSQL_ALLOW_EMPTY_PASSWORD=yes
+      - MYSQL_DATABASE=incomeapi
+      - MYSQL_USER=incomeapi
+      - MYSQL_PASSWORD=incomeapi
