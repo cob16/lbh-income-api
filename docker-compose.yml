@@ -14,21 +14,30 @@ services:
       - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
       - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
       - GOV_NOTIFY_API_KEY=${GOV_NOTIFY_API_KEY}
+      - DATABASE_URL=mysql2://incomeapi:incomeapi@mysql/incomeapi?pool=5
     ports:
       - 3000:3000
-    links:
-      - universal_housing_simulator
     volumes:
       - .:/app
     command: sh -c 'rails db:migrate && rails s'
+    depends_on:
+      - universal_housing_simulator
+      - redis
+      - mysql
   universal_housing_simulator:
-    image: 775052747630.dkr.ecr.eu-west-2.amazonaws.com/hackney/universal-housing-simulator:9855e4d527519516e8138a026e900ae26b4be5f3
+    image: 775052747630.dkr.ecr.eu-west-2.amazonaws.com/hackney/universal-housing-simulator-loaded:latest
     ports:
       - 1433:1433
-
   redis:
     image: redis:5.0.3-alpine
     command: ["redis-server", "--appendonly", "yes"]
     hostname: redis
     ports:
       - 6379:6379
+  mysql:
+    image: mysql:5.7
+    environment:
+      - MYSQL_ALLOW_EMPTY_PASSWORD=yes
+      - MYSQL_DATABASE=incomeapi
+      - MYSQL_USER=incomeapi
+      - MYSQL_PASSWORD=incomeapi
