@@ -9,8 +9,6 @@ class LettersController < ApplicationController
     letter_data = UseCases::ViewLetter.new.execute
     _uuid = UseCases::SaveToCache.new(cache: Rails.cache).execute(data: letter_data)
 
-    # we'll have to include some data from the previous
-    # use cases to get this response right
     json = pdf_use_case_factory.get_preview.execute(
       payment_ref: params.fetch(:payment_ref),
       template_id: params.fetch(:template_id)
@@ -22,14 +20,6 @@ class LettersController < ApplicationController
   end
 
   def send_letter
-    # 1. Pop from cache x
-    # 2. Generate PDF x
-    # 3. Create Document Model x
-    # 4. Upload to S3 x
-    # 5. Update document with S3 URL x
-    # 6. Send to notify (via job)
-    # 7. Write to action diary (via job on success of 6)
-
     pop_letter_from_cache = UseCases::PopLetterFromCache.new(cache: Rails.cache)
     letter = pop_letter_from_cache.execute(uuid: params.fetch(:uuid))
 
@@ -51,24 +41,8 @@ class LettersController < ApplicationController
     )
 
     update_document_s3_url = UseCases::UpdateDocumentS3Url.new
-    update_model = update_document_s3_url.execute(document_model: document_model, document_data: document_data)
+    update_document_s3_url.execute(document_model: document_model, document_data: document_data)
 
-    # find_letter = UseCases::FindLetterInCloud.new(Rails.configuration.cloud_adapter)
-    # pdf = find_letter.execute(document_data: document_data)
-
-    # send_letter = UseCases::SendLetter.new(notify_gateway: nil)
-    # send_letter.execute(letter: pdf)
-
-    # write_to_action_diary = UseCases::RecordLetterSent(action_diary_gateway: nil)
-    # write_to_action_diary.execute(letter: letter)
-
-    # this calls the ProcessLetter use case, which also sends the letter
-    income_use_case_factory.send_letter.execute(
-      uuid: params.fetch(:uuid),
-      user_id: params.fetch(:user_id),
-      payment_ref: letter[:case][:payment_ref],
-      template_name: letter[:template],
-      letter_content: letter[:preview]
-    )
+    Hackney::Income::Jobs::SendLetterToGovNotifyJob.perform_later(document_id: document_model.id)
   end
 end

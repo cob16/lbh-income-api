@@ -6,10 +6,10 @@ module UseCases
       @document_model = document_model
     end
 
-    def execute(letter_html: letter_html, uuid: uuid, filename: filename, metadata: metadata)
+    def execute(letter_html:, uuid:, filename:, metadata:)
       extension = File.extname(filename)
 
-      new_document = @document_model.create(
+      @document_model.create(
         filename: filename,
         uuid: uuid,
         extension: extension,

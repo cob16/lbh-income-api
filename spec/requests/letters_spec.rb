@@ -96,10 +96,10 @@ RSpec.describe 'Letters', type: :request do
         expect(response).to be_no_content
       end
 
-      it 'adds a `Hackney::Income::Jobs::SaveAndSendLetterJob` to ActiveJob' do
+      it 'adds a `Hackney::Income::Jobs::SendLetterToGovNotifyJob` to ActiveJob' do
         expect {
           post messages_letters_send_path, params: { uuid: uuid, user_id: user_id }
-        }.to have_enqueued_job(Hackney::Income::Jobs::SaveAndSendLetterJob)
+        }.to have_enqueued_job(Hackney::Income::Jobs::SendLetterToGovNotifyJob)
       end
 
       it 'creates a `Hackney::Cloud::Document`' do
@@ -126,10 +126,10 @@ RSpec.describe 'Letters', type: :request do
       end
 
       context 'with a bogus User ID' do
-        it 'adds a `Hackney::Income::Jobs::SaveAndSendLetterJob` to ActiveJob' do
+        it 'adds a `Hackney::Income::Jobs::SendLetterToGovNotifyJob` to ActiveJob' do
           expect {
             post messages_letters_send_path, params: { uuid: uuid, user_id: Faker::Number.number(4) }
-          }.to have_enqueued_job(Hackney::Income::Jobs::SaveAndSendLetterJob)
+          }.to have_enqueued_job(Hackney::Income::Jobs::SendLetterToGovNotifyJob)
         end
       end
     end
@@ -179,12 +179,18 @@ RSpec.describe 'Letters', type: :request do
   end
 
   def mock_aws_client
+    # rubocop:disable RSpec/MessageChain
     allow_any_instance_of(Aws::S3::Encryption::Client)
       .to receive_message_chain(:put_object, :context, :http_request, :headers)
-      .and_return({ 'x-amz-date' => Time.new(2002).to_s })
+      .and_return('x-amz-date' => Time.new(2002).to_s)
 
     allow_any_instance_of(Aws::S3::Encryption::Client)
       .to receive_message_chain(:put_object, :context, :http_request, :endpoint)
       .and_return('blah.com')
+
+    allow_any_instance_of(Aws::S3::Encryption::Client)
+      .to receive_message_chain(:get_object, :body, :read)
+      .and_return('PDF Content')
+    # rubocop:enable RSpec/MessageChain
   end
 end

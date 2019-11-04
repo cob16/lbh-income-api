@@ -11,7 +11,9 @@ describe UseCases::CreateDocumentModel do
     let(:letter_html) { "<h1>#{Faker::RickAndMorty.quote}</h1>" }
 
     it 'adds it to the database' do
-      expect { subject.execute(letter_html: letter_html, uuid: uuid, filename: filename, metadata: metadata) }.to change{ Hackney::Cloud::Document.count }.by(1)
+      expect {
+        subject.execute(letter_html: letter_html, uuid: uuid, filename: filename, metadata: metadata)
+      }.to change { Hackney::Cloud::Document.count }.by(1)
     end
   end
 end
