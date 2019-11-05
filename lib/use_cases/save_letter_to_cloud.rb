@@ -4,15 +4,15 @@ module UseCases
       @cloud_gateway = cloud_gateway
     end
 
-    def execute(uuid:, bucket_name:, pdf:)
-      raise ArgumentError unless uuid.present?
+    def execute(filename:, bucket_name:, pdf:)
+      raise ArgumentError unless filename.present?
       raise ArgumentError unless bucket_name.present?
       raise ArgumentError unless pdf.present?
 
       @cloud_gateway.upload(
         binary_letter_content: pdf,
         bucket_name: bucket_name,
-        filename: "#{uuid}.pdf"
+        filename: filename
       )
     end
   end

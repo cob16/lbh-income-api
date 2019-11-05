@@ -1,4 +1,5 @@
 require "#{Rails.root}/lib/hackney/service_charge/exceptions/service_charge_exception"
+require 'hackney/income/universal_housing_leasehold_gateway.rb'
 
 class LettersController < ApplicationController
   def get_templates
@@ -6,9 +7,10 @@ class LettersController < ApplicationController
   end
 
   def create
-    json = pdf_use_case_factory.get_preview.execute(
-      payment_ref: params.fetch(:payment_ref),
-      template_id: params.fetch(:template_id)
+    json = generate_and_store_use_case.execute(
+      payment_ref: parms_for_generate_and_store[:payment_ref],
+      template_id: parms_for_generate_and_store[:template_id],
+      user_id: parms_for_generate_and_store[:user_id]
     )
 
     render json: json
@@ -17,29 +19,17 @@ class LettersController < ApplicationController
   end
 
   def send_letter
-    pop_letter_from_cache = UseCases::PopLetterFromCache.new(cache: Rails.cache)
-    letter = pop_letter_from_cache.execute(uuid: params.fetch(:uuid))
-
-    generate_pdf = UseCases::GeneratePdf.new
-    pdf = generate_pdf.execute(uuid: params.fetch(:uuid), letter_html: letter[:preview])
-
-    create_document_model = UseCases::CreateDocumentModel.new(Hackney::Cloud::Document)
-    document_model = create_document_model.execute(letter_html: letter[:preview], uuid: params.fetch(:uuid), filename: params.fetch(:uuid), metadata: {
-      user_id: params.fetch(:user_id),
-      payment_ref: letter[:case][:payment_ref],
-      template: letter[:template]
-    })
-
-    save_letter = UseCases::SaveLetterToCloud.new(Rails.configuration.cloud_adapter)
-    document_data = save_letter.execute(
-      uuid: params.fetch(:uuid),
-      bucket_name: Rails.application.config_for('cloud_storage')['bucket_docs'],
-      pdf: pdf
-    )
-
-    update_document_s3_url = UseCases::UpdateDocumentS3Url.new
-    update_document_s3_url.execute(document_model: document_model, document_data: document_data)
-
+    document_model = Hackney::Cloud::Document.find_by!(uuid: params[:uuid])
     Hackney::Income::Jobs::SendLetterToGovNotifyJob.perform_later(document_id: document_model.id)
+  end
+
+  private
+
+  def parms_for_generate_and_store
+    params.permit(%i[user_id payment_ref template_id])
+  end
+
+  def generate_and_store_use_case
+    UseCases::GenerateAndStoreLetter.new
   end
 end
