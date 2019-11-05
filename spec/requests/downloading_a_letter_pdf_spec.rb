@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-xdescribe 'downloading a letter PDF' do
+RSpec.describe 'Downloading a PDF', type: :request do
   let(:real_template_id) { 'letter_before_action' }
   let(:payment_ref) { Faker::Number.number(6) }
   let(:house_ref) { Faker::Number.number(6) }

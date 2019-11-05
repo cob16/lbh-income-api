@@ -6,9 +6,6 @@ class LettersController < ApplicationController
   end
 
   def create
-    letter_data = UseCases::ViewLetter.new.execute
-    _uuid = UseCases::SaveToCache.new(cache: Rails.cache).execute(data: letter_data)
-
     json = pdf_use_case_factory.get_preview.execute(
       payment_ref: params.fetch(:payment_ref),
       template_id: params.fetch(:template_id)
