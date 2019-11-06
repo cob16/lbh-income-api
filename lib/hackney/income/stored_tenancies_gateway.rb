@@ -45,7 +45,8 @@ module Hackney
               classification: classification_usecase.execute,
               patch_code: criteria.patch_code,
               courtdate: criteria.courtdate,
-              court_outcome: criteria.court_outcome
+              court_outcome: criteria.court_outcome,
+              eviction_date: criteria.eviction_date
             )
           end
         rescue ActiveRecord::RecordNotUnique
@@ -137,7 +138,8 @@ module Hackney
           patch_code: model.patch_code,
           classification: model.classification,
           courtdate: model.courtdate,
-          court_outcome: model.court_outcome
+          court_outcome: model.court_outcome,
+          eviction_date: model.eviction_date
         }
       end
     end
