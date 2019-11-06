@@ -62,6 +62,7 @@ RSpec.describe 'Letters', type: :request do
             'name' => 'Letter 1 in arrears fh',
             'id' => 'letter_1_in_arrears_FH'
           },
+          'user_name' => user.name,
           'document_id' => 1,
           'errors' => []
         }

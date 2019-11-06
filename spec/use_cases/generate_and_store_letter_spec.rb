@@ -9,11 +9,12 @@ describe UseCases::GenerateAndStoreLetter do
 
   let(:use_case) { described_class.new }
   let(:use_case_output) { use_case.execute(params) }
+  let(:user) { create(:user) }
   let(:params) do
     {
       payment_ref: payment_ref,
       template_id: 'letter_1_in_arrears_FH',
-      user_id: Faker::Number.number(3)
+      user_id: user.id
     }
   end
 
@@ -49,7 +50,7 @@ describe UseCases::GenerateAndStoreLetter do
 
     context 'when the missing data mandatory' do
       let(:payment_ref) { Faker::Number.number(4) }
-      let(:mandatory_fields) { Hackney::ServiceCharge::Letter::MANDATORY_LETTER_FIELDS }
+      let(:mandatory_fields) { Hackney::ServiceCharge::Letter::DEFAULT_MANDATORY_LETTER_FIELDS }
 
       it 'returns errors' do
         expect_any_instance_of(Hackney::Income::UniversalHousingLeaseholdGateway)

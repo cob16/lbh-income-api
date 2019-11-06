@@ -8,7 +8,8 @@ module UseCases
 
       letter_data = pdf_use_case_factory.get_preview.execute(
         payment_ref: payment_ref,
-        template_id: template_id
+        template_id: template_id,
+        user_id: user_id
       )
 
       return letter_data if letter_data[:errors].present?

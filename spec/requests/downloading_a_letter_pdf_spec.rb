@@ -8,7 +8,7 @@ RSpec.describe 'Downloading a PDF', type: :request do
   let(:house_ref) { Faker::Number.number(6) }
   let(:prop_ref) { Faker::Number.number(6) }
   let(:postcode) { Faker::Address.postcode }
-  let(:user_id) { Faker::Number.number(6) }
+  let(:user_id) { create(:user).id }
 
   before do
     mock_aws_client
