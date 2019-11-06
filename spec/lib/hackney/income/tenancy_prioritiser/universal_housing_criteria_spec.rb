@@ -15,6 +15,8 @@ describe Hackney::Income::TenancyPrioritiser::UniversalHousingCriteria, universa
 
   let(:court_outcome) { nil }
 
+  let(:eviction_date) { '2007-09-20 10:30:00' }
+
   let(:current_balance) { Faker::Number.decimal.to_f }
 
   before {
@@ -24,7 +26,8 @@ describe Hackney::Income::TenancyPrioritiser::UniversalHousingCriteria, universa
       nosp_notice_served_date: nosp_notice_served_date,
       nosp_notice_expiry_date: nosp_notice_expiry_date,
       courtdate: courtdate,
-      court_outcome: court_outcome
+      court_outcome: court_outcome,
+      eviction_date: eviction_date
     )
   }
 
@@ -63,6 +66,14 @@ describe Hackney::Income::TenancyPrioritiser::UniversalHousingCriteria, universa
 
     it 'returns a court_outcome' do
       expect(subject).to eq(court_outcome)
+    end
+  end
+
+  describe '#eviction_date' do
+    subject { criteria.eviction_date }
+
+    it 'returns an eviction date' do
+      expect(subject).to eq(eviction_date.to_date)
     end
   end
 

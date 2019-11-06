@@ -78,7 +78,8 @@ describe Hackney::Income::StoredTenanciesGateway do
           active_nosp: attributes.fetch(:criteria).active_nosp?,
           patch_code: attributes.fetch(:criteria).patch_code,
           courtdate: attributes.fetch(:criteria).courtdate,
-          court_outcome: attributes.fetch(:criteria).court_outcome
+          court_outcome: attributes.fetch(:criteria).court_outcome,
+          eviction_date: attributes.fetch(:criteria).eviction_date
         )
       end
 
@@ -160,7 +161,8 @@ describe Hackney::Income::StoredTenanciesGateway do
           active_nosp: attributes.fetch(:criteria).active_nosp?,
           patch_code: attributes.fetch(:criteria).patch_code,
           courtdate: attributes.fetch(:criteria).courtdate,
-          court_outcome: attributes.fetch(:criteria).court_outcome
+          court_outcome: attributes.fetch(:criteria).court_outcome,
+          eviction_date: attributes.fetch(:criteria).eviction_date
         )
       end
 
@@ -714,7 +716,8 @@ describe Hackney::Income::StoredTenanciesGateway do
       active_nosp: attributes.fetch(:criteria).active_nosp?,
       patch_code: attributes.fetch(:criteria).patch_code,
       courtdate: attributes.fetch(:criteria).courtdate,
-      court_outcome: attributes.fetch(:criteria).court_outcome
+      court_outcome: attributes.fetch(:criteria).court_outcome,
+      eviction_date: attributes.fetch(:criteria).eviction_date
     }
   end
 end
