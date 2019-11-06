@@ -10,8 +10,8 @@ RSpec.describe 'Letters', type: :request do
   let(:postcode) { Faker::Address.postcode }
   let(:leasedate) { Time.zone.now.beginning_of_hour }
   let(:template) { 'letter_1_in_arrears_FH' }
-  let(:user) { create(:user) }
-  let(:user_id) { user.id }
+  let(:username) { Faker::Name.name }
+  let(:email) { Faker::Internet.email }
 
   before do
     mock_aws_client
@@ -21,7 +21,7 @@ RSpec.describe 'Letters', type: :request do
   describe 'POST /api/v1/messages/letters' do
     it 'returns 404 with bogus payment ref' do
       post messages_letters_path, params: {
-        payment_ref: 'abc', template_id: 'letter_1_in_arrears_FH', user_id: user_id
+        payment_ref: 'abc', template_id: 'letter_1_in_arrears_FH', username: username, email: email
       }
 
       expect(response).to have_http_status(404)
@@ -30,7 +30,7 @@ RSpec.describe 'Letters', type: :request do
     it 'raises an error with bogus template_id' do
       expect {
         post messages_letters_path, params: {
-          payment_ref: 'abc', template_id: 'does not exist', user_id: user_id
+          payment_ref: 'abc', template_id: 'does not exist', username: username, email: email
         }
       }.to raise_error(TypeError)
     end
@@ -62,7 +62,7 @@ RSpec.describe 'Letters', type: :request do
             'name' => 'Letter 1 in arrears fh',
             'id' => 'letter_1_in_arrears_FH'
           },
-          'user_name' => user.name,
+          'username' => username,
           'document_id' => 1,
           'errors' => []
         }
@@ -70,7 +70,7 @@ RSpec.describe 'Letters', type: :request do
 
       it 'responds with a JSON object' do
         post messages_letters_path, params: {
-          payment_ref: payment_ref, template_id: template, user_id: user_id
+          payment_ref: payment_ref, template_id: template, username: username, email: email
         }
 
         # UUID: is always different can ignore this.
@@ -85,18 +85,18 @@ RSpec.describe 'Letters', type: :request do
       it 'creates a `Hackney::Cloud::Document`' do
         expect {
           post messages_letters_path, params: {
-            payment_ref: payment_ref, template_id: template, user_id: user_id
+            payment_ref: payment_ref, template_id: template, username: username, email: email
           }
         }.to change { Hackney::Cloud::Document.count }.from(0).to(1)
       end
 
       it 'stores the User ID on metadata of the Document' do
         post messages_letters_path, params: {
-          payment_ref: payment_ref, template_id: template, user_id: user_id
+          payment_ref: payment_ref, template_id: template, username: username, email: email
         }
 
         document = Hackney::Cloud::Document.last
-        expect(JSON.parse(document.metadata)['user_id'].to_i).to eq(user_id)
+        expect(JSON.parse(document.metadata)['username']).to eq(username)
         expect(JSON.parse(document.metadata)['template']['id']).to eq(template)
         expect(JSON.parse(document.metadata)['payment_ref']).to eq(payment_ref)
       end

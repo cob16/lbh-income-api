@@ -9,13 +9,17 @@ module UseCases
     def execute(letter_html:, uuid:, filename:, metadata:)
       extension = File.extname(filename)
 
+      metadata ||= {}
+
       @document_model.create(
         filename: filename,
         uuid: uuid,
         extension: extension,
         mime_type: Rack::Mime.mime_type(extension),
         status: UPLOADING_CLOUD_STATUS,
-        metadata: metadata.to_json
+        metadata: metadata.to_json,
+        email: metadata[:email],
+        username: metadata[:username]
       )
     end
   end

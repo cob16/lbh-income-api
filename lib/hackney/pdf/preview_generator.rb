@@ -21,7 +21,7 @@ module Hackney
         @logo = File.open(LOGO_PATH).read
       end
 
-      def execute(letter_params:, user_name:)
+      def execute(letter_params:, username:)
         @letter = Hackney::ServiceCharge::Letter.build(letter_params: letter_params, template_path: @template_path)
 
         @sender_address = ERB.new(File.open(SENDER_ADDRESS_PATH).read).result(binding)
@@ -42,7 +42,7 @@ module Hackney
 
         @signature_base64 = Base64.encode64(File.open(SIGNATURE_IMAGE).read)
 
-        @user_name = user_name
+        @username = username
         template = File.open(@template_path).read
         html = ERB.new(template).result(binding)
 
