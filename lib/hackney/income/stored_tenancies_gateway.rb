@@ -60,9 +60,10 @@ module Hackney
 
         query = query.offset((page_number - 1) * number_per_page).limit(number_per_page) if page_number.present? && number_per_page.present?
 
-        return query.order('eviction_date').map(&method(:build_tenancy_list_item)) if filters[:upcoming_evictions].present?
+        order_options   = 'eviction_date' if filters[:upcoming_evictions].present?
+        order_options ||= by_balance
 
-        query.order(by_balance).map(&method(:build_tenancy_list_item))
+        query.order(order_options).map(&method(:build_tenancy_list_item))
       end
 
       def number_of_pages_for_user(user_id:, number_per_page:, filters: {})
