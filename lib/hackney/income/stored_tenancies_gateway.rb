@@ -61,6 +61,7 @@ module Hackney
         query = query.offset((page_number - 1) * number_per_page).limit(number_per_page) if page_number.present? && number_per_page.present?
 
         order_options   = 'eviction_date' if filters[:upcoming_evictions].present?
+        order_options   = 'courtdate' if filters[:upcoming_court_dates].present?
         order_options ||= by_balance
 
         query.order(order_options).map(&method(:build_tenancy_list_item))
@@ -86,6 +87,7 @@ module Hackney
         end
 
         query = query.where('eviction_date >= ?', Time.zone.now.beginning_of_day) if filters[:upcoming_evictions].present?
+        query = query.where('courtdate >= ?', Time.zone.now.beginning_of_day) if filters[:upcoming_court_dates].present?
 
         if filters[:classification].present?
           query = query.where(classification: filters[:classification])
@@ -104,8 +106,7 @@ module Hackney
       end
 
       def only_show_immediate_actions?(filters)
-        filters_that_return_all_actions = [filters[:is_paused], filters[:full_patch], filters[:upcoming_evictions]]
-
+        filters_that_return_all_actions = [filters[:is_paused], filters[:full_patch], filters[:upcoming_evictions], filters[:upcoming_court_dates]]
         filters_that_return_all_actions.all? { |filter| filter == false || filter.nil? }
       end
 
