@@ -25,7 +25,7 @@ describe MyCasesController do
             is_paused: nil,
             classification: nil,
             patch: nil,
-            full_patch: nil, 
+            full_patch: nil,
             upcoming_evictions: nil
           })
 
@@ -54,7 +54,7 @@ describe MyCasesController do
             is_paused: nil,
             classification: nil,
             patch: nil,
-            full_patch: nil, 
+            full_patch: nil,
             upcoming_evictions: nil
           })
           .and_return(cases: [], number_per_page: 1)
@@ -111,7 +111,7 @@ describe MyCasesController do
             is_paused: nil,
             classification: nil,
             patch: patch,
-            full_patch: nil, 
+            full_patch: nil,
             upcoming_evictions: nil
           })
           .and_return(expected_result)
