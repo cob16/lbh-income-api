@@ -10,7 +10,8 @@ class MyCasesController < ApplicationController
         is_paused: my_cases_params[:is_paused],
         classification: my_cases_params[:recommended_actions],
         patch: my_cases_params[:patch],
-        full_patch: my_cases_params[:full_patch]
+        full_patch: my_cases_params[:full_patch],
+        upcoming_evictions: my_cases_params[:upcoming_evictions]
       }
     )
 
@@ -28,6 +29,8 @@ class MyCasesController < ApplicationController
 
     allowed_params[:page_number] = min_1(allowed_params[:page_number].to_i)
     allowed_params[:number_per_page] = min_1(allowed_params[:number_per_page].to_i)
+
+    allowed_params[:upcoming_evictions] = ActiveModel::Type::Boolean.new.cast(allowed_params[:upcoming_evictions])
 
     allowed_params
   end
