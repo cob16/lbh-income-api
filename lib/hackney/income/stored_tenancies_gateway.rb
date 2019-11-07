@@ -82,7 +82,7 @@ module Hackney
           end
         end
 
-        query = query.where('eviction_date >= ?', Date.today).order('eviction_date') if filters[:upcoming_evictions].present?
+        query = query.where('eviction_date >= ?', Time.zone.now.beginning_of_day).order('eviction_date') if filters[:upcoming_evictions].present?
 
         if filters[:classification].present?
           query = query.where(classification: filters[:classification])
