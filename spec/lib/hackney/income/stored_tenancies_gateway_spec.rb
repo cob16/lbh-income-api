@@ -455,10 +455,10 @@ describe Hackney::Income::StoredTenanciesGateway do
 
     before do
       cases_with_upcoming_evictions.times do |index|
-        create(:case_priority, assigned_user_id: user.id, balance: 40, eviction_date: Date.tomorrow + index)
+        create(:case_priority, assigned_user_id: user.id, balance: 40 + index, eviction_date: Date.tomorrow + index)
       end
-      cases_with_no_upcoming_evictions.times do |_index|
-        create(:case_priority, assigned_user_id: user.id, balance: 40)
+      cases_with_no_upcoming_evictions.times do |index|
+        create(:case_priority, assigned_user_id: user.id, balance: 40 + index)
       end
     end
 

@@ -60,6 +60,8 @@ module Hackney
 
         query = query.offset((page_number - 1) * number_per_page).limit(number_per_page) if page_number.present? && number_per_page.present?
 
+        return query.order('eviction_date').map(&method(:build_tenancy_list_item)) if filters[:upcoming_evictions].present?
+
         query.order(by_balance).map(&method(:build_tenancy_list_item))
       end
 
@@ -82,7 +84,7 @@ module Hackney
           end
         end
 
-        query = query.where('eviction_date >= ?', Time.zone.now.beginning_of_day).order('eviction_date') if filters[:upcoming_evictions].present?
+        query = query.where('eviction_date >= ?', Time.zone.now.beginning_of_day) if filters[:upcoming_evictions].present?
 
         if filters[:classification].present?
           query = query.where(classification: filters[:classification])
