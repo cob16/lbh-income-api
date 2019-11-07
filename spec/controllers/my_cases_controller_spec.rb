@@ -26,6 +26,7 @@ describe MyCasesController do
             classification: nil,
             patch: nil,
             full_patch: nil,
+            upcoming_evictions: nil,
             upcoming_court_dates: nil
           })
 
@@ -55,6 +56,7 @@ describe MyCasesController do
             classification: nil,
             patch: nil,
             full_patch: nil,
+            upcoming_evictions: nil,
             upcoming_court_dates: nil
           })
           .and_return(cases: [], number_per_page: 1)
@@ -90,6 +92,7 @@ describe MyCasesController do
             classification: nil,
             patch: nil,
             full_patch: nil,
+            upcoming_evictions: nil,
             upcoming_court_dates: nil
           })
           .and_return(expected_result)
@@ -112,6 +115,7 @@ describe MyCasesController do
             classification: nil,
             patch: patch,
             full_patch: nil,
+            upcoming_evictions: nil,
             upcoming_court_dates: nil
           })
           .and_return(expected_result)
