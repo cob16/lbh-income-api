@@ -475,9 +475,7 @@ describe Hackney::Income::StoredTenanciesGateway do
 
     it 'can return cases in the future' do
       create(:case_priority, assigned_user_id: user.id, balance: 40, eviction_date: Date.yesterday)
-      subject.each do |value|
-        expect(value[:eviction_date]).not_to be(Date.today)
-      end
+      expect(subject.map { |v| v[:eviction_date] }.min).to be >= Time.zone.today
     end
   end
 
