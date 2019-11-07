@@ -1,22 +1,22 @@
-class MyCasesController < ApplicationController
+class CasesController < ApplicationController
   REQUIRED_INDEX_PARAMS = %i[page_number number_per_page].freeze
 
   def index
-    response = income_use_case_factory.view_my_cases.execute(
-      page_number: my_cases_params[:page_number],
-      number_per_page: my_cases_params[:number_per_page],
+    response = income_use_case_factory.view_cases.execute(
+      page_number: cases_params[:page_number],
+      number_per_page: cases_params[:number_per_page],
       filters: {
-        is_paused: my_cases_params[:is_paused],
-        classification: my_cases_params[:recommended_actions],
-        patch: my_cases_params[:patch],
-        full_patch: my_cases_params[:full_patch]
+        is_paused: cases_params[:is_paused],
+        classification: cases_params[:recommended_actions],
+        patch: cases_params[:patch],
+        full_patch: cases_params[:full_patch]
       }
     )
 
     render json: response
   end
 
-  def my_cases_params
+  def cases_params
     params.require(REQUIRED_INDEX_PARAMS)
     allowed_params = params.permit(REQUIRED_INDEX_PARAMS + %i[is_paused patch recommended_actions full_patch])
 

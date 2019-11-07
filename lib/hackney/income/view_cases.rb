@@ -1,6 +1,6 @@
 module Hackney
   module Income
-    class ViewMyCases
+    class ViewCases
       Response = Struct.new(:cases, :number_of_pages)
 
       def initialize(tenancy_api_gateway:, stored_tenancies_gateway:)

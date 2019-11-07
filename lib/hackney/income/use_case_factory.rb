@@ -1,8 +1,8 @@
 module Hackney
   module Income
     class UseCaseFactory
-      def view_my_cases
-        Hackney::Income::ViewMyCases.new(
+      def view_cases
+        Hackney::Income::ViewCases.new(
           tenancy_api_gateway: tenancy_api_gateway,
           stored_tenancies_gateway: stored_tenancies_gateway
         )

@@ -1,14 +1,14 @@
 require 'rails_helper'
 
-describe Hackney::Income::ViewMyCases do
-  subject { view_my_cases.execute(page_number: page_number, number_per_page: number_per_page) }
+describe Hackney::Income::ViewCases do
+  subject { view_cases.execute(page_number: page_number, number_per_page: number_per_page) }
 
   let(:page_number) { Faker::Number.number(2).to_i }
   let(:number_per_page) { Faker::Number.number(2).to_i }
   let(:tenancy_api_gateway) { Hackney::Income::TenancyApiGatewayStub.new({}) }
   let(:stored_tenancies_gateway) { Hackney::Income::StoredTenancyGatewayStub.new({}) }
 
-  let(:view_my_cases) do
+  let(:view_cases) do
     described_class.new(
       tenancy_api_gateway: tenancy_api_gateway,
       stored_tenancies_gateway: stored_tenancies_gateway
@@ -125,7 +125,7 @@ describe Hackney::Income::ViewMyCases do
 
       context 'when filtering out paused cases' do
         subject {
-          view_my_cases.execute(
+          view_cases.execute(
             page_number: page_number,
             number_per_page: number_per_page,
             filters: {
@@ -162,7 +162,7 @@ describe Hackney::Income::ViewMyCases do
 
       context 'when filtering cases by patch' do
         subject {
-          view_my_cases.execute(
+          view_cases.execute(
             page_number: page_number,
             number_per_page: number_per_page,
             filters: {
