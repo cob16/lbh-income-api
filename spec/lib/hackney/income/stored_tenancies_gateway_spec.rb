@@ -439,16 +439,16 @@ describe Hackney::Income::StoredTenanciesGateway do
   context 'when there are tenancies with an upcoming courtdate' do
     let(:user) { create(:user) }
 
-    let(:cases_with_courtdate_within_a_week) { 5 }
-    let(:cases_with_courtdate_outside_a_week) { 5 }
+    let(:cases_with_courtdate_in_future) { 5 }
+    let(:cases_with_courtdate_in_past) { 5 }
 
     before do
-      cases_with_courtdate_within_a_week.times do
-        create(:case_priority, assigned_user_id: user.id, balance: 40, courtdate: Date.today + 5)
+      cases_with_courtdate_in_future.times do
+        create(:case_priority, assigned_user_id: user.id, balance: 40, classification: nil, courtdate: Date.today + 20)
       end
 
-      cases_with_courtdate_outside_a_week.times do
-        create(:case_priority, assigned_user_id: user.id, balance: 40, courtdate: Date.today + 29)
+      cases_with_courtdate_in_past.times do
+        create(:case_priority, assigned_user_id: user.id, balance: 40, classification: nil, courtdate: Date.today - 20)
       end
     end
 
@@ -457,43 +457,15 @@ describe Hackney::Income::StoredTenanciesGateway do
         gateway.get_tenancies_for_user(
           user_id: user.id,
           page_number: 1,
-          number_per_page: 50
+          number_per_page: 50,
+          filters: {
+            upcoming_court_dates: true
+          }
         )
       end
 
-      it 'returns all tenancies' do
-        expect(subject.count).to eq(cases_with_courtdate_within_a_week + cases_with_courtdate_outside_a_week)
-      end
-    end
-  end
-
-  context 'when there are tenancies with an upcoming courtdate' do
-    let(:user) { create(:user) }
-
-    let(:cases_with_courtdate_within_a_week) { 5 }
-    let(:cases_with_courtdate_outside_a_week) { 5 }
-
-    before do
-      cases_with_courtdate_within_a_week.times do
-        create(:case_priority, assigned_user_id: user.id, balance: 40, courtdate: Date.today + 5)
-      end
-
-      cases_with_courtdate_outside_a_week.times do
-        create(:case_priority, assigned_user_id: user.id, balance: 40, courtdate: Date.today + 29)
-      end
-    end
-
-    context 'when we call get_tenancies_for_user' do
-      subject do
-        gateway.get_tenancies_for_user(
-          user_id: user.id,
-          page_number: 1,
-          number_per_page: 50
-        )
-      end
-
-      it 'returns all tenancies' do
-        expect(subject.count).to eq(cases_with_courtdate_within_a_week + cases_with_courtdate_outside_a_week)
+      it 'returns only tenancies with an upcoming courtdate' do
+        expect(subject.count).to eq(cases_with_courtdate_in_future)
       end
     end
   end

@@ -60,7 +60,10 @@ module Hackney
 
         query = query.offset((page_number - 1) * number_per_page).limit(number_per_page) if page_number.present? && number_per_page.present?
 
-        query.order(by_balance).map(&method(:build_tenancy_list_item))
+        order_options   = 'courtdate' if filters[:upcoming_court_dates].present?
+        order_options ||= by_balance
+
+        query.order(order_options).map(&method(:build_tenancy_list_item))
       end
 
       def number_of_pages_for_user(user_id:, number_per_page:, filters: {})
@@ -82,6 +85,8 @@ module Hackney
           end
         end
 
+        query = query.where('courtdate >= ?', Time.zone.now.beginning_of_day) if filters[:upcoming_court_dates].present?
+
         if filters[:classification].present?
           query = query.where(classification: filters[:classification])
         elsif only_show_immediate_actions?(filters)
@@ -99,7 +104,7 @@ module Hackney
       end
 
       def only_show_immediate_actions?(filters)
-        filters_that_return_all_actions = [filters[:is_paused], filters[:full_patch]]
+        filters_that_return_all_actions = [filters[:is_paused], filters[:full_patch], filters[:upcoming_court_dates]]
 
         filters_that_return_all_actions.all? { |filter| filter == false || filter.nil? }
       end
