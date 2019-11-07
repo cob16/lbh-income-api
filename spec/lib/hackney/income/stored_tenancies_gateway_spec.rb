@@ -567,6 +567,50 @@ describe Hackney::Income::StoredTenanciesGateway do
       end
     end
   end
+  context 'when there are tenancies upcoming eviction dates' do
+    let(:user) { create(:user) }
+
+    let(:cases_with_upcoming_evictions) {5}
+    let(:cases_with_no_upcoming_evictions) {5}
+
+    before do
+      cases_with_upcoming_evictions.times do |index|
+        create(:case_priority, assigned_user_id: user.id, balance: 40, eviction_date: Date.tomorrow + index)
+      end
+      cases_with_no_upcoming_evictions.times do |index|
+        create(:case_priority, assigned_user_id: user.id, balance: 40)
+      end
+    end
+
+    subject do
+      gateway.get_tenancies_for_user(
+        user_id: user.id,
+        page_number: 1,
+        number_per_page: 50,
+        filters: {
+          upcoming_evictions: true
+        }
+      )
+    end
+
+    it 'can return cases with upcoming eviction dates' do
+      expect(subject.count).to eq(cases_with_upcoming_evictions)
+    end
+
+    it 'can return cases in order of their eviction date' do 
+      last_eviction_date_created = Date.tomorrow + cases_with_upcoming_evictions - 1
+      create(:case_priority, assigned_user_id: user.id, balance: 40,  eviction_date: Date.today)
+      expect(subject.first[:eviction_date]).to eq(Date.today)
+      expect(subject.last[:eviction_date]).to eq(last_eviction_date_created)
+    end
+
+    it 'can return cases in the future' do 
+      past_eviction_date_case = create(:case_priority, assigned_user_id: user.id, balance: 40,  eviction_date: Date.yesterday)
+      subject.each do |value| 
+        expect(value[:eviction_date]).not_to be(Date.today) 
+      end
+    end
+  end
 
   context 'when there are tenancies with different patches' do
     let(:patch_1) { Faker::Lorem.characters(3) }

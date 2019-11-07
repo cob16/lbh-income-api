@@ -88,6 +88,10 @@ module Hackney
           query = query.where.not(classification: :no_action).or(query.where(classification: nil))
         end
 
+        if filters[:upcoming_evictions]
+          query = query.where('eviction_date >= ?', Date.today).order('eviction_date')
+        end
+
         return query if filters[:is_paused].nil?
 
         if filters[:is_paused]
