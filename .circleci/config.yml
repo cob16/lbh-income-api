@@ -26,7 +26,7 @@ jobs:
       - store_artifacts:
           path: coverage
 
-  staging_release:
+  staging_release: &staging_release
     machine: true
     steps:
       - checkout
@@ -65,6 +65,9 @@ jobs:
           name: Force new application deployment
           command: ecs-deploy --region $AWS_REGION --cluster $ECS_STAGING_CLUSTER --service-name $ECS_STAGING_APP_NAME --image $ECR_IMAGE_URL:staging --timeout $ECS_DEPLOY_TIMEOUT --use-latest-task-def
           no_output_timeout: 20m
+  staging_release_manual:
+    <<: *staging_release
+
   production_release:
     machine: true
     steps:
@@ -100,6 +103,7 @@ jobs:
           name: Force new application deployment
           command: ecs-deploy --region $AWS_REGION --cluster $ECS_PRODUCTION_CLUSTER --service-name $ECS_PRODUCTION_APP_NAME --image $ECR_IMAGE_URL:production --timeout $ECS_DEPLOY_TIMEOUT --use-latest-task-def
           no_output_timeout: 20m
+
 workflows:
   version: 2
   continuous_delivery:
@@ -111,6 +115,19 @@ workflows:
           filters:
             branches:
               only: master
+      - permit_manual_staging_release:
+          type: approval
+          requires:
+            - check
+          filters:
+            branches:
+              ignore: master
+      - staging_release_manual:
+          requires:
+            - permit_manual_staging_release
+          filters:
+            branches:
+              ignore: master
       - permit_production_release:
           type: approval
           requires:
