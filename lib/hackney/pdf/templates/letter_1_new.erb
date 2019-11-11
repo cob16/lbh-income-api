@@ -3,7 +3,8 @@
 
 <div class="right">
   <%= @sender_address %>
-  <p>Our ref: REFREF</p>
+  <p>Your ref: <%= @letter.payment_ref %></p>
+  <p>Our ref: <%= @letter.tenancy_ref %></p>
   <%= @sending_date %>
 </div>
 
