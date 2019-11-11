@@ -5,7 +5,7 @@
   <%= @sender_address %>
   <p>Your ref: <%= @letter.payment_ref %></p>
   <p>Our ref: <%= @letter.tenancy_ref %></p>
-  <%= @sending_date %>
+  <%= @today_date %>
 </div>
 
 <div class="lessee_address">
@@ -19,8 +19,8 @@
 <div>
   Dear <%= @letter.lessee_short_name %>,
 
-  <p>Your rent account is <%= arrears_balance %> in debt.</p>
-  <h1>Please pay the full amount now using any of the following methods:</h1>
+  <p>Your rent account is <%= @letter.balance %> in debt.</p>
+  <h2>Please pay the full amount now using any of the following methods:</h2>
   <ul>
     <li>Hackney's Rent Account Website: <strong>https://www.hackney.gov.uk/rentaccount.</strong></li>
     <li>By telephone: 020 8356 5050 (24 hours payline)</li>
@@ -28,7 +28,7 @@
     <li>Visit <strong>https://www.hackney.gov.uk/housing-payments</strong>, to find out about all our available payment methods.</li>
   </ul>
 
-  <h1>If you are unable to do so please contact us as soon as you can:</h1>
+  <h2>If you are unable to do so please contact us as soon as you can:</h2>
   <ul>
     <li>By telephone on 020 8356 3100</li>
     <li>By email at <strong>income.services@hackney.gov.uk</strong></li>
@@ -36,17 +36,15 @@
     <li>Through a third party such as a family member, friend, carer, or an advice agency such as the Citizen's Advice Bureau. To ensure confidentiality, we will ask for proof that you have given them permission to discuss your account with us.</li>
   </ul>
 
-  <h1>More information</h1>
+  <h2>More information</h2>
   <p>You can view your rent account and make a payment at any time by visiting our website - <strong>www.hackney.gov.uk/rentaccount</strong> using your payment reference number shown above. If you think there might be a problem with your housing benefit claim, please contact the housing benefit team on 020 8365 3399 or visit them at Hackney Service Centre, 1 Hillman Street, London E8 1DY. If you are experiencing problems with Universal Credit, please contact the Department for Work and Pensions.</p>
-
   <p>We can put you in touch with someone who can provide you with financial help and assistance if you need it. Give us a call and we'll arrange this for you.</p>
 
   <p>
     Yours sincerely,<br>
-    Income Collection Officer<br>
+    <%= @user_name %><br>
     London Borough of Hackney
   </p>
 
 </div>
 
-<%= @payment_options %>
