@@ -118,6 +118,7 @@ describe Hackney::Income::ViewCases do
 
                                            courtdate: tenancy_priority_factors.fetch(:courtdate),
                                            court_outcome: tenancy_priority_factors.fetch(:court_outcome),
+                                           eviction_date: tenancy_priority_factors.fetch(:eviction_date),
 
                                            classification: tenancy_priority_factors.fetch(:classification)
                                          ))
@@ -249,6 +250,7 @@ describe Hackney::Income::ViewCases do
 
       courtdate: Date.today - 5,
       court_outcome: Faker::Lorem.word,
+      eviction_date: Date.today + 1.month,
 
       classification: 'no_action'
     }

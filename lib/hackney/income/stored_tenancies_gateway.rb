@@ -45,7 +45,8 @@ module Hackney
               classification: classification_usecase.execute,
               patch_code: criteria.patch_code,
               courtdate: criteria.courtdate,
-              court_outcome: criteria.court_outcome
+              court_outcome: criteria.court_outcome,
+              eviction_date: criteria.eviction_date
             )
           end
         rescue ActiveRecord::RecordNotUnique
@@ -59,7 +60,11 @@ module Hackney
 
         query = query.offset((page_number - 1) * number_per_page).limit(number_per_page) if page_number.present? && number_per_page.present?
 
-        query.order(by_balance).map(&method(:build_tenancy_list_item))
+        order_options   = 'eviction_date' if filters[:upcoming_evictions].present?
+        order_options   = 'courtdate' if filters[:upcoming_court_dates].present?
+        order_options ||= by_balance
+
+        query.order(order_options).map(&method(:build_tenancy_list_item))
       end
 
       def number_of_pages(number_per_page:, filters: {})
@@ -79,6 +84,9 @@ module Hackney
           end
         end
 
+        query = query.where('eviction_date >= ?', Time.zone.now.beginning_of_day) if filters[:upcoming_evictions].present?
+        query = query.where('courtdate >= ?', Time.zone.now.beginning_of_day) if filters[:upcoming_court_dates].present?
+
         if filters[:classification].present?
           query = query.where(classification: filters[:classification])
         elsif only_show_immediate_actions?(filters)
@@ -96,8 +104,7 @@ module Hackney
       end
 
       def only_show_immediate_actions?(filters)
-        filters_that_return_all_actions = [filters[:is_paused], filters[:full_patch]]
-
+        filters_that_return_all_actions = [filters[:is_paused], filters[:full_patch], filters[:upcoming_evictions], filters[:upcoming_court_dates]]
         filters_that_return_all_actions.all? { |filter| filter == false || filter.nil? }
       end
 
@@ -135,7 +142,8 @@ module Hackney
           patch_code: model.patch_code,
           classification: model.classification,
           courtdate: model.courtdate,
-          court_outcome: model.court_outcome
+          court_outcome: model.court_outcome,
+          eviction_date: model.eviction_date
         }
       end
     end

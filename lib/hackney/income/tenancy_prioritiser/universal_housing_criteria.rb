@@ -35,6 +35,9 @@ module Hackney
             DECLARE @CourtOutcome VARCHAR(3) = (
               SELECT u_court_outcome FROM [dbo].[tenagree] WHERE tag_ref = @TenancyRef
             )
+            DECLARE @EvictionDate SMALLDATETIME = (
+              SELECT evictdate FROM [dbo].[tenagree] WHERE tag_ref = @TenancyRef
+            )
 
             DECLARE @WeeklyRent NUMERIC(9, 2) = (
               SELECT rent FROM [dbo].[tenagree] WHERE tag_ref = @TenancyRef
@@ -106,6 +109,7 @@ module Hackney
               @NospExpiryDate as nosp_expiry_date,
               @Courtdate as courtdate,
               @CourtOutcome as court_outcome,
+              @EvictionDate as eviction_date,
               @Payment1Value as payment_1_value,
               @Payment1Date as payment_1_date,
               @Payment2Value as payment_2_value,
@@ -160,6 +164,10 @@ module Hackney
 
         def court_outcome
           attributes[:court_outcome]
+        end
+
+        def eviction_date
+          attributes[:eviction_date]
         end
 
         def days_in_arrears

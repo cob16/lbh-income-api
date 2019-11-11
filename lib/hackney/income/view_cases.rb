@@ -74,10 +74,9 @@ module Hackney
           broken_court_order: assigned_tenancy.fetch(:broken_court_order),
           nosp_served: assigned_tenancy.fetch(:nosp_served),
           active_nosp: assigned_tenancy.fetch(:active_nosp),
-
           courtdate: assigned_tenancy.fetch(:courtdate),
           court_outcome: assigned_tenancy.fetch(:court_outcome),
-
+          eviction_date: assigned_tenancy.fetch(:eviction_date),
           classification: assigned_tenancy.fetch(:classification)
         }
       end

@@ -78,7 +78,8 @@ describe Hackney::Income::StoredTenanciesGateway do
           active_nosp: attributes.fetch(:criteria).active_nosp?,
           patch_code: attributes.fetch(:criteria).patch_code,
           courtdate: attributes.fetch(:criteria).courtdate,
-          court_outcome: attributes.fetch(:criteria).court_outcome
+          court_outcome: attributes.fetch(:criteria).court_outcome,
+          eviction_date: attributes.fetch(:criteria).eviction_date
         )
       end
 
@@ -334,45 +335,57 @@ describe Hackney::Income::StoredTenanciesGateway do
     end
   end
 
-  context 'when there are tenancies with an upcoming courtdate' do
-    let(:cases_with_courtdate_within_a_week) { 5 }
-    let(:cases_with_courtdate_outside_a_week) { 5 }
+  context 'when there are tenancies upcoming eviction dates' do
+    subject do
+      gateway.get_tenancies(
+        page_number: 1,
+        number_per_page: 50,
+        filters: {
+          upcoming_evictions: true
+        }
+      )
+    end
+
+    let(:cases_with_upcoming_evictions) { 5 }
+    let(:cases_with_no_upcoming_evictions) { 5 }
 
     before do
-      cases_with_courtdate_within_a_week.times do
-        create(:case_priority, balance: 40, courtdate: Date.today + 5)
+      cases_with_upcoming_evictions.times do |index|
+        create(:case_priority, balance: 40 + index, eviction_date: Date.tomorrow + index)
       end
-
-      cases_with_courtdate_outside_a_week.times do
-        create(:case_priority, balance: 40, courtdate: Date.today + 29)
+      cases_with_no_upcoming_evictions.times do |index|
+        create(:case_priority, balance: 40 + index)
       end
     end
 
-    context 'when we call get_tenancies' do
-      subject do
-        gateway.get_tenancies(
-          page_number: 1,
-          number_per_page: 50
-        )
-      end
+    it 'can return cases with upcoming eviction dates' do
+      expect(subject.count).to eq(cases_with_upcoming_evictions)
+    end
 
-      it 'returns all tenancies' do
-        expect(subject.count).to eq(cases_with_courtdate_within_a_week + cases_with_courtdate_outside_a_week)
-      end
+    it 'can return cases in order of their eviction date' do
+      last_eviction_date_created = Date.tomorrow + cases_with_upcoming_evictions - 1
+      create(:case_priority, balance: 40, eviction_date: Date.today)
+      expect(subject.first[:eviction_date]).to eq(Date.today)
+      expect(subject.last[:eviction_date]).to eq(last_eviction_date_created)
+    end
+
+    it 'can return cases in the future' do
+      create(:case_priority, balance: 40, eviction_date: Date.yesterday)
+      expect(subject.map { |v| v[:eviction_date] }.min).to be >= Time.zone.today
     end
   end
 
   context 'when there are tenancies with an upcoming courtdate' do
-    let(:cases_with_courtdate_within_a_week) { 5 }
-    let(:cases_with_courtdate_outside_a_week) { 5 }
+    let(:cases_with_courtdate_in_future) { 5 }
+    let(:cases_with_courtdate_in_past) { 5 }
 
     before do
-      cases_with_courtdate_within_a_week.times do
-        create(:case_priority, balance: 40, courtdate: Date.today + 5)
+      cases_with_courtdate_in_future.times do
+        create(:case_priority, balance: 40, classification: nil, courtdate: Date.today + 20)
       end
 
-      cases_with_courtdate_outside_a_week.times do
-        create(:case_priority, balance: 40, courtdate: Date.today + 29)
+      cases_with_courtdate_in_past.times do
+        create(:case_priority, balance: 40, classification: nil, courtdate: Date.today - 20)
       end
     end
 
@@ -380,12 +393,15 @@ describe Hackney::Income::StoredTenanciesGateway do
       subject do
         gateway.get_tenancies(
           page_number: 1,
-          number_per_page: 50
+          number_per_page: 50,
+          filters: {
+            upcoming_court_dates: true
+          }
         )
       end
 
-      it 'returns all tenancies' do
-        expect(subject.count).to eq(cases_with_courtdate_within_a_week + cases_with_courtdate_outside_a_week)
+      it 'returns only tenancies with an upcoming courtdate' do
+        expect(subject.count).to eq(cases_with_courtdate_in_future)
       end
     end
   end
@@ -601,7 +617,8 @@ describe Hackney::Income::StoredTenanciesGateway do
       active_nosp: attributes.fetch(:criteria).active_nosp?,
       patch_code: attributes.fetch(:criteria).patch_code,
       courtdate: attributes.fetch(:criteria).courtdate,
-      court_outcome: attributes.fetch(:criteria).court_outcome
+      court_outcome: attributes.fetch(:criteria).court_outcome,
+      eviction_date: attributes.fetch(:criteria).eviction_date
     }
   end
 end
