@@ -17,12 +17,11 @@ Our Reference: <%= @letter.tenancy_ref %>
 <%= @letter.correspondence_address3 %> <br>
 <%= @letter.correspondence_address4 %> <br>
 <%= @letter.correspondence_address5 %> <br>
-<%= address 6 %> <br>
 <%= @letter.correspondence_postcode %>
 </div>
 
 <div>
-<%= Time.now.strftime('%d %B %Y') %>
+<%= @today_date %>
 <h2>Rent arrears <%= @letter.balance %> - avoid court action</h2>
 <p>Dear <%= @letter.lessee_short_name %></p>
 <p>You rent account remains in arrears. To avoid court action you need to contact us immediately using the contact details at the top of this letter, so that we can try to resolve this problem.</p>
