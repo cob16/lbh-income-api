@@ -31,6 +31,7 @@ describe Hackney::PDF::Preview do
     }
   end
   let(:test_pay_ref) { 1_234_567_890 }
+  let(:test_user_group) { 'magic-group' }
   let(:test_letter_params) do
     {
       payment_ref: test_pay_ref,
@@ -54,7 +55,12 @@ describe Hackney::PDF::Preview do
     expect(leasehold_information_gateway).to receive(:get_leasehold_info).with(payment_ref: test_pay_ref).and_return(test_letter_params)
     expect(get_templates_gateway).to receive(:execute).and_return([test_template])
 
-    preview = subject.execute(payment_ref: test_pay_ref, template_id: test_template_id, user_id: test_user.id)
+    preview = subject.execute(
+      payment_ref: test_pay_ref,
+      template_id: test_template_id,
+      user_id: test_user.id,
+      user_groups: [test_user_group]
+    )
 
     expect(preview).to include(
       case: test_letter_params,
@@ -86,7 +92,12 @@ describe Hackney::PDF::Preview do
       expect(leasehold_information_gateway).to receive(:get_leasehold_info).with(payment_ref: test_pay_ref).and_return(test_letter_params)
       expect(get_templates_gateway).to receive(:execute).and_return([test_template])
 
-      preview = subject.execute(payment_ref: test_pay_ref, template_id: test_template_id, user_id: test_user.id)
+      preview = subject.execute(
+        payment_ref: test_pay_ref,
+        template_id: test_template_id,
+        user_id: test_user.id,
+        user_groups: [test_user_group]
+      )
 
       expect(preview).to include(
         case: test_letter_params,

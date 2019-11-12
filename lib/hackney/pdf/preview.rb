@@ -7,8 +7,8 @@ module Hackney
         @users_gateway = users_gateway
       end
 
-      def execute(payment_ref:, template_id:, user_id:)
-        template = get_template_by_id(template_id)
+      def execute(payment_ref:, template_id:, user_id:, user_groups:)
+        template = get_template_by_id(template_id, user_groups)
         leasehold_info = get_leasehold_info(payment_ref)
         user = @users_gateway.find_user(id: user_id)
 
@@ -34,8 +34,8 @@ module Hackney
         @leasehold_information_gateway.get_leasehold_info(payment_ref: payment_ref)
       end
 
-      def get_template_by_id(template_id)
-        templates = @get_templates_gateway.execute
+      def get_template_by_id(template_id, user_groups)
+        templates = @get_templates_gateway.execute(user_groups: user_groups)
         templates[templates.index { |temp| temp[:id] == template_id }]
       end
     end
