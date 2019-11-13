@@ -488,4 +488,8 @@ describe Hackney::Income::TenancyPrioritiser::UniversalHousingCriteria, universa
       end
     end
   end
+
+  it 'has the same methods as the stub' do
+    expect(criteria.methods).to match_array(Stubs::StubCriteria.new.methods)
+  end
 end
