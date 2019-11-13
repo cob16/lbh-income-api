@@ -1,13 +1,15 @@
 module Hackney
   module PDF
     class GetTemplates
-      LEASEHOLD_SERVICES_TEMPLATE_DIRECTORY_PATH = 'lib/hackney/pdf/templates/leasehold'.freeze
-      INCOME_COLLECTION_TEMPLATE_DIRECTORY_PATH = 'lib/hackney/pdf/templates/income'.freeze
+      LEASEHOLD_SERVICES_TEMPLATE_DIRECTORY_PATH = 'lib/hackney/pdf/templates/leasehold/'.freeze
+      INCOME_COLLECTION_TEMPLATE_DIRECTORY_PATH = 'lib/hackney/pdf/templates/income/'.freeze
       LEASEHOLD_SERVICES_GROUP = 'leasehold-services-group-1'.freeze
       INCOME_COLLECTION_GROUP = 'income-collection-group-1'.freeze
 
       def execute(user_groups:)
-        Dir.glob("#{get_template_directory_path(user_groups)}*.erb").map do |f|
+        path = get_template_directory_path(user_groups)
+
+        Dir.glob("#{path}*.erb").map do |f|
           template_meta_data = get_meta_data(f)
           { path: f, name: template_meta_data[:name], id: template_meta_data[:id] }
         end
