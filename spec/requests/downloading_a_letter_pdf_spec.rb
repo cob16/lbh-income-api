@@ -7,6 +7,7 @@ RSpec.describe 'Downloading a PDF', type: :request do
   let(:payment_ref) { Faker::Number.number(6) }
   let(:house_ref) { Faker::Number.number(6) }
   let(:prop_ref) { Faker::Number.number(6) }
+  let(:tenancy_ref) { Faker::Number.number(6) }
   let(:postcode) { Faker::Address.postcode }
   let(:username) { Faker::Name.name }
   let(:email) { Faker::Internet.email }
@@ -16,19 +17,57 @@ RSpec.describe 'Downloading a PDF', type: :request do
     create_valid_uh_records_for_a_letter
   end
 
-  it 'responds with a PDF when I call preview then documents' do
-    post messages_letters_path, params: {
-      payment_ref: payment_ref, template_id: real_template_id, username: username, email: email
-    }
+  context 'when I call preview then documents' do
+    before do
+      post messages_letters_path, params: {
+        payment_ref: payment_ref, template_id: real_template_id, username: username, email: email
+      }
 
-    letter_json = JSON.parse(response.body)
+      letter_json = JSON.parse(response.body)
+      get "/api/v1/documents/#{letter_json['document_id']}/download#{query_string}"
+    end
 
-    expect(letter_json['errors']).to eq([])
-    expect(letter_json['document_id']).not_to be_nil
+    context 'with a username' do
+      let(:query_string) { "?username=#{username}" }
 
-    get "/api/v1/documents/#{letter_json['document_id']}/download/"
+      it 'responds with a PDF' do
+        expect(response.headers['Content-Type']).to eq('application/pdf')
+      end
 
-    expect(response.headers['Content-Type']).to eq('application/pdf')
+      xit 'asks the tenancy API to record an action' do
+        expect(a_request(
+          :post, 'tenancy-api/api/v2/tenancies/arrears-action-diary'
+        )
+            .with(body: {
+              tenancyAgreementRef: tenancy_ref,
+              actionCode: 'SLB',
+              actionCategory: 'LBA sent (SC)',
+              comment: 'Sent a Letter Before Action',
+              username: username
+            })).to have_been_made.once
+      end
+    end
+
+    context 'without a username' do
+      let(:query_string) { "?username=#{username}" }
+
+      it 'responds with a PDF' do
+        expect(response.headers['Content-Type']).to eq('application/pdf')
+      end
+
+      it 'does not ask the tenancy API to record an action' do
+        expect(a_request(
+          :post, 'tenancy-api/api/v2/tenancies/arrears-action-diary'
+        )
+            .with(body: {
+              tenancyAgreementRef: tenancy_ref,
+              actionCode: 'SLB',
+              actionCategory: 'LBA sent (SC)',
+              comment: 'Sent a Letter Before Action',
+              username: username
+            })).not_to have_been_made
+      end
+    end
   end
 
   def create_valid_uh_records_for_a_letter
@@ -38,7 +77,7 @@ RSpec.describe 'Downloading a PDF', type: :request do
     )
     create_uh_tenancy_agreement(
       prop_ref: prop_ref,
-      tenancy_ref: Faker::Number.number(6),
+      tenancy_ref: tenancy_ref,
       u_saff_rentacc: payment_ref,
       house_ref: house_ref
     )
