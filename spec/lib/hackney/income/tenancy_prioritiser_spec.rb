@@ -1,7 +1,10 @@
 require 'rails_helper'
 
 describe Hackney::Income::TenancyPrioritiser do
-  let(:criteria) { Stubs::StubCriteria.new }
+  let(:attributes) { { active_agreement: active_agreement } }
+  let(:active_agreement) { nil }
+
+  let(:criteria) { Stubs::StubCriteria.new(attributes) }
   let(:weightings) { Hackney::Income::TenancyPrioritiser::PriorityWeightings.new }
 
   let(:subject) { described_class.new(criteria: criteria, weightings: weightings) }
@@ -67,9 +70,9 @@ describe Hackney::Income::TenancyPrioritiser do
     context 'when a case is green but score would drive band to amber but maintaining an agreement' do
       let(:computed_priority_score) { described_class::AMBER_SCORE_THRESHOLD + 1 }
       let(:computed_priority_band) { :green }
+      let(:active_agreement) { true }
 
       it 'stays green' do
-        criteria.active_agreement = true
         expect(subject.priority_band).to eq(:green)
       end
     end
