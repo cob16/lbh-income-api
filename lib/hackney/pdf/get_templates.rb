@@ -9,7 +9,7 @@ module Hackney
       def execute(user_groups:)
         path = get_template_directory_path(user_groups)
 
-        Dir.glob("#{path}*.erb").map do |f|
+        Dir.glob(path).map do |f|
           template_meta_data = get_meta_data(f)
           { path: f, name: template_meta_data[:name], id: template_meta_data[:id] }
         end
@@ -32,10 +32,11 @@ module Hackney
         File.basename(file_path, '.*')
       end
 
-      # TODO: need to figure out what to do when a user belongs in both....
       def get_template_directory_path(groups)
-        return LEASEHOLD_SERVICES_TEMPLATE_DIRECTORY_PATH if groups.include?(LEASEHOLD_SERVICES_GROUP)
-        return INCOME_COLLECTION_TEMPLATE_DIRECTORY_PATH if groups.include?(INCOME_COLLECTION_GROUP)
+        paths = []
+        paths << LEASEHOLD_SERVICES_TEMPLATE_DIRECTORY_PATH if groups.include?(LEASEHOLD_SERVICES_GROUP)
+        paths << INCOME_COLLECTION_TEMPLATE_DIRECTORY_PATH if groups.include?(INCOME_COLLECTION_GROUP)
+        paths.map { |path| "#{path}*.erb" }
       end
     end
   end
