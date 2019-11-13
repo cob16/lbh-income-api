@@ -52,4 +52,10 @@ describe Hackney::PDF::GetTemplates do
              )).to eq([test_template])
     end
   end
+
+  context 'when user is not in any appropriate group' do
+    it 'no templates are found' do
+      expect(subject.execute(user_groups: ['muffins'])).to eq([])
+    end
+  end
 end
