@@ -9,8 +9,6 @@ module UseCases
     def execute(letter_html:, uuid:, filename:, metadata:)
       extension = File.extname(filename)
 
-      metadata ||= {}
-
       @document_model.create(
         filename: filename,
         uuid: uuid,
