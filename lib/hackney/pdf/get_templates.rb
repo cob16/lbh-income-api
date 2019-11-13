@@ -32,7 +32,7 @@ module Hackney
         File.basename(file_path, '.*')
       end
 
-      # TODO need to figure out what to do when a user belongs in both....
+      # TODO: need to figure out what to do when a user belongs in both....
       def get_template_directory_path(groups)
         return LEASEHOLD_SERVICES_TEMPLATE_DIRECTORY_PATH if groups.include?(LEASEHOLD_SERVICES_GROUP)
         return INCOME_COLLECTION_TEMPLATE_DIRECTORY_PATH if groups.include?(INCOME_COLLECTION_GROUP)

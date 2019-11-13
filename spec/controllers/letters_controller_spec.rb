@@ -4,19 +4,19 @@ describe LettersController, type: :controller do
   let(:template_path) { 'path/to/temp' }
   let(:template_id) { 'letter_1_in_arrears_FH' }
   let(:template_name) { 'Letter 1 In Arrears FH' }
-  let(:user_group) {Hackney::PDF::GetTemplates::LEASEHOLD_SERVICES_GROUP}
+  let(:user_group) { Hackney::PDF::GetTemplates::LEASEHOLD_SERVICES_GROUP }
 
   describe '#get_templates' do
     it 'gets letter templates' do
       expect_any_instance_of(Hackney::PDF::GetTemplates)
         .to receive(:execute)
-              .with(user_groups: [user_group]).and_return(
-                    path: template_path,
-                    id: template_id,
-                    name: template_name
-                  )
+        .with(user_groups: [user_group]).and_return(
+          path: template_path,
+          id: template_id,
+          name: template_name
+        )
 
-      get :get_templates, params: {user_groups: user_group }
+      get :get_templates, params: { user_groups: user_group }
 
       expect(response.body).to eq(
         {
@@ -43,11 +43,11 @@ describe LettersController, type: :controller do
     context 'when all data is is found' do
       it 'generates pdf(html) preview with template details, case and empty errors' do
         expect(generate_and_store_use_case_spy).to receive(:execute).with(
-          payment_ref: payment_ref, template_id: template_id, user_id: user_id
+          payment_ref: payment_ref, template_id: template_id, user_id: user_id, user_groups: user_group
         ).and_return(dummy_json_hash)
 
         post :create, params: {
-          payment_ref: payment_ref, template_id: template_id, user_id: user_id
+          payment_ref: payment_ref, template_id: template_id, user_id: user_id, user_groups: user_group
         }
 
         expect(response.status).to eq(200)
@@ -61,7 +61,10 @@ describe LettersController, type: :controller do
         expect(generate_and_store_use_case_spy).to receive(:execute).and_raise(Hackney::Income::TenancyNotFoundError)
 
         post :create, params: {
-          payment_ref: not_found_payment_ref, template_id: template_id, user_id: user_id
+          payment_ref: not_found_payment_ref,
+          template_id: template_id,
+          user_id: user_id,
+          user_groups: user_group
         }
 
         expect(response.status).to eq(404)

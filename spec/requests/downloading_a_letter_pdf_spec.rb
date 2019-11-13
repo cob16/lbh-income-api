@@ -9,6 +9,7 @@ RSpec.describe 'Downloading a PDF', type: :request do
   let(:prop_ref) { Faker::Number.number(6) }
   let(:postcode) { Faker::Address.postcode }
   let(:user_id) { create(:user).id }
+  let(:user_group) { Hackney::PDF::GetTemplates::LEASEHOLD_SERVICES_GROUP }
 
   before do
     mock_aws_client
@@ -17,7 +18,10 @@ RSpec.describe 'Downloading a PDF', type: :request do
 
   it 'responds with a PDF when I call preview then documents' do
     post messages_letters_path, params: {
-      payment_ref: payment_ref, template_id: real_template_id, user_id: user_id
+      payment_ref: payment_ref,
+      template_id: real_template_id,
+      user_id: user_id,
+      user_groups: user_group
     }
 
     letter_json = JSON.parse(response.body)
