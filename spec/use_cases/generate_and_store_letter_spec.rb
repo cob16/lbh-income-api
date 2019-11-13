@@ -14,7 +14,8 @@ describe UseCases::GenerateAndStoreLetter do
     {
       payment_ref: payment_ref,
       template_id: 'letter_1_in_arrears_FH',
-      user_id: user.id
+      user_id: user.id,
+      user_groups: [Hackney::PDF::GetTemplates::LEASEHOLD_SERVICES_GROUP]
     }
   end
 
