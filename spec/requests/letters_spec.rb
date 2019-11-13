@@ -10,9 +10,9 @@ RSpec.describe 'Letters', type: :request do
   let(:postcode) { Faker::Address.postcode }
   let(:leasedate) { Time.zone.now.beginning_of_hour }
   let(:template) { 'letter_1_in_arrears_FH' }
-  let(:user) { create(:user) }
-  let(:user_id) { user.id }
   let(:user_group) { Hackney::PDF::GetTemplates::LEASEHOLD_SERVICES_GROUP }
+  let(:username) { Faker::Name.name }
+  let(:email) { Faker::Internet.email }
 
   before do
     mock_aws_client
@@ -24,8 +24,9 @@ RSpec.describe 'Letters', type: :request do
       post messages_letters_path, params: {
         payment_ref: 'abc',
         template_id: 'letter_1_in_arrears_FH',
-        user_id: user_id,
-        user_groups: user_group
+        user_groups: user_group,
+        username: username,
+        email: email
       }
 
       expect(response).to have_http_status(404)
@@ -36,8 +37,9 @@ RSpec.describe 'Letters', type: :request do
         post messages_letters_path, params: {
           payment_ref: 'abc',
           template_id: 'does not exist',
-          user_id: user_id,
-          user_groups: user_group
+          user_groups: user_group,
+          username: username,
+          email: email
         }
       }.to raise_error(TypeError)
     end
@@ -69,7 +71,7 @@ RSpec.describe 'Letters', type: :request do
             'name' => 'Letter 1 in arrears fh',
             'id' => 'letter_1_in_arrears_FH'
           },
-          'user_name' => user.name,
+          'username' => username,
           'document_id' => 1,
           'errors' => []
         }
@@ -79,8 +81,9 @@ RSpec.describe 'Letters', type: :request do
         post messages_letters_path, params: {
           payment_ref: payment_ref,
           template_id: template,
-          user_id: user_id,
-          user_groups: user_group
+          user_groups: user_group,
+          username: username,
+          email: email
         }
 
         # UUID: is always different can ignore this.
@@ -95,18 +98,26 @@ RSpec.describe 'Letters', type: :request do
       it 'creates a `Hackney::Cloud::Document`' do
         expect {
           post messages_letters_path, params: {
-            payment_ref: payment_ref, template_id: template, user_id: user_id, user_groups: user_group
+            payment_ref: payment_ref,
+            template_id: template,
+            user_groups: user_group,
+            username: username,
+            email: email
           }
         }.to change { Hackney::Cloud::Document.count }.from(0).to(1)
       end
 
       it 'stores the User ID on metadata of the Document' do
         post messages_letters_path, params: {
-          payment_ref: payment_ref, template_id: template, user_id: user_id, user_groups: user_group
+          payment_ref: payment_ref,
+          template_id: template,
+          user_groups: user_group,
+          username: username,
+          email: email
         }
 
         document = Hackney::Cloud::Document.last
-        expect(JSON.parse(document.metadata)['user_id'].to_i).to eq(user_id)
+        expect(JSON.parse(document.metadata)['username']).to eq(username)
         expect(JSON.parse(document.metadata)['template']['id']).to eq(template)
         expect(JSON.parse(document.metadata)['payment_ref']).to eq(payment_ref)
       end
@@ -115,12 +126,15 @@ RSpec.describe 'Letters', type: :request do
 
   describe 'POST /api/v1/messages/letters/send' do
     let(:uuid) { existing_letter[:uuid] }
+    let(:username) { Faker::Name.name }
+    let(:email) { Faker::Internet.email }
     let(:existing_letter) do
       generate_and_store_letter(
         payment_ref: payment_ref,
         template_id: template,
-        user_id: user_id,
-        user_groups: user_group
+        user_groups: user_group,
+        username: username,
+        email: email
       )
     end
 
@@ -130,34 +144,45 @@ RSpec.describe 'Letters', type: :request do
       end
 
       it 'is a No Content (204) status' do
-        post messages_letters_send_path, params: { uuid: uuid, user_id: user_id, user_groups: user_group }
-
+        post messages_letters_send_path, params: {
+          uuid: uuid,
+          user_groups: user_group,
+          username: username,
+          email: email
+        }
         expect(response).to be_no_content
       end
 
       it 'adds a `Hackney::Income::Jobs::SendLetterToGovNotifyJob` to ActiveJob' do
         expect {
-          post messages_letters_send_path, params: { uuid: uuid, user_id: user_id, user_groups: user_group }
+          post messages_letters_send_path, params: {
+            uuid: uuid,
+            username: username,
+            email: email,
+            user_groups: user_group
+          }
         }.to have_enqueued_job(Hackney::Income::Jobs::SendLetterToGovNotifyJob)
+      end
+
+      it "stores the User's details on metadata of the Document" do
+        post messages_letters_send_path, params: {
+          uuid: uuid,
+          username: username,
+          email: email,
+          user_groups: user_group
+        }
+
+        document = Hackney::Cloud::Document.last
+        expect(JSON.parse(document.metadata)['username']).to eq(username)
       end
 
       context 'with a bogus UUID' do
         it 'throws a `ActiveRecord::RecordNotFound`' do
           expect {
             post messages_letters_send_path, params: {
-              uuid: SecureRandom.uuid, user_id: user_id, user_groups: user_group
+              uuid: SecureRandom.uuid, username: username, email: email, user_groups: user_group
             }
           }.to raise_error(ActiveRecord::RecordNotFound)
-        end
-      end
-
-      context 'with a bogus User ID' do
-        it 'adds a `Hackney::Income::Jobs::SendLetterToGovNotifyJob` to ActiveJob' do
-          expect {
-            post messages_letters_send_path, params: {
-              uuid: uuid, user_id: Faker::Number.number(4), user_groups: user_group
-            }
-          }.to have_enqueued_job(Hackney::Income::Jobs::SendLetterToGovNotifyJob)
         end
       end
     end
@@ -166,7 +191,7 @@ RSpec.describe 'Letters', type: :request do
       context 'with a random UUID' do
         it 'throws a `ActiveRecord::RecordNotFound`' do
           expect {
-            post messages_letters_send_path, params: { uuid: SecureRandom.uuid, user_id: user_id }
+            post messages_letters_send_path, params: { uuid: SecureRandom.uuid, username: username, email: email }
           }.to raise_error(ActiveRecord::RecordNotFound)
         end
       end
@@ -199,12 +224,13 @@ RSpec.describe 'Letters', type: :request do
     create_uh_rent(prop_ref: property_ref, sc_leasedate: leasedate)
   end
 
-  def generate_and_store_letter(payment_ref:, template_id:, user_id:, user_groups:)
+  def generate_and_store_letter(payment_ref:, template_id:, user_groups:, username:, email:)
     UseCases::GenerateAndStoreLetter.new.execute(
       payment_ref: payment_ref,
       template_id: template_id,
-      user_id: user_id,
-      user_groups: user_groups
+      user_groups: user_groups,
+      username: username,
+      email: email
     )
   end
 end

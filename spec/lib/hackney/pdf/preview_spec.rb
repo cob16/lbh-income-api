@@ -4,25 +4,13 @@ describe Hackney::PDF::Preview do
   subject do
     described_class.new(
       get_templates_gateway: get_templates_gateway,
-      leasehold_information_gateway: leasehold_information_gateway,
-      users_gateway: users_gateway
+      leasehold_information_gateway: leasehold_information_gateway
     )
   end
 
   let(:get_templates_gateway) { instance_double(Hackney::PDF::GetTemplates) }
   let(:leasehold_information_gateway) { instance_double(Hackney::Income::UniversalHousingLeaseholdGateway) }
-  let(:users_gateway) { Hackney::Income::SqlUsersGateway.new }
-  let(:test_user) do
-    Hackney::Income::Models::User.create(
-      provider_uid: 'close-to-me',
-      provider: 'universal',
-      name: 'Robert Smith',
-      email: 'old-email@the-cure.com',
-      first_name: 'Robert',
-      last_name: 'Smith',
-      provider_permissions: '12345.98765'
-    )
-  end
+  let(:username) { Faker::Name.name }
   let(:test_template_id) { 123_123 }
   let(:test_template) do
     {
@@ -58,7 +46,7 @@ describe Hackney::PDF::Preview do
     preview = subject.execute(
       payment_ref: test_pay_ref,
       template_id: test_template_id,
-      user_id: test_user.id,
+      username: username,
       user_groups: [test_user_group]
     )
 
@@ -95,7 +83,7 @@ describe Hackney::PDF::Preview do
       preview = subject.execute(
         payment_ref: test_pay_ref,
         template_id: test_template_id,
-        user_id: test_user.id,
+        username: username,
         user_groups: [test_user_group]
       )
 

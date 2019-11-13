@@ -9,13 +9,15 @@ describe UseCases::GenerateAndStoreLetter do
 
   let(:use_case) { described_class.new }
   let(:use_case_output) { use_case.execute(params) }
-  let(:user) { create(:user) }
+  let(:username) { Faker::Name.name }
+  let(:email) { Faker::Internet.email }
   let(:params) do
     {
       payment_ref: payment_ref,
       template_id: 'letter_1_in_arrears_FH',
-      user_id: user.id,
-      user_groups: [Hackney::PDF::GetTemplates::LEASEHOLD_SERVICES_GROUP]
+      user_groups: [Hackney::PDF::GetTemplates::LEASEHOLD_SERVICES_GROUP],
+      username: username,
+      email: email
     }
   end
 

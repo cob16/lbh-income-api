@@ -1,8 +1,8 @@
 module Hackney
   module Income
     class UseCaseFactory
-      def view_my_cases
-        Hackney::Income::ViewMyCases.new(
+      def view_cases
+        Hackney::Income::ViewCases.new(
           tenancy_api_gateway: tenancy_api_gateway,
           stored_tenancies_gateway: stored_tenancies_gateway
         )
@@ -22,14 +22,9 @@ module Hackney
         )
       end
 
-      def find_or_create_user
-        Hackney::Income::FindOrCreateUser.new(users_gateway: users_gateway)
-      end
-
       def add_action_diary
         Hackney::Tenancy::AddActionDiaryEntry.new(
-          action_diary_gateway: action_diary_gateway,
-          users_gateway: users_gateway
+          action_diary_gateway: action_diary_gateway
         )
       end
 
@@ -133,20 +128,8 @@ module Hackney
         )
         Hackney::Income::SyncCasePriority.new(
           prioritisation_gateway: prioritisation_gateway,
-          stored_tenancies_gateway: stored_tenancies_gateway,
-          assign_tenancy_to_user: assign_tenancy_to_user
+          stored_tenancies_gateway: stored_tenancies_gateway
         )
-      end
-
-      def migrate_patch_to_lcw
-        Hackney::Income::MigratePatchToLcw.new(
-          legal_cases_gateway: legal_cases_gateway,
-          user_assignment_gateway: user_assignment_gateway
-        )
-      end
-
-      def assign_tenancy_to_user
-        Hackney::Income::AssignTenancyToUser.new(user_assignment_gateway: user_assignment_gateway)
       end
 
       # intended to only be used for rake task please delete when no longer required
@@ -195,14 +178,6 @@ module Hackney
 
       def stored_tenancies_gateway
         Hackney::Income::StoredTenanciesGateway.new
-      end
-
-      def users_gateway
-        Hackney::Income::SqlUsersGateway.new
-      end
-
-      def user_assignment_gateway
-        Hackney::Income::SqlTenancyCaseGateway.new
       end
 
       def uh_tenancies_gateway

@@ -7,7 +7,7 @@ describe Hackney::PDF::PreviewGenerator do
     )
   end
 
-  let(:test_user_name) { 'Dave' }
+  let(:test_username) { 'Dave' }
   let(:test_template_path) { 'spec/lib/hackney/pdf/test_template.erb' }
   let(:test_letter_params) do
     {
@@ -26,7 +26,7 @@ describe Hackney::PDF::PreviewGenerator do
   let(:translated_html) { File.open('spec/lib/hackney/pdf/translated_test_template.html').read }
 
   it 'translates erb templates to html and shows no errors' do
-    preview_with_errors = subject.execute(letter_params: test_letter_params, user_name: test_user_name)
+    preview_with_errors = subject.execute(letter_params: test_letter_params, username: test_username)
 
     expect(preview_with_errors[:html]).to eq(translated_html)
     expect(preview_with_errors[:errors]).to eq([])
@@ -51,7 +51,7 @@ describe Hackney::PDF::PreviewGenerator do
     end
 
     it 'translates erb templates to html and shows errors' do
-      preview_with_errors = subject.execute(letter_params: test_letter_params, user_name: test_user_name)
+      preview_with_errors = subject.execute(letter_params: test_letter_params, username: test_username)
 
       expect(preview_with_errors[:html]).to eq(translated_html)
       expect(preview_with_errors[:errors]).to eq([
