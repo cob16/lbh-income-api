@@ -3,7 +3,9 @@ require 'hackney/income/universal_housing_leasehold_gateway.rb'
 
 class LettersController < ApplicationController
   def get_templates
-    render json: pdf_use_case_factory.get_templates.execute
+    render json: pdf_use_case_factory.get_templates.execute(
+      user_groups: params_for_templates[:user_groups].split(/,/)
+    )
   end
 
   def create
@@ -27,6 +29,10 @@ class LettersController < ApplicationController
 
   def parms_for_generate_and_store
     params.permit(%i[user_id payment_ref template_id])
+  end
+
+  def params_for_templates
+    params.permit(%i[user_groups])
   end
 
   def generate_and_store_use_case

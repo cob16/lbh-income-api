@@ -4,16 +4,19 @@ describe LettersController, type: :controller do
   let(:template_path) { 'path/to/temp' }
   let(:template_id) { 'letter_1_in_arrears_FH' }
   let(:template_name) { 'Letter 1 In Arrears FH' }
+  let(:user_group) {Hackney::PDF::GetTemplates::LEASEHOLD_SERVICES_GROUP}
 
   describe '#get_templates' do
     it 'gets letter templates' do
-      expect_any_instance_of(Hackney::PDF::GetTemplates).to receive(:execute).and_return(
-        path: template_path,
-        id: template_id,
-        name: template_name
-      )
+      expect_any_instance_of(Hackney::PDF::GetTemplates)
+        .to receive(:execute)
+              .with(user_groups: [user_group]).and_return(
+                    path: template_path,
+                    id: template_id,
+                    name: template_name
+                  )
 
-      get :get_templates
+      get :get_templates, params: {user_groups: user_group }
 
       expect(response.body).to eq(
         {
