@@ -1,5 +1,5 @@
-class AddColumnsToDocuments < ActiveRecord::Migration[5.2]
-  def change
+class AddUsernameAndEmailColumnsAndBackfillToDocuments < ActiveRecord::Migration[5.2]
+  def up
     add_column :documents, :username, :string
     add_column :documents, :email, :string
 
@@ -14,5 +14,10 @@ class AddColumnsToDocuments < ActiveRecord::Migration[5.2]
 
       document.update!(username: user.name, email: user.email)
     end
+  end
+
+  def down
+    remove_column :documents, :username, :string
+    remove_column :documents, :email, :string
   end
 end
