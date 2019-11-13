@@ -48,8 +48,8 @@ ActiveRecord::Schema.define(version: 2019_11_06_142526) do
     t.decimal "weekly_rent", precision: 10, scale: 2
     t.string "last_communication_action"
     t.datetime "last_communication_date"
-    t.integer "classification"
     t.string "patch_code"
+    t.integer "classification"
     t.datetime "courtdate"
     t.string "court_outcome"
     t.datetime "eviction_date"
@@ -90,6 +90,8 @@ ActiveRecord::Schema.define(version: 2019_11_06_142526) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "ext_message_id"
+    t.string "username"
+    t.string "email"
     t.index ["uuid"], name: "index_documents_on_uuid", unique: true
   end
 

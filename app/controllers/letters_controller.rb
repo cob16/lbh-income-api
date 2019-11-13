@@ -8,9 +8,10 @@ class LettersController < ApplicationController
 
   def create
     json = generate_and_store_use_case.execute(
-      payment_ref: parms_for_generate_and_store[:payment_ref],
-      template_id: parms_for_generate_and_store[:template_id],
-      user_id: parms_for_generate_and_store[:user_id]
+      payment_ref: params_for_generate_and_store[:payment_ref],
+      template_id: params_for_generate_and_store[:template_id],
+      username: params_for_generate_and_store[:username],
+      email: params_for_generate_and_store[:email]
     )
 
     render json: json
@@ -25,8 +26,8 @@ class LettersController < ApplicationController
 
   private
 
-  def parms_for_generate_and_store
-    params.permit(%i[user_id payment_ref template_id])
+  def params_for_generate_and_store
+    params.permit(%i[username email payment_ref template_id])
   end
 
   def generate_and_store_use_case

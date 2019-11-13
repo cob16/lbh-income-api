@@ -15,7 +15,9 @@ module UseCases
         extension: extension,
         mime_type: Rack::Mime.mime_type(extension),
         status: UPLOADING_CLOUD_STATUS,
-        metadata: metadata.to_json
+        metadata: metadata.to_json,
+        email: metadata[:email],
+        username: metadata[:username]
       )
     end
   end

@@ -28,7 +28,8 @@ describe LettersController, type: :controller do
   describe '#create' do
     let(:generate_and_store_use_case_spy) { spy }
     let(:payment_ref) { Faker::Number.number(6) }
-    let(:user_id) { Faker::Number.number(6) }
+    let(:username) { Faker::Name.name }
+    let(:email) { Faker::Internet.email }
     let(:dummy_json_hash) { { uuid: SecureRandom.uuid } }
 
     before do
@@ -40,11 +41,11 @@ describe LettersController, type: :controller do
     context 'when all data is is found' do
       it 'generates pdf(html) preview with template details, case and empty errors' do
         expect(generate_and_store_use_case_spy).to receive(:execute).with(
-          payment_ref: payment_ref, template_id: template_id, user_id: user_id
+          payment_ref: payment_ref, template_id: template_id, username: username, email: email
         ).and_return(dummy_json_hash)
 
         post :create, params: {
-          payment_ref: payment_ref, template_id: template_id, user_id: user_id
+          payment_ref: payment_ref, template_id: template_id, username: username, email: email
         }
 
         expect(response.status).to eq(200)
@@ -58,7 +59,7 @@ describe LettersController, type: :controller do
         expect(generate_and_store_use_case_spy).to receive(:execute).and_raise(Hackney::Income::TenancyNotFoundError)
 
         post :create, params: {
-          payment_ref: not_found_payment_ref, template_id: template_id, user_id: user_id
+          payment_ref: not_found_payment_ref, template_id: template_id, username: username, email: email
         }
 
         expect(response.status).to eq(404)
