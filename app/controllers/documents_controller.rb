@@ -4,12 +4,14 @@ class DocumentsController < ApplicationController
     doc = doc_download[:document]
 
     tenancy_ref = get_tenancy_ref(doc)
+    if params[:username] != ''
       income_use_case_factory.add_action_diary.execute(
-        tenancy_ref: tenancy_ref, 
-        action_code: 'SLB', 
-        comment:'LBA sent (SC)', 
+        tenancy_ref: tenancy_ref,
+        action_code: 'SLB',
+        comment: 'LBA sent (SC)',
         username: params[:username]
-      ) if params[:username] != "" 
+      )
+    end
     send_file doc_download[:filepath], type: doc.mime_type, filename: letter_file_name(doc)
   end
 
@@ -37,7 +39,7 @@ class DocumentsController < ApplicationController
 
   def get_tenancy_ref(doc)
     tenancy_finder = Hackney::Income::UniversalHousingLeaseholdGateway.new
-    payment_ref = JSON.parse(doc.metadata)["payment_ref"]
+    payment_ref = JSON.parse(doc.metadata)['payment_ref']
     result = tenancy_finder.get_tenancy_ref(payment_ref: payment_ref)
     result[:tenancy_ref]
   end

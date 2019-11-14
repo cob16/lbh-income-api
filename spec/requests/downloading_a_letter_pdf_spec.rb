@@ -16,9 +16,9 @@ RSpec.describe 'Downloading a PDF', type: :request do
     mock_aws_client
     create_valid_uh_records_for_a_letter
 
-    stub_request(:post, "http://example.com/api/v2/tenancies/arrears-action-diary")
+    stub_request(:post, 'http://example.com/api/v2/tenancies/arrears-action-diary')
   end
-  
+
   after { Timecop.return }
 
   context 'when I call preview then documents' do
@@ -55,7 +55,7 @@ RSpec.describe 'Downloading a PDF', type: :request do
     end
 
     context 'without a username' do
-      let(:username){nil}
+      let(:username) { nil }
       let(:query_string) { "?username=#{username}" }
 
       it 'responds with a PDF' do
@@ -64,8 +64,8 @@ RSpec.describe 'Downloading a PDF', type: :request do
 
       it 'does not ask the tenancy API to record an action' do
         expect(a_request(
-          :post, 'http://example.com/api/v2/tenancies/arrears-action-diary'
-        )).not_to have_been_made
+                 :post, 'http://example.com/api/v2/tenancies/arrears-action-diary'
+               )).not_to have_been_made
       end
     end
   end

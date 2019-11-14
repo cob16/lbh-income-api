@@ -20,8 +20,6 @@ describe DocumentsController do
     let(:real_template_id) { 'letter_before_action' }
     let(:username) { Faker::Name.name }
 
-
-
     context 'when the document is present' do
       before do
         create_valid_uh_records_for_a_letter
@@ -30,10 +28,11 @@ describe DocumentsController do
                                .and_return(filepath: Tempfile.new.path, document: document)
         expect_any_instance_of(add_action_diary_use_case)
           .to receive(:execute).with(
-            tenancy_ref: tenancy_ref, 
-            action_code: 'SLB', 
-            comment:'LBA sent (SC)', 
-            username: username).and_return(header: 200)
+            tenancy_ref: tenancy_ref,
+            action_code: 'SLB',
+            comment: 'LBA sent (SC)',
+            username: username
+          ).and_return(header: 200)
         get :download, params: { id: document.id, username: username }
       end
 
