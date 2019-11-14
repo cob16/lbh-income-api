@@ -9,13 +9,17 @@ RSpec.describe 'Downloading a PDF', type: :request do
   let(:prop_ref) { Faker::Number.number(6) }
   let(:tenancy_ref) { Faker::Number.number(6) }
   let(:postcode) { Faker::Address.postcode }
-  let(:username) { Faker::Name.name }
   let(:email) { Faker::Internet.email }
 
   before do
+    Timecop.freeze
     mock_aws_client
     create_valid_uh_records_for_a_letter
+
+    stub_request(:post, "http://example.com/api/v2/tenancies/arrears-action-diary")
   end
+  
+  after { Timecop.return }
 
   context 'when I call preview then documents' do
     before do
@@ -28,27 +32,30 @@ RSpec.describe 'Downloading a PDF', type: :request do
     end
 
     context 'with a username' do
+      let(:username) { Faker::Name.name }
       let(:query_string) { "?username=#{username}" }
 
       it 'responds with a PDF' do
         expect(response.headers['Content-Type']).to eq('application/pdf')
       end
 
-      xit 'asks the tenancy API to record an action' do
+      it 'asks the tenancy API to record an action' do
         expect(a_request(
-          :post, 'tenancy-api/api/v2/tenancies/arrears-action-diary'
+          :post, 'http://example.com/api/v2/tenancies/arrears-action-diary'
         )
             .with(body: {
               tenancyAgreementRef: tenancy_ref,
               actionCode: 'SLB',
-              actionCategory: 'LBA sent (SC)',
-              comment: 'Sent a Letter Before Action',
-              username: username
+              actionCategory: '9',
+              comment: 'LBA sent (SC)',
+              username: username,
+              createdDate: DateTime.now.iso8601
             })).to have_been_made.once
       end
     end
 
     context 'without a username' do
+      let(:username){nil}
       let(:query_string) { "?username=#{username}" }
 
       it 'responds with a PDF' do
@@ -57,15 +64,8 @@ RSpec.describe 'Downloading a PDF', type: :request do
 
       it 'does not ask the tenancy API to record an action' do
         expect(a_request(
-          :post, 'tenancy-api/api/v2/tenancies/arrears-action-diary'
-        )
-            .with(body: {
-              tenancyAgreementRef: tenancy_ref,
-              actionCode: 'SLB',
-              actionCategory: 'LBA sent (SC)',
-              comment: 'Sent a Letter Before Action',
-              username: username
-            })).not_to have_been_made
+          :post, 'http://example.com/api/v2/tenancies/arrears-action-diary'
+        )).not_to have_been_made
       end
     end
   end
