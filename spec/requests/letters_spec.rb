@@ -122,17 +122,21 @@ RSpec.describe 'Letters', type: :request do
 
   describe 'POST /api/v1/messages/letters/send' do
     let(:uuid) { existing_letter[:uuid] }
-    let(:existing_letter) do
-      generate_and_store_letter(
-        payment_ref: payment_ref,
-        template_id: template,
-        user: user
-      )
+    let(:username) { Faker::Name.name }
+    let(:email) { Faker::Internet.email }
+    let(:existing_income_collection_letter) do
+      document = create(:document)
+      metadata = JSON.parse(document.metadata)
+      metadata['template']['id'] = 'income_collection_letter_1'
+      document.update(metadata: metadata.to_json)
+      document
     end
 
     context 'when there is an existing leasehold letter' do
+      let(:uuid) { existing_leasehold_letter[:uuid] }
+
       before do
-        existing_letter
+        existing_leasehold_letter
       end
 
       it 'is a No Content (204) status' do
@@ -175,6 +179,34 @@ RSpec.describe 'Letters', type: :request do
         it 'throws a `ActiveRecord::RecordNotFound`' do
           expect {
             post messages_letters_send_path, params: { uuid: SecureRandom.uuid, user: user }
+          }.to raise_error(ActiveRecord::RecordNotFound)
+        end
+      end
+    end
+
+    context 'when there is an existing income collection letter' do
+      let(:uuid) { existing_income_collection_letter[:uuid] }
+
+      before do
+        existing_income_collection_letter
+      end
+
+      it 'is a No Content (204) status' do
+        post messages_letters_send_path, params: { uuid: uuid, username: username, email: email }
+
+        expect(response).to be_no_content
+      end
+
+      it 'adds a `Hackney::Income::Jobs::SendIncomeCollectionLetterToGovNotifyJob` to ActiveJob' do
+        expect {
+          post messages_letters_send_path, params: { uuid: uuid, username: username, email: email }
+        }.to have_enqueued_job(Hackney::Income::Jobs::SendIncomeCollectionLetterToGovNotifyJob)
+      end
+
+      context 'with a bogus UUID' do
+        it 'throws a `ActiveRecord::RecordNotFound`' do
+          expect {
+            post messages_letters_send_path, params: { uuid: SecureRandom.uuid, username: username, email: email }
           }.to raise_error(ActiveRecord::RecordNotFound)
         end
       end

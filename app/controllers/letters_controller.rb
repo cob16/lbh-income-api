@@ -21,11 +21,12 @@ class LettersController < ApplicationController
 
   def send_letter
     document_model = Hackney::Cloud::Document.find_by!(uuid: params[:uuid])
-    if document_model.id == "income_collection_letter_1" || 
-       document_model.id == "income_collection_letter_2"
-        pp "DO NOT SEND TO ACTION DIARY"
+
+    if income_collection_document?(document_model)
+      Hackney::Income::Jobs::SendIncomeCollectionLetterToGovNotifyJob.perform_later(document_id: document_model.id)
+    else
+      Hackney::Income::Jobs::SendLetterToGovNotifyJob.perform_later(document_id: document_model.id)
     end
-    Hackney::Income::Jobs::SendLetterToGovNotifyJob.perform_later(document_id: document_model.id)
   end
 
   private
@@ -51,5 +52,11 @@ class LettersController < ApplicationController
 
   def generate_and_store_use_case
     UseCases::GenerateAndStoreLetter.new
+  end
+
+  def income_collection_document?(document)
+    metadata = JSON.parse(document.metadata)
+    income_collection_templates = ['income_collection_letter_1', 'income_collection_letter_2']
+    metadata['template']['id'].in?(income_collection_templates)
   end
 end
