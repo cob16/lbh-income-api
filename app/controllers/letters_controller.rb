@@ -27,21 +27,24 @@ class LettersController < ApplicationController
   private
 
   def params_for_generate_and_store
-    params.permit(%i[username email payment_ref template_id user_groups])
+    params.permit(
+      :payment_ref,
+      :template_id,
+      user: [:id, :name, :email, groups: []]
+    )
   end
 
   def params_for_templates
-    params.permit(%i[user])
+    params.permit(user: [:id, :name, :email, groups: []])
   end
 
   def user
-    user_params = JSON.parse(params[:user])
+    user_params = JSON.parse(params_for_generate_and_store[:user])
 
     Hackney::Domain::User.new.tap do |u|
       u.id = user_params['id']
       u.name = user_params['name']
       u.email = user_params['email']
-      # u.groups = ['income-collection-group-1']
       u.groups = user_params['groups']
     end
   end
