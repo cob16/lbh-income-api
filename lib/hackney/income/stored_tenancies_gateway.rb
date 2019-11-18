@@ -8,10 +8,13 @@ module Hackney
           criteria,
           weightings
         )
-        classification_usecase = Hackney::Income::TenancyPrioritiser::TenancyClassification.new(criteria)
+
+        gateway_model_instance = GatewayModel.find_or_initialize_by(tenancy_ref: tenancy_ref)
+
+        classification_usecase = Hackney::Income::TenancyPrioritiser::TenancyClassification.new(gateway_model_instance, criteria)
 
         begin
-          GatewayModel.find_or_create_by(tenancy_ref: tenancy_ref).tap do |tenancy|
+          gateway_model_instance.tap do |tenancy|
             tenancy.update(
               priority_band: priority_band,
               priority_score: priority_score,

@@ -122,6 +122,13 @@ module Hackney
         )
       end
 
+      def add_action_diary_and_sync_case
+        UseCases::AddActionDiaryAndSyncCase.new(
+          sync_case_priority: sync_case_priority,
+          add_action_diary: add_action_diary
+        )
+      end
+
       def sync_case_priority
         ActiveSupport::Deprecation.warn(
           "SyncCasePriorityJob is deprecated - use external scheduler via 'rake income:sync:enqueue'"

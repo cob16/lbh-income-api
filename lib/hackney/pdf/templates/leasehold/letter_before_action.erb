@@ -1,4 +1,6 @@
 <div class="top_space"></div>
+<%= @logo %>
+<div class="top_space"></div>
 
 <div class="right">
 <strong>Leasehold & Right To Buy Service</strong> <br>
@@ -10,12 +12,13 @@
   Tel: 020 8356 2299 <br>
   Email: service.charges@hackney.gov.uk <br><br>
   <strong>Service Charge Account Number: <%= @letter.payment_ref %> <br></strong>
-  Our Ref: LBA/ID
+  Our Ref: LBA/ID <br>
   <%= @sending_date_lba %>
 </p>
 </div>
 
 <div class="lessee_address">
+  <br>
   <strong><%= @letter.lessee_full_name %></strong> <br>
   <%= @letter.correspondence_address1 %> <br>
   <%= @letter.correspondence_address2 %> <br>
@@ -59,18 +62,24 @@ If you are facing financial difficulties, please complete and return the enclose
 </p>
 
 <p>
+  Please note that we may carry out credit assessment from credit reference agencies before we agree any installment plan. The agencies will record our enquiries which may be seen by other companies who make their own credit enquiries. This may affect your ability to obtain credit elsewhere in the near future.
+</p>
+
+<p>
 Government assistance may be available towards making payment of your service charges if you qualify. The enclosed information sheet provides details of independent organisations that offer free, impartial and non-judgemental advice to you should you need this.
 </p>
 
 <h2>Why am I being pursued for unpaid service charges?</h2>
 
 <p>
-Under the terms of your lease/transfer agreement, you are required to pay ground rent and service charges.
+Under the terms of your lease/transfer agreement, you are <u>required</u> to pay ground rent and service charges.
 </p>
 
 <p>
 We are writing to you as your non-payment of service charges and ground rent totalling £<%= @letter.lba_balance %> is a breach of these terms.
 </p>
+
+<div class="new_page"></div>
 
 <h2>What will happen if I don’t pay the outstanding service charges?</h2>
 <p>
@@ -108,11 +117,12 @@ Yours sincerely,<br>
 
 <%= @payment_options_lba %>
 
+<div class="new_page"></div>
 <div>
 <h2 class="centre"><strong>ANNEX 1 INFORMATION SHEET</strong></h2>
 
-<p class="centre"><strong>You have recieved this notcie because a business intends to take you to court in
-relation to a debt. Thiws notice tells you what to do nexrt, including how to avoid
+<p class="centre"><strong>You have received this notice because a business intends to take you to court in
+relation to a debt. This notice tells you what to do next, including how to avoid
 court action. Please read it carefully.</strong></p>
 
 <h2>What should I do now to make sure I am not taken to court unnecessarily?</h2>
@@ -168,7 +178,7 @@ been in contact with the business for a number of years).
 </table>
 
 <p class="centre"><strong>It is recommended that you get debt advice if you have any doubt about whether
-you owe the debt or whetcher you can pay it now.</strong></p>
+you owe the debt or whether you can pay it now.</strong></p>
 
 <p>If you don’t have a copy of the agreement (contract) between you and the business, and
 you need this to decide what to do next or to help you get debt advice, you can ask the
@@ -187,6 +197,8 @@ back to the business. You should complete the Reply Form with as much informatio
 possible to avoid court action being taken against you.
 </p>
 </ul>
+
+<div class="new_page"></div>
 
 <h2>How long do I have to fill in the Reply Form?</h2>
 <p>You only have <strong>30 days</strong> from the date at the top of the letter from the business to send
