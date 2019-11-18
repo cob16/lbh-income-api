@@ -10,7 +10,7 @@ RSpec.describe 'Letters', type: :request do
   let(:postcode) { Faker::Address.postcode }
   let(:leasedate) { Time.zone.now.beginning_of_hour }
   let(:template) { 'letter_1_in_arrears_FH' }
-  let(:user_group) { Hackney::PDF::GetTemplates::LEASEHOLD_SERVICES_GROUP }
+  let(:user_group) { 'leasehold-group' }
   let(:username) { Faker::Name.name }
   let(:email) { Faker::Internet.email }
 

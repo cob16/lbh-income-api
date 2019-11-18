@@ -8,7 +8,7 @@ RSpec.describe 'Downloading a PDF', type: :request do
   let(:house_ref) { Faker::Number.number(6) }
   let(:prop_ref) { Faker::Number.number(6) }
   let(:postcode) { Faker::Address.postcode }
-  let(:user_group) { Hackney::PDF::GetTemplates::LEASEHOLD_SERVICES_GROUP }
+  let(:user_group) { 'leasehold-group' }
   let(:user) {
     {
       id: 1,

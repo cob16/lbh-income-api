@@ -13,29 +13,46 @@ describe Hackney::PDF::GetTemplates do
     }
   }
 
+  let(:user_groups) { ['some-user-group'] }
+
+  let(:user) {
+    Hackney::Domain::User.new.tap do |u|
+      u.id = 1
+      u.name = Faker::Name.name
+      u.email = Faker::Internet.email
+      u.groups = user_groups
+    end
+  }
+
   context 'when user is in the leasehold services group' do
+    let(:user_groups) { ['leasehold-group'] }
+
     it 'templates are found in the correct directory' do
       allow(Dir).to receive(:glob)
         .with(["#{Hackney::PDF::GetTemplates::LEASEHOLD_SERVICES_TEMPLATE_DIRECTORY_PATH}*.erb"])
         .and_return([test_template[:path]])
 
-      expect(subject.execute(user_groups: [Hackney::PDF::GetTemplates::LEASEHOLD_SERVICES_GROUP]))
+      expect(subject.execute(user: user))
         .to eq([test_template])
     end
   end
 
   context 'when user is in the income collection group' do
+    let(:user_groups) { ['income-group'] }
+
     it 'templates are found in the correct directory' do
       allow(Dir).to receive(:glob)
         .with(["#{Hackney::PDF::GetTemplates::INCOME_COLLECTION_TEMPLATE_DIRECTORY_PATH}*.erb"])
         .and_return([test_template[:path]])
 
-      expect(subject.execute(user_groups: [Hackney::PDF::GetTemplates::INCOME_COLLECTION_GROUP]))
+      expect(subject.execute(user: user))
         .to eq([test_template])
     end
   end
 
   context 'when user is in the income collection and leasehold services group' do
+    let(:user_groups) { ['leasehold-group', 'income-group'] }
+
     it 'templates are found in the correct directory' do
       allow(Dir).to receive(:glob)
         .with([
@@ -44,18 +61,13 @@ describe Hackney::PDF::GetTemplates do
         ])
         .and_return([test_template[:path]])
 
-      expect(subject.execute(
-               user_groups: [
-                 Hackney::PDF::GetTemplates::INCOME_COLLECTION_GROUP,
-                 Hackney::PDF::GetTemplates::LEASEHOLD_SERVICES_GROUP
-               ]
-             )).to eq([test_template])
+      expect(subject.execute(user: user)).to eq([test_template])
     end
   end
 
   context 'when user is not in any appropriate group' do
     it 'no templates are found' do
-      expect(subject.execute(user_groups: ['muffins'])).to eq([])
+      expect(subject.execute(user: user)).to eq([])
     end
   end
 end

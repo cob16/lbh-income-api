@@ -12,7 +12,7 @@ describe Hackney::PDF::Preview do
   let(:leasehold_information_gateway) { instance_double(Hackney::Income::UniversalHousingLeaseholdGateway) }
   let(:test_template_id) { 123_123 }
   let(:user_name) { Faker::Name.name }
-  let(:user_group) { Hackney::PDF::GetTemplates::LEASEHOLD_SERVICES_GROUP }
+  let(:user_group) { 'leasehold-group' }
 
   let(:user) do
     Hackney::Domain::User.new.tap do |u|

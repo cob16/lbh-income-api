@@ -4,27 +4,26 @@ describe LettersController, type: :controller do
   let(:template_path) { 'path/to/temp' }
   let(:template_id) { 'letter_1_in_arrears_FH' }
   let(:template_name) { 'Letter 1 In Arrears FH' }
-  let(:user_group) { Hackney::PDF::GetTemplates::LEASEHOLD_SERVICES_GROUP }
   let(:user) {
     {
       id: 1,
       name: Faker::Name.name,
       email: Faker::Internet.email,
-      groups: [user_group]
-    }.to_json
+      groups: %w[leasehold-group income-group]
+    }
   }
 
   describe '#get_templates' do
     it 'gets letter templates' do
       expect_any_instance_of(Hackney::PDF::GetTemplates)
         .to receive(:execute)
-        .with(user_groups: [user_group]).and_return(
+        .with(user: having_attributes(user)).and_return(
           path: template_path,
           id: template_id,
           name: template_name
         )
 
-      get :get_templates, params: { user: user }
+      get :get_templates, params: { user: user.to_json }
 
       expect(response.body).to eq(
         {
@@ -56,7 +55,7 @@ describe LettersController, type: :controller do
         post :create, params: {
           payment_ref: payment_ref,
           template_id: template_id,
-          user: user
+          user: user.to_json
         }
 
         expect(response.status).to eq(200)
@@ -72,7 +71,7 @@ describe LettersController, type: :controller do
         post :create, params: {
           payment_ref: not_found_payment_ref,
           template_id: template_id,
-          user: user
+          user: user.to_json
         }
 
         expect(response.status).to eq(404)

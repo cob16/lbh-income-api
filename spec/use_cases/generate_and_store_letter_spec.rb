@@ -11,7 +11,7 @@ describe UseCases::GenerateAndStoreLetter do
   let(:use_case_output) { use_case.execute(params) }
   let(:user_name) { Faker::Name.name }
   let(:email) { Faker::Internet.email }
-  let(:user_group) { Hackney::PDF::GetTemplates::LEASEHOLD_SERVICES_GROUP }
+  let(:user_group) { ['leasehold-group'] }
 
   let(:params) do
     {

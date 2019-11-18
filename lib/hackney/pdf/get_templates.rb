@@ -3,11 +3,9 @@ module Hackney
     class GetTemplates
       LEASEHOLD_SERVICES_TEMPLATE_DIRECTORY_PATH = 'lib/hackney/pdf/templates/leasehold/'.freeze
       INCOME_COLLECTION_TEMPLATE_DIRECTORY_PATH = 'lib/hackney/pdf/templates/income/'.freeze
-      LEASEHOLD_SERVICES_GROUP = 'leasehold-services-group-1'.freeze
-      INCOME_COLLECTION_GROUP = 'income-collection-group-1'.freeze
-      # "leasehold-services-group-1", "income-collection-group-1
-      def execute(user_groups:)
-        path = get_template_directory_path(user_groups)
+
+      def execute(user:)
+        path = get_template_directory_path(user)
 
         Dir.glob(path).map do |f|
           template_meta_data = get_meta_data(f)
@@ -32,10 +30,10 @@ module Hackney
         File.basename(file_path, '.*')
       end
 
-      def get_template_directory_path(groups)
+      def get_template_directory_path(user)
         paths = []
-        paths << LEASEHOLD_SERVICES_TEMPLATE_DIRECTORY_PATH if groups.include?(LEASEHOLD_SERVICES_GROUP)
-        paths << INCOME_COLLECTION_TEMPLATE_DIRECTORY_PATH if groups.include?(INCOME_COLLECTION_GROUP)
+        paths << LEASEHOLD_SERVICES_TEMPLATE_DIRECTORY_PATH if user.leasehold_services?
+        paths << INCOME_COLLECTION_TEMPLATE_DIRECTORY_PATH if user.income_collection?
         paths.map { |path| "#{path}*.erb" }
       end
     end

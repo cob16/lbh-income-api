@@ -7,7 +7,7 @@ module Hackney
       end
 
       def execute(payment_ref:, template_id:, user:)
-        template = get_template_by_id(template_id, user.groups)
+        template = get_template_by_id(template_id, user)
         leasehold_info = get_leasehold_info(payment_ref)
 
         preview_with_errors = Hackney::PDF::PreviewGenerator.new(
@@ -32,8 +32,8 @@ module Hackney
         @leasehold_information_gateway.get_leasehold_info(payment_ref: payment_ref)
       end
 
-      def get_template_by_id(template_id, user_groups)
-        templates = @get_templates_gateway.execute(user_groups: user_groups)
+      def get_template_by_id(template_id, user)
+        templates = @get_templates_gateway.execute(user: user)
         templates[templates.index { |temp| temp[:id] == template_id }]
       end
     end
