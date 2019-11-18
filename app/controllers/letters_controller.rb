@@ -56,7 +56,7 @@ class LettersController < ApplicationController
 
   def income_collection_document?(document)
     metadata = JSON.parse(document.metadata)
-    income_collection_templates = ['income_collection_letter_1', 'income_collection_letter_2']
+    income_collection_templates = %w[income_collection_letter_1 income_collection_letter_2]
     metadata['template']['id'].in?(income_collection_templates)
   end
 end
