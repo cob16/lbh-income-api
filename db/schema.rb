@@ -12,37 +12,37 @@
 
 ActiveRecord::Schema.define(version: 2019_11_06_142526) do
 
-  create_table "case_priorities", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
+  create_table "case_priorities", force: :cascade do |t|
     t.string "tenancy_ref"
     t.string "priority_band"
     t.integer "priority_score"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.decimal "balance_contribution", precision: 10
-    t.decimal "days_in_arrears_contribution", precision: 10
-    t.decimal "days_since_last_payment_contribution", precision: 10
-    t.decimal "payment_amount_delta_contribution", precision: 10
-    t.decimal "payment_date_delta_contribution", precision: 10
-    t.decimal "number_of_broken_agreements_contribution", precision: 10
-    t.decimal "active_agreement_contribution", precision: 10
-    t.decimal "broken_court_order_contribution", precision: 10
-    t.decimal "nosp_served_contribution", precision: 10
-    t.decimal "active_nosp_contribution", precision: 10
+    t.decimal "balance_contribution"
+    t.decimal "days_in_arrears_contribution"
+    t.decimal "days_since_last_payment_contribution"
+    t.decimal "payment_amount_delta_contribution"
+    t.decimal "payment_date_delta_contribution"
+    t.decimal "number_of_broken_agreements_contribution"
+    t.decimal "active_agreement_contribution"
+    t.decimal "broken_court_order_contribution"
+    t.decimal "nosp_served_contribution"
+    t.decimal "active_nosp_contribution"
     t.decimal "balance", precision: 10, scale: 2
     t.integer "days_in_arrears"
     t.integer "days_since_last_payment"
-    t.decimal "payment_amount_delta", precision: 10
+    t.decimal "payment_amount_delta"
     t.integer "payment_date_delta"
     t.integer "number_of_broken_agreements"
     t.boolean "active_agreement"
     t.boolean "broken_court_order"
     t.boolean "nosp_served"
     t.boolean "active_nosp"
-    t.bigint "assigned_user_id"
+    t.integer "assigned_user_id"
     t.datetime "is_paused_until"
     t.string "pause_reason"
     t.text "pause_comment"
-    t.bigint "case_id"
+    t.integer "case_id"
     t.datetime "nosp_served_date"
     t.datetime "nosp_expiry_date"
     t.decimal "weekly_rent", precision: 10, scale: 2
@@ -58,13 +58,13 @@ ActiveRecord::Schema.define(version: 2019_11_06_142526) do
     t.index ["tenancy_ref"], name: "index_case_priorities_on_tenancy_ref", unique: true
   end
 
-  create_table "cases", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
+  create_table "cases", force: :cascade do |t|
     t.string "tenancy_ref"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
-  create_table "delayed_jobs", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
+  create_table "delayed_jobs", force: :cascade do |t|
     t.integer "priority", default: 0, null: false
     t.integer "attempts", default: 0, null: false
     t.text "handler", null: false
@@ -79,7 +79,7 @@ ActiveRecord::Schema.define(version: 2019_11_06_142526) do
     t.index ["priority", "run_at"], name: "delayed_jobs_priority"
   end
 
-  create_table "documents", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
+  create_table "documents", force: :cascade do |t|
     t.string "uuid", null: false
     t.string "extension", null: false
     t.string "metadata"
@@ -95,7 +95,7 @@ ActiveRecord::Schema.define(version: 2019_11_06_142526) do
     t.index ["uuid"], name: "index_documents_on_uuid", unique: true
   end
 
-  create_table "users", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
+  create_table "users", force: :cascade do |t|
     t.string "provider_uid"
     t.string "provider"
     t.string "name"
@@ -106,5 +106,4 @@ ActiveRecord::Schema.define(version: 2019_11_06_142526) do
     t.integer "role", default: 0
   end
 
-  add_foreign_key "case_priorities", "users", column: "assigned_user_id"
 end
