@@ -4,7 +4,7 @@ require 'hackney/income/universal_housing_leasehold_gateway.rb'
 class LettersController < ApplicationController
   def get_templates
     render json: pdf_use_case_factory.get_templates.execute(
-      user_groups: user.groups
+      user: user
     )
   end
 
@@ -39,7 +39,8 @@ class LettersController < ApplicationController
   end
 
   def user
-    user_params = JSON.parse(params_for_generate_and_store[:user])
+    # byebug
+    user_params = JSON.parse(params[:user])
 
     Hackney::Domain::User.new.tap do |u|
       u.id = user_params['id']
