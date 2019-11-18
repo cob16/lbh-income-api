@@ -130,7 +130,7 @@ RSpec.describe 'Letters', type: :request do
       )
     end
 
-    context 'when there is an existing letter' do
+    context 'when there is an existing leasehold letter' do
       before do
         existing_letter
       end

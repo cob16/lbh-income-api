@@ -1,5 +1,5 @@
 module Hackney
-  module Income
+ module Income
     class UseCaseFactory
       def view_cases
         Hackney::Income::ViewCases.new(
@@ -53,6 +53,12 @@ module Hackney
           notification_gateway: notifications_gateway,
           add_action_diary_usecase: add_action_diary,
           leasehold_gateway: Hackney::Income::UniversalHousingLeaseholdGateway.new
+        )
+      end
+
+      def send_precompiled_letter_without_action_diary
+        Hackney::Notification::SendManualPrecompiledLetterWithoutActionDiary.new(
+          notification_gateway: notifications_gateway,
         )
       end
 
