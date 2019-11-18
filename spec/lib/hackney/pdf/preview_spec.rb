@@ -10,8 +10,17 @@ describe Hackney::PDF::Preview do
 
   let(:get_templates_gateway) { instance_double(Hackney::PDF::GetTemplates) }
   let(:leasehold_information_gateway) { instance_double(Hackney::Income::UniversalHousingLeaseholdGateway) }
-  let(:username) { Faker::Name.name }
   let(:test_template_id) { 123_123 }
+  let(:user_name) { Faker::Name.name }
+  let(:user_group) { Hackney::PDF::GetTemplates::LEASEHOLD_SERVICES_GROUP }
+
+  let(:user) do
+    Hackney::Domain::User.new.tap do |u|
+      u.name = user_name
+      u.groups = [user_group]
+    end
+  end
+
   let(:test_template) do
     {
       path: 'spec/lib/hackney/pdf/test_template.erb',
@@ -46,8 +55,7 @@ describe Hackney::PDF::Preview do
     preview = subject.execute(
       payment_ref: test_pay_ref,
       template_id: test_template_id,
-      username: username,
-      user_groups: [test_user_group]
+      user: user
     )
 
     expect(preview).to include(
@@ -83,8 +91,7 @@ describe Hackney::PDF::Preview do
       preview = subject.execute(
         payment_ref: test_pay_ref,
         template_id: test_template_id,
-        username: username,
-        user_groups: [test_user_group]
+        user: user
       )
 
       expect(preview).to include(

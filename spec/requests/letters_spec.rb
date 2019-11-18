@@ -14,6 +14,14 @@ RSpec.describe 'Letters', type: :request do
   let(:username) { Faker::Name.name }
   let(:email) { Faker::Internet.email }
 
+  let(:user) {
+    Hackney::Domain::User.new.tap do |u|
+      u.name = username
+      u.email = email
+      u.groups = [user_group]
+    end
+  }
+
   before do
     mock_aws_client
     create_valid_uh_records_for_a_letter
@@ -24,9 +32,7 @@ RSpec.describe 'Letters', type: :request do
       post messages_letters_path, params: {
         payment_ref: 'abc',
         template_id: 'letter_1_in_arrears_FH',
-        user_groups: user_group,
-        username: username,
-        email: email
+        user: user.to_json
       }
 
       expect(response).to have_http_status(404)
@@ -37,9 +43,7 @@ RSpec.describe 'Letters', type: :request do
         post messages_letters_path, params: {
           payment_ref: 'abc',
           template_id: 'does not exist',
-          user_groups: user_group,
-          username: username,
-          email: email
+          user: user.to_json
         }
       }.to raise_error(TypeError)
     end
@@ -81,9 +85,7 @@ RSpec.describe 'Letters', type: :request do
         post messages_letters_path, params: {
           payment_ref: payment_ref,
           template_id: template,
-          user_groups: user_group,
-          username: username,
-          email: email
+          user: user.to_json
         }
 
         # UUID: is always different can ignore this.
@@ -100,9 +102,7 @@ RSpec.describe 'Letters', type: :request do
           post messages_letters_path, params: {
             payment_ref: payment_ref,
             template_id: template,
-            user_groups: user_group,
-            username: username,
-            email: email
+            user: user.to_json
           }
         }.to change { Hackney::Cloud::Document.count }.from(0).to(1)
       end
@@ -111,9 +111,7 @@ RSpec.describe 'Letters', type: :request do
         post messages_letters_path, params: {
           payment_ref: payment_ref,
           template_id: template,
-          user_groups: user_group,
-          username: username,
-          email: email
+          user: user.to_json
         }
 
         document = Hackney::Cloud::Document.last
@@ -132,9 +130,7 @@ RSpec.describe 'Letters', type: :request do
       generate_and_store_letter(
         payment_ref: payment_ref,
         template_id: template,
-        user_groups: user_group,
-        username: username,
-        email: email
+        user: user
       )
     end
 
@@ -146,9 +142,7 @@ RSpec.describe 'Letters', type: :request do
       it 'is a No Content (204) status' do
         post messages_letters_send_path, params: {
           uuid: uuid,
-          user_groups: user_group,
-          username: username,
-          email: email
+          user: user
         }
         expect(response).to be_no_content
       end
@@ -157,9 +151,7 @@ RSpec.describe 'Letters', type: :request do
         expect {
           post messages_letters_send_path, params: {
             uuid: uuid,
-            username: username,
-            email: email,
-            user_groups: user_group
+            user: user
           }
         }.to have_enqueued_job(Hackney::Income::Jobs::SendLetterToGovNotifyJob)
       end
@@ -167,9 +159,7 @@ RSpec.describe 'Letters', type: :request do
       it "stores the User's details on metadata of the Document" do
         post messages_letters_send_path, params: {
           uuid: uuid,
-          username: username,
-          email: email,
-          user_groups: user_group
+          user: user
         }
 
         document = Hackney::Cloud::Document.last
@@ -224,13 +214,11 @@ RSpec.describe 'Letters', type: :request do
     create_uh_rent(prop_ref: property_ref, sc_leasedate: leasedate)
   end
 
-  def generate_and_store_letter(payment_ref:, template_id:, user_groups:, username:, email:)
+  def generate_and_store_letter(payment_ref:, template_id:, user:)
     UseCases::GenerateAndStoreLetter.new.execute(
       payment_ref: payment_ref,
       template_id: template_id,
-      user_groups: user_groups,
-      username: username,
-      email: email
+      user: user
     )
   end
 end

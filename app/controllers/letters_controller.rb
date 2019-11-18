@@ -4,7 +4,7 @@ require 'hackney/income/universal_housing_leasehold_gateway.rb'
 class LettersController < ApplicationController
   def get_templates
     render json: pdf_use_case_factory.get_templates.execute(
-      user_groups: params_for_templates[:user_groups].split(/,/)
+      user_groups: user.groups
     )
   end
 
@@ -12,11 +12,8 @@ class LettersController < ApplicationController
     json = generate_and_store_use_case.execute(
       payment_ref: params_for_generate_and_store[:payment_ref],
       template_id: params_for_generate_and_store[:template_id],
-      user_groups: params_for_generate_and_store[:user_groups],
-      username: params_for_generate_and_store[:username],
-      email: params_for_generate_and_store[:email]
+      user: user
     )
-
     render json: json
   rescue Hackney::Income::TenancyNotFoundError
     head(404)
@@ -34,7 +31,19 @@ class LettersController < ApplicationController
   end
 
   def params_for_templates
-    params.permit(%i[user_groups])
+    params.permit(%i[user])
+  end
+
+  def user
+    user_params = JSON.parse(params[:user])
+
+    Hackney::Domain::User.new.tap do |u|
+      u.id = user_params['id']
+      u.name = user_params['name']
+      u.email = user_params['email']
+      # u.groups = ['income-collection-group-1']
+      u.groups = user_params['groups']
+    end
   end
 
   def generate_and_store_use_case

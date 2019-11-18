@@ -5,7 +5,7 @@ module Hackney
       INCOME_COLLECTION_TEMPLATE_DIRECTORY_PATH = 'lib/hackney/pdf/templates/income/'.freeze
       LEASEHOLD_SERVICES_GROUP = 'leasehold-services-group-1'.freeze
       INCOME_COLLECTION_GROUP = 'income-collection-group-1'.freeze
-
+      # "leasehold-services-group-1", "income-collection-group-1
       def execute(user_groups:)
         path = get_template_directory_path(user_groups)
 

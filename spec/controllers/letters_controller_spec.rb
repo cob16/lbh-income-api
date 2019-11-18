@@ -5,6 +5,14 @@ describe LettersController, type: :controller do
   let(:template_id) { 'letter_1_in_arrears_FH' }
   let(:template_name) { 'Letter 1 In Arrears FH' }
   let(:user_group) { Hackney::PDF::GetTemplates::LEASEHOLD_SERVICES_GROUP }
+  let(:user) {
+    {
+      id: 1,
+      name: Faker::Name.name,
+      email: Faker::Internet.email,
+      groups: [user_group]
+    }.to_json
+  }
 
   describe '#get_templates' do
     it 'gets letter templates' do
@@ -16,7 +24,7 @@ describe LettersController, type: :controller do
           name: template_name
         )
 
-      get :get_templates, params: { user_groups: user_group }
+      get :get_templates, params: { user: user }
 
       expect(response.body).to eq(
         {
@@ -43,20 +51,12 @@ describe LettersController, type: :controller do
 
     context 'when all data is is found' do
       it 'generates pdf(html) preview with template details, case and empty errors' do
-        expect(generate_and_store_use_case_spy).to receive(:execute).with(
-          payment_ref: payment_ref,
-          template_id: template_id,
-          username: username,
-          email: email,
-          user_groups: user_group
-        ).and_return(dummy_json_hash)
+        expect(generate_and_store_use_case_spy).to receive(:execute).and_return(dummy_json_hash)
 
         post :create, params: {
           payment_ref: payment_ref,
           template_id: template_id,
-          username: username,
-          email: email,
-          user_groups: user_group
+          user: user
         }
 
         expect(response.status).to eq(200)
@@ -72,9 +72,7 @@ describe LettersController, type: :controller do
         post :create, params: {
           payment_ref: not_found_payment_ref,
           template_id: template_id,
-          username: username,
-          email: email,
-          user_groups: user_group
+          user: user
         }
 
         expect(response.status).to eq(404)
