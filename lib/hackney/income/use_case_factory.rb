@@ -1,5 +1,5 @@
 module Hackney
- module Income
+  module Income
     class UseCaseFactory
       def view_cases
         Hackney::Income::ViewCases.new(
@@ -56,9 +56,9 @@ module Hackney
         )
       end
 
-      def send_precompiled_letter_without_action_diary
-        Hackney::Notification::SendManualPrecompiledLetterWithoutActionDiary.new(
-          notification_gateway: notifications_gateway,
+      def send_precompiled_letter_to_gov_notify
+        Hackney::Notification::SendPrecompiledLetter.new(
+          notification_gateway: notifications_gateway
         )
       end
 
