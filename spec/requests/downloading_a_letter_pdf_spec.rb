@@ -10,6 +10,8 @@ RSpec.describe 'Downloading a PDF', type: :request do
   let(:tenancy_ref) { Faker::Number.number(6) }
   let(:postcode) { Faker::Address.postcode }
   let(:email) { Faker::Internet.email }
+  let(:username) { Faker::Name.name }
+  let(:letter_json) { [] }
 
   before do
     Timecop.freeze
@@ -27,12 +29,11 @@ RSpec.describe 'Downloading a PDF', type: :request do
         payment_ref: payment_ref, template_id: real_template_id, username: username, email: email
       }
 
-      letter_json = JSON.parse(response.body)
-      get "/api/v1/documents/#{letter_json['document_id']}/download#{query_string}"
+      letter_json << JSON.parse(response.body)
+      get "/api/v1/documents/#{letter_json[0]['document_id']}/download#{query_string}"
     end
 
     context 'with a username' do
-      let(:username) { Faker::Name.name }
       let(:query_string) { "?username=#{username}" }
 
       it 'responds with a PDF' do
@@ -52,6 +53,49 @@ RSpec.describe 'Downloading a PDF', type: :request do
               createdDate: DateTime.now.iso8601
             })).to have_been_made.once
       end
+
+      it 'updates the status to downloaded' do
+        get 'http://example.com/api/v1/documents'
+        expect(response).to be_successful
+        response_payment_reference = JSON.parse(JSON.parse(response.body)[0]['metadata'])['payment_ref']
+        status = JSON.parse(response.body)[0]['status']
+        expect(response_payment_reference).to eq(payment_ref)
+        expect(status).to eq('downloaded')
+      end
+
+      context 'when you download a second time' do
+        before do
+          get "/api/v1/documents/#{letter_json[0]['document_id']}/download#{query_string}"
+        end
+
+        it 'responds with a PDF' do
+          expect(response.headers['Content-Type']).to eq('application/pdf')
+        end
+
+        it 'does not write to the action diary twice' do
+          expect(a_request(
+                   :post, 'http://example.com/api/v2/tenancies/arrears-action-diary'
+                 )).to have_been_made.once
+        end
+      end
+
+      context 'when downloading from the documents list view' do
+        let(:query_string) { "?username=#{username}&documents_view=true" }
+
+        it 'does not write to the action diary if it is being downloaded from the view' do
+          expect(a_request(
+            :post, 'http://example.com/api/v2/tenancies/arrears-action-diary'
+          )
+              .with(body: {
+                tenancyAgreementRef: tenancy_ref,
+                actionCode: 'SLB',
+                actionCategory: '9',
+                comment: 'LBA sent (SC)',
+                username: username,
+                createdDate: DateTime.now.iso8601
+              })).not_to have_been_made
+        end
+      end
     end
 
     context 'without a username' do
@@ -67,6 +111,37 @@ RSpec.describe 'Downloading a PDF', type: :request do
                  :post, 'http://example.com/api/v2/tenancies/arrears-action-diary'
                )).not_to have_been_made
       end
+    end
+  end
+
+  context 'when a letter is status is not uploaded' do
+    let(:query_string) { "?username=#{username}" }
+
+    before do
+      post messages_letters_path, params: {
+        payment_ref: payment_ref, template_id: real_template_id, username: username, email: email
+      }
+
+      letter_json = JSON.parse(response.body)
+
+      document = Hackney::Cloud::Document.find(letter_json['document_id'])
+      document.update(status: 'received')
+
+      get "/api/v1/documents/#{letter_json['document_id']}/download#{query_string}"
+    end
+
+    it 'does not write to the action diary when it has been downloaded' do
+      expect(a_request(
+        :post, 'http://example.com/api/v2/tenancies/arrears-action-diary'
+      )
+          .with(body: {
+            tenancyAgreementRef: tenancy_ref,
+            actionCode: 'SLB',
+            actionCategory: '9',
+            comment: 'LBA sent (SC)',
+            username: username,
+            createdDate: DateTime.now.iso8601
+          })).not_to have_been_made
     end
   end
 

@@ -49,12 +49,14 @@ describe Hackney::Notification::EnqueueRequestAllPrecompiledLetterStates do
       let!(:received) { create(:document, status: :received) }
       let!(:accepted) { create(:document, status: :accepted) }
       let!(:failed) { create(:document, status: 'validation-failed') }
+      let!(:downloaded) { create(:document, status: :downloaded) }
 
       it { expect(subject.documents).to include(uploading) }
       it { expect(subject.documents).to include(uploaded) }
       it { expect(subject.documents).to include(accepted) }
       it { expect(subject.documents).not_to include(received) }
       it { expect(subject.documents).not_to include(failed) }
+      it { expect(subject.documents).to include(downloaded) }
 
       it 'all statuses should be checked' do
         document_store.statuses.each do |status|

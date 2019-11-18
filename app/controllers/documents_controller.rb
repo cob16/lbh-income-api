@@ -3,25 +3,21 @@ class DocumentsController < ApplicationController
     doc_download = letter_use_case_factory.download.execute(id: params.fetch(:id))
     doc = doc_download[:document]
 
-    tenancy_ref = get_tenancy_ref(doc)
-    if params[:username] != ''
-      income_use_case_factory.add_action_diary.execute(
+    if user_can_write_to_action_diary?
+
+      tenancy_ref = get_tenancy_ref(doc)
+      send_lba_action = {
         tenancy_ref: tenancy_ref,
         action_code: 'SLB',
         comment: 'LBA sent (SC)',
         username: params[:username]
-      )
+      }
+
+      add_action_to_action_diary(action: send_lba_action)
+      update_document_status
     end
     send_file doc_download[:filepath], type: doc.mime_type, filename: letter_file_name(doc)
   end
-
-  # def mark_downloaded
-  #   document = Hackney::Cloud::Document.find(params.fetch(:id))
-  #   if document.status != 'downloaded'
-  #     document.update(status:'downloaded')
-  #   end
-  #   head :ok
-  # end
 
   def index
     render json: letter_use_case_factory.get_all_documents.execute(payment_ref: params.fetch(:payment_ref, nil))
@@ -42,5 +38,18 @@ class DocumentsController < ApplicationController
     payment_ref = JSON.parse(doc.metadata)['payment_ref']
     result = tenancy_finder.get_tenancy_ref(payment_ref: payment_ref)
     result[:tenancy_ref]
+  end
+
+  def user_can_write_to_action_diary?
+    document_status = Hackney::Cloud::Document.find(params[:id]).status
+    params[:username].present? && document_status == 'uploaded' && params[:documents_view] != 'true'
+  end
+
+  def add_action_to_action_diary(action:)
+    income_use_case_factory.add_action_diary.execute(action)
+  end
+
+  def update_document_status
+    Hackney::Cloud::Document.find(params[:id]).update(status: 'downloaded')
   end
 end
