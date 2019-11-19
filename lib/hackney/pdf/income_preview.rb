@@ -6,7 +6,7 @@ module Hackney
         @income_information_gateway = income_information_gateway
       end
 
-      def execute(payment_ref:, template_id:, username:)
+      def execute(payment_ref:, tenancy_ref:, template_id:, username:)
         template = get_template_by_id(template_id)
         income_info = get_income_info(tenancy_ref)
 
@@ -28,7 +28,7 @@ module Hackney
 
       private
 
-      def get_income_info(payment_ref)
+      def get_income_info(tenancy_ref)
         @income_information_gateway.get_income_info(tenancy_ref: tenancy_ref)
       end
 

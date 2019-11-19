@@ -6,17 +6,21 @@ module UseCases
       pdf_use_case_factory = Hackney::PDF::UseCaseFactory.new
       letter_use_case_factory = Hackney::Letter::UseCaseFactory.new
 
-      letter_data = pdf_use_case_factory.get_preview.execute(
-        payment_ref: payment_ref,
-        template_id: template_id,
-        user: user
-      )
+      # if template_id == 'income_collection_letter_1' || 'income_collection_letter_2'
+        letter_data = pdf_use_case_factory.get_income_preview.execute(
+          payment_ref: payment_ref,
+          tenancy_ref: tenancy_ref,
+          template_id: template_id,
+          user: user
+        )
+      # else    
+      #   letter_data = pdf_use_case_factory.get_preview.execute(
+      #     payment_ref: payment_ref,
+      #     template_id: template_id,
+      #     username: username
+      #   )
+      # end
 
-      letter_data = pdf_use_case_factory.get_income_preview.execute(
-        tenancy_ref: tenancy_ref,
-        template_id: template_id,
-        user: user
-      )
 
       return letter_data if letter_data[:errors].present?
 

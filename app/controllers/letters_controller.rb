@@ -11,6 +11,7 @@ class LettersController < ApplicationController
   def create
     json = generate_and_store_use_case.execute(
       payment_ref: params_for_generate_and_store[:payment_ref],
+      tenancy_ref: params_for_generate_and_store[:tenancy_ref],
       template_id: params_for_generate_and_store[:template_id],
       user: user
     )
@@ -35,6 +36,7 @@ class LettersController < ApplicationController
     params.permit(
       :payment_ref,
       :template_id,
+      :tenancy_ref,
       user: [:id, :name, :email, groups: []]
     )
   end

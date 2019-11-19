@@ -1,15 +1,15 @@
 module Hackney
   module Income
     class UniversalHousingIncomeGateway
-      def get_tenancy_ref(payment_ref:)
+      def get_tenancy_ref(tenancy_ref:)
         with_core do |core|
-          core.get_tenancy_ref(payment_ref: payment_ref)
+          core.get_tenancy_ref(tenancy_ref: tenancy_ref)
         end
       end
 
-      def get_income_info(payment_ref:)
+      def get_income_info(tenancy_ref:)
         with_core do |core|
-          core.get_income_info(payment_ref: payment_ref)
+          core.get_income_info(tenancy_ref: tenancy_ref)
         end
       end
 
@@ -31,20 +31,20 @@ module Hackney
           @database = database
         end
 
-        def get_tenancy_ref(payment_ref:)
+        def get_tenancy_ref(tenancy_ref:)
           res = tenancy_agreement
-                .where(u_saff_rentacc: payment_ref)
+                .where(u_saff_rentacc: tenancy_ref)
                 .first
 
           raise TenancyNotFoundError unless res.present?
           { tenancy_ref: res[:tag_ref] }
         end
 
-        def get_income_info(payment_ref:)
+        def get_leasehold_info(tenancy_ref:) # old
           res = tenancy_agreement
                 .select_append(Sequel.qualify(:tenagree, :prop_ref).as(:tenancy_prop_ref))
                 .select_append(Sequel.qualify(:tenagree, :tenure).as(:tenure_type))
-                .where(u_saff_rentacc: payment_ref)
+                .where(u_saff_rentacc: tenancy_ref)
                 .exclude(Sequel.trim(Sequel.qualify(:tenagree, :prop_ref)) => '')
                 .join(rent, prop_ref: Sequel.qualify(:tenagree, :prop_ref))
                 .join(household, house_ref: Sequel.qualify(:tenagree, :house_ref))
@@ -63,7 +63,7 @@ module Hackney
           )
 
           {
-            payment_ref: payment_ref,
+            tenancy_ref: tenancy_ref,
             tenancy_ref: res[:tag_ref].strip,
             total_collectable_arrears_balance: res[:cur_bal],
             lessee_full_name: res[:house_desc]&.strip,
@@ -76,6 +76,52 @@ module Hackney
             correspondence_postcode: corr_address[:post_code]&.strip || '',
             property_address: "#{property_res[:address1]&.strip}, #{property_res[:post_code]&.strip}",
             international: international?(corr_address[:post_code])
+          }
+        end
+
+        def get_income_info(tenancy_ref:)
+          res = tenancy_agreement
+                .select_append(Sequel.qualify(:postcode, :aline1).as(:address_line1))
+                .select_append(Sequel.qualify(:postcode, :aline2).as(:address_line2))
+                .select_append(Sequel.qualify(:postcode, :aline3).as(:address_line3))
+                .select_append(Sequel.qualify(:postcode, :aline4).as(:address_line4))
+                .select_append(Sequel.qualify(:postcode, :post_code).as(:address_post_code))
+                .select_append(Sequel.qualify(:property, :prop_ref).as(:property_ref))
+                .select_append(Sequel.qualify(:property, :post_preamble).as(:address_preamble))
+                .select_append(Sequel.qualify(:property, :post_desig).as(:address_name_number))
+                # .select_append(Sequel.qualify(:tenagree, :house_ref).as(:house_ref))
+                .select_append(Sequel.qualify(:member, :title).as(:tenant_title))
+                .select_append(Sequel.qualify(:member, :forename).as(:tenant_forename))
+                .select_append(Sequel.qualify(:member, :surname).as(:tenant_surname))
+                .exclude(Sequel.trim(Sequel.qualify(:property, :prop_ref)) => '')
+                .join(property, post_code: Sequel.qualify(:postcode, :post_code))
+                .join(tenagree, prop_ref: Sequel.qualify(:property, :prop_ref))
+                .join(member, house_ref: Sequel.qualify(:tenagree, :house_ref))
+                .where(tag_ref: tenancy_ref)
+                .first
+          byebug
+
+          raise TenancyNotFoundError unless res.present?
+
+          prop_ref = res[:tenancy_prop_ref]
+          leasehold_res = get_leasehold_info(payment_ref)
+
+          balance = leasehold_res[:total_collectable_arrears_balance]
+
+          {
+              tenant_title: tenant_title,
+              tenant_forename: tenant_forename,
+              tenant_surname: tenant_surname,
+              address_line1: address_line1,
+              address_line2: address_line2,
+              address_line3: address_line3,
+              address_line4: address_line4,
+              address_post_code: address_post_code,
+              property_ref: property_ref,
+              address_preamble: address_preamble,
+              address_name_number: address_name_number,
+
+              total_collectable_arrears_balance: balance
           }
         end
 

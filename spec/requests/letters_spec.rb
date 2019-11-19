@@ -30,6 +30,7 @@ RSpec.describe 'Letters', type: :request do
       post messages_letters_path, params: {
         payment_ref: 'abc',
         template_id: 'letter_1_in_arrears_FH',
+        tenancy_ref: tenancy_ref,
         user: user
       }
 
@@ -41,6 +42,7 @@ RSpec.describe 'Letters', type: :request do
         post messages_letters_path, params: {
           payment_ref: 'abc',
           template_id: 'does not exist',
+          tenancy_ref: 'abd',
           user: user
         }
       }.to raise_error(TypeError)
@@ -83,6 +85,7 @@ RSpec.describe 'Letters', type: :request do
         post messages_letters_path, params: {
           payment_ref: payment_ref,
           template_id: template,
+          tenancy_ref: tenancy_ref,
           user: user
         }
 
@@ -100,6 +103,7 @@ RSpec.describe 'Letters', type: :request do
           post messages_letters_path, params: {
             payment_ref: payment_ref,
             template_id: template,
+            tenancy_ref: tenancy_ref,
             user: user
           }
         }.to change { Hackney::Cloud::Document.count }.from(0).to(1)
@@ -109,6 +113,7 @@ RSpec.describe 'Letters', type: :request do
         post messages_letters_path, params: {
           payment_ref: payment_ref,
           template_id: template,
+          tenancy_ref: tenancy_ref,
           user: user
         }
 
@@ -124,6 +129,11 @@ RSpec.describe 'Letters', type: :request do
     let(:uuid) { existing_letter[:uuid] }
     let(:username) { Faker::Name.name }
     let(:email) { Faker::Internet.email }
+    let(:existing_leasehold_letter) do
+      generate_and_store_letter(
+        payment_ref: payment_ref, tenancy_ref: tenancy_ref, template_id: template, user: user
+      )
+    end
     let(:existing_income_collection_letter) do
       document = create(:document)
       metadata = JSON.parse(document.metadata)
@@ -239,14 +249,16 @@ RSpec.describe 'Letters', type: :request do
     create_uh_rent(prop_ref: property_ref, sc_leasedate: leasedate)
   end
 
-  def generate_and_store_letter(payment_ref:, template_id:, user:)
+  def generate_and_store_letter(payment_ref:, tenancy_ref:, template_id:, user:)
     user_obj = Hackney::Domain::User.new.tap do |u|
       u.name = user[:name]
       u.email = user[:email]
       u.groups = user[:groups]
     end
+
     UseCases::GenerateAndStoreLetter.new.execute(
       payment_ref: payment_ref,
+      tenancy_ref: tenancy_ref,
       template_id: template_id,
       user: user_obj
     )
