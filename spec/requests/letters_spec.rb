@@ -74,7 +74,7 @@ RSpec.describe 'Letters', type: :request do
             'id' => 'letter_1_in_arrears_FH'
           },
           'username' => user[:name],
-          'document_id' => 1,
+          'document_id' => Hackney::Cloud::Document.last.id,
           'errors' => []
         }
       }
