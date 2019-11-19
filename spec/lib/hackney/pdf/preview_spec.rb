@@ -8,10 +8,19 @@ describe Hackney::PDF::Preview do
     )
   end
 
-  let(:get_templates_gateway) { instance_double(Hackney::PDF::GetTemplates) }
+  let(:get_templates_gateway) { instance_double(Hackney::PDF::GetTemplatesForUser) }
   let(:leasehold_information_gateway) { instance_double(Hackney::Income::UniversalHousingLeaseholdGateway) }
-  let(:username) { Faker::Name.name }
   let(:test_template_id) { 123_123 }
+  let(:user_name) { Faker::Name.name }
+  let(:user_group) { 'leasehold-group' }
+
+  let(:user) do
+    Hackney::Domain::User.new.tap do |u|
+      u.name = user_name
+      u.groups = [user_group]
+    end
+  end
+
   let(:test_template) do
     {
       path: 'spec/lib/hackney/pdf/test_template.erb',
@@ -19,6 +28,7 @@ describe Hackney::PDF::Preview do
     }
   end
   let(:test_pay_ref) { 1_234_567_890 }
+  let(:test_user_group) { 'magic-group' }
   let(:test_letter_params) do
     {
       payment_ref: test_pay_ref,
@@ -42,7 +52,11 @@ describe Hackney::PDF::Preview do
     expect(leasehold_information_gateway).to receive(:get_leasehold_info).with(payment_ref: test_pay_ref).and_return(test_letter_params)
     expect(get_templates_gateway).to receive(:execute).and_return([test_template])
 
-    preview = subject.execute(payment_ref: test_pay_ref, template_id: test_template_id, username: username)
+    preview = subject.execute(
+      payment_ref: test_pay_ref,
+      template_id: test_template_id,
+      user: user
+    )
 
     expect(preview).to include(
       case: test_letter_params,
@@ -74,7 +88,11 @@ describe Hackney::PDF::Preview do
       expect(leasehold_information_gateway).to receive(:get_leasehold_info).with(payment_ref: test_pay_ref).and_return(test_letter_params)
       expect(get_templates_gateway).to receive(:execute).and_return([test_template])
 
-      preview = subject.execute(payment_ref: test_pay_ref, template_id: test_template_id, username: username)
+      preview = subject.execute(
+        payment_ref: test_pay_ref,
+        template_id: test_template_id,
+        user: user
+      )
 
       expect(preview).to include(
         case: test_letter_params,

@@ -4,16 +4,25 @@ describe LettersController, type: :controller do
   let(:template_path) { 'path/to/temp' }
   let(:template_id) { 'letter_1_in_arrears_FH' }
   let(:template_name) { 'Letter 1 In Arrears FH' }
+  let(:user) {
+    {
+      name: Faker::Name.name,
+      email: Faker::Internet.email,
+      groups: %w[leasehold-group income-group]
+    }
+  }
 
   describe '#get_templates' do
     it 'gets letter templates' do
-      expect_any_instance_of(Hackney::PDF::GetTemplates).to receive(:execute).and_return(
-        path: template_path,
-        id: template_id,
-        name: template_name
-      )
+      expect_any_instance_of(Hackney::PDF::GetTemplatesForUser)
+        .to receive(:execute)
+        .with(user: having_attributes(user)).and_return(
+          path: template_path,
+          id: template_id,
+          name: template_name
+        )
 
-      get :get_templates
+      get :get_templates, params: { user: user }
 
       expect(response.body).to eq(
         {
@@ -40,12 +49,12 @@ describe LettersController, type: :controller do
 
     context 'when all data is is found' do
       it 'generates pdf(html) preview with template details, case and empty errors' do
-        expect(generate_and_store_use_case_spy).to receive(:execute).with(
-          payment_ref: payment_ref, template_id: template_id, username: username, email: email
-        ).and_return(dummy_json_hash)
+        expect(generate_and_store_use_case_spy).to receive(:execute).and_return(dummy_json_hash)
 
         post :create, params: {
-          payment_ref: payment_ref, template_id: template_id, username: username, email: email
+          payment_ref: payment_ref,
+          template_id: template_id,
+          user: user
         }
 
         expect(response.status).to eq(200)
@@ -59,7 +68,9 @@ describe LettersController, type: :controller do
         expect(generate_and_store_use_case_spy).to receive(:execute).and_raise(Hackney::Income::TenancyNotFoundError)
 
         post :create, params: {
-          payment_ref: not_found_payment_ref, template_id: template_id, username: username, email: email
+          payment_ref: not_found_payment_ref,
+          template_id: template_id,
+          user: user
         }
 
         expect(response.status).to eq(404)
