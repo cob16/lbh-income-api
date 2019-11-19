@@ -6,7 +6,6 @@ describe LettersController, type: :controller do
   let(:template_name) { 'Letter 1 In Arrears FH' }
   let(:user) {
     {
-      id: 1,
       name: Faker::Name.name,
       email: Faker::Internet.email,
       groups: %w[leasehold-group income-group]
@@ -15,7 +14,7 @@ describe LettersController, type: :controller do
 
   describe '#get_templates' do
     it 'gets letter templates' do
-      expect_any_instance_of(Hackney::PDF::GetTemplates)
+      expect_any_instance_of(Hackney::PDF::GetTemplatesForUser)
         .to receive(:execute)
         .with(user: having_attributes(user)).and_return(
           path: template_path,
@@ -23,7 +22,7 @@ describe LettersController, type: :controller do
           name: template_name
         )
 
-      get :get_templates, params: { user: user.to_json }
+      get :get_templates, params: { user: user }
 
       expect(response.body).to eq(
         {
@@ -55,7 +54,7 @@ describe LettersController, type: :controller do
         post :create, params: {
           payment_ref: payment_ref,
           template_id: template_id,
-          user: user.to_json
+          user: user
         }
 
         expect(response.status).to eq(200)
@@ -71,7 +70,7 @@ describe LettersController, type: :controller do
         post :create, params: {
           payment_ref: not_found_payment_ref,
           template_id: template_id,
-          user: user.to_json
+          user: user
         }
 
         expect(response.status).to eq(404)

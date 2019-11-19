@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe Hackney::PDF::GetTemplates do
+describe Hackney::PDF::GetTemplatesForUser do
   subject do
     described_class.new
   end
@@ -29,7 +29,7 @@ describe Hackney::PDF::GetTemplates do
 
     it 'templates are found in the correct directory' do
       allow(Dir).to receive(:glob)
-        .with(["#{Hackney::PDF::GetTemplates::LEASEHOLD_SERVICES_TEMPLATE_DIRECTORY_PATH}*.erb"])
+        .with(["#{Hackney::PDF::GetTemplatesForUser::LEASEHOLD_SERVICES_TEMPLATE_DIRECTORY_PATH}*.erb"])
         .and_return([test_template[:path]])
 
       expect(subject.execute(user: user))
@@ -42,7 +42,7 @@ describe Hackney::PDF::GetTemplates do
 
     it 'templates are found in the correct directory' do
       allow(Dir).to receive(:glob)
-        .with(["#{Hackney::PDF::GetTemplates::INCOME_COLLECTION_TEMPLATE_DIRECTORY_PATH}*.erb"])
+        .with(["#{Hackney::PDF::GetTemplatesForUser::INCOME_COLLECTION_TEMPLATE_DIRECTORY_PATH}*.erb"])
         .and_return([test_template[:path]])
 
       expect(subject.execute(user: user))
@@ -56,8 +56,8 @@ describe Hackney::PDF::GetTemplates do
     it 'templates are found in the correct directory' do
       allow(Dir).to receive(:glob)
         .with([
-          "#{Hackney::PDF::GetTemplates::LEASEHOLD_SERVICES_TEMPLATE_DIRECTORY_PATH}*.erb",
-          "#{Hackney::PDF::GetTemplates::INCOME_COLLECTION_TEMPLATE_DIRECTORY_PATH}*.erb"
+          "#{Hackney::PDF::GetTemplatesForUser::LEASEHOLD_SERVICES_TEMPLATE_DIRECTORY_PATH}*.erb",
+          "#{Hackney::PDF::GetTemplatesForUser::INCOME_COLLECTION_TEMPLATE_DIRECTORY_PATH}*.erb"
         ])
         .and_return([test_template[:path]])
 

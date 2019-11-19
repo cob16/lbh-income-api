@@ -1,6 +1,6 @@
 module Hackney
   module PDF
-    class GetTemplates
+    class GetTemplatesForUser
       LEASEHOLD_SERVICES_TEMPLATE_DIRECTORY_PATH = 'lib/hackney/pdf/templates/leasehold/'.freeze
       INCOME_COLLECTION_TEMPLATE_DIRECTORY_PATH = 'lib/hackney/pdf/templates/income/'.freeze
 

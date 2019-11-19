@@ -15,7 +15,7 @@ RSpec.describe 'Downloading a PDF', type: :request do
       name: Faker::Name.name,
       email: Faker::Internet.email,
       groups: [user_group]
-    }.to_json
+    }
   }
 
   before do

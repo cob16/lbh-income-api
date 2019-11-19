@@ -34,13 +34,8 @@ class LettersController < ApplicationController
     )
   end
 
-  def params_for_templates
-    params.permit(user: [:id, :name, :email, groups: []])
-  end
-
   def user
-    # byebug
-    user_params = JSON.parse(params[:user])
+    user_params = params.require(:user).permit(:id, :name, :email, groups: [])
 
     Hackney::Domain::User.new.tap do |u|
       u.id = user_params['id']

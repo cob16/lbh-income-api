@@ -2,7 +2,7 @@ module Hackney
   module PDF
     class UseCaseFactory
       def get_templates
-        Hackney::PDF::GetTemplates.new
+        Hackney::PDF::GetTemplatesForUser.new
       end
 
       def get_preview
