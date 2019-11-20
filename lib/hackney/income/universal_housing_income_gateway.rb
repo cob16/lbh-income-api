@@ -81,25 +81,12 @@ module Hackney
 
         def get_income_info(tenancy_ref:)
           res = tenancy_agreement
-                .select_append(Sequel.qualify(:postcode, :aline1).as(:address_line1))
-                .select_append(Sequel.qualify(:postcode, :aline2).as(:address_line2))
-                .select_append(Sequel.qualify(:postcode, :aline3).as(:address_line3))
-                .select_append(Sequel.qualify(:postcode, :aline4).as(:address_line4))
-                .select_append(Sequel.qualify(:postcode, :post_code).as(:address_post_code))
-                .select_append(Sequel.qualify(:property, :prop_ref).as(:property_ref))
-                .select_append(Sequel.qualify(:property, :post_preamble).as(:address_preamble))
-                .select_append(Sequel.qualify(:property, :post_desig).as(:address_name_number))
-                # .select_append(Sequel.qualify(:tenagree, :house_ref).as(:house_ref))
-                .select_append(Sequel.qualify(:member, :title).as(:tenant_title))
-                .select_append(Sequel.qualify(:member, :forename).as(:tenant_forename))
-                .select_append(Sequel.qualify(:member, :surname).as(:tenant_surname))
-                .exclude(Sequel.trim(Sequel.qualify(:property, :prop_ref)) => '')
-                .join(property, post_code: Sequel.qualify(:postcode, :post_code))
-                .join(tenagree, prop_ref: Sequel.qualify(:property, :prop_ref))
+                .exclude(Sequel.trim(Sequel.qualify(:prop_table, :prop_ref)) => '')
+                .join(property, { prop_ref: Sequel.qualify(:tenagree, :prop_ref) }, table_alias: 'prop_table')
+                .join(postcode, post_code: Sequel.qualify(:prop_table, :post_code))
                 .join(member, house_ref: Sequel.qualify(:tenagree, :house_ref))
                 .where(tag_ref: tenancy_ref)
                 .first
-          byebug
 
           raise TenancyNotFoundError unless res.present?
 
@@ -121,7 +108,7 @@ module Hackney
               address_preamble: address_preamble,
               address_name_number: address_name_number,
 
-              total_collectable_arrears_balance: balance
+              total_collectable_arrears_balance: balancdene
           }
         end
 
@@ -141,6 +128,10 @@ module Hackney
 
         def property
           @property ||= database[:property]
+        end
+
+        def member
+          @member ||= database[:member]
         end
 
         def household
