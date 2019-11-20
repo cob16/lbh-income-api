@@ -9,40 +9,44 @@ describe Hackney::PDF::IncomePreview do
   end
 
   let(:get_templates_gateway) { instance_double(Hackney::PDF::GetTemplates) }
-  let(:income_information_gateway) { instance_double(Hackney::Income::UniversalHousingLeaseholdGateway) }
+  let(:income_information_gateway) { instance_double(Hackney::Income::UniversalHousingIncomeGateway) }
   let(:username) { Faker::Name.name }
   let(:test_template_id) { 123_123 }
   let(:test_template) do
     {
-      path: 'spec/lib/hackney/pdf/test_template.erb',
+      path: 'spec/lib/hackney/pdf/test_income_template.erb',
       id: test_template_id
     }
   end
-  let(:test_pay_ref) { 1_234_567_890 }
+  let(:test_tenancy_ref) { 1_234_567_890 }
+  let(:test_payment_ref) { 1_234_567_890 }
+  let(:test_property_ref) { 1_234_567_890 }
   let(:test_letter_params) do
     {
-      tenancy_ref: test_pay_ref,
-      lessee_full_name: 'Mr Philip Banks',
-      lessee_short_name: 'Philip',
-      correspondence_address1: '508 Saint Cloud Road',
-      correspondence_address2: 'Southwalk',
-      correspondence_address3: 'London',
-      correspondence_address4: 'London',
-      correspondence_address5: 'England',
-      correspondence_postcode: 'SE1 0SW',
-      property_address: '1 Hillman St, London, E8 1DY',
-      arrears_letter_1_date: '20th Feb 2019',
+      tenancy_ref: test_tenancy_ref,
+      payment_ref: test_payment_ref,
+      property_ref: test_property_ref,
+      address_line1: '508 Saint Cloud Road',
+      address_line2: 'Southwalk',
+      address_line3: 'London',
+      address_line4: 'London',
+      address_name_number: '',
+      address_post_code: 'SE1 0SW',
+      address_preamble: '',
+      title: '',
+      forename: 'Bloggs',
+      surname: 'Joe',
       total_collectable_arrears_balance: '3506.90'
     }
   end
 
-  let(:translated_html) { File.open('spec/lib/hackney/pdf/translated_test_template.html').read }
+  let(:translated_html) { File.open('spec/lib/hackney/pdf/translated_test_income_template.html').read }
 
   it 'generates letter preview' do
-    expect(income_information_gateway).to receive(:get_income_info).with(tenancy_ref: test_pay_ref).and_return(test_letter_params)
+    expect(income_information_gateway).to receive(:get_income_info).with(tenancy_ref: test_tenancy_ref).and_return(test_letter_params)
     expect(get_templates_gateway).to receive(:execute).and_return([test_template])
 
-    preview = subject.execute(tenancy_ref: test_pay_ref, template_id: test_template_id, username: username)
+    preview = subject.execute(tenancy_ref: test_tenancy_ref, template_id: test_template_id, username: username)
 
     expect(preview).to include(
       case: test_letter_params,
@@ -55,26 +59,30 @@ describe Hackney::PDF::IncomePreview do
   context 'when there\'s missing data' do
     let(:test_letter_params) do
       {
-        tenancy_ref: test_pay_ref,
-        lessee_full_name: 'P Banks',
-        correspondence_address1: '',
-        correspondence_address2: '',
-        correspondence_address3: '',
-        correspondence_postcode: '',
-        lessee_short_name: '',
-        property_address: '1 Hillman St, London, E8 1DY',
-        arrears_letter_1_date: '20th Feb 2019',
+        tenancy_ref: test_tenancy_ref,
+        payment_ref: test_payment_ref,
+        property_ref: test_property_ref,
+        address_line1: '508 Saint Cloud Road',
+        address_line2: '',
+        address_line3: '',
+        address_line4: '',
+        address_name_number: '',
+        address_post_code: '',
+        address_preamble: '',
+        title: '',
+        forename: '',
+        surname: '',
         total_collectable_arrears_balance: '3506.90'
       }
     end
 
-    let(:translated_html) { File.open('spec/lib/hackney/pdf/translated_test_template_with_blanks.html').read }
+    let(:translated_html) { File.open('spec/lib/hackney/pdf/translated_test_income_template_with_blanks.html').read }
 
     it 'generates letter preview with errors' do
-      expect(income_information_gateway).to receive(:get_income_info).with(tenancy_ref: test_pay_ref).and_return(test_letter_params)
+      expect(income_information_gateway).to receive(:get_income_info).with(tenancy_ref: test_tenancy_ref).and_return(test_letter_params)
       expect(get_templates_gateway).to receive(:execute).and_return([test_template])
 
-      preview = subject.execute(tenancy_ref: test_pay_ref, template_id: test_template_id, username: username)
+      preview = subject.execute(tenancy_ref: test_tenancy_ref, template_id: test_template_id, username: username)
 
       expect(preview).to include(
         case: test_letter_params,
@@ -82,13 +90,19 @@ describe Hackney::PDF::IncomePreview do
         preview: translated_html,
         errors: [
           {
-            name: 'correspondence_address1',
+            name: 'forename',
             message: 'missing mandatory field'
-          }, {
-            name: 'correspondence_address2',
+          },
+          {
+            name: 'surname',
             message: 'missing mandatory field'
-          }, {
-            name: 'correspondence_postcode',
+          },
+          {
+            name: 'address_line2',
+            message: 'missing mandatory field'
+          },
+          {
+            name: 'address_post_code',
             message: 'missing mandatory field'
           }
         ]

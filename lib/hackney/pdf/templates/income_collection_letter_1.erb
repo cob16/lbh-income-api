@@ -9,17 +9,17 @@
 </div>
 
 <div class="lessee_address">
-  <strong><%= @letter.lessee_full_name %></strong> <br>
-  <%= @letter.correspondence_address1 %> <br>
-  <%= @letter.correspondence_address2 %> <br>
-  <%= @letter.correspondence_address3 %> <br>
-  <%= @letter.correspondence_postcode %>
+  <strong><%= @letter.forename %> <%= @letter.surname %></strong> <br>
+  <%= @letter.address_line1 %> <br>
+  <%= @letter.address_line2 %> <br>
+  <%= @letter.address_line3 %> <br>
+  <%= @letter.address_post_code %>
 </div>
 
 <div>
-  Dear <%= @letter.lessee_short_name %>,
+  Dear <%= @letter.forename %> <%= @letter.surname %>,
 
-  <p>Your rent account is <%= @letter.balance %> in debt.</p>
+  <p>Your rent account is <%= @letter.total_collectable_arrears_balance %> in debt.</p>
   <h2>Please pay the full amount now using any of the following methods:</h2>
   <ul>
     <li>Hackney's Rent Account Website: <strong>https://www.hackney.gov.uk/rentaccount.</strong></li>
@@ -42,7 +42,7 @@
 
   <p>
     Yours sincerely,<br>
-    <%= @user_name %><br>
+    <%= @username %><br>
     London Borough of Hackney
   </p>
 

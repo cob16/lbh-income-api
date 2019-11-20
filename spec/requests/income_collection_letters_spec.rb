@@ -15,7 +15,7 @@ RSpec.describe 'Income Collection Letters', type: :request do
 
   before do
     mock_aws_client
-    create_valid_uh_records_for_a_letter
+    create_valid_uh_records_for_an_income_letter
   end
 
   describe 'POST /api/v1/messages/letters' do
@@ -39,27 +39,24 @@ RSpec.describe 'Income Collection Letters', type: :request do
       let(:expected_json_response_as_hash) {
         {
           'case' => {
-            'bal_dispute' => '0.0',
-            'charging_order' => '0.0',
-            'money_judgement' => '0.0',
-            'tenure_type' => 'SEC',
-            'payment_ref' => payment_ref,
             'tenancy_ref' => tenancy_ref,
-            'total_collectable_arrears_balance' => '0.0',
-            'original_lease_date' => leasedate.strftime('%FT%T.%L%:z'),
-            'lessee_full_name' => 'Test Name',
-            'lessee_short_name' => 'Test Name', 'date_of_current_purchase_assignment' => '1900-01-01T00:00:00.000+00:00',
-            'correspondence_address1' => 'Test',
-            'correspondence_address2' => 'Test Test Line 1', 'correspondence_address3' => '',
-            'correspondence_address4' => '',
-            'correspondence_address5' => '',
-            'correspondence_postcode' => postcode,
-            'property_address' => ", #{postcode}",
-            'international' => false
+            'payment_ref' => payment_ref,
+            'address_line1' => 'Test Line 1',
+            'address_line2' => 'Test Line 2',
+            'address_line3' => '',
+            'address_line4' => '',
+            'address_name_number' => '',
+            'address_post_code' => postcode,
+            'address_preamble' => '',
+            'property_ref' => property_ref,
+            'forename' => 'Test Forename',
+            'surname' => 'Test Surname',
+            'title' => 'Test Title',
+            'total_collectable_arrears_balance' => '0.0'
           },
           'template' => {
             'path' => 'lib/hackney/pdf/templates/income_collection_letter_1.erb',
-            'name' => 'Income Collection Letter 1',
+            'name' => 'Income collection letter 1',
             'id' => 'income_collection_letter_1'
           },
           'username' => username,
@@ -72,6 +69,8 @@ RSpec.describe 'Income Collection Letters', type: :request do
         post messages_letters_path, params: {
           tenancy_ref: tenancy_ref, template_id: template, username: username, email: email
         }
+
+        expect(response).to be_successful
 
         # UUID: is always different can ignore this.
         # TODO: Test `preview` content separatly
@@ -92,13 +91,6 @@ RSpec.describe 'Income Collection Letters', type: :request do
         tenancy_ref: tenancy_ref, template_id: template, username: username, email: email
       )
     end
-    let(:existing_income_collection_letter) do
-      document = create(:document)
-      metadata = JSON.parse(document.metadata)
-      metadata['template']['id'] = 'income_collection_letter_1'
-      document.update(metadata: metadata.to_json)
-      document
-    end
 
     context 'when there is an existing income collection letter' do
       let(:uuid) { existing_income_collection_letter[:uuid] }
@@ -115,7 +107,7 @@ RSpec.describe 'Income Collection Letters', type: :request do
     end
   end
 
-  def create_valid_uh_records_for_a_letter
+  def create_valid_uh_records_for_an_income_letter
     create_uh_property(
       property_ref: property_ref,
       post_code: postcode
@@ -136,7 +128,14 @@ RSpec.describe 'Income Collection Letters', type: :request do
     )
     create_uh_postcode(
       post_code: postcode,
-      aline1: 'Test Line 1'
+      aline1: 'Test Line 1',
+      aline2: 'Test Line 2'
+    )
+    create_uh_member(
+      house_ref: house_ref,
+      title: 'Test Title',
+      forename: 'Test Forename',
+      surname: 'Test Surname'
     )
     create_uh_rent(prop_ref: property_ref, sc_leasedate: leasedate)
   end
@@ -144,6 +143,7 @@ RSpec.describe 'Income Collection Letters', type: :request do
   def generate_and_store_letter(tenancy_ref:, template_id:, username:, email:)
     UseCases::GenerateAndStoreLetter.new.execute(
       tenancy_ref: tenancy_ref,
+      payment_ref: nil,
       template_id: template_id,
       username: username,
       email: email

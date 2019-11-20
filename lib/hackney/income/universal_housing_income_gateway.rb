@@ -40,45 +40,6 @@ module Hackney
           { tenancy_ref: res[:tag_ref] }
         end
 
-        def get_leasehold_info(tenancy_ref:) # old
-          res = tenancy_agreement
-                .select_append(Sequel.qualify(:tenagree, :prop_ref).as(:tenancy_prop_ref))
-                .select_append(Sequel.qualify(:tenagree, :tenure).as(:tenure_type))
-                .where(u_saff_rentacc: tenancy_ref)
-                .exclude(Sequel.trim(Sequel.qualify(:tenagree, :prop_ref)) => '')
-                .join(rent, prop_ref: Sequel.qualify(:tenagree, :prop_ref))
-                .join(household, house_ref: Sequel.qualify(:tenagree, :house_ref))
-                .first
-
-          raise TenancyNotFoundError unless res.present?
-
-          prop_ref = res[:tenancy_prop_ref]
-
-          property_res = property.first(prop_ref: prop_ref) || {}
-          corr_address = get_correspondence_address(
-            corr_postcode: res[:corr_postcode],
-            prop_postcode: property_res[:post_code],
-            household_res: res,
-            property_res: property_res
-          )
-
-          {
-            tenancy_ref: tenancy_ref,
-            tenancy_ref: res[:tag_ref].strip,
-            total_collectable_arrears_balance: res[:cur_bal],
-            lessee_full_name: res[:house_desc]&.strip,
-            lessee_short_name: res[:house_desc]&.strip,
-            correspondence_address1: corr_address[:preamble]&.strip,
-            correspondence_address2: "#{corr_address[:desig]&.strip} #{corr_address[:aline1]&.strip}",
-            correspondence_address3: corr_address[:aline2]&.strip || '',
-            correspondence_address4: corr_address[:aline3]&.strip || '',
-            correspondence_address5: corr_address[:aline4]&.strip || '',
-            correspondence_postcode: corr_address[:post_code]&.strip || '',
-            property_address: "#{property_res[:address1]&.strip}, #{property_res[:post_code]&.strip}",
-            international: international?(corr_address[:post_code])
-          }
-        end
-
         def get_income_info(tenancy_ref:)
           res = tenancy_agreement
                 .exclude(Sequel.trim(Sequel.qualify(:prop_table, :prop_ref)) => '')
@@ -90,25 +51,21 @@ module Hackney
 
           raise TenancyNotFoundError unless res.present?
 
-          prop_ref = res[:tenancy_prop_ref]
-          leasehold_res = get_leasehold_info(payment_ref)
-
-          balance = leasehold_res[:total_collectable_arrears_balance]
-
           {
-              tenant_title: tenant_title,
-              tenant_forename: tenant_forename,
-              tenant_surname: tenant_surname,
-              address_line1: address_line1,
-              address_line2: address_line2,
-              address_line3: address_line3,
-              address_line4: address_line4,
-              address_post_code: address_post_code,
-              property_ref: property_ref,
-              address_preamble: address_preamble,
-              address_name_number: address_name_number,
-
-              total_collectable_arrears_balance: balancdene
+            title: res[:title]&.strip,
+            forename: res[:forename]&.strip,
+            surname: res[:surname]&.strip,
+            address_line1: res[:aline1]&.strip,
+            address_line2: res[:aline2]&.strip || '',
+            address_line3: res[:aline3]&.strip || '',
+            address_line4: res[:aline4]&.strip || '',
+            address_post_code: res[:post_code]&.strip || '',
+            property_ref: res[:prop_ref]&.strip,
+            address_preamble: res[:post_preamble]&.strip,
+            address_name_number: res[:post_desig]&.strip,
+            total_collectable_arrears_balance: res[:cur_bal],
+            payment_ref: res[:u_saff_rentacc]&.strip || '',
+            tenancy_ref: tenancy_ref
           }
         end
 

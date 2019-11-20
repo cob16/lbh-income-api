@@ -6,11 +6,11 @@ module Hackney
         @income_information_gateway = income_information_gateway
       end
 
-      def execute(payment_ref:, tenancy_ref:, template_id:, username:)
+      def execute(tenancy_ref:, template_id:, username:)
         template = get_template_by_id(template_id)
         income_info = get_income_info(tenancy_ref)
 
-        preview_with_errors = Hackney::PDF::PreviewGenerator.new(
+        preview_with_errors = Hackney::PDF::IncomePreviewGenerator.new(
           template_path: template[:path]
         ).execute(letter_params: income_info, username: username)
 
