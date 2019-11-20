@@ -9,9 +9,16 @@ RSpec.describe 'Downloading a PDF', type: :request do
   let(:prop_ref) { Faker::Number.number(6) }
   let(:tenancy_ref) { Faker::Number.number(6) }
   let(:postcode) { Faker::Address.postcode }
-  let(:email) { Faker::Internet.email }
-  let(:username) { Faker::Name.name }
   let(:letter_json) { [] }
+  let(:user_group) { 'leasehold-group' }
+  let(:user) {
+    {
+      id: 1,
+      name: Faker::Name.name,
+      email: Faker::Internet.email,
+      groups: [user_group]
+    }
+  }
 
   before do
     Timecop.freeze
@@ -26,7 +33,9 @@ RSpec.describe 'Downloading a PDF', type: :request do
   context 'when I call preview then documents' do
     before do
       post messages_letters_path, params: {
-        payment_ref: payment_ref, template_id: real_template_id, username: username, email: email
+        payment_ref: payment_ref,
+        template_id: real_template_id,
+        user: user
       }
 
       letter_json << JSON.parse(response.body)
@@ -34,7 +43,7 @@ RSpec.describe 'Downloading a PDF', type: :request do
     end
 
     context 'with a username' do
-      let(:query_string) { "?username=#{username}" }
+      let(:query_string) { "?username=#{user[:name]}" }
 
       it 'responds with a PDF' do
         expect(response.headers['Content-Type']).to eq('application/pdf')
@@ -49,7 +58,7 @@ RSpec.describe 'Downloading a PDF', type: :request do
               actionCode: 'SLB',
               actionCategory: '9',
               comment: 'LBA sent (SC)',
-              username: username,
+              username: user[:name],
               createdDate: DateTime.now.iso8601
             })).to have_been_made.once
       end
@@ -80,7 +89,7 @@ RSpec.describe 'Downloading a PDF', type: :request do
       end
 
       context 'when downloading from the documents list view' do
-        let(:query_string) { "?username=#{username}&documents_view=true" }
+        let(:query_string) { "?username=#{user[:name]}&documents_view=true" }
 
         it 'does not write to the action diary if it is being downloaded from the view' do
           expect(a_request(
@@ -91,7 +100,7 @@ RSpec.describe 'Downloading a PDF', type: :request do
                 actionCode: 'SLB',
                 actionCategory: '9',
                 comment: 'LBA sent (SC)',
-                username: username,
+                username: user[:name],
                 createdDate: DateTime.now.iso8601
               })).not_to have_been_made
         end
@@ -99,8 +108,14 @@ RSpec.describe 'Downloading a PDF', type: :request do
     end
 
     context 'without a username' do
-      let(:username) { nil }
-      let(:query_string) { "?username=#{username}" }
+      let(:user) {
+        {
+          name: nil,
+          groups: [user_group]
+
+        }
+      }
+      let(:query_string) { "?username=#{user[:name]}" }
 
       it 'responds with a PDF' do
         expect(response.headers['Content-Type']).to eq('application/pdf')
@@ -115,13 +130,17 @@ RSpec.describe 'Downloading a PDF', type: :request do
   end
 
   context 'when a letter is status is not uploaded' do
-    let(:query_string) { "?username=#{username}" }
+    let(:query_string) { "?username=#{user[:name]}" }
 
     before do
       post messages_letters_path, params: {
-        payment_ref: payment_ref, template_id: real_template_id, username: username, email: email
+        payment_ref: payment_ref,
+        template_id: real_template_id,
+        user: user
       }
+    end
 
+    it 'responds with a PDF when I call preview then documents' do
       letter_json = JSON.parse(response.body)
 
       document = Hackney::Cloud::Document.find(letter_json['document_id'])
@@ -139,7 +158,7 @@ RSpec.describe 'Downloading a PDF', type: :request do
             actionCode: 'SLB',
             actionCategory: '9',
             comment: 'LBA sent (SC)',
-            username: username,
+            username: user[:name],
             createdDate: DateTime.now.iso8601
           })).not_to have_been_made
     end

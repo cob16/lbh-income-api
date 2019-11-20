@@ -2,8 +2,9 @@ module Hackney
   module Income
     class TenancyPrioritiser
       class TenancyClassification
-        def initialize(criteria)
+        def initialize(case_priority, criteria)
           @criteria = criteria
+          @case_priority = case_priority
         end
 
         def execute
@@ -21,9 +22,9 @@ module Hackney
           @criteria.last_communication_action.nil? &&
             @criteria.balance >= 5 &&
             @criteria.balance < 10 &&
-            @criteria.nosp_served == false &&
+            @criteria.nosp_served? == false &&
             last_communication_between_three_months_one_week? &&
-            @criteria.paused == false
+            @case_priority.paused? == false
         end
 
         def send_letter_one?
@@ -34,9 +35,9 @@ module Hackney
 
           @criteria.last_communication_action.in?(valid_actions) &&
             @criteria.balance > 10 &&
-            @criteria.nosp_served == false &&
+            @criteria.nosp_served? == false &&
             last_communication_between_three_months_one_week? &&
-            @criteria.paused == false
+            @case_priority.paused? == false
         end
 
         def send_letter_two?
@@ -47,9 +48,9 @@ module Hackney
           @criteria.last_communication_action.in?(valid_actions) &&
             @criteria.balance >= @criteria.weekly_rent &&
             @criteria.balance < arrear_accumulation_by_number_weeks(3) &&
-            @criteria.nosp_served == false &&
+            @criteria.nosp_served? == false &&
             last_communication_between_three_months_one_week? &&
-            @criteria.paused == false
+            @case_priority.paused? == false
         end
 
         def send_warning_letter?
@@ -59,9 +60,9 @@ module Hackney
 
           @criteria.last_communication_action.in?(valid_actions) &&
             @criteria.balance >= arrear_accumulation_by_number_weeks(3) &&
-            @criteria.nosp_served == false &&
+            @criteria.nosp_served? == false &&
             last_communication_between_three_months_one_week? &&
-            @criteria.paused == false
+            @case_priority.paused? == false
         end
 
         def send_nosp?
@@ -70,14 +71,17 @@ module Hackney
           ]
           @criteria.last_communication_action.in?(valid_actions) &&
             @criteria.balance >= arrear_accumulation_by_number_weeks(4) &&
-            @criteria.nosp_served == false &&
+            @criteria.nosp_served? == false &&
             last_communication_between_three_months_one_week? &&
-            @criteria.paused == false
+            @case_priority.paused? == false
         end
 
         def last_communication_between_three_months_one_week?
           one_week = 7.days.ago.to_date
           three_months = 3.months.ago.to_date
+
+          return false if @criteria.last_communication_date.nil?
+
           @criteria.last_communication_date <= one_week &&
             @criteria.last_communication_date >= three_months
         end

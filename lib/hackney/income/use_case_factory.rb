@@ -122,6 +122,13 @@ module Hackney
         )
       end
 
+      def add_action_diary_and_sync_case
+        UseCases::AddActionDiaryAndSyncCase.new(
+          sync_case_priority: sync_case_priority,
+          add_action_diary: add_action_diary
+        )
+      end
+
       def sync_case_priority
         ActiveSupport::Deprecation.warn(
           "SyncCasePriorityJob is deprecated - use external scheduler via 'rake income:sync:enqueue'"
@@ -142,6 +149,13 @@ module Hackney
       def get_failed_sms_messages
         Hackney::Notification::GetFailedSMSMessages.new(
           notification_gateway: notifications_gateway
+        )
+      end
+
+      def uh_tenancies_gateway
+        Hackney::Income::UniversalHousingTenanciesGateway.new(
+          restrict_patches: ENV.fetch('RESTRICT_PATCHES', false),
+          patches: ENV.fetch('PERMITTED_PATCHES', '').split(',')
         )
       end
 
@@ -178,13 +192,6 @@ module Hackney
 
       def stored_tenancies_gateway
         Hackney::Income::StoredTenanciesGateway.new
-      end
-
-      def uh_tenancies_gateway
-        Hackney::Income::UniversalHousingTenanciesGateway.new(
-          restrict_patches: ENV.fetch('RESTRICT_PATCHES', false),
-          patches: ENV.fetch('PERMITTED_PATCHES', '').split(',')
-        )
       end
 
       def tenancy_api_gateway

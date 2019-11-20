@@ -19,7 +19,7 @@ module Hackney
           req = Net::HTTP::Get.new(uri)
           req['X-Api-Key'] = @key
 
-          res = Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) { |http| http.request(req) }
+          res = Net::HTTP.start(uri.hostname, uri.port, use_ssl: (uri.scheme == 'https')) { |http| http.request(req) }
 
           raise Hackney::Tenancy::Exceptions::TenancyApiException, res unless res.is_a? Net::HTTPSuccess
 

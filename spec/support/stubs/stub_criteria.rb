@@ -1,16 +1,27 @@
 module Stubs
   class StubCriteria
-    attr_writer :balance, :broken_court_order, :days_in_arrears,
-                :number_of_broken_agreements,
-                :payment_date_delta, :payment_amount_delta,
-                :active_agreement, :active_nosp, :nosp_served_date,
-                :nosp_expiry_date, :patch_code, :courtdate, :eviction_date
+    def initialize(attributes = {})
+      @attributes = attributes
+    end
 
-    attr_accessor :days_since_last_payment, :last_communication_date, :paused, :nosp_served,
-                  :last_communication_action, :court_outcome
+    def days_since_last_payment
+      attributes[:days_since_last_payment]
+    end
+
+    def last_communication_date
+      attributes[:last_communication_date]
+    end
+
+    def last_communication_action
+      attributes[:last_communication_action]
+    end
+
+    def court_outcome
+      attributes[:court_outcome]
+    end
 
     def balance
-      @balance || 100.00
+      attributes[:balance] || 100.00
     end
 
     def weekly_rent
@@ -34,39 +45,43 @@ module Stubs
     end
 
     def patch_code
-      @patch_code || 'E01'
+      attributes[:patch_code] || 'E01'
     end
 
     def broken_court_order?
-      @broken_court_order || false
+      attributes[:broken_court_order] || false
     end
 
     def days_in_arrears
-      @days_in_arrears || 7
+      attributes[:days_in_arrears] || 7
     end
 
     def active_agreement?
-      @active_agreement || false
+      attributes[:active_agreement] || false
     end
 
     def nosp_served?
-      @nosp_served || false
+      attributes[:nosp_served] || false
     end
 
     def active_nosp?
-      @active_nosp || false
+      attributes[:active_nosp] || false
     end
 
     def number_of_broken_agreements
-      @number_of_broken_agreements || 0
+      attributes[:number_of_broken_agreements] || 0
     end
 
     def payment_amount_delta
-      @payment_amount_delta || 0
+      attributes[:payment_amount_delta] || 0
     end
 
     def payment_date_delta
-      @payment_date_delta || 0
+      attributes[:payment_date_delta] || 0
     end
+
+    private
+
+    attr_reader :attributes
   end
 end
