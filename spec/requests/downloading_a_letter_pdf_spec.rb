@@ -7,7 +7,9 @@ RSpec.describe 'Downloading a PDF', type: :request do
   let(:payment_ref) { Faker::Number.number(6) }
   let(:house_ref) { Faker::Number.number(6) }
   let(:prop_ref) { Faker::Number.number(6) }
+  let(:tenancy_ref) { Faker::Number.number(6) }
   let(:postcode) { Faker::Address.postcode }
+  let(:letter_json) { [] }
   let(:user_group) { 'leasehold-group' }
   let(:user) {
     {
@@ -19,25 +21,147 @@ RSpec.describe 'Downloading a PDF', type: :request do
   }
 
   before do
+    Timecop.freeze
     mock_aws_client
     create_valid_uh_records_for_a_letter
+
+    stub_request(:post, 'http://example.com/api/v2/tenancies/arrears-action-diary')
   end
 
-  it 'responds with a PDF when I call preview then documents' do
-    post messages_letters_path, params: {
-      payment_ref: payment_ref,
-      template_id: real_template_id,
-      user: user
-    }
+  after { Timecop.return }
 
-    letter_json = JSON.parse(response.body)
+  context 'when I call preview then documents' do
+    before do
+      post messages_letters_path, params: {
+        payment_ref: payment_ref,
+        template_id: real_template_id,
+        user: user
+      }
 
-    expect(letter_json['errors']).to eq([])
-    expect(letter_json['document_id']).not_to be_nil
+      letter_json << JSON.parse(response.body)
+      get "/api/v1/documents/#{letter_json[0]['document_id']}/download#{query_string}"
+    end
 
-    get "/api/v1/documents/#{letter_json['document_id']}/download/"
+    context 'with a username' do
+      let(:query_string) { "?username=#{user[:name]}" }
 
-    expect(response.headers['Content-Type']).to eq('application/pdf')
+      it 'responds with a PDF' do
+        expect(response.headers['Content-Type']).to eq('application/pdf')
+      end
+
+      it 'asks the tenancy API to record an action' do
+        expect(a_request(
+          :post, 'http://example.com/api/v2/tenancies/arrears-action-diary'
+        )
+            .with(body: {
+              tenancyAgreementRef: tenancy_ref,
+              actionCode: 'SLB',
+              actionCategory: '9',
+              comment: 'LBA sent (SC)',
+              username: user[:name],
+              createdDate: DateTime.now.iso8601
+            })).to have_been_made.once
+      end
+
+      it 'updates the status to downloaded' do
+        get 'http://example.com/api/v1/documents'
+        expect(response).to be_successful
+        response_payment_reference = JSON.parse(JSON.parse(response.body)[0]['metadata'])['payment_ref']
+        status = JSON.parse(response.body)[0]['status']
+        expect(response_payment_reference).to eq(payment_ref)
+        expect(status).to eq('downloaded')
+      end
+
+      context 'when you download a second time' do
+        before do
+          get "/api/v1/documents/#{letter_json[0]['document_id']}/download#{query_string}"
+        end
+
+        it 'responds with a PDF' do
+          expect(response.headers['Content-Type']).to eq('application/pdf')
+        end
+
+        it 'does not write to the action diary twice' do
+          expect(a_request(
+                   :post, 'http://example.com/api/v2/tenancies/arrears-action-diary'
+                 )).to have_been_made.once
+        end
+      end
+
+      context 'when downloading from the documents list view' do
+        let(:query_string) { "?username=#{user[:name]}&documents_view=true" }
+
+        it 'does not write to the action diary if it is being downloaded from the view' do
+          expect(a_request(
+            :post, 'http://example.com/api/v2/tenancies/arrears-action-diary'
+          )
+              .with(body: {
+                tenancyAgreementRef: tenancy_ref,
+                actionCode: 'SLB',
+                actionCategory: '9',
+                comment: 'LBA sent (SC)',
+                username: user[:name],
+                createdDate: DateTime.now.iso8601
+              })).not_to have_been_made
+        end
+      end
+    end
+
+    context 'without a username' do
+      let(:user) {
+        {
+          name: nil,
+          groups: [user_group]
+
+        }
+      }
+      let(:query_string) { "?username=#{user[:name]}" }
+
+      it 'responds with a PDF' do
+        expect(response.headers['Content-Type']).to eq('application/pdf')
+      end
+
+      it 'does not ask the tenancy API to record an action' do
+        expect(a_request(
+                 :post, 'http://example.com/api/v2/tenancies/arrears-action-diary'
+               )).not_to have_been_made
+      end
+    end
+  end
+
+  context 'when a letter is status is not uploaded' do
+    let(:query_string) { "?username=#{user[:name]}" }
+
+    before do
+      post messages_letters_path, params: {
+        payment_ref: payment_ref,
+        template_id: real_template_id,
+        user: user
+      }
+    end
+
+    it 'responds with a PDF when I call preview then documents' do
+      letter_json = JSON.parse(response.body)
+
+      document = Hackney::Cloud::Document.find(letter_json['document_id'])
+      document.update(status: 'received')
+
+      get "/api/v1/documents/#{letter_json['document_id']}/download#{query_string}"
+    end
+
+    it 'does not write to the action diary when it has been downloaded' do
+      expect(a_request(
+        :post, 'http://example.com/api/v2/tenancies/arrears-action-diary'
+      )
+          .with(body: {
+            tenancyAgreementRef: tenancy_ref,
+            actionCode: 'SLB',
+            actionCategory: '9',
+            comment: 'LBA sent (SC)',
+            username: user[:name],
+            createdDate: DateTime.now.iso8601
+          })).not_to have_been_made
+    end
   end
 
   def create_valid_uh_records_for_a_letter
@@ -47,7 +171,7 @@ RSpec.describe 'Downloading a PDF', type: :request do
     )
     create_uh_tenancy_agreement(
       prop_ref: prop_ref,
-      tenancy_ref: Faker::Number.number(6),
+      tenancy_ref: tenancy_ref,
       u_saff_rentacc: payment_ref,
       house_ref: house_ref
     )
