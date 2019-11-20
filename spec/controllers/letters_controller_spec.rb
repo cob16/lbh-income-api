@@ -47,9 +47,7 @@ describe LettersController, type: :controller do
 
     context 'when all data is is found' do
       it 'generates pdf(html) preview with template details, case and empty errors' do
-        expect(generate_and_store_use_case_spy).to receive(:execute).with(
-          payment_ref: payment_ref, tenancy_ref: nil, template_id: template_id, user: user
-        ).and_return(dummy_json_hash)
+        expect(generate_and_store_use_case_spy).to receive(:execute).and_return(dummy_json_hash)
 
         post :create, params: {
           payment_ref: payment_ref,

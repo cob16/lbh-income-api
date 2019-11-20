@@ -10,8 +10,15 @@ RSpec.describe 'Income Collection Letters', type: :request do
   let(:postcode) { Faker::Address.postcode }
   let(:leasedate) { Time.zone.now.beginning_of_hour }
   let(:template) { 'income_collection_letter_1' }
-  let(:username) { Faker::Name.name }
-  let(:email) { Faker::Internet.email }
+  let(:user_group) { 'income-collection-group' }
+  
+  let(:user) {
+    {
+      name: Faker::Name.name,
+      email: Faker::Internet.email,
+      groups: [user_group]
+    }
+  }
 
   before do
     mock_aws_client
@@ -21,7 +28,7 @@ RSpec.describe 'Income Collection Letters', type: :request do
   describe 'POST /api/v1/messages/letters' do
     it 'returns 404 with bogus tenancy ref' do
       post messages_letters_path, params: {
-        tenancy_ref: 'abc', template_id: 'income_collection_letter_1', username: username, email: email
+        tenancy_ref: 'abc', template_id: 'income_collection_letter_1', user: user
       }
 
       expect(response).to have_http_status(404)
@@ -30,7 +37,7 @@ RSpec.describe 'Income Collection Letters', type: :request do
     it 'raises an error with bogus template_id' do
       expect {
         post messages_letters_path, params: {
-          tenancy_ref: 'abc', template_id: 'does not exist', username: username, email: email
+          tenancy_ref: 'abc', template_id: 'does not exist', user: user
         }
       }.to raise_error(TypeError)
     end
@@ -55,11 +62,11 @@ RSpec.describe 'Income Collection Letters', type: :request do
             'total_collectable_arrears_balance' => '0.0'
           },
           'template' => {
-            'path' => 'lib/hackney/pdf/templates/income_collection_letter_1.erb',
+            'path' => 'lib/hackney/pdf/templates/income/income_collection_letter_1.erb',
             'name' => 'Income collection letter 1',
             'id' => 'income_collection_letter_1'
           },
-          'username' => username,
+          'username' => user[:name],
           'document_id' => 1,
           'errors' => []
         }
@@ -67,7 +74,7 @@ RSpec.describe 'Income Collection Letters', type: :request do
 
       it 'responds with a JSON object' do
         post messages_letters_path, params: {
-          tenancy_ref: tenancy_ref, template_id: template, username: username, email: email
+          tenancy_ref: tenancy_ref, template_id: template, user: user
         }
 
         expect(response).to be_successful
@@ -84,11 +91,9 @@ RSpec.describe 'Income Collection Letters', type: :request do
   end
 
   describe 'POST /api/v1/messages/letters/send' do
-    let(:username) { Faker::Name.name }
-    let(:email) { Faker::Internet.email }
     let(:existing_income_collection_letter) do
       generate_and_store_letter(
-        tenancy_ref: tenancy_ref, template_id: template, username: username, email: email
+        tenancy_ref: tenancy_ref, template_id: template, user: user
       )
     end
 
@@ -100,7 +105,7 @@ RSpec.describe 'Income Collection Letters', type: :request do
       end
 
       it 'is a No Content (204) status' do
-        post messages_letters_send_path, params: { uuid: uuid, username: username, email: email }
+        post messages_letters_send_path, params: { uuid: uuid, user: user }
 
         expect(response).to be_no_content
       end
@@ -140,13 +145,18 @@ RSpec.describe 'Income Collection Letters', type: :request do
     create_uh_rent(prop_ref: property_ref, sc_leasedate: leasedate)
   end
 
-  def generate_and_store_letter(tenancy_ref:, template_id:, username:, email:)
+  def generate_and_store_letter(tenancy_ref:, template_id:, user:)
+    user_obj = Hackney::Domain::User.new.tap do |u|
+      u.name = user[:name]
+      u.email = user[:email]
+      u.groups = user[:groups]
+    end
+
     UseCases::GenerateAndStoreLetter.new.execute(
       tenancy_ref: tenancy_ref,
       payment_ref: nil,
       template_id: template_id,
-      username: username,
-      email: email
+      user: user_obj
     )
   end
 end

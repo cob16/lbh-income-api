@@ -18,7 +18,7 @@ module UseCases
         letter_data = pdf_use_case_factory.get_preview.execute(
           payment_ref: payment_ref,
           template_id: template_id,
-          username: username
+          user: user
         )
       end
 

@@ -8,7 +8,7 @@ describe Hackney::PDF::IncomePreview do
     )
   end
 
-  let(:get_templates_gateway) { instance_double(Hackney::PDF::GetTemplates) }
+  let(:get_templates_gateway) { instance_double(Hackney::PDF::GetTemplatesForUser) }
   let(:income_information_gateway) { instance_double(Hackney::Income::UniversalHousingIncomeGateway) }
   let(:username) { Faker::Name.name }
   let(:test_template_id) { 123_123 }
@@ -39,6 +39,12 @@ describe Hackney::PDF::IncomePreview do
       total_collectable_arrears_balance: '3506.90'
     }
   end
+  let(:user) do 
+    Hackney::Domain::User.new.tap do |u| 
+      u.name = username 
+      u.groups = ['income-collection-group']
+    end 
+  end 
 
   let(:translated_html) { File.open('spec/lib/hackney/pdf/translated_test_income_template.html').read }
 
@@ -46,7 +52,7 @@ describe Hackney::PDF::IncomePreview do
     expect(income_information_gateway).to receive(:get_income_info).with(tenancy_ref: test_tenancy_ref).and_return(test_letter_params)
     expect(get_templates_gateway).to receive(:execute).and_return([test_template])
 
-    preview = subject.execute(tenancy_ref: test_tenancy_ref, template_id: test_template_id, username: username)
+    preview = subject.execute(tenancy_ref: test_tenancy_ref, template_id: test_template_id, user: user)
 
     expect(preview).to include(
       case: test_letter_params,
@@ -82,7 +88,7 @@ describe Hackney::PDF::IncomePreview do
       expect(income_information_gateway).to receive(:get_income_info).with(tenancy_ref: test_tenancy_ref).and_return(test_letter_params)
       expect(get_templates_gateway).to receive(:execute).and_return([test_template])
 
-      preview = subject.execute(tenancy_ref: test_tenancy_ref, template_id: test_template_id, username: username)
+      preview = subject.execute(tenancy_ref: test_tenancy_ref, template_id: test_template_id, user: user)
 
       expect(preview).to include(
         case: test_letter_params,

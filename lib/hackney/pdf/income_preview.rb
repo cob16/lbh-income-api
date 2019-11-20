@@ -6,13 +6,13 @@ module Hackney
         @income_information_gateway = income_information_gateway
       end
 
-      def execute(tenancy_ref:, template_id:, username:)
-        template = get_template_by_id(template_id)
+      def execute(tenancy_ref:, template_id:, user:)
+        template = get_template_by_id(template_id, user)
         income_info = get_income_info(tenancy_ref)
 
         preview_with_errors = Hackney::PDF::IncomePreviewGenerator.new(
           template_path: template[:path]
-        ).execute(letter_params: income_info, username: username)
+        ).execute(letter_params: income_info, username: user.name)
 
         uuid = SecureRandom.uuid
 
@@ -20,7 +20,7 @@ module Hackney
           case: income_info,
           template: template,
           uuid: uuid,
-          username: username,
+          username: user.name,
           preview: preview_with_errors[:html],
           errors: preview_with_errors[:errors]
         }
@@ -32,8 +32,8 @@ module Hackney
         @income_information_gateway.get_income_info(tenancy_ref: tenancy_ref)
       end
 
-      def get_template_by_id(template_id)
-        templates = @get_templates_gateway.execute
+      def get_template_by_id(template_id, user)
+        templates = @get_templates_gateway.execute(user: user)
         templates[templates.index { |temp| temp[:id] == template_id }]
       end
     end
