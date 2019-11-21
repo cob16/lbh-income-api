@@ -11,7 +11,7 @@ RSpec.describe 'Income Collection Letters', type: :request do
   let(:leasedate) { Time.zone.now.beginning_of_hour }
   let(:template) { 'income_collection_letter_1' }
   let(:user_group) { 'income-collection-group' }
-  
+
   let(:user) {
     {
       name: Faker::Name.name,

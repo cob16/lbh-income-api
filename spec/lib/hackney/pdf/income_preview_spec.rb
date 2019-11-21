@@ -39,12 +39,12 @@ describe Hackney::PDF::IncomePreview do
       total_collectable_arrears_balance: '3506.90'
     }
   end
-  let(:user) do 
-    Hackney::Domain::User.new.tap do |u| 
-      u.name = username 
+  let(:user) do
+    Hackney::Domain::User.new.tap do |u|
+      u.name = username
       u.groups = ['income-collection-group']
-    end 
-  end 
+    end
+  end
 
   let(:translated_html) { File.open('spec/lib/hackney/pdf/translated_test_income_template.html').read }
 
