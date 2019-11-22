@@ -1,12 +1,6 @@
 module Hackney
   module Income
     class UniversalHousingIncomeGateway
-      def get_tenancy_ref(tenancy_ref:)
-        with_core do |core|
-          core.get_tenancy_ref(tenancy_ref: tenancy_ref)
-        end
-      end
-
       def get_income_info(tenancy_ref:)
         with_core do |core|
           core.get_income_info(tenancy_ref: tenancy_ref)
@@ -29,15 +23,6 @@ module Hackney
 
         def initialize(database)
           @database = database
-        end
-
-        def get_tenancy_ref(tenancy_ref:)
-          res = tenancy_agreement
-                .where(u_saff_rentacc: tenancy_ref)
-                .first
-
-          raise TenancyNotFoundError unless res.present?
-          { tenancy_ref: res[:tag_ref] }
         end
 
         def get_income_info(tenancy_ref:)
