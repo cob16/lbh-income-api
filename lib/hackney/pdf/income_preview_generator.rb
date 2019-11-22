@@ -3,7 +3,7 @@ module Hackney
     class IncomePreviewGenerator
       LOGO_PATH = 'lib/hackney/pdf/templates/layouts/logo.svg'.freeze
       HACKNEY_ADDRESS_PARTIAL = 'lib/hackney/pdf/templates/income/partials/hackney_address.html.erb'.freeze
-      TENANT_ADDRESS_PARTIAL = 'lib/hackney/pdf/templates/income/partials/TENANT_address.html.erb'.freeze
+      TENANT_ADDRESS_PARTIAL = 'lib/hackney/pdf/templates/income/partials/tenant_address.html.erb'.freeze
 
       def initialize(template_path:)
         @template_path = template_path
