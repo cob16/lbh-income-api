@@ -1,47 +1,73 @@
+<%= @logo %>
 <div class="top_space"></div>
+<%= @hackney_address %>
 
-<div class="right">
-Income Collection Team <br>
-Hackney Service Centre <br>
-1 Hillman Street <br>
-London, E8 1DY <br>
-Telephone: 020 8356 3100 <br>
-Email: income.services@hackney.gov.uk <br>
-Your Reference: <%= @letter.payment_ref %>
-Our Reference: <%= @letter.tenancy_ref %>
-</div>
-
-<div class="lessee_address">
-<strong><%= @letter.forename %> <%= @letter.surname %></strong> <br>
-<%= @letter.address_line1 %> <br>
-<%= @letter.address_line2 %> <br>
-<%= @letter.address_line3 %> <br>
-<%= @letter.address_line4 %> <br>
-<%= @letter.address_post_code %>
-</div>
+<%= @tenant_address %>
 
 <div>
-<%= @today_date %>
-<h2>Rent arrears <%= @letter.total_collectable_arrears_balance %> - avoid court action</h2>
-<p>Dear <%= @letter.title %> <%= @letter.surname%></p>
-<p>You rent account remains in arrears. To avoid court action you need to contact us immediately using the contact details at the top of this letter, so that we can try to resolve this problem.</p>
-<p>We will discuss your situation and work with you to create a repayment plan. We can also put you in touch with someone who can help you in managing your finances if you need it.</p>
-<h2>If you wish to make a full payment please use any of the following methods:</h2>
+  <p>
+    <%= @today_date %>
+  </p>
 
-<ul>
-<li>Hackney's Rent Account website: <strong>www.hackney.gov.uk/pay-rent</strong></li>
-<li>By telephone: 020 83656 5050 (24 hours payline)</li>
-<li>Pay in person: at 2 Hillman Street, E8 1FB from Monday to Friday (9am to 5pm)</li>
-<li>Visit <strong>www.hackney.gov.uk/housing-payments</strong> to find out about all our available payment methods.</li>
-</ul>
+  <h1>
+    Rent arrears £<%= @letter.total_collectable_arrears_balance %> - avoid court action
+  </h1>
 
-<h2>Problems with your benefits claim</h2>
-<p>if you think there might be a problem with your housing benefit claim then contact the housing benefit team on 020 8356 3399 or visit the Hackney Service at 1 Hillman Street, London, E8 1DY. If you need help with your Universal Credit claim you should contact the Department for Work and Pensions.</p>
-<h2>Did you know you could be entitled to additional financial help?</h2>
-<p>Visit <strong>www.hackney.gov.uk/discretionary-housing-payments.</strong></p>
-<p>Yours sincerely</p>
-<p>
-Credit Controller <br>
-London Borough of Hackney
-</p>
+  <p>
+    Dear <%= @letter.title %> <%= @letter.surname%>
+  </p>
+
+  <p>
+    You rent account remains in arrears. To avoid court action you need to contact us immediately using the contact details at the top of this letter, so that we can try to resolve this problem.
+  </p>
+
+  <p>
+    We will discuss your situation and work with you to create a repayment plan. We can also put you in touch with someone who can help you in managing your finances if you need it.
+  </p>
+
+  <h2>
+    If you wish to make a full payment please use any of the following methods:
+  </h2>
+
+  <ul>
+    <li>
+      Hackney's Rent Account website: <strong>www.hackney.gov.uk/pay-rent</strong>
+    </li>
+    <li>
+      By telephone: 020 83656 5050 (24 hours payline)
+    </li>
+    <li>
+      Pay in person: at 2 Hillman Street, E8 1FB from Monday to Friday (9am to 5pm)
+    </li>
+    <li>
+      Visit <strong>www.hackney.gov.uk/housing-payments</strong> to find out about all our available payment methods.
+    </li>
+  </ul>
+
+  <h2>
+    Problems with your benefits claim
+  </h2>
+
+  <p>
+    If you think there might be a problem with your housing benefit claim then contact the housing benefit team on 020 8356 3399 or visit the Hackney Service at 1 Hillman Street, London, E8 1DY. If you need help with your Universal Credit claim you
+    should contact the Department for Work and Pensions.
+  </p>
+
+  <h2>
+    Did you know you could be entitled to additional financial help?
+  </h2>
+
+  <p>
+    Visit <strong>www.hackney.gov.uk/discretionary-housing-payments.</strong>
+  </p>
+
+  <p>
+    Yours sincerely
+  </p>
+
+  <p>
+    Credit Controller
+    <br>
+    London Borough of Hackney
+  </p>
 </div>
