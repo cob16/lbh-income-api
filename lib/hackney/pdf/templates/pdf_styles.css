@@ -15,7 +15,8 @@
   margin-top: 25.92pt;
 }
 
-.lessee_address {
+.lessee_address,
+.tenant-address {
   width: 117mm;
   margin-top: -3mm;
   margin-bottom: 120pt;

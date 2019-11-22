@@ -2,6 +2,8 @@ module Hackney
   module PDF
     class IncomePreviewGenerator
       LOGO_PATH = 'lib/hackney/pdf/templates/layouts/logo.svg'.freeze
+      HACKNEY_ADDRESS_PARTIAL = 'lib/hackney/pdf/templates/income/partials/hackney_address.html.erb'.freeze
+      TENANT_ADDRESS_PARTIAL = 'lib/hackney/pdf/templates/income/partials/TENANT_address.html.erb'.freeze
 
       def initialize(template_path:)
         @template_path = template_path
@@ -12,7 +14,10 @@ module Hackney
 
       def execute(letter_params:, username:)
         @letter = Hackney::IncomeCollection::Letter.build(letter_params: letter_params, template_path: @template_path)
-        @username = username
+
+        @hackney_address = load_erb_file(HACKNEY_ADDRESS_PARTIAL)
+        @tenant_address = load_erb_file(TENANT_ADDRESS_PARTIAL)
+
         template = File.open(@template_path).read
         html = ERB.new(template).result(binding)
 
@@ -34,6 +39,10 @@ module Hackney
 
       def get_sending_date
         Time.now.strftime('%d %B %Y')
+      end
+
+      def load_erb_file(file_path)
+        ERB.new(File.open(file_path).read).result(binding)
       end
     end
   end
