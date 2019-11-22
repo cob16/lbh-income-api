@@ -64,43 +64,12 @@ module Hackney
           @postcode ||= database[:postcode]
         end
 
-        def rent
-          @rent ||= database[:rent]
-        end
-
         def property
           @property ||= database[:property]
         end
 
         def member
           @member ||= database[:member]
-        end
-
-        def household
-          @household ||= database[:househ]
-        end
-
-        def get_correspondence_address(corr_postcode:, prop_postcode:, household_res:, property_res:)
-          if corr_postcode.present?
-            postcode.first(post_code: corr_postcode).presence&.merge(
-              desig: household_res[:corr_desig],
-              preamble: household_res[:corr_preamble]
-            )
-          elsif prop_postcode.present?
-            postcode.first(post_code: prop_postcode).presence&.merge(
-              desig: property_res[:post_desig],
-              preamble: property_res[:post_preamble]
-            )
-          else
-            {
-              desig: household_res[:corr_desig],
-              preamble: household_res[:corr_preamble]
-            }
-          end
-        end
-
-        def international?(postcode)
-          postcode.nil? ? '' : !UKPostcode.parse(postcode).valid?
         end
       end
     end
