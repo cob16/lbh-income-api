@@ -11,6 +11,7 @@ RSpec.describe 'Income Collection Letters', type: :request do
   let(:leasedate) { Time.zone.now.beginning_of_hour }
   let(:template) { 'income_collection_letter_1' }
   let(:user_group) { 'income-collection-group' }
+  let(:current_balance) { BigDecimal('525.00') }
 
   let(:user) {
     {
@@ -59,7 +60,7 @@ RSpec.describe 'Income Collection Letters', type: :request do
             'forename' => 'Test Forename',
             'surname' => 'Test Surname',
             'title' => 'Test Title',
-            'total_collectable_arrears_balance' => '0.0'
+            'total_collectable_arrears_balance' => current_balance.to_s
           },
           'template' => {
             'path' => 'lib/hackney/pdf/templates/income/income_collection_letter_1.erb',
@@ -121,7 +122,8 @@ RSpec.describe 'Income Collection Letters', type: :request do
       tenancy_ref: tenancy_ref,
       u_saff_rentacc: payment_ref,
       prop_ref: property_ref,
-      house_ref: house_ref
+      house_ref: house_ref,
+      current_balance: current_balance
     )
     create_uh_househ(
       house_ref: house_ref,
