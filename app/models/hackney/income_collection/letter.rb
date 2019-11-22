@@ -8,12 +8,13 @@ module Hackney
       attr_reader :tenancy_ref, :address_line1, :address_line2,
                   :address_line3, :address_line4, :address_post_code,
                   :payment_ref, :total_collectable_arrears_balance,
-                  :title, :forename, :surname, :errors,
-                  # Following the pattern used in Letter.rb
-                  # We don't need template_path at the moment.
-                  def self.build(letter_params:, template_path:)
-                    new(letter_params)
-                  end
+                  :title, :forename, :surname, :errors
+
+      # Following the pattern used in Letter.rb
+      # We don't need template_path at the moment.
+      def self.build(letter_params:, template_path:)
+        new(letter_params)
+      end
 
       def initialize(params)
         validated_params = validate_mandatory_fields(
