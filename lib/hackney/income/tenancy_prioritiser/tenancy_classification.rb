@@ -24,7 +24,8 @@ module Hackney
           @criteria.nosp_served? &&
             @criteria.nosp_served_date <= 28.days.ago.to_date &&
             @criteria.balance >= arrear_accumulation_by_number_weeks(4) &&
-            @case_priority.paused? == false
+            @case_priority.paused? == false &&
+            @criteria.active_agreement? == false
         end
 
         def send_sms?
