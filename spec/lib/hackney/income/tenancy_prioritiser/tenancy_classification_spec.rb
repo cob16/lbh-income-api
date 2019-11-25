@@ -236,7 +236,8 @@ describe Hackney::Income::TenancyPrioritiser::TenancyClassification do
         weekly_rent: 5,
         balance: 15.0, # 3 * weekly_rent
         is_paused_until: nil,
-        active_agreement: false
+        active_agreement: false,
+        last_communication_action: nil
       },
       {
         outcome: :no_action,
@@ -245,7 +246,8 @@ describe Hackney::Income::TenancyPrioritiser::TenancyClassification do
         weekly_rent: 5,
         balance: 50.0, # 10 * 5 weekly_rent
         is_paused_until: nil,
-        active_agreement: false
+        active_agreement: false,
+        last_communication_action: nil
       },
       {
         outcome: :no_action,
@@ -254,7 +256,8 @@ describe Hackney::Income::TenancyPrioritiser::TenancyClassification do
         weekly_rent: 5,
         balance: 15.0, # 3 * weekly_rent
         is_paused_until: nil,
-        active_agreement: false
+        active_agreement: false,
+        last_communication_action: nil
       },
       {
         outcome: :no_action,
@@ -263,7 +266,8 @@ describe Hackney::Income::TenancyPrioritiser::TenancyClassification do
         weekly_rent: 5,
         balance: 50.0, # 10 * weekly_rent
         is_paused_until: nil,
-        active_agreement: false
+        active_agreement: false,
+        last_communication_action: nil
       },
       {
         outcome: :no_action,
@@ -272,7 +276,8 @@ describe Hackney::Income::TenancyPrioritiser::TenancyClassification do
         weekly_rent: 5,
         balance: 15.0, # 3 * weekly_rent
         is_paused_until: nil,
-        active_agreement: false
+        active_agreement: false,
+        last_communication_action: nil
       },
       {
         outcome: :no_action,
@@ -281,7 +286,8 @@ describe Hackney::Income::TenancyPrioritiser::TenancyClassification do
         weekly_rent: 5,
         balance: 25.0, # 5 * weekly_rent
         is_paused_until: 1.month.from_now.to_date,
-        active_agreement: false
+        active_agreement: false,
+        last_communication_action: nil
       },
       {
         outcome: :no_action,
@@ -290,7 +296,18 @@ describe Hackney::Income::TenancyPrioritiser::TenancyClassification do
         weekly_rent: 5,
         balance: 25.0, # 5 * weekly_rent
         is_paused_until: nil,
-        active_agreement: true
+        active_agreement: true,
+        last_communication_action: nil
+      },
+      {
+        outcome: :no_action,
+        nosp_served: true,
+        nosp_served_date: 29.days.ago.to_date,
+        weekly_rent: 5,
+        balance: 25.0, # 5 * weekly_rent
+        is_paused_until: nil,
+        active_agreement: false,
+        last_communication_action: 'ZR3'
       },
       {
         outcome: :send_court_warning_letter,
@@ -299,7 +316,8 @@ describe Hackney::Income::TenancyPrioritiser::TenancyClassification do
         weekly_rent: 5,
         balance: 25.0, # 5 * weekly_rent
         is_paused_until: nil,
-        active_agreement: false
+        active_agreement: false,
+        last_communication_action: nil
       }
     ]
 
@@ -318,6 +336,7 @@ describe Hackney::Income::TenancyPrioritiser::TenancyClassification do
         let(:balance) { options[:balance] }
         let(:is_paused_until) { options[:is_paused_until] }
         let(:active_agreement) { options[:active_agreement] }
+        let(:last_communication_action) { options[:last_communication_action] }
 
         it "returns `#{options[:outcome]}`" do
           expect(subject).to eq(options[:outcome])

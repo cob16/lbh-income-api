@@ -21,7 +21,8 @@ module Hackney
         private
 
         def send_court_warning_letter?
-          @criteria.nosp_served? &&
+          @criteria.last_communication_action != Hackney::Tenancy::ActionCodes::COURT_WARNING_LETTER_SENT &&
+            @criteria.nosp_served? &&
             @criteria.nosp_served_date <= 28.days.ago.to_date &&
             @criteria.balance >= arrear_accumulation_by_number_weeks(4) &&
             @case_priority.paused? == false &&
