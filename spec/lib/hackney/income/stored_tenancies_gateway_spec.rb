@@ -21,16 +21,27 @@ describe Hackney::Income::StoredTenanciesGateway do
         tenancy_ref: Faker::Internet.slug,
         priority_band: Faker::Internet.slug,
         priority_score: Faker::Number.number(5).to_i,
-        criteria: Stubs::StubCriteria.new,
+        criteria: stubbed_criteria,
         weightings: Hackney::Income::TenancyPrioritiser::PriorityWeightings.new
       }
     end
+
+    let(:stubbed_criteria) { Stubs::StubCriteria.new }
+    let(:tenancy_classification_stub) { double('TenancyClassification') }
+    let(:classification) { 'no_action' }
 
     let(:score_calculator) do
       Hackney::Income::TenancyPrioritiser::Score.new(
         attributes.fetch(:criteria),
         attributes.fetch(:weightings)
       )
+    end
+
+    before do
+      expect(tenancy_classification_stub).to receive(:execute).and_return(classification)
+      expect(Hackney::Income::TenancyPrioritiser::TenancyClassification).to receive(:new)
+        .with(instance_of(tenancy_model), stubbed_criteria)
+        .and_return(tenancy_classification_stub)
     end
 
     context 'when the tenancy does not already exist' do
@@ -79,7 +90,9 @@ describe Hackney::Income::StoredTenanciesGateway do
           patch_code: attributes.fetch(:criteria).patch_code,
           courtdate: attributes.fetch(:criteria).courtdate,
           court_outcome: attributes.fetch(:criteria).court_outcome,
-          eviction_date: attributes.fetch(:criteria).eviction_date
+          eviction_date: attributes.fetch(:criteria).eviction_date,
+
+          classification: classification
         )
       end
 
@@ -618,7 +631,9 @@ describe Hackney::Income::StoredTenanciesGateway do
       patch_code: attributes.fetch(:criteria).patch_code,
       courtdate: attributes.fetch(:criteria).courtdate,
       court_outcome: attributes.fetch(:criteria).court_outcome,
-      eviction_date: attributes.fetch(:criteria).eviction_date
+      eviction_date: attributes.fetch(:criteria).eviction_date,
+
+      classification: classification
     }
   end
 end
