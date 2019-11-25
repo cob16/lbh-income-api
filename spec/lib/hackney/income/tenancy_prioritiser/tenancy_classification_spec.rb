@@ -12,7 +12,8 @@ describe Hackney::Income::TenancyPrioritiser::TenancyClassification do
       balance: balance,
       nosp_served: nosp_served,
       last_communication_date: last_communication_date,
-      last_communication_action: last_communication_action
+      last_communication_action: last_communication_action,
+      nosp_served_date: nosp_served_date
     }
   end
 
@@ -23,6 +24,7 @@ describe Hackney::Income::TenancyPrioritiser::TenancyClassification do
   let(:nosp_served) { false }
   let(:last_communication_date) { 8.days.ago.to_date }
   let(:last_communication_action) { nil }
+  let(:nosp_served_date) { nil }
 
   context 'when there are no arrears' do
     context 'with difference balances' do
@@ -218,6 +220,88 @@ describe Hackney::Income::TenancyPrioritiser::TenancyClassification do
           it 'can classify to send a NOSP' do
             expect(subject).to eq(:send_NOSP)
           end
+        end
+      end
+    end
+  end
+
+  context 'when testing `send_court_warning_letter`' do
+    condition_matrix = [
+      {
+        outcome: :no_action,
+        nosp_served: false,
+        nosp_served_date: 40.days.ago.to_date,
+        weekly_rent: 5,
+        balance: 15.0, # 3 * weekly_rent
+        is_paused_until: nil
+      },
+      {
+        outcome: :no_action,
+        nosp_served: false,
+        nosp_served_date: 40.days.ago.to_date,
+        weekly_rent: 5,
+        balance: 50.0, # 10 * 5 weekly_rent
+        is_paused_until: nil
+      },
+      {
+        outcome: :no_action,
+        nosp_served: true,
+        nosp_served_date: 1.day.ago.to_date,
+        weekly_rent: 5,
+        balance: 15.0, # 3 * weekly_rent
+        is_paused_until: nil
+      },
+      {
+        outcome: :no_action,
+        nosp_served: true,
+        nosp_served_date: 1.day.ago.to_date,
+        weekly_rent: 5,
+        balance: 50.0, # 10 * weekly_rent
+        is_paused_until: nil
+      },
+      {
+        outcome: :no_action,
+        nosp_served: true,
+        nosp_served_date: 29.days.ago.to_date,
+        weekly_rent: 5,
+        balance: 15.0, # 3 * weekly_rent
+        is_paused_until: nil
+      },
+      {
+        outcome: :no_action,
+        nosp_served: true,
+        nosp_served_date: 29.days.ago.to_date,
+        weekly_rent: 5,
+        balance: 25.0, # 5 * weekly_rent
+        is_paused_until: 1.month.from_now.to_date
+      },
+      {
+        outcome: :send_court_warning_letter,
+        nosp_served: true,
+        nosp_served_date: 29.days.ago.to_date,
+        weekly_rent: 5,
+        balance: 25.0, # 5 * weekly_rent
+        is_paused_until: nil
+      }
+    ]
+
+    condition_matrix.each do |options|
+      message = options.each_with_object([]) do |(k, v), m|
+        next m if k == :outcome
+        m << "'#{k}' is '#{v}'"
+        m
+      end.join(', ')
+
+      context "when #{message}" do
+        let(:nosp_served) { options[:nosp_served] }
+        let(:nosp_served_date) { options[:nosp_served_date] }
+        let(:last_communication_date) { options[:last_communication_date] }
+        let(:weekly_rent) { options[:weekly_rent] }
+        let(:balance) { options[:balance] }
+        let(:is_paused_until) { options[:is_paused_until] }
+
+        it "returns `#{options[:outcome]}`" do
+          expect(subject).to eq(options[:outcome])
         end
       end
     end
