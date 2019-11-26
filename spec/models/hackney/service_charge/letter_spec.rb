@@ -87,8 +87,18 @@ describe Hackney::ServiceCharge::Letter do
 
       expect(letter.errors).to eq [
         { message: 'missing mandatory field', name: 'original_lease_date' },
-        { message: 'missing mandatory field', name: 'date_of_current_purchase_assignment' }
+        { message: 'missing mandatory field', name: 'date_of_current_purchase_assignment' },
+        { message: 'missing mandatory field', name: 'lba_balance' }
       ]
+    end
+
+    it 'returns the correct lba balance' do
+      letter = described_class.build(
+        letter_params: letter_params,
+        template_path: Hackney::ServiceCharge::Letter::BeforeAction::TEMPLATE_PATHS.sample
+      )
+      expected_balance =  format('%.2f',letter_params[:total_collectable_arrears_balance].to_f-letter_params[:money_judgement].to_f)
+      expect(letter.lba_balance).to eq(expected_balance.to_s)
     end
   end
 
