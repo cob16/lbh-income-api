@@ -202,6 +202,23 @@ module UniversalHousingHelper
     )
   end
 
+  def create_uh_member(house_ref:, title:, forename:, surname:)
+    Hackney::UniversalHousing::Client.connection[:member].insert(
+      house_ref: house_ref,
+      title: title,
+      forename: forename,
+      surname: surname,
+      person_no: 1,
+      oap: 0,
+      responsible: 0,
+      at_risk: 0,
+      full_ed: 0,
+      member_sid: 0,
+      dob: DateTime.now,
+      bank_acc_type: 'BANK'
+    )
+  end
+
   def truncate_uh_tables
     Hackney::UniversalHousing::Client.connection[:tenagree].truncate
     Hackney::UniversalHousing::Client.connection[:rtrans].truncate
@@ -212,5 +229,6 @@ module UniversalHousingHelper
     Hackney::UniversalHousing::Client.connection[:postcode].truncate
     Hackney::UniversalHousing::Client.connection[:rent].truncate
     Hackney::UniversalHousing::Client.connection[:u_letsvoids].truncate
+    Hackney::UniversalHousing::Client.connection[:member].truncate
   end
 end

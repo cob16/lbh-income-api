@@ -16,6 +16,7 @@ describe UseCases::GenerateAndStoreLetter do
   let(:params) do
     {
       payment_ref: payment_ref,
+      tenancy_ref: nil,
       template_id: 'letter_1_in_arrears_FH',
       user: Hackney::Domain::User.new.tap do |u|
         u.name = user_name

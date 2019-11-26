@@ -2,15 +2,25 @@ require 'hackney/income/universal_housing_leasehold_gateway.rb'
 
 module UseCases
   class GenerateAndStoreLetter
-    def execute(payment_ref:, template_id:, user:)
+    def execute(payment_ref:, tenancy_ref:, template_id:, user:)
       pdf_use_case_factory = Hackney::PDF::UseCaseFactory.new
       letter_use_case_factory = Hackney::Letter::UseCaseFactory.new
 
-      letter_data = pdf_use_case_factory.get_preview.execute(
-        payment_ref: payment_ref,
-        template_id: template_id,
-        user: user
-      )
+      income_collection_templates = %w[income_collection_letter_1 income_collection_letter_2]
+
+      if template_id.in?(income_collection_templates)
+        letter_data = pdf_use_case_factory.get_income_preview.execute(
+          tenancy_ref: tenancy_ref,
+          template_id: template_id,
+          user: user
+        )
+      else
+        letter_data = pdf_use_case_factory.get_preview.execute(
+          payment_ref: payment_ref,
+          template_id: template_id,
+          user: user
+        )
+      end
 
       return letter_data if letter_data[:errors].present?
 
