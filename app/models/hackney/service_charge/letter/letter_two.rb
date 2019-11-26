@@ -3,9 +3,9 @@ module Hackney
     class Letter
       class LetterTwo < Hackney::ServiceCharge::Letter
         TEMPLATE_PATHS = [
-          'lib/hackney/pdf/templates/letter_2_in_arrears_FH.erb',
-          'lib/hackney/pdf/templates/letter_2_in_arrears_LH.erb',
-          'lib/hackney/pdf/templates/letter_2_in_arrears_SO.erb'
+          'lib/hackney/pdf/templates/leasehold/letter_2_in_arrears_FH.erb',
+          'lib/hackney/pdf/templates/leasehold/letter_2_in_arrears_LH.erb',
+          'lib/hackney/pdf/templates/leasehold/letter_2_in_arrears_SO.erb'
         ].freeze
 
         MANDATORY_FIELDS = %i[arrears_letter_1_date].freeze
