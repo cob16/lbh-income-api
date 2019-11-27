@@ -41,7 +41,7 @@ module Stubs
     end
 
     def eviction_date
-      '2007-09-20 10:30:00'.to_date
+      attributes[:eviction_date] || '2007-09-20 10:30:00'.to_date
     end
 
     def patch_code
