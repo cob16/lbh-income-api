@@ -8,6 +8,7 @@ module Hackney
         end
 
         def execute
+          return :apply_for_court_date if apply_for_court_date?
           return :send_court_warning_letter if send_court_warning_letter?
           return :send_NOSP if send_nosp?
           return :send_warning_letter if send_warning_letter?
@@ -20,6 +21,7 @@ module Hackney
 
         private
 
+
         def send_court_warning_letter?
           @criteria.last_communication_action != Hackney::Tenancy::ActionCodes::COURT_WARNING_LETTER_SENT &&
             @criteria.nosp_served? &&
@@ -27,6 +29,23 @@ module Hackney
             @criteria.balance >= arrear_accumulation_by_number_weeks(4) &&
             @case_priority.paused? == false &&
             @criteria.active_agreement? == false
+        end
+
+        def apply_for_court_date?
+          valid_actions = [
+            Hackney::Tenancy::ActionCodes::COURT_WARNING_LETTER_SENT
+          ]
+
+          can_apply_for_court_date =
+            @criteria.last_communication_action.in?(valid_actions) &&
+            @criteria.balance >= arrear_accumulation_by_number_weeks(4) &&
+            @criteria.nosp_served? == true &&
+            @criteria.nosp_served_date <= 28.days.ago.to_date &&
+            @case_priority.paused? == false
+
+          can_apply_for_court_date &&= @criteria.courtdate <= Time.zone.now if @criteria.courtdate.present?
+
+          can_apply_for_court_date
         end
 
         def send_sms?
@@ -80,10 +99,18 @@ module Hackney
           valid_actions = [
             Hackney::Tenancy::ActionCodes::PRE_NOSP_WARNING_LETTER_SENT
           ]
-          @criteria.last_communication_action.in?(valid_actions) &&
+
+          can_send_nosp = false
+
+          if @criteria.nosp_expiry_date.present?
+            can_send_nosp = @criteria.nosp_expiry_date < Time.zone.now
+          else
+            can_send_nosp = @criteria.last_communication_action.in?(valid_actions) &&
+                            last_communication_between_three_months_one_week?
+          end
+
+          can_send_nosp && @criteria.nosp_served? == false &&
             @criteria.balance >= arrear_accumulation_by_number_weeks(4) &&
-            @criteria.nosp_served? == false &&
-            last_communication_between_three_months_one_week? &&
             @case_priority.paused? == false
         end
 

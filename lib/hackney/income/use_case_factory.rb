@@ -56,6 +56,12 @@ module Hackney
         )
       end
 
+      def send_precompiled_letter_to_gov_notify
+        Hackney::Notification::SendPrecompiledLetter.new(
+          notification_gateway: notifications_gateway
+        )
+      end
+
       def request_precompiled_letter_state
         document_store = Hackney::Cloud::Document
         Hackney::Notification::RequestPrecompiledLetterState.new(

@@ -37,8 +37,6 @@ describe LettersController, type: :controller do
   describe '#create' do
     let(:generate_and_store_use_case_spy) { spy }
     let(:payment_ref) { Faker::Number.number(6) }
-    let(:username) { Faker::Name.name }
-    let(:email) { Faker::Internet.email }
     let(:dummy_json_hash) { { uuid: SecureRandom.uuid } }
 
     before do

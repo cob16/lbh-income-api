@@ -11,6 +11,13 @@ module Hackney
           leasehold_information_gateway: Hackney::Income::UniversalHousingLeaseholdGateway.new
         )
       end
+
+      def get_income_preview
+        Hackney::PDF::IncomePreview.new(
+          get_templates_gateway: get_templates,
+          income_information_gateway: Hackney::Income::UniversalHousingIncomeGateway.new
+        )
+      end
     end
   end
 end
