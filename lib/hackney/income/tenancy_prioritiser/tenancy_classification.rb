@@ -21,7 +21,6 @@ module Hackney
 
         private
 
-
         def send_court_warning_letter?
           @criteria.last_communication_action != Hackney::Tenancy::ActionCodes::COURT_WARNING_LETTER_SENT &&
             @criteria.nosp_served? &&
