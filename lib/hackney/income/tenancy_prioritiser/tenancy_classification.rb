@@ -22,6 +22,8 @@ module Hackney
         private
 
         def send_court_warning_letter?
+          return false if @criteria.nosp_served_date.blank?
+
           @criteria.last_communication_action != Hackney::Tenancy::ActionCodes::COURT_WARNING_LETTER_SENT &&
             @criteria.nosp_served? &&
             @criteria.nosp_served_date <= 28.days.ago.to_date &&
