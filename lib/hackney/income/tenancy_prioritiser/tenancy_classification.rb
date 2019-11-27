@@ -8,21 +8,31 @@ module Hackney
         end
 
         def execute
-          return :no_action if @criteria.eviction_date.present?
-          return :no_action if @criteria.courtdate.present? && @criteria.courtdate >= Time.zone.now
+          wanted_action = nil
 
-          return :apply_for_court_date if apply_for_court_date?
-          return :send_court_warning_letter if send_court_warning_letter?
-          return :send_NOSP if send_nosp?
-          return :send_warning_letter if send_warning_letter?
-          return :send_letter_two if send_letter_two?
-          return :send_letter_one if send_letter_one?
-          return :send_first_SMS if send_sms?
+          wanted_action ||= :no_action if @criteria.eviction_date.present?
+          wanted_action ||= :no_action if @criteria.courtdate.present? && @criteria.courtdate >= Time.zone.now
 
-          :no_action
+          wanted_action ||= :apply_for_court_date if apply_for_court_date?
+          wanted_action ||= :send_court_warning_letter if send_court_warning_letter?
+          wanted_action ||= :send_NOSP if send_nosp?
+          wanted_action ||= :send_warning_letter if send_warning_letter?
+          wanted_action ||= :send_letter_two if send_letter_two?
+          wanted_action ||= :send_letter_one if send_letter_one?
+          wanted_action ||= :send_first_SMS if send_sms?
+
+          wanted_action ||= :no_action
+
+          validate_wanted_action(wanted_action)
+
+          wanted_action
         end
 
         private
+
+        def validate_wanted_action(wanted_action)
+          raise 'Unknown Wanted Action' unless Hackney::Income::Models::CasePriority.classifications.key?(wanted_action)
+        end
 
         def send_court_warning_letter?
           return false if @criteria.nosp_served_date.blank?
