@@ -15,7 +15,8 @@ describe 'Send NOSP Rule', type: :feature do
       active_agreement: false,
       last_communication_date: 2.months.ago.to_date,
       last_communication_action: pre_nosp_warning_letter,
-      eviction_date: nil
+      eviction_date: nil,
+      courtdate: ''
     },
     {
       outcome: :no_action,
@@ -27,7 +28,8 @@ describe 'Send NOSP Rule', type: :feature do
       active_agreement: false,
       last_communication_date: 2.months.ago.to_date,
       last_communication_action: pre_nosp_warning_letter,
-      eviction_date: nil
+      eviction_date: nil,
+      courtdate: ''
     },
     {
       outcome: :no_action,
@@ -39,7 +41,8 @@ describe 'Send NOSP Rule', type: :feature do
       active_agreement: false,
       last_communication_date: 2.months.ago.to_date,
       last_communication_action: pre_nosp_warning_letter,
-      eviction_date: nil
+      eviction_date: nil,
+      courtdate: ''
     },
     {
       outcome: :send_warning_letter,
@@ -51,7 +54,8 @@ describe 'Send NOSP Rule', type: :feature do
       active_agreement: false,
       last_communication_date: 2.months.ago.to_date,
       last_communication_action: 'ZR2', # Stage 02 Complete / Letter 2 Sent
-      eviction_date: nil
+      eviction_date: nil,
+      courtdate: ''
     },
     {
       outcome: :no_action,
@@ -63,7 +67,8 @@ describe 'Send NOSP Rule', type: :feature do
       active_agreement: false,
       last_communication_date: 5.days.ago.to_date,
       last_communication_action: pre_nosp_warning_letter,
-      eviction_date: nil
+      eviction_date: nil,
+      courtdate: ''
     },
     {
       outcome: :no_action,
@@ -75,7 +80,8 @@ describe 'Send NOSP Rule', type: :feature do
       active_agreement: false,
       last_communication_date: 8.days.ago.to_date,
       last_communication_action: pre_nosp_warning_letter,
-      eviction_date: 2.weeks.ago
+      eviction_date: 2.weeks.ago,
+      courtdate: ''
     },
     {
       outcome: :no_action,
@@ -87,7 +93,21 @@ describe 'Send NOSP Rule', type: :feature do
       active_agreement: false,
       last_communication_date: 8.days.ago.to_date,
       last_communication_action: pre_nosp_warning_letter,
-      eviction_date: 1.week.from_now
+      eviction_date: 1.week.from_now,
+      courtdate: ''
+    },
+    {
+      outcome: :no_action,
+      nosps_in_last_year: 0,
+      nosp_expiry_date: '',
+      weekly_rent: 5,
+      balance: 25.0, # 5 * weekly_rent
+      is_paused_until: nil,
+      active_agreement: false,
+      last_communication_date: 8.days.ago.to_date,
+      last_communication_action: pre_nosp_warning_letter,
+      eviction_date: nil,
+      courtdate: 2.weeks.from_now
     },
     {
       outcome: :send_NOSP,
@@ -99,7 +119,8 @@ describe 'Send NOSP Rule', type: :feature do
       active_agreement: false,
       last_communication_date: 8.days.ago.to_date,
       last_communication_action: pre_nosp_warning_letter,
-      eviction_date: nil
+      eviction_date: nil,
+      courtdate: ''
     },
     {
       outcome: :send_NOSP,
@@ -111,7 +132,8 @@ describe 'Send NOSP Rule', type: :feature do
       active_agreement: false,
       last_communication_date: 7.months.ago.to_date,
       last_communication_action: 'ZR2', # Stage 02 Complete / Letter 2 Sent
-      eviction_date: nil
+      eviction_date: nil,
+      courtdate: ''
     },
     {
       outcome: :send_NOSP,
@@ -123,7 +145,8 @@ describe 'Send NOSP Rule', type: :feature do
       active_agreement: true,
       last_communication_date: 8.days.ago.to_date,
       last_communication_action: pre_nosp_warning_letter,
-      eviction_date: nil
+      eviction_date: nil,
+      courtdate: ''
     },
     {
       outcome: :send_NOSP,
@@ -135,7 +158,21 @@ describe 'Send NOSP Rule', type: :feature do
       active_agreement: false,
       last_communication_date: 8.days.ago.to_date,
       last_communication_action: pre_nosp_warning_letter,
-      eviction_date: nil
+      eviction_date: nil,
+      courtdate: ''
+    },
+    {
+      outcome: :send_NOSP,
+      nosps_in_last_year: 0,
+      nosp_expiry_date: '',
+      weekly_rent: 5,
+      balance: 25.0, # 5 * weekly_rent
+      is_paused_until: nil,
+      active_agreement: false,
+      last_communication_date: 8.days.ago.to_date,
+      last_communication_action: pre_nosp_warning_letter,
+      eviction_date: nil,
+      courtdate: 2.months.ago
     }
   ]
 

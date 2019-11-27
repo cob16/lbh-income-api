@@ -9,6 +9,7 @@ module Hackney
 
         def execute
           return :no_action if @criteria.eviction_date.present?
+          return :no_action if @criteria.courtdate.present? && @criteria.courtdate >= Time.zone.now
 
           return :apply_for_court_date if apply_for_court_date?
           return :send_court_warning_letter if send_court_warning_letter?
