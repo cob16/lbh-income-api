@@ -37,6 +37,7 @@ module Hackney
 
           can_apply_for_court_date =
             @criteria.last_communication_action.in?(valid_actions) &&
+            last_communication_date_before?(2.weeks.ago) &&
             @criteria.balance >= arrear_accumulation_by_number_weeks(4) &&
             @criteria.nosp_served? == true &&
             @criteria.nosp_served_date <= 28.days.ago.to_date &&
@@ -114,13 +115,17 @@ module Hackney
         end
 
         def last_communication_between_three_months_one_week?
-          one_week = 7.days.ago.to_date
-          three_months = 3.months.ago.to_date
-
           return false if @criteria.last_communication_date.nil?
 
-          @criteria.last_communication_date <= one_week &&
-            @criteria.last_communication_date >= three_months
+          last_communication_date_before?(1.week.ago) && last_communication_date_after?(3.months.ago)
+        end
+
+        def last_communication_date_before?(date)
+          @criteria.last_communication_date <= date.to_date
+        end
+
+        def last_communication_date_after?(date)
+          @criteria.last_communication_date >= date.to_date
         end
 
         def arrear_accumulation_by_number_weeks(weeks)
