@@ -8,6 +8,7 @@ module Hackney
         end
 
         def execute
+          return :apply_for_court_date if apply_for_court_date?
           return :send_NOSP if send_nosp?
           return :send_warning_letter if send_warning_letter?
           return :send_letter_two if send_letter_two?
@@ -17,6 +18,23 @@ module Hackney
         end
 
         private
+
+        def apply_for_court_date?
+          valid_actions = [
+            Hackney::Tenancy::ActionCodes::COURT_WARNING_LETTER_SENT
+          ]
+
+          can_apply_for_court_date =
+            @criteria.last_communication_action.in?(valid_actions) &&
+            @criteria.balance >= arrear_accumulation_by_number_weeks(4) &&
+            @criteria.nosp_served? == true &&
+            @criteria.nosp_served_date <= 28.days.ago.to_date &&
+            @case_priority.paused? == false
+
+          can_apply_for_court_date &&= @criteria.courtdate <= Time.zone.now if @criteria.courtdate.present?
+
+          can_apply_for_court_date
+        end
 
         def send_sms?
           @criteria.last_communication_action.nil? &&
