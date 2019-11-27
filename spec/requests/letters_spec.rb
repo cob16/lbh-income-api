@@ -11,6 +11,9 @@ RSpec.describe 'Letters', type: :request do
   let(:leasedate) { Time.zone.now.beginning_of_hour }
   let(:template) { 'letter_1_in_arrears_FH' }
   let(:user_group) { 'leasehold-group' }
+  let(:total_collectable_arrears_balance) { Faker::Number.number(3).to_f }
+  let(:money_judgement) { Faker::Number.number(2).to_f }
+  let(:lba_balance) { BigDecimal(total_collectable_arrears_balance.to_s) - BigDecimal(money_judgement.to_s) }
 
   let(:user) {
     {
@@ -54,11 +57,11 @@ RSpec.describe 'Letters', type: :request do
           'case' => {
             'bal_dispute' => '0.0',
             'charging_order' => '0.0',
-            'money_judgement' => '0.0',
+            'money_judgement' => money_judgement.to_s,
             'tenure_type' => 'SEC',
             'payment_ref' => payment_ref,
             'tenancy_ref' => tenancy_ref,
-            'total_collectable_arrears_balance' => '0.0',
+            'total_collectable_arrears_balance' => total_collectable_arrears_balance.to_s,
             'original_lease_date' => leasedate.strftime('%FT%T.%L%:z'),
             'lessee_full_name' => 'Test Name',
             'lessee_short_name' => 'Test Name', 'date_of_current_purchase_assignment' => '1900-01-01T00:00:00.000+00:00',
@@ -96,6 +99,19 @@ RSpec.describe 'Letters', type: :request do
         json_response = JSON.parse(response.body).except(*keys_to_ignore)
 
         expect(json_response).to eq(expected_json_response_as_hash)
+      end
+
+      it 'generates an LBA with an lba_balance' do
+        post messages_letters_path, params: {
+          payment_ref: payment_ref,
+          template_id: 'letter_before_action',
+          tenancy_ref: tenancy_ref,
+          user: user
+        }
+
+        json_response = JSON.parse(response.body)
+
+        expect(json_response['preview']).to include("SUM OWED: £#{lba_balance}")
       end
 
       it 'creates a `Hackney::Cloud::Document`' do
@@ -232,7 +248,9 @@ RSpec.describe 'Letters', type: :request do
       tenancy_ref: tenancy_ref,
       u_saff_rentacc: payment_ref,
       prop_ref: property_ref,
-      house_ref: house_ref
+      house_ref: house_ref,
+      current_balance: total_collectable_arrears_balance,
+      money_judgement: money_judgement
     )
     create_uh_househ(
       house_ref: house_ref,
