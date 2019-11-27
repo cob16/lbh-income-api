@@ -22,12 +22,8 @@ module Hackney
 
       LETTER_2_IN_ARREARS_SENT = 'ZR2'.freeze
 
-      PRE_NOSP_WARNING_LETTER_SENT = 'not yet defined in UH'.freeze
-
-      # This the code for "Stage 3 complet".
-      # For this to be present means that the NOSP has waited 28 days and a Court Warning Letter
-      # has been sent to the Tenant.
-      COURT_WARNING_LETTER_SENT = 'ZR3'.freeze
+      PRE_NOSP_WARNING_LETTER_SENT = 'IC3'.freeze
+      COURT_WARNING_LETTER_SENT = 'IC4'.freeze
     end
   end
 end

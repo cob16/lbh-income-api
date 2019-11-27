@@ -209,7 +209,7 @@ describe Hackney::Income::TenancyPrioritiser::TenancyClassification do
   end
 
   context 'when testing `send_NOSP`' do
-    pre_nosp_warning_letter = 'not yet defined in UH'
+    pre_nosp_warning_letter = 'IC3'
     condition_matrix = [
       {
         outcome: :no_action,
@@ -337,6 +337,7 @@ describe Hackney::Income::TenancyPrioritiser::TenancyClassification do
   end
 
   context 'when testing `apply_for_court_date`' do
+    court_warning_letter_code = 'IC4'.freeze
     condition_matrix = [
       {
         outcome: :no_action,
@@ -346,7 +347,7 @@ describe Hackney::Income::TenancyPrioritiser::TenancyClassification do
         balance: 25.0, # 5 * weekly_rent
         is_paused_until: nil,
         active_agreement: false,
-        last_communication_action: 'ZR3',
+        last_communication_action: court_warning_letter_code,
         courtdate: ''
       },
       {
@@ -357,7 +358,7 @@ describe Hackney::Income::TenancyPrioritiser::TenancyClassification do
         balance: 25.0, # 5 * weekly_rent
         is_paused_until: nil,
         active_agreement: true,
-        last_communication_action: 'ZR3',
+        last_communication_action: court_warning_letter_code,
         courtdate: ''
       },
       {
@@ -368,7 +369,7 @@ describe Hackney::Income::TenancyPrioritiser::TenancyClassification do
         balance: 10.0, # 2 * weekly_rent
         is_paused_until: nil,
         active_agreement: true,
-        last_communication_action: 'ZR3',
+        last_communication_action: court_warning_letter_code,
         courtdate: ''
       },
       {
@@ -379,7 +380,7 @@ describe Hackney::Income::TenancyPrioritiser::TenancyClassification do
         balance: 25.0, # 5 * weekly_rent
         is_paused_until: 1.day.from_now.to_date,
         active_agreement: true,
-        last_communication_action: 'ZR3',
+        last_communication_action: court_warning_letter_code,
         courtdate: ''
       },
       {
@@ -390,7 +391,7 @@ describe Hackney::Income::TenancyPrioritiser::TenancyClassification do
         balance: 25.0, # 5 * weekly_rent
         is_paused_until: nil,
         active_agreement: true,
-        last_communication_action: 'ZR2',
+        last_communication_action: 'ZR3', # ZR3 is NOSP is served over 28 days ago.
         courtdate: ''
       },
       {
@@ -401,7 +402,7 @@ describe Hackney::Income::TenancyPrioritiser::TenancyClassification do
         balance: 25.0, # 5 * weekly_rent
         is_paused_until: nil,
         active_agreement: true,
-        last_communication_action: 'ZR3',
+        last_communication_action: court_warning_letter_code,
         courtdate: ''
       },
       {
@@ -412,7 +413,7 @@ describe Hackney::Income::TenancyPrioritiser::TenancyClassification do
         balance: 25.0, # 5 * weekly_rent
         is_paused_until: nil,
         active_agreement: false,
-        last_communication_action: 'ZR3',
+        last_communication_action: court_warning_letter_code,
         courtdate: ''
       },
       {
@@ -423,7 +424,7 @@ describe Hackney::Income::TenancyPrioritiser::TenancyClassification do
         balance: 25.0, # 5 * weekly_rent
         is_paused_until: nil,
         active_agreement: false,
-        last_communication_action: 'ZR3',
+        last_communication_action: court_warning_letter_code,
         courtdate: 5.days.ago.to_date
       },
       {
@@ -434,7 +435,7 @@ describe Hackney::Income::TenancyPrioritiser::TenancyClassification do
         balance: 25.0, # 5 * weekly_rent
         is_paused_until: nil,
         active_agreement: false,
-        last_communication_action: 'ZR3',
+        last_communication_action: court_warning_letter_code,
         courtdate: 2.weeks.from_now.to_date
       }
     ]
@@ -544,7 +545,7 @@ describe Hackney::Income::TenancyPrioritiser::TenancyClassification do
         balance: 25.0, # 5 * weekly_rent
         is_paused_until: nil,
         active_agreement: false,
-        last_communication_action: 'ZR3'
+        last_communication_action: 'IC4'
       },
       {
         outcome: :send_court_warning_letter,
