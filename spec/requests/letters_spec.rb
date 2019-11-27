@@ -57,11 +57,11 @@ RSpec.describe 'Letters', type: :request do
           'case' => {
             'bal_dispute' => '0.0',
             'charging_order' => '0.0',
-            'money_judgement' => money_judgement.to_s,
+            'money_judgement' => "#{money_judgement}",
             'tenure_type' => 'SEC',
             'payment_ref' => payment_ref,
             'tenancy_ref' => tenancy_ref,
-            'total_collectable_arrears_balance' => total_collectable_arrears_balance.to_s,
+            'total_collectable_arrears_balance' => "#{total_collectable_arrears_balance}",
             'original_lease_date' => leasedate.strftime('%FT%T.%L%:z'),
             'lessee_full_name' => 'Test Name',
             'lessee_short_name' => 'Test Name', 'date_of_current_purchase_assignment' => '1900-01-01T00:00:00.000+00:00',
