@@ -29,7 +29,7 @@ module Stubs
     end
 
     def nosp_served_date
-      '2019-12-13 12:43:10'.to_date
+      attributes[:nosp_served_date] || '2019-12-13 12:43:10'.to_date
     end
 
     def nosp_expiry_date
@@ -37,7 +37,7 @@ module Stubs
     end
 
     def courtdate
-      '2005-12-13 12:43:10'.to_date
+      attributes[:courtdate] || '2005-12-13 12:43:10'.to_date
     end
 
     def eviction_date

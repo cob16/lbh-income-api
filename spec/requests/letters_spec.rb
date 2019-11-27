@@ -30,6 +30,7 @@ RSpec.describe 'Letters', type: :request do
       post messages_letters_path, params: {
         payment_ref: 'abc',
         template_id: 'letter_1_in_arrears_FH',
+        tenancy_ref: tenancy_ref,
         user: user
       }
 
@@ -41,6 +42,7 @@ RSpec.describe 'Letters', type: :request do
         post messages_letters_path, params: {
           payment_ref: 'abc',
           template_id: 'does not exist',
+          tenancy_ref: 'abd',
           user: user
         }
       }.to raise_error(TypeError)
@@ -83,6 +85,7 @@ RSpec.describe 'Letters', type: :request do
         post messages_letters_path, params: {
           payment_ref: payment_ref,
           template_id: template,
+          tenancy_ref: tenancy_ref,
           user: user
         }
 
@@ -100,6 +103,7 @@ RSpec.describe 'Letters', type: :request do
           post messages_letters_path, params: {
             payment_ref: payment_ref,
             template_id: template,
+            tenancy_ref: tenancy_ref,
             user: user
           }
         }.to change { Hackney::Cloud::Document.count }.from(0).to(1)
@@ -109,6 +113,7 @@ RSpec.describe 'Letters', type: :request do
         post messages_letters_path, params: {
           payment_ref: payment_ref,
           template_id: template,
+          tenancy_ref: tenancy_ref,
           user: user
         }
 
@@ -122,17 +127,26 @@ RSpec.describe 'Letters', type: :request do
 
   describe 'POST /api/v1/messages/letters/send' do
     let(:uuid) { existing_letter[:uuid] }
-    let(:existing_letter) do
+    let(:username) { Faker::Name.name }
+    let(:email) { Faker::Internet.email }
+    let(:existing_leasehold_letter) do
       generate_and_store_letter(
-        payment_ref: payment_ref,
-        template_id: template,
-        user: user
+        payment_ref: payment_ref, tenancy_ref: tenancy_ref, template_id: template, user: user
       )
     end
+    let(:existing_income_collection_letter) do
+      document = create(:document)
+      metadata = JSON.parse(document.metadata)
+      metadata['template']['id'] = 'income_collection_letter_1'
+      document.update(metadata: metadata.to_json)
+      document
+    end
 
-    context 'when there is an existing letter' do
+    context 'when there is an existing leasehold letter' do
+      let(:uuid) { existing_leasehold_letter[:uuid] }
+
       before do
-        existing_letter
+        existing_leasehold_letter
       end
 
       it 'is a No Content (204) status' do
@@ -179,6 +193,34 @@ RSpec.describe 'Letters', type: :request do
         end
       end
     end
+
+    context 'when there is an existing income collection letter' do
+      let(:uuid) { existing_income_collection_letter[:uuid] }
+
+      before do
+        existing_income_collection_letter
+      end
+
+      it 'is a No Content (204) status' do
+        post messages_letters_send_path, params: { uuid: uuid, username: username, email: email }
+
+        expect(response).to be_no_content
+      end
+
+      it 'adds a `Hackney::Income::Jobs::SendIncomeCollectionLetterToGovNotifyJob` to ActiveJob' do
+        expect {
+          post messages_letters_send_path, params: { uuid: uuid, username: username, email: email }
+        }.to have_enqueued_job(Hackney::Income::Jobs::SendIncomeCollectionLetterToGovNotifyJob)
+      end
+
+      context 'with a bogus UUID' do
+        it 'throws a `ActiveRecord::RecordNotFound`' do
+          expect {
+            post messages_letters_send_path, params: { uuid: SecureRandom.uuid, username: username, email: email }
+          }.to raise_error(ActiveRecord::RecordNotFound)
+        end
+      end
+    end
   end
 
   def create_valid_uh_records_for_a_letter
@@ -207,14 +249,16 @@ RSpec.describe 'Letters', type: :request do
     create_uh_rent(prop_ref: property_ref, sc_leasedate: leasedate)
   end
 
-  def generate_and_store_letter(payment_ref:, template_id:, user:)
+  def generate_and_store_letter(payment_ref:, tenancy_ref:, template_id:, user:)
     user_obj = Hackney::Domain::User.new.tap do |u|
       u.name = user[:name]
       u.email = user[:email]
       u.groups = user[:groups]
     end
+
     UseCases::GenerateAndStoreLetter.new.execute(
       payment_ref: payment_ref,
+      tenancy_ref: tenancy_ref,
       template_id: template_id,
       user: user_obj
     )

@@ -23,6 +23,7 @@ module Hackney
       LETTER_2_IN_ARREARS_SENT = 'ZR2'.freeze
 
       PRE_NOSP_WARNING_LETTER_SENT = 'not yet defined in UH'.freeze
+      COURT_WARNING_LETTER_SENT = 'ZR3'.freeze
     end
   end
 end
