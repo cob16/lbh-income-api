@@ -87,10 +87,18 @@ module Hackney
           valid_actions = [
             Hackney::Tenancy::ActionCodes::PRE_NOSP_WARNING_LETTER_SENT
           ]
-          @criteria.last_communication_action.in?(valid_actions) &&
+
+          can_send_nosp = false
+
+          if @criteria.nosp_expiry_date.present?
+            can_send_nosp = @criteria.nosp_expiry_date < Time.zone.now
+          else
+            can_send_nosp = @criteria.last_communication_action.in?(valid_actions) &&
+                            last_communication_between_three_months_one_week?
+          end
+
+          can_send_nosp && @criteria.nosp_served? == false &&
             @criteria.balance >= arrear_accumulation_by_number_weeks(4) &&
-            @criteria.nosp_served? == false &&
-            last_communication_between_three_months_one_week? &&
             @case_priority.paused? == false
         end
 

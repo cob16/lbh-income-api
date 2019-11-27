@@ -13,6 +13,9 @@ describe Hackney::Income::TenancyPrioritiser::TenancyClassification do
       nosp_served: nosp_served,
       last_communication_date: last_communication_date,
       last_communication_action: last_communication_action,
+      nosp_expiry_date: nosp_expiry_date,
+      active_agreement: active_agreement,
+      nosps_in_last_year: nosps_in_last_year,
       nosp_served_date: nosp_served_date,
       courtdate: courtdate
     }
@@ -23,8 +26,11 @@ describe Hackney::Income::TenancyPrioritiser::TenancyClassification do
   let(:weekly_rent) { 5.0 }
   let(:balance) { 5.00 }
   let(:nosp_served) { false }
+  let(:nosp_expiry_date) { '' }
   let(:last_communication_date) { 8.days.ago.to_date }
   let(:last_communication_action) { nil }
+  let(:active_agreement) { nil }
+  let(:nosps_in_last_year) { nil }
   let(:nosp_served_date) { nil }
   let(:courtdate) { nil }
 
@@ -199,29 +205,131 @@ describe Hackney::Income::TenancyPrioritiser::TenancyClassification do
         end
       end
     end
+  end
 
-    context 'when the arrears are greater than or equal 4 week rent' do
-      last_communication_actions = {
-        pre_nosp_warning_letter: 'not yet defined in UH' # this is a placeholder code defined in lib/hackney/tenancy/action_codes.rb
+  context 'when testing `send_NOSP`' do
+    pre_nosp_warning_letter = 'not yet defined in UH'
+    condition_matrix = [
+      {
+        outcome: :no_action,
+        nosps_in_last_year: 1,
+        nosp_expiry_date: 8.months.from_now.to_date,
+        weekly_rent: 5,
+        balance: 25.0, # 5 * weekly_rent
+        is_paused_until: nil,
+        active_agreement: false,
+        last_communication_date: 2.months.ago.to_date,
+        last_communication_action: pre_nosp_warning_letter
+      },
+      {
+        outcome: :no_action,
+        nosps_in_last_year: 0,
+        nosp_expiry_date: 1.month.ago.to_date,
+        weekly_rent: 5,
+        balance: 10.0, # 2 * weekly_rent
+        is_paused_until: nil,
+        active_agreement: false,
+        last_communication_date: 2.months.ago.to_date,
+        last_communication_action: pre_nosp_warning_letter
+      },
+      {
+        outcome: :no_action,
+        nosps_in_last_year: 0,
+        nosp_expiry_date: 1.month.ago.to_date,
+        weekly_rent: 5,
+        balance: 25.0, # 5 * weekly_rent
+        is_paused_until: 1.month.from_now,
+        active_agreement: false,
+        last_communication_date: 2.months.ago.to_date,
+        last_communication_action: pre_nosp_warning_letter
+      },
+      {
+        outcome: :send_warning_letter,
+        nosps_in_last_year: 0,
+        nosp_expiry_date: '',
+        weekly_rent: 5,
+        balance: 25.0, # 5 * weekly_rent
+        is_paused_until: nil,
+        active_agreement: false,
+        last_communication_date: 2.months.ago.to_date,
+        last_communication_action: 'ZR2' # Stage 02 Complete / Letter 2 Sent
+      },
+      {
+        outcome: :no_action,
+        nosps_in_last_year: 0,
+        nosp_expiry_date: '',
+        weekly_rent: 5,
+        balance: 25.0, # 5 * weekly_rent
+        is_paused_until: nil,
+        active_agreement: false,
+        last_communication_date: 5.days.ago.to_date,
+        last_communication_action: pre_nosp_warning_letter
+      },
+      {
+        outcome: :send_NOSP,
+        nosps_in_last_year: 0,
+        nosp_expiry_date: '',
+        weekly_rent: 5,
+        balance: 25.0, # 5 * weekly_rent
+        is_paused_until: nil,
+        active_agreement: false,
+        last_communication_date: 8.days.ago.to_date,
+        last_communication_action: pre_nosp_warning_letter
+      },
+      {
+        outcome: :send_NOSP,
+        nosps_in_last_year: 0,
+        nosp_expiry_date: 1.month.ago.to_date,
+        weekly_rent: 5,
+        balance: 25.0, # 5 * weekly_rent
+        is_paused_until: nil,
+        active_agreement: false,
+        last_communication_date: 7.months.ago.to_date,
+        last_communication_action: 'ZR2' # Stage 02 Complete / Letter 2 Sent
+      },
+      {
+        outcome: :send_NOSP,
+        nosps_in_last_year: 0,
+        nosp_expiry_date: '',
+        weekly_rent: 5,
+        balance: 25.0, # 5 * weekly_rent
+        is_paused_until: nil,
+        active_agreement: true,
+        last_communication_date: 8.days.ago.to_date,
+        last_communication_action: pre_nosp_warning_letter
+      },
+      {
+        outcome: :send_NOSP,
+        nosps_in_last_year: 0,
+        nosp_expiry_date: '',
+        weekly_rent: 5,
+        balance: 25.0, # 5 * weekly_rent
+        is_paused_until: nil,
+        active_agreement: false,
+        last_communication_date: 8.days.ago.to_date,
+        last_communication_action: pre_nosp_warning_letter
       }
+    ]
 
-      last_communication_actions.each do |key, last_communication_action|
-        let(:last_communication_action) { last_communication_action }
+    condition_matrix.each do |options|
+      message = options.each_with_object([]) do |(k, v), m|
+        next m if k == :outcome
+        m << "'#{k}' is '#{v}'"
+        m
+      end.join(', ')
 
-        context "when the tenant has missed 4 weeks worth of rent with a last communication action of #{key}" do
-          let(:balance) { weekly_rent * 4 }
+      context "when #{message}" do
+        let(:nosps_in_last_year) { options[:nosps_in_last_year] }
+        let(:last_communication_date) { options[:last_communication_date] }
+        let(:weekly_rent) { options[:weekly_rent] }
+        let(:balance) { options[:balance] }
+        let(:is_paused_until) { options[:is_paused_until] }
+        let(:active_agreement) { options[:active_agreement] }
+        let(:last_communication_action) { options[:last_communication_action] }
+        let(:nosp_expiry_date) { options[:nosp_expiry_date] }
 
-          it 'can classify to send a NOSP' do
-            expect(subject).to eq(:send_NOSP)
-          end
-        end
-
-        context "when the tenant has missed over 4 weeks worth of rent with a last communication action of #{key}" do
-          let(:balance) { weekly_rent * 4 + 1 }
-
-          it 'can classify to send a NOSP' do
-            expect(subject).to eq(:send_NOSP)
-          end
+        it "returns `#{options[:outcome]}`" do
+          expect(subject).to eq(options[:outcome])
         end
       end
     end
