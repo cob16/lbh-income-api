@@ -15,7 +15,6 @@ describe Hackney::Income::TenancyPrioritiser::TenancyClassification do
       last_communication_action: last_communication_action,
       active_agreement: active_agreement,
       nosp_expiry_date: nosp_expiry_date,
-      active_agreement: active_agreement,
       nosps_in_last_year: nosps_in_last_year,
       nosp_served_date: nosp_served_date,
       courtdate: courtdate
@@ -341,7 +340,7 @@ describe Hackney::Income::TenancyPrioritiser::TenancyClassification do
     condition_matrix = [
       {
         outcome: :no_action,
-        nosp_served: true,
+        nosps_in_last_year: 1,
         nosp_served_date: 26.days.ago.to_date,
         weekly_rent: 5,
         balance: 25.0, # 5 * weekly_rent
@@ -352,7 +351,7 @@ describe Hackney::Income::TenancyPrioritiser::TenancyClassification do
       },
       {
         outcome: :no_action,
-        nosp_served: false,
+        nosps_in_last_year: 0,
         nosp_served_date: '',
         weekly_rent: 5,
         balance: 25.0, # 5 * weekly_rent
@@ -363,7 +362,7 @@ describe Hackney::Income::TenancyPrioritiser::TenancyClassification do
       },
       {
         outcome: :no_action,
-        nosp_served: true,
+        nosps_in_last_year: 1,
         nosp_served_date: 29.days.ago.to_date,
         weekly_rent: 5,
         balance: 10.0, # 2 * weekly_rent
@@ -374,7 +373,7 @@ describe Hackney::Income::TenancyPrioritiser::TenancyClassification do
       },
       {
         outcome: :no_action,
-        nosp_served: true,
+        nosps_in_last_year: 1,
         nosp_served_date: 29.days.ago.to_date,
         weekly_rent: 5,
         balance: 25.0, # 5 * weekly_rent
@@ -385,7 +384,7 @@ describe Hackney::Income::TenancyPrioritiser::TenancyClassification do
       },
       {
         outcome: :no_action,
-        nosp_served: true,
+        nosps_in_last_year: 1,
         nosp_served_date: 29.days.ago.to_date,
         weekly_rent: 5,
         balance: 25.0, # 5 * weekly_rent
@@ -396,7 +395,7 @@ describe Hackney::Income::TenancyPrioritiser::TenancyClassification do
       },
       {
         outcome: :apply_for_court_date,
-        nosp_served: true,
+        nosps_in_last_year: 1,
         nosp_served_date: 29.days.ago.to_date,
         weekly_rent: 5,
         balance: 25.0, # 5 * weekly_rent
@@ -407,7 +406,7 @@ describe Hackney::Income::TenancyPrioritiser::TenancyClassification do
       },
       {
         outcome: :apply_for_court_date,
-        nosp_served: true,
+        nosps_in_last_year: 1,
         nosp_served_date: 29.days.ago.to_date,
         weekly_rent: 5,
         balance: 25.0, # 5 * weekly_rent
@@ -418,7 +417,7 @@ describe Hackney::Income::TenancyPrioritiser::TenancyClassification do
       },
       {
         outcome: :apply_for_court_date,
-        nosp_served: true,
+        nosps_in_last_year: 1,
         nosp_served_date: 29.days.ago.to_date,
         weekly_rent: 5,
         balance: 25.0, # 5 * weekly_rent
@@ -429,7 +428,7 @@ describe Hackney::Income::TenancyPrioritiser::TenancyClassification do
       },
       {
         outcome: :no_action,
-        nosp_served: true,
+        nosps_in_last_year: 1,
         nosp_served_date: 29.days.ago.to_date,
         weekly_rent: 5,
         balance: 25.0, # 5 * weekly_rent
@@ -448,7 +447,7 @@ describe Hackney::Income::TenancyPrioritiser::TenancyClassification do
       end.join(', ')
 
       context "when #{message}" do
-        let(:nosp_served) { options[:nosp_served] }
+        let(:nosps_in_last_year) { options[:nosps_in_last_year] }
         let(:nosp_served_date) { options[:nosp_served_date] }
         let(:last_communication_date) { options[:last_communication_date] }
         let(:weekly_rent) { options[:weekly_rent] }
@@ -469,8 +468,8 @@ describe Hackney::Income::TenancyPrioritiser::TenancyClassification do
     condition_matrix = [
       {
         outcome: :no_action,
-        nosp_served: false,
-        nosp_served_date: 40.days.ago.to_date,
+        nosps_in_last_year: 0,
+        nosp_served_date: 60.weeks.ago.to_date,
         weekly_rent: 5,
         balance: 15.0, # 3 * weekly_rent
         is_paused_until: nil,
@@ -479,8 +478,8 @@ describe Hackney::Income::TenancyPrioritiser::TenancyClassification do
       },
       {
         outcome: :no_action,
-        nosp_served: false,
-        nosp_served_date: 40.days.ago.to_date,
+        nosps_in_last_year: 0,
+        nosp_served_date: 60.weeks.ago.to_date,
         weekly_rent: 5,
         balance: 50.0, # 10 * 5 weekly_rent
         is_paused_until: nil,
@@ -489,7 +488,7 @@ describe Hackney::Income::TenancyPrioritiser::TenancyClassification do
       },
       {
         outcome: :no_action,
-        nosp_served: true,
+        nosps_in_last_year: 1,
         nosp_served_date: 1.day.ago.to_date,
         weekly_rent: 5,
         balance: 15.0, # 3 * weekly_rent
@@ -499,7 +498,7 @@ describe Hackney::Income::TenancyPrioritiser::TenancyClassification do
       },
       {
         outcome: :no_action,
-        nosp_served: true,
+        nosps_in_last_year: 1,
         nosp_served_date: 1.day.ago.to_date,
         weekly_rent: 5,
         balance: 50.0, # 10 * weekly_rent
@@ -509,7 +508,7 @@ describe Hackney::Income::TenancyPrioritiser::TenancyClassification do
       },
       {
         outcome: :no_action,
-        nosp_served: true,
+        nosps_in_last_year: 1,
         nosp_served_date: 29.days.ago.to_date,
         weekly_rent: 5,
         balance: 15.0, # 3 * weekly_rent
@@ -519,7 +518,7 @@ describe Hackney::Income::TenancyPrioritiser::TenancyClassification do
       },
       {
         outcome: :no_action,
-        nosp_served: true,
+        nosps_in_last_year: 1,
         nosp_served_date: 29.days.ago.to_date,
         weekly_rent: 5,
         balance: 25.0, # 5 * weekly_rent
@@ -529,7 +528,7 @@ describe Hackney::Income::TenancyPrioritiser::TenancyClassification do
       },
       {
         outcome: :no_action,
-        nosp_served: true,
+        nosps_in_last_year: 1,
         nosp_served_date: 29.days.ago.to_date,
         weekly_rent: 5,
         balance: 25.0, # 5 * weekly_rent
@@ -538,8 +537,8 @@ describe Hackney::Income::TenancyPrioritiser::TenancyClassification do
         last_communication_action: nil
       },
       {
-        outcome: :no_action,
-        nosp_served: true,
+        outcome: :apply_for_court_date,
+        nosps_in_last_year: 1,
         nosp_served_date: 29.days.ago.to_date,
         weekly_rent: 5,
         balance: 25.0, # 5 * weekly_rent
@@ -549,7 +548,7 @@ describe Hackney::Income::TenancyPrioritiser::TenancyClassification do
       },
       {
         outcome: :send_court_warning_letter,
-        nosp_served: true,
+        nosps_in_last_year: 1,
         nosp_served_date: 29.days.ago.to_date,
         weekly_rent: 5,
         balance: 25.0, # 5 * weekly_rent
@@ -567,7 +566,7 @@ describe Hackney::Income::TenancyPrioritiser::TenancyClassification do
       end.join(', ')
 
       context "when #{message}" do
-        let(:nosp_served) { options[:nosp_served] }
+        let(:nosps_in_last_year) { options[:nosps_in_last_year] }
         let(:nosp_served_date) { options[:nosp_served_date] }
         let(:last_communication_date) { options[:last_communication_date] }
         let(:weekly_rent) { options[:weekly_rent] }
