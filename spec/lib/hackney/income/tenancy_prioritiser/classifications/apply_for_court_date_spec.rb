@@ -1,5 +1,4 @@
 require 'rails_helper'
-require_relative 'shared_example'
 
 describe 'Apply for Court Date Rule', type: :feature do
   court_warning_letter_code = 'IC4'.freeze

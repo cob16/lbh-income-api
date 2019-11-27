@@ -1,5 +1,4 @@
 require 'rails_helper'
-require_relative 'shared_example'
 
 describe 'Send NOSP Rule', type: :feature do
   pre_nosp_warning_letter = 'IC3'.freeze
