@@ -9,7 +9,7 @@ module Hackney
 
         def initialize(params)
           super(params)
-          
+
           validated_params = validate_mandatory_fields(MANDATORY_FIELDS, params)
 
           @lba_expiry_date = validated_params[:lba_expiry_date]
@@ -31,10 +31,10 @@ module Hackney
         private
 
         def calculate_lba_balance(arrears_balance, money_judgement)
-          if arrears_balance.nil?	
-            arrears_balance = 0	
-          elsif money_judgement.nil?	
-            money_judgement = 0	
+          if arrears_balance.nil?
+            arrears_balance = 0
+          elsif money_judgement.nil?
+            money_judgement = 0
           end
           BigDecimal(arrears_balance.to_s) - BigDecimal(money_judgement.to_s)
         end
