@@ -1,3 +1,28 @@
+#
+# Build up a message to put into the testing context. The message will include all the data that can
+# effect the classification outcome. It will produce a context message that looks like the following:
+#   "when 'nosps_in_last_year' is '0', 'nosp_expiry_date' is '', 'weekly_rent' is '5',
+#   'balance' is '25.0', 'is_paused_until' is '', 'active_agreement' is 'false',
+#   'last_communication_date' is '2019-11-19', 'last_communication_action' is 'IC3',
+#   'eviction_date' is '', 'courtdate' is '2019-09-27 16:39:53 UTC'"
+# The `outcome` is skipped as we use it in the `it` message instead. That will look like the following:
+#  "returns `send_NOSP`"
+#
+def build_context_message(options)
+  options.each_with_object([]) do |(attribute, value), msg|
+    next msg if attribute == :outcome
+    msg << "'#{attribute}' is '#{value}'"
+    msg
+  end.join(', ')
+end
+
+#
+# `condition_matrix` is an Array of Hashes containing the mandatory key of `outcome` this is what
+# the classification system should evaluate the other attributes as. For a list of data you can set
+# see the `let`s in the `context` towards the end of this file.
+#
+# Alternatively, see any file that uses the Shared Example and see what they are supplying.
+#
 shared_examples 'TenancyClassification' do |condition_matrix|
   subject { assign_classification.execute }
 
@@ -33,11 +58,7 @@ shared_examples 'TenancyClassification' do |condition_matrix|
   let(:eviction_date) { '' }
 
   condition_matrix.each do |options|
-    message = options.each_with_object([]) do |(k, v), m|
-      next m if k == :outcome
-      m << "'#{k}' is '#{v}'"
-      m
-    end.join(', ')
+    message = build_context_message(options)
 
     context "when #{message}" do
       let(:is_paused_until) { options[:is_paused_until] }
