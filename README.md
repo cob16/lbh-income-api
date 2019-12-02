@@ -8,7 +8,7 @@ It is used to store users, prioritise cases, assign cases evenly to users, and r
 
 - Rails as a web framework.
 - Puma as a web server.
-- Sideqik for running background and scheduled tasks.
+- Sidekiq for running background and scheduled tasks.
 
 ## Development practices
 
