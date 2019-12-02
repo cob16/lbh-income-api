@@ -49,7 +49,11 @@ module Hackney
               patch_code: criteria.patch_code,
               courtdate: criteria.courtdate,
               court_outcome: criteria.court_outcome,
-              eviction_date: criteria.eviction_date
+              eviction_date: criteria.eviction_date,
+              universal_credit: criteria.universal_credit,
+              uc_rent_verification: criteria. uc_rent_verification,
+              uc_direct_payment_requested: criteria.uc_direct_payment_requested,
+              uc_direct_payment_received: criteria.uc_direct_payment_received
             )
           end
         rescue ActiveRecord::RecordNotUnique
