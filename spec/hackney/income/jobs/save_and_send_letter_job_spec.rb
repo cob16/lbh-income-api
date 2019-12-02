@@ -23,31 +23,30 @@ describe Hackney::Income::Jobs::SaveAndSendLetterJob do
     expect_any_instance_of(Aws::S3::Encryption::Client).to receive(:put_object).and_return(AwsEncryptionClientDouble.new(nil).send(:put_object))
   }
 
-  it 'uploads to clouds' do
+  it 'retrieves document from the clouds' do
     expect_any_instance_of(Aws::S3::Encryption::Client).to receive(:get_object).and_return(AwsClientResponse.new)
-    # expect_any_instance_of(Hackney::Notification::GovNotifyGateway).to receive(:send_precompiled_letter).once
 
     expect_any_instance_of(Hackney::Notification::SendManualPrecompiledLetter).to receive(:execute).and_return(message_receipt)
 
     enqueue_save_send
+
     uploaded_doc = Hackney::Cloud::Document.find(doc.id)
     expect(uploaded_doc.url).to eq 'blah.com'
-    expect(uploaded_doc.status).to eq('uploaded')
+    expect(uploaded_doc.status).to eq('queued')
   end
 
   it 'perform_now on SendLetterToGovNotifyJob' do
     expect_any_instance_of(Hackney::Income::Jobs::SendLetterToGovNotifyJob).to receive(:perform_now).once
+
     enqueue_save_send
   end
 
   it 'creates pdf' do
-    # expect_any_instance_of(Aws::S3::Encryption::Client).to receive(:put_object).and_return(AwsEncryptionClientDouble.new(nil).send(:put_object))
     expect_any_instance_of(Aws::S3::Encryption::Client).to receive(:get_object).and_return(AwsClientResponse.new)
     expect_any_instance_of(Hackney::Notification::SendManualPrecompiledLetter).to receive(:execute).and_return(message_receipt)
 
     allow(File).to receive(:delete)
     expect_any_instance_of(Hackney::PDF::Generator).to receive(:execute).with(letter_html).and_return(FakePDFKit.new(pdf_file))
-    # expect(Hackney::PDF::Generator.new).to receive(:execute).with(letter_html) # .and_return(FakePDFKit.new(pdf_file))
     enqueue_save_send
   end
 end
