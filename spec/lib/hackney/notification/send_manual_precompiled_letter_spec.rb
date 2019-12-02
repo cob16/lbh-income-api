@@ -38,12 +38,12 @@ describe Hackney::Notification::SendManualPrecompiledLetter do
     it { expect(subject).to be_a Hackney::Notification::Domain::NotificationReceipt }
     it { expect(subject.body).to include(unique_reference) }
 
-    context 'all templates that write into action diary have action codes associated with them' do
+    context 'when templates write into action diary they should have action codes associated with them' do
       [
         'letter 1 in arrears FH', 'letter 1 in arrears LH',
         'letter 1 in arrears SO', 'letter 2 in arrears FH',
         'letter 2 in arrears LH', 'letter 2 in arrears SO',
-        'income collection letter 1', 'income collection letter 2',
+        'income collection letter 1', 'income collection letter 2'
       ].each do |template|
         it {
           expect {
