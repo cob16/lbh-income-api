@@ -29,19 +29,19 @@ module Stubs
     end
 
     def nosp_served_date
-      '2019-12-13 12:43:10'.to_date
+      attributes[:nosp_served_date] || '2019-12-13 12:43:10'.to_date
     end
 
     def nosp_expiry_date
-      '2019-12-30 16:43:10'.to_date
+      attributes[:nosp_expiry_date] || '2019-12-30 16:43:10'.to_date
     end
 
     def courtdate
-      '2005-12-13 12:43:10'.to_date
+      attributes[:courtdate] || '2005-12-13 12:43:10'.to_date
     end
 
     def eviction_date
-      '2007-09-20 10:30:00'.to_date
+      attributes[:eviction_date] || '2007-09-20 10:30:00'.to_date
     end
 
     def patch_code
@@ -61,7 +61,9 @@ module Stubs
     end
 
     def nosp_served?
-      attributes[:nosp_served] || false
+      # Real Criteria class uses this `nosps_in_last_year` so lets be able to set this instead.
+      # Fallback to the `stubbed` behaviour.
+      ((attributes[:nosps_in_last_year] || 0) > 0) || attributes[:nosp_served] || false
     end
 
     def active_nosp?
