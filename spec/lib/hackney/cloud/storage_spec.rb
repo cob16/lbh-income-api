@@ -23,7 +23,7 @@ describe Hackney::Cloud::Storage, type: :model do
       create(:document, status: :queued)
     end
 
-    it 'retrieves all documents without uploading' do
+    it 'retrieves all documents except for the one marked as "uploaded"' do
       expect(storage.all_documents).not_to include(uploaded)
     end
 
