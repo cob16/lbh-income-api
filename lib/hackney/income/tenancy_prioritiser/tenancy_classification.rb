@@ -96,7 +96,6 @@ module Hackney
             @case_priority.paused? == false
         end
 
-
         def send_nosp?
           valid_actions = [
             Hackney::Tenancy::ActionCodes::PRE_NOSP_WARNING_LETTER_SENT
