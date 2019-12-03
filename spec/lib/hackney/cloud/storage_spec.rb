@@ -13,12 +13,15 @@ describe Hackney::Cloud::Storage, type: :model do
   end
 
   describe 'retrieve all document' do
-    let(:uploading) { create(:document, status: :uploading) }
-    let(:uploaded) { create(:document, status: :uploaded) }
-    let(:received) { create(:document, status: :received) }
-    let(:accepted) { create(:document, status: :accepted) }
-    let(:downloaded) { create(:document, status: :downloaded) }
-    let(:queued) { create(:document, status: :queued) }
+    let!(:uploaded) { create(:document, status: :uploaded) }
+
+    before do
+      create(:document, status: :uploading)
+      create(:document, status: :received)
+      create(:document, status: :accepted)
+      create(:document, status: :downloaded)
+      create(:document, status: :queued)
+    end
 
     it 'retrieves all documents without uploading' do
       expect(storage.all_documents).not_to include(uploaded)
