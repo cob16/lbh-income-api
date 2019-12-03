@@ -137,63 +137,12 @@ describe Hackney::Income::TenancyPrioritiser::TenancyClassification do
     end
 
     context 'when the arrears are greater than or equal to one weeks rent and less than 3 week rent' do
-      context 'with different last_communication_actions' do
-        let(:balance) { weekly_rent }
+      let(:balance) { weekly_rent * 3 }
+      let(:last_communication_action) { 'ZR1' }
 
-        last_communication_actions = {
-          letter_one_in_arrears_auto: 'IC1'
-        }
-
-        last_communication_actions.each do |key, last_communication_action|
-          let(:last_communication_action) { last_communication_action }
-
-          context "when the tenant has arreas of 1 week with a last communication action of #{key}" do
-            it 'can classify to send letter two' do
-              expect(subject).to eq(:send_letter_two)
-            end
-          end
-
-          context "when the tenant is over 1 weeks in arrears with a last communication action of #{key}" do
-            let(:last_communication_date) { 8.days.ago.to_date + 1.day }
-
-            it 'can classify to send letter two' do
-              expect(subject).to eq(:send_letter_two)
-            end
-          end
-
-          context "when the tenant has just under 3 weeks with a last communication action of #{key}" do
-            let(:balance) { weekly_rent * 3 - 1 }
-
-            it 'can classify to send letter two' do
-              expect(subject).to eq(:send_letter_two)
-            end
-          end
-        end
-      end
-    end
-
-    context 'when the arrears are greater than or equal to three weeks rent and less than 4 week rent' do
-      last_communication_actions = {
-        letter_two_in_arrears: 'IC2'
-      }
-
-      last_communication_actions.each do |key, last_communication_action|
-        let(:last_communication_action) { last_communication_action }
-
-        context "when the tenant has missed three weeks rent with a last communication action of #{key}" do
-          let(:balance) { weekly_rent * 3 }
-
-          it 'can classify to send a warning letter' do
-            expect(subject).to eq(:send_warning_letter)
-          end
-        end
-
-        context "when the tenant has missed just under 4 weeks rent with a last communication action of #{key}" do
-          let(:balance) { weekly_rent * 4 - 1 }
-
-          it 'can classify to send a warning letter' do
-            expect(subject).to eq(:send_warning_letter)
-          end
+      context 'when the tenant is 3 weeks with a last communication action of `send_letter_one`' do
+        it 'can classify to send letter two' do
+          expect(subject).to eq(:send_letter_two)
         end
       end
     end
