@@ -22,7 +22,8 @@ module Hackney
 
       INCOME_COLLECTION_LETTER_2 = 'IC2'.freeze
 
-      PRE_NOSP_WARNING_LETTER_SENT = 'not yet defined in UH'.freeze
+      PRE_NOSP_WARNING_LETTER_SENT = 'IC3'.freeze
+      COURT_WARNING_LETTER_SENT = 'IC4'.freeze
     end
   end
 end
