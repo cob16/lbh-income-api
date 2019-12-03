@@ -135,11 +135,37 @@ module Hackney
         )
       end
 
+      def automate_sending_letters
+        UseCases::AutomateSendingLetters.new(
+          case_ready_for_automation: case_ready_for_automation,
+          case_classification_to_letter_type_map: case_classification_to_letter_type_map,
+          generate_and_store_letter: generate_and_store_letter,
+          send_letter_to_gov_notify: send_letter_to_gov_notify
+        )
+      end
+
+      def send_letter_to_gov_notify
+        Hackney::Income::Jobs::SendLetterToGovNotifyJob
+      end
+
+      def generate_and_store_letter
+        UseCases::GenerateAndStoreLetter.new
+      end
+
+      def case_classification_to_letter_type_map
+        UseCases::CaseClassificationToLetterTypeMap.new
+      end
+
+      def case_ready_for_automation
+        UseCases::CaseReadyForAutomation.new
+      end
+
       def sync_case_priority
         ActiveSupport::Deprecation.warn(
           "SyncCasePriorityJob is deprecated - use external scheduler via 'rake income:sync:enqueue'"
         )
         Hackney::Income::SyncCasePriority.new(
+          automate_sending_letters: automate_sending_letters,
           prioritisation_gateway: prioritisation_gateway,
           stored_tenancies_gateway: stored_tenancies_gateway
         )
