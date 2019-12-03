@@ -5,6 +5,7 @@ describe Hackney::Income::Jobs::SendLetterToGovNotifyJob do
     Hackney::Cloud::Document.create(
       filename: 'test_file.txt',
       extension: '.txt',
+      status: 'uploaded',
       uuid: SecureRandom.uuid,
       mime_type: 'application/pdf',
       metadata: {
@@ -24,5 +25,10 @@ describe Hackney::Income::Jobs::SendLetterToGovNotifyJob do
   it 'updates with message id' do
     doc = Hackney::Cloud::Document.find(document_id)
     expect { described_class.perform_now(document_id: document_id) }.to change { doc.reload.ext_message_id }.from(nil).to(message_receipt.message_id)
+  end
+
+  it 'updates with letter status' do
+    doc = Hackney::Cloud::Document.find(document_id)
+    expect { described_class.perform_now(document_id: document_id) }.to change { doc.reload.status }.from('uploaded').to('queued')
   end
 end

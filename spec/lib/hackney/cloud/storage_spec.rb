@@ -13,10 +13,18 @@ describe Hackney::Cloud::Storage, type: :model do
   end
 
   describe 'retrieve all document' do
-    it 'retrieves all documents' do
-      expect(Hackney::Cloud::Document).to receive(:all).and_return(Hackney::Cloud::Document.none)
+    let!(:uploaded) { create(:document, status: :uploaded) }
 
-      storage.all_documents
+    before do
+      create(:document, status: :uploading)
+      create(:document, status: :received)
+      create(:document, status: :accepted)
+      create(:document, status: :downloaded)
+      create(:document, status: :queued)
+    end
+
+    it 'retrieves all documents except for the one marked as "uploaded"' do
+      expect(storage.all_documents).not_to include(uploaded)
     end
 
     context 'when payment_ref param is used' do

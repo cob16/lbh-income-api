@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 describe 'Apply for Court Date Rule', type: :feature do
-  court_warning_letter_code = 'IC4'.freeze
+  court_warning_letter_code = Hackney::Tenancy::ActionCodes::COURT_WARNING_LETTER_SENT
 
   apply_for_court_date_condition_matrix = [
     {
