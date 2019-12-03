@@ -92,8 +92,7 @@ module Hackney
           ]
 
           @criteria.last_communication_action.in?(valid_actions) &&
-            @criteria.balance >= @criteria.weekly_rent &&
-            @criteria.balance < arrear_accumulation_by_number_weeks(3) &&
+            @criteria.balance >= arrear_accumulation_by_number_weeks(3) &&
             @criteria.nosp_served? == false &&
             last_communication_between_three_months_one_week? &&
             @case_priority.paused? == false
