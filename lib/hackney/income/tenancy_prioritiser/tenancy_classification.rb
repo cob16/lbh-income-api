@@ -31,7 +31,8 @@ module Hackney
         private
 
         def validate_wanted_action(wanted_action)
-          raise 'Unknown Wanted Action' unless Hackney::Income::Models::CasePriority.classifications.key?(wanted_action)
+          return if Hackney::Income::Models::CasePriority.classifications.key?(wanted_action)
+          raise ArgumentError, "Tried to classify a case as #{wanted_action}, but this is not on the list of valid classifications."
         end
 
         def send_court_warning_letter?
