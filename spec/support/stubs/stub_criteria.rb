@@ -61,9 +61,8 @@ module Stubs
     end
 
     def nosp_served?
-      # Real Criteria class uses this `nosps_in_last_year` so lets be able to set this instead.
-      # Fallback to the `stubbed` behaviour.
-      ((attributes[:nosps_in_last_year] || 0) > 0) || attributes[:nosp_served] || false
+      ((attributes[:nosps_in_last_year] || 0) > 0) ||
+        attributes[:nosp_served] || false
     end
 
     def active_nosp?
