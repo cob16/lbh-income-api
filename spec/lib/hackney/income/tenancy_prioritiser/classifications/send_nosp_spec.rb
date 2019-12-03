@@ -44,19 +44,6 @@ describe 'Send NOSP Rule', type: :feature do
       courtdate: ''
     },
     {
-      outcome: :send_warning_letter,
-      nosps_in_last_year: 0,
-      nosp_expiry_date: '',
-      weekly_rent: 5,
-      balance: 25.0, # 5 * weekly_rent
-      is_paused_until: nil,
-      active_agreement: false,
-      last_communication_date: 2.months.ago.to_date,
-      last_communication_action: 'ZR2', # Stage 02 Complete / Letter 2 Sent
-      eviction_date: nil,
-      courtdate: ''
-    },
-    {
       outcome: :no_action,
       nosps_in_last_year: 0,
       nosp_expiry_date: '',

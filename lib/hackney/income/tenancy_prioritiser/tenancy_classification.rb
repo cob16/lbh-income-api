@@ -16,7 +16,6 @@ module Hackney
           wanted_action ||= :apply_for_court_date if apply_for_court_date?
           wanted_action ||= :send_court_warning_letter if send_court_warning_letter?
           wanted_action ||= :send_NOSP if send_nosp?
-          wanted_action ||= :send_warning_letter if send_warning_letter?
           wanted_action ||= :send_letter_two if send_letter_two?
           wanted_action ||= :send_letter_one if send_letter_one?
           wanted_action ||= :send_first_SMS if send_sms?
@@ -97,17 +96,6 @@ module Hackney
             @case_priority.paused? == false
         end
 
-        def send_warning_letter?
-          valid_actions = [
-            Hackney::Tenancy::ActionCodes::LETTER_2_IN_ARREARS_SENT
-          ]
-
-          @criteria.last_communication_action.in?(valid_actions) &&
-            @criteria.balance >= arrear_accumulation_by_number_weeks(3) &&
-            @criteria.nosp_served? == false &&
-            last_communication_between_three_months_one_week? &&
-            @case_priority.paused? == false
-        end
 
         def send_nosp?
           valid_actions = [
