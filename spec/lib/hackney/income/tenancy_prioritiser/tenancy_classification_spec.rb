@@ -138,7 +138,7 @@ describe Hackney::Income::TenancyPrioritiser::TenancyClassification do
 
     context 'when the arrears are greater than or equal to one weeks rent and less than 3 week rent' do
       let(:balance) { weekly_rent * 3 }
-      let(:last_communication_action) { 'ZR1' }
+      let(:last_communication_action) { 'IC1' }
 
       context 'when the tenant is 3 weeks with a last communication action of `send_letter_one`' do
         it 'can classify to send letter two' do

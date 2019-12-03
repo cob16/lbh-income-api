@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 describe 'Send Letter Two Rule', type: :feature do
-  letter_1_in_arrears_sent_code = 'ZR1'
+  letter_1_in_arrears_sent_code = 'IC1'
 
   send_letter_two_condition_matrix = [
     {
