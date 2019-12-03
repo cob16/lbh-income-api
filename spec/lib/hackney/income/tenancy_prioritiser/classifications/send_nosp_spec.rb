@@ -1,8 +1,6 @@
 require 'rails_helper'
 
 describe 'Send NOSP Rule', type: :feature do
-  pre_nosp_warning_letter = 'IC3'.freeze
-
   send_nosp_condition_matrix = [
     {
       outcome: :no_action,
@@ -13,7 +11,7 @@ describe 'Send NOSP Rule', type: :feature do
       is_paused_until: nil,
       active_agreement: false,
       last_communication_date: 2.months.ago.to_date,
-      last_communication_action: pre_nosp_warning_letter,
+      last_communication_action: Hackney::Tenancy::ActionCodes::PRE_NOSP_WARNING_LETTER_SENT,
       eviction_date: nil,
       courtdate: ''
     },
@@ -26,7 +24,7 @@ describe 'Send NOSP Rule', type: :feature do
       is_paused_until: nil,
       active_agreement: false,
       last_communication_date: 2.months.ago.to_date,
-      last_communication_action: pre_nosp_warning_letter,
+      last_communication_action: Hackney::Tenancy::ActionCodes::PRE_NOSP_WARNING_LETTER_SENT,
       eviction_date: nil,
       courtdate: ''
     },
@@ -39,7 +37,7 @@ describe 'Send NOSP Rule', type: :feature do
       is_paused_until: 1.month.from_now,
       active_agreement: false,
       last_communication_date: 2.months.ago.to_date,
-      last_communication_action: pre_nosp_warning_letter,
+      last_communication_action: Hackney::Tenancy::ActionCodes::PRE_NOSP_WARNING_LETTER_SENT,
       eviction_date: nil,
       courtdate: ''
     },
@@ -52,7 +50,7 @@ describe 'Send NOSP Rule', type: :feature do
       is_paused_until: nil,
       active_agreement: false,
       last_communication_date: 2.months.ago.to_date,
-      last_communication_action: 'ZR2', # Stage 02 Complete / Letter 2 Sent
+      last_communication_action: Hackney::Tenancy::ActionCodes::INCOME_COLLECTION_LETTER_2,
       eviction_date: nil,
       courtdate: ''
     },
@@ -65,7 +63,7 @@ describe 'Send NOSP Rule', type: :feature do
       is_paused_until: nil,
       active_agreement: false,
       last_communication_date: 5.days.ago.to_date,
-      last_communication_action: pre_nosp_warning_letter,
+      last_communication_action: Hackney::Tenancy::ActionCodes::PRE_NOSP_WARNING_LETTER_SENT,
       eviction_date: nil,
       courtdate: ''
     },
@@ -78,7 +76,7 @@ describe 'Send NOSP Rule', type: :feature do
       is_paused_until: nil,
       active_agreement: false,
       last_communication_date: 8.days.ago.to_date,
-      last_communication_action: pre_nosp_warning_letter,
+      last_communication_action: Hackney::Tenancy::ActionCodes::PRE_NOSP_WARNING_LETTER_SENT,
       eviction_date: 2.weeks.ago,
       courtdate: ''
     },
@@ -91,7 +89,7 @@ describe 'Send NOSP Rule', type: :feature do
       is_paused_until: nil,
       active_agreement: false,
       last_communication_date: 8.days.ago.to_date,
-      last_communication_action: pre_nosp_warning_letter,
+      last_communication_action: Hackney::Tenancy::ActionCodes::PRE_NOSP_WARNING_LETTER_SENT,
       eviction_date: 1.week.from_now,
       courtdate: ''
     },
@@ -104,7 +102,7 @@ describe 'Send NOSP Rule', type: :feature do
       is_paused_until: nil,
       active_agreement: false,
       last_communication_date: 8.days.ago.to_date,
-      last_communication_action: pre_nosp_warning_letter,
+      last_communication_action: Hackney::Tenancy::ActionCodes::PRE_NOSP_WARNING_LETTER_SENT,
       eviction_date: nil,
       courtdate: 2.weeks.from_now
     },
@@ -117,7 +115,7 @@ describe 'Send NOSP Rule', type: :feature do
       is_paused_until: nil,
       active_agreement: false,
       last_communication_date: 8.days.ago.to_date,
-      last_communication_action: pre_nosp_warning_letter,
+      last_communication_action: Hackney::Tenancy::ActionCodes::PRE_NOSP_WARNING_LETTER_SENT,
       eviction_date: nil,
       courtdate: ''
     },
@@ -130,7 +128,7 @@ describe 'Send NOSP Rule', type: :feature do
       is_paused_until: nil,
       active_agreement: false,
       last_communication_date: 7.months.ago.to_date,
-      last_communication_action: 'ZR2', # Stage 02 Complete / Letter 2 Sent
+      last_communication_action: Hackney::Tenancy::ActionCodes::INCOME_COLLECTION_LETTER_2,
       eviction_date: nil,
       courtdate: ''
     },
@@ -143,7 +141,7 @@ describe 'Send NOSP Rule', type: :feature do
       is_paused_until: nil,
       active_agreement: true,
       last_communication_date: 8.days.ago.to_date,
-      last_communication_action: pre_nosp_warning_letter,
+      last_communication_action: Hackney::Tenancy::ActionCodes::PRE_NOSP_WARNING_LETTER_SENT,
       eviction_date: nil,
       courtdate: ''
     },
@@ -156,7 +154,7 @@ describe 'Send NOSP Rule', type: :feature do
       is_paused_until: nil,
       active_agreement: false,
       last_communication_date: 8.days.ago.to_date,
-      last_communication_action: pre_nosp_warning_letter,
+      last_communication_action: Hackney::Tenancy::ActionCodes::PRE_NOSP_WARNING_LETTER_SENT,
       eviction_date: nil,
       courtdate: ''
     },
@@ -169,7 +167,7 @@ describe 'Send NOSP Rule', type: :feature do
       is_paused_until: nil,
       active_agreement: false,
       last_communication_date: 8.days.ago.to_date,
-      last_communication_action: pre_nosp_warning_letter,
+      last_communication_action: Hackney::Tenancy::ActionCodes::PRE_NOSP_WARNING_LETTER_SENT,
       eviction_date: nil,
       courtdate: 2.months.ago
     }
