@@ -50,7 +50,7 @@ describe Hackney::Notification::EnqueueRequestAllPrecompiledLetterStates do
       let!(:accepted) { create(:document, status: :accepted) }
       let!(:failed) { create(:document, status: 'validation-failed') }
       let!(:downloaded) { create(:document, status: :downloaded) }
-      let!(:queued) { create(:document, status: :queued) } # rubocop:disable RSpec/LetSetup
+      let!(:queued) { create(:document, status: :queued) }
 
       it { expect(subject.documents).to include(uploading) }
       it { expect(subject.documents).to include(uploaded) }
@@ -58,6 +58,7 @@ describe Hackney::Notification::EnqueueRequestAllPrecompiledLetterStates do
       it { expect(subject.documents).not_to include(received) }
       it { expect(subject.documents).not_to include(failed) }
       it { expect(subject.documents).to include(downloaded) }
+      it { expect(subject.documents).to include(queued) }
 
       it 'all statuses should be checked' do
         document_store.statuses.each do |status|
