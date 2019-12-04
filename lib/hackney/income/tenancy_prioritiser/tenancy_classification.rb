@@ -107,6 +107,8 @@ module Hackney
 
           if @criteria.nosp_expiry_date.present?
             can_send_nosp = @criteria.nosp_expiry_date < Time.zone.now
+          elsif @criteria.active_agreement?
+            can_send_nosp = false
           else
             can_send_nosp = @criteria.last_communication_action.in?(valid_actions) &&
                             last_communication_between_three_months_one_week?
