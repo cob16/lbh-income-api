@@ -79,10 +79,11 @@ module Hackney
           ]
 
           @criteria.last_communication_action.in?(valid_actions) &&
-            @criteria.balance > 10 &&
+            @criteria.balance > @criteria.weekly_rent &&
             @criteria.nosp_served? == false &&
             last_communication_between_three_months_one_week? &&
-            @case_priority.paused? == false
+            @case_priority.paused? == false &&
+            @criteria.active_agreement? == false
         end
 
         def send_letter_two?
