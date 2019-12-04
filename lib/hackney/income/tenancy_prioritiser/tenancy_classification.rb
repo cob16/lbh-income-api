@@ -99,7 +99,8 @@ module Hackney
 
         def send_nosp?
           valid_actions = [
-            Hackney::Tenancy::ActionCodes::PRE_NOSP_WARNING_LETTER_SENT
+            Hackney::Tenancy::ActionCodes::INCOME_COLLECTION_LETTER_2,
+            Hackney::Tenancy::ActionCodes::INCOME_COLLECTION_LETTER_2_UH
           ]
 
           can_send_nosp = false
