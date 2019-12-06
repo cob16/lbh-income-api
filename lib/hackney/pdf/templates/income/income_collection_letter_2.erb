@@ -9,56 +9,68 @@
     <%= @today_date %>
   </p>
 
-  <h1>
-    Rent arrears £<%= @letter.total_collectable_arrears_balance %> - avoid court action
-  </h1>
-
   <p>
     Dear <%= @letter.title %> <%= @letter.surname%>
   </p>
 
+  <div class="blue_box">
+    <h3 class="no_top_margin">
+      Rent Account balance: £<%= @letter.total_collectable_arrears_balance %><br>
+      Account Number: <%= @letter.tenancy_ref %>
+    </h3>
+  </div>
+
   <p>
-    You rent account remains in arrears. To avoid court action you need to contact us immediately using the contact details at the top of this letter, so that we can try to resolve this problem.
+    There is still a problem with your rent account and we need to talk to you to help you to put things right.
   </p>
 
   <p>
-    We will discuss your situation and work with you to create a repayment plan. We can also put you in touch with someone who can help you in managing your finances if you need it.
+    Please contact us as soon as you can. It is important that you work with us quickly so we can solve the problem before it becomes too late.
   </p>
 
-  <h2>
-    If you wish to make a full payment please use any of the following methods:
-  </h2>
+  <div class="gray_box">
+    <h3 class="no_top_margin">
+      What you need to do:
+    </h3>
 
-  <ul>
-    <li>
-      Hackney's Rent Account website: <strong>www.hackney.gov.uk/pay-rent</strong>
-    </li>
-    <li>
-      By telephone: 020 83656 5050 (24 hours payline)
-    </li>
-    <li>
-      Pay in person: at 2 Hillman Street, E8 1FB from Monday to Friday (9am to 5pm)
-    </li>
-    <li>
-      Visit <strong>www.hackney.gov.uk/housing-payments</strong> to find out about all our available payment methods.
-    </li>
-  </ul>
+    <p>
+      Contact us in one of the following ways:
+    </p>
+    <ul>
+      <li>
+        By telephone on 020 8356 3100
+      </li>
+      <li>
+        By email at <strong>income.services@hackney.gov.uk</strong>
+      </li>
+      <li>
+        In person at Hackney Service Centre - the address is at the top of this letter
+      </li>
+      <li>
+        Through someone who helps you, such as a friend, carer or advice agency like the Citizens Advice Bureau. We will ask them for proof that you have given them permission to discuss your account first.
+      </li>
+    </ul>
+    <br>
+  </div>
 
-  <h2>
-    Problems with your benefits claim
-  </h2>
+  <br>
+  <div class="gray_box">
+    <h3 class="no_top_margin">
+      What will happen next?
+    </h3>
+
+    <p>
+      If you contact us, it will help us to understand why your account is in arrears. We can help you if you are struggling financially by either telling you about benefits you might be entitled to, referring you for budgeting support or debt advice or making an affordable repayment agreement. We can only help you if you talk to us.
+    </p>
+
+    <p>
+      If you don't talk to us, and we can't solve the problem, you will receive a Notice of Seeking Possession, which is the first step towards eviction. We want to avoid this.
+    </p>
+    <br>
+    </div>
 
   <p>
-    If you think there might be a problem with your housing benefit claim then contact the housing benefit team on 020 8356 3399 or visit the Hackney Service at 1 Hillman Street, London, E8 1DY. If you need help with your Universal Credit claim you
-    should contact the Department for Work and Pensions.
-  </p>
-
-  <h2>
-    Did you know you could be entitled to additional financial help?
-  </h2>
-
-  <p>
-    Visit <strong>www.hackney.gov.uk/discretionary-housing-payments.</strong>
+    You can view your rent account and make a payment at any time by visiting our website - <strong>www.hackney.gov.uk/rentaccount</strong> using your payment reference number, shown above.
   </p>
 
   <p>
@@ -71,3 +83,6 @@
     London Borough of Hackney
   </p>
 </div>
+
+<%= @payment_options %>
+

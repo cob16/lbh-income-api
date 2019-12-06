@@ -31,6 +31,17 @@ p {
   margin-inline-end: 0px;
 }
 
+.blue_box {
+  padding: 8.64pt 8.64pt 0 8.64pt;
+  border: 2pt #1d70b8 solid;
+}
+
+.gray_box {
+  padding: 8.64pt 8.64pt 0 8.64pt;
+  border: 0;
+  background-color: #d2d2d2;
+}
+
 .green_box {
   padding: 8.64pt 8.64pt 0 8.64pt;
   border: 2pt #589d8b solid;
