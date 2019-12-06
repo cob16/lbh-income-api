@@ -66,24 +66,30 @@ module Hackney
         def send_sms?
           @criteria.last_communication_action.nil? &&
             @criteria.balance >= 5 &&
-            @criteria.balance < 10 &&
-            @criteria.nosp_served? == false &&
-            last_communication_between_three_months_one_week? &&
-            @case_priority.paused? == false
-        end
-
-        def send_letter_one?
-          valid_actions = [
-            Hackney::Tenancy::ActionCodes::AUTOMATED_SMS_ACTION_CODE,
-            Hackney::Tenancy::ActionCodes::MANUAL_SMS_ACTION_CODE
-          ]
-
-          @criteria.last_communication_action.in?(valid_actions) &&
-            @criteria.balance > @criteria.weekly_rent &&
             @criteria.nosp_served? == false &&
             last_communication_between_three_months_one_week? &&
             @case_priority.paused? == false &&
             @criteria.active_agreement? == false
+        end
+
+        def send_letter_one?
+          future_communication_actions = [
+            Hackney::Tenancy::ActionCodes::INCOME_COLLECTION_LETTER_2,
+            Hackney::Tenancy::ActionCodes::INCOME_COLLECTION_LETTER_2_UH,
+            Hackney::Tenancy::ActionCodes::COURT_WARNING_LETTER_SENT,
+            Hackney::Tenancy::ActionCodes::INCOME_COLLECTION_LETTER_1
+          ]
+          can_send_letter_one = false
+          if @criteria.balance >= @criteria.weekly_rent &&
+             @criteria.balance < arrear_accumulation_by_number_weeks(3) &&
+             @criteria.nosp_served? == false &&
+             last_communication_between_three_months_one_week? &&
+             @case_priority.paused? == false &&
+             @criteria.active_agreement? == false
+            can_send_letter_one = true
+          end
+          can_send_letter_one = @criteria.last_communication_date < 3.months.ago if @criteria.last_communication_action.in?(future_communication_actions)
+          can_send_letter_one
         end
 
         def send_letter_two?

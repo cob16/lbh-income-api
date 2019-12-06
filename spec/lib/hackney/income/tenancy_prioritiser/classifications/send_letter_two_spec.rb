@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 describe 'Send Letter Two Rule', type: :feature do
-  letter_1_in_arrears_sent_code = 'IC1'
+  letter_1_in_arrears_sent_code = 'IC1'.freeze
 
   send_letter_two_condition_matrix = [
     {
@@ -82,7 +82,7 @@ describe 'Send Letter Two Rule', type: :feature do
       is_paused_until: '',
       active_agreement: false,
       last_communication_date: 2.weeks.ago.to_date,
-      last_communication_action: 'WRONG',
+      last_communication_action: Hackney::Tenancy::ActionCodes::COURT_WARNING_LETTER_SENT,
       eviction_date: '',
       courtdate: ''
     },

@@ -25,7 +25,7 @@ module Stubs
     end
 
     def weekly_rent
-      5.0
+      attributes[:weekly_rent] || 5.0
     end
 
     def nosp_served_date
