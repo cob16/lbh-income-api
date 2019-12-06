@@ -150,8 +150,24 @@ vertical-align:top;
   border-collapse: collapse;
 }
 
+.income_payment_table {
+  border-collapse: collapse;
+}
+
+.income_payment_table td {
+  width: 450px;
+}
+.income_payment_table th {
+  text-align: left;
+  width: 190px;
+}
+
 .payment_table_grey {
   background: #e0e0e0;
+}
+
+.payment_table_blue {
+  background: #c9daf8;
 }
 
 .payment_table_right {
