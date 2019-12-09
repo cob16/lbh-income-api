@@ -52,7 +52,7 @@ module Hackney
 
           can_apply_for_court_date =
             @criteria.last_communication_action.in?(valid_actions) &&
-            last_communication_date_before?(2.weeks.ago) &&
+            last_communication_older_than?(2.weeks.ago) &&
             @criteria.balance >= arrear_accumulation_by_number_weeks(4) &&
             @criteria.nosp_served? == true &&
             @criteria.nosp_served_date <= 28.days.ago.to_date &&
@@ -73,23 +73,21 @@ module Hackney
         end
 
         def send_letter_one?
-          future_communication_actions = [
+          return if @case_priority.paused?
+          return if @criteria.nosp_served?
+          return if @criteria.active_agreement?
+
+          after_letter_one_actions = [
+            Hackney::Tenancy::ActionCodes::INCOME_COLLECTION_LETTER_1,
             Hackney::Tenancy::ActionCodes::INCOME_COLLECTION_LETTER_2,
             Hackney::Tenancy::ActionCodes::INCOME_COLLECTION_LETTER_2_UH,
-            Hackney::Tenancy::ActionCodes::COURT_WARNING_LETTER_SENT,
-            Hackney::Tenancy::ActionCodes::INCOME_COLLECTION_LETTER_1
+            Hackney::Tenancy::ActionCodes::COURT_WARNING_LETTER_SENT
           ]
-          can_send_letter_one = false
-          if @criteria.balance >= @criteria.weekly_rent &&
-             @criteria.balance < arrear_accumulation_by_number_weeks(3) &&
-             @criteria.nosp_served? == false &&
-             last_communication_between_three_months_one_week? &&
-             @case_priority.paused? == false &&
-             @criteria.active_agreement? == false
-            can_send_letter_one = true
-          end
-          can_send_letter_one = @criteria.last_communication_date < 3.months.ago if @criteria.last_communication_action.in?(future_communication_actions)
-          can_send_letter_one
+
+          return if @criteria.last_communication_action.in?(after_letter_one_actions) &&
+            last_communication_newer_than?(3.months.ago)
+
+          @criteria.balance >= @criteria.weekly_rent
         end
 
         def send_letter_two?
@@ -127,16 +125,16 @@ module Hackney
         end
 
         def last_communication_between_three_months_one_week?
-          return false if @criteria.last_communication_date.nil?
+          return if @criteria.last_communication_date.nil?
 
-          last_communication_date_before?(1.week.ago) && last_communication_date_after?(3.months.ago)
+          last_communication_older_than?(1.week.ago) && last_communication_newer_than?(3.months.ago)
         end
 
-        def last_communication_date_before?(date)
+        def last_communication_older_than?(date)
           @criteria.last_communication_date <= date.to_date
         end
 
-        def last_communication_date_after?(date)
+        def last_communication_newer_than?(date)
           @criteria.last_communication_date >= date.to_date
         end
 
