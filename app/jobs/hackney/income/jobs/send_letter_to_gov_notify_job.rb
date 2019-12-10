@@ -22,6 +22,7 @@ module Hackney
             )
 
           document.ext_message_id = letter_response.message_id
+          document.status = :queued
           document.save!
         end
 

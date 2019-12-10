@@ -12,7 +12,9 @@ describe Hackney::Income::TenancyPrioritiser::TenancyClassification do
       balance: balance,
       nosp_served: nosp_served,
       last_communication_date: last_communication_date,
-      last_communication_action: last_communication_action
+      last_communication_action: last_communication_action,
+      courtdate: '',
+      eviction_date: ''
     }
   end
 
@@ -139,7 +141,7 @@ describe Hackney::Income::TenancyPrioritiser::TenancyClassification do
         let(:balance) { weekly_rent }
 
         last_communication_actions = {
-          letter_one_in_arrears_auto: 'ZR1'
+          letter_one_in_arrears_auto: 'IC1'
         }
 
         last_communication_actions.each do |key, last_communication_action|
@@ -172,7 +174,7 @@ describe Hackney::Income::TenancyPrioritiser::TenancyClassification do
 
     context 'when the arrears are greater than or equal to three weeks rent and less than 4 week rent' do
       last_communication_actions = {
-        letter_two_in_arrears: 'ZR2'
+        letter_two_in_arrears: 'IC2'
       }
 
       last_communication_actions.each do |key, last_communication_action|
@@ -191,32 +193,6 @@ describe Hackney::Income::TenancyPrioritiser::TenancyClassification do
 
           it 'can classify to send a warning letter' do
             expect(subject).to eq(:send_warning_letter)
-          end
-        end
-      end
-    end
-
-    context 'when the arrears are greater than or equal 4 week rent' do
-      last_communication_actions = {
-        pre_nosp_warning_letter: 'not yet defined in UH' # this is a placeholder code defined in lib/hackney/tenancy/action_codes.rb
-      }
-
-      last_communication_actions.each do |key, last_communication_action|
-        let(:last_communication_action) { last_communication_action }
-
-        context "when the tenant has missed 4 weeks worth of rent with a last communication action of #{key}" do
-          let(:balance) { weekly_rent * 4 }
-
-          it 'can classify to send a NOSP' do
-            expect(subject).to eq(:send_NOSP)
-          end
-        end
-
-        context "when the tenant has missed over 4 weeks worth of rent with a last communication action of #{key}" do
-          let(:balance) { weekly_rent * 4 + 1 }
-
-          it 'can classify to send a NOSP' do
-            expect(subject).to eq(:send_NOSP)
           end
         end
       end

@@ -46,7 +46,7 @@ module Hackney
         if payment_ref.present?
           document_model.where("JSON_EXTRACT(metadata, '$.payment_ref') = ?", payment_ref).order(created_at: :DESC)
         else
-          document_model.all.order(created_at: :DESC)
+          document_model.where.not(status: :uploaded).order(created_at: :DESC)
         end
       end
 

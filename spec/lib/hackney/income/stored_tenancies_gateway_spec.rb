@@ -21,16 +21,27 @@ describe Hackney::Income::StoredTenanciesGateway do
         tenancy_ref: Faker::Internet.slug,
         priority_band: Faker::Internet.slug,
         priority_score: Faker::Number.number(5).to_i,
-        criteria: Stubs::StubCriteria.new,
+        criteria: stubbed_criteria,
         weightings: Hackney::Income::TenancyPrioritiser::PriorityWeightings.new
       }
     end
+
+    let(:stubbed_criteria) { Stubs::StubCriteria.new }
+    let(:tenancy_classification_stub) { double('TenancyClassification') }
+    let(:classification) { 'no_action' }
 
     let(:score_calculator) do
       Hackney::Income::TenancyPrioritiser::Score.new(
         attributes.fetch(:criteria),
         attributes.fetch(:weightings)
       )
+    end
+
+    before do
+      expect(tenancy_classification_stub).to receive(:execute).and_return(classification)
+      expect(Hackney::Income::TenancyPrioritiser::TenancyClassification).to receive(:new)
+        .with(instance_of(tenancy_model), stubbed_criteria)
+        .and_return(tenancy_classification_stub)
     end
 
     context 'when the tenancy does not already exist' do
@@ -83,7 +94,8 @@ describe Hackney::Income::StoredTenanciesGateway do
           universal_credit: attributes.fetch(:criteria).universal_credit,
           uc_rent_verification: attributes.fetch(:criteria).uc_rent_verification,
           uc_direct_payment_requested: attributes.fetch(:criteria).uc_direct_payment_requested,
-          uc_direct_payment_received: attributes.fetch(:criteria).uc_direct_payment_received
+          uc_direct_payment_received: attributes.fetch(:criteria).uc_direct_payment_received,
+          classification: classification
         )
       end
 
@@ -626,8 +638,8 @@ describe Hackney::Income::StoredTenanciesGateway do
       universal_credit: attributes.fetch(:criteria).universal_credit,
       uc_rent_verification: attributes.fetch(:criteria).uc_rent_verification,
       uc_direct_payment_requested: attributes.fetch(:criteria).uc_direct_payment_requested,
-      uc_direct_payment_received: attributes.fetch(:criteria).uc_direct_payment_received
-
+      uc_direct_payment_received: attributes.fetch(:criteria).uc_direct_payment_received,
+      classification: classification
     }
   end
 end
