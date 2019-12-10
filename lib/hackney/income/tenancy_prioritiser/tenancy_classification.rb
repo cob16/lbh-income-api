@@ -103,25 +103,24 @@ module Hackney
         end
 
         def send_nosp?
+          return if @criteria.active_agreement?
+          return if @case_priority.paused?
+
           valid_actions = [
             Hackney::Tenancy::ActionCodes::INCOME_COLLECTION_LETTER_2,
             Hackney::Tenancy::ActionCodes::INCOME_COLLECTION_LETTER_2_UH
           ]
 
-          can_send_nosp = false
-
           if @criteria.nosp_expiry_date.present?
             can_send_nosp = @criteria.nosp_expiry_date < Time.zone.now
-          elsif @criteria.active_agreement?
-            can_send_nosp = false
           else
             can_send_nosp = @criteria.last_communication_action.in?(valid_actions) &&
                             last_communication_between_three_months_one_week?
           end
 
-          can_send_nosp && @criteria.nosp_served? == false &&
-            @criteria.balance >= arrear_accumulation_by_number_weeks(4) &&
-            @case_priority.paused? == false
+          can_send_nosp &&
+            @criteria.nosp_served? == false &&
+            @criteria.balance >= arrear_accumulation_by_number_weeks(4)
         end
 
         def last_communication_between_three_months_one_week?
