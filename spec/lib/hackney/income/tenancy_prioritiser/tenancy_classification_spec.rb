@@ -47,12 +47,13 @@ describe Hackney::Income::TenancyPrioritiser::TenancyClassification do
       let(:last_communication_date) { 3.months.ago.to_date - 1.day }
 
       it 'can classify a no action tenancy' do
-        expect(subject).to eq(:no_action)
+        expect(subject).to eq(:send_letter_one)
       end
     end
 
-    context 'when the last communication date was less than a week ago' do
+    context 'when we sent a letter less than a week ago' do
       let(:last_communication_date) { 6.days.ago.to_date }
+      let(:last_communication_action) { Hackney::Tenancy::ActionCodes::INCOME_COLLECTION_LETTER_1 }
 
       it 'can classify a no action tenancy ' do
         expect(subject).to eq(:no_action)
