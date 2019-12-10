@@ -79,6 +79,7 @@ module Hackney
 
           after_letter_one_actions = [
             Hackney::Tenancy::ActionCodes::INCOME_COLLECTION_LETTER_1,
+            Hackney::Tenancy::ActionCodes::INCOME_COLLECTION_LETTER_1_UH,
             Hackney::Tenancy::ActionCodes::INCOME_COLLECTION_LETTER_2,
             Hackney::Tenancy::ActionCodes::INCOME_COLLECTION_LETTER_2_UH,
             Hackney::Tenancy::ActionCodes::COURT_WARNING_LETTER_SENT

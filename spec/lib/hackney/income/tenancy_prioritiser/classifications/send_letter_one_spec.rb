@@ -58,6 +58,20 @@ describe 'Send Letter One Rule', type: :feature do
       eviction_date: '',
       courtdate: ''
     },
+    # send letter one, four days ago, with the UH code
+    {
+      outcome: :no_action,
+      nosps_in_last_year: 0,
+      nosp_expiry_date: '',
+      weekly_rent: 5,
+      balance: 6.0,
+      is_paused_until: '',
+      active_agreement: false,
+      last_communication_date: 4.days.ago.to_date,
+      last_communication_action: Hackney::Tenancy::ActionCodes::INCOME_COLLECTION_LETTER_1_UH,
+      eviction_date: '',
+      courtdate: ''
+    },
     # active_agreement test
     {
       outcome: :no_action,

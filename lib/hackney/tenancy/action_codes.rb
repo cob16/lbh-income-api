@@ -19,6 +19,7 @@ module Hackney
       LETTER_2_IN_ARREARS_SO = 'LS2'.freeze
 
       INCOME_COLLECTION_LETTER_1 = 'IC1'.freeze
+      INCOME_COLLECTION_LETTER_1_UH = 'SO1'.freeze
 
       INCOME_COLLECTION_LETTER_2 = 'IC2'.freeze
       INCOME_COLLECTION_LETTER_2_UH = 'ZR2'.freeze
