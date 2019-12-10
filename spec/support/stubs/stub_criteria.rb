@@ -16,6 +16,22 @@ module Stubs
       attributes[:last_communication_action]
     end
 
+    def universal_credit
+      attributes[:universal_credit]
+    end
+
+    def uc_rent_verification
+      attributes[:uc_verification_complete]
+    end
+
+    def uc_direct_payment_requested
+      attributes[:uc_direct_payment_requested]
+    end
+
+    def uc_direct_payment_received
+      attributes[:uc_direct_payment_received]
+    end
+
     def court_outcome
       attributes[:court_outcome]
     end

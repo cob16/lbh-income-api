@@ -70,7 +70,34 @@ module Hackney
               AND action_code IN (SELECT communication_types FROM @CommunicationTypes)
               ORDER BY action_date DESC
             )
-
+            DECLARE @UniversalCredit SMALLDATETIME = (
+              SELECT TOP 1 action_date
+              FROM araction
+              WHERE tag_ref = @TenancyRef
+              AND action_code = 'UCC'
+              ORDER BY action_date DESC
+            )
+            DECLARE @UCVerificationComplete SMALLDATETIME = (
+              SELECT TOP 1 action_date
+              FROM araction
+              WHERE tag_ref = @TenancyRef
+              AND action_code = 'UC1'
+              ORDER BY action_date DESC
+            )
+            DECLARE @UCDirectPaymentRequested SMALLDATETIME = (
+              SELECT TOP 1 action_date
+              FROM araction
+              WHERE tag_ref = @TenancyRef
+              AND action_code = 'UC2'
+              ORDER BY action_date DESC
+            )
+            DECLARE @UCDirectPaymentReceived SMALLDATETIME = (
+              SELECT TOP 1 action_date
+              FROM araction
+              WHERE tag_ref = @TenancyRef
+              AND action_code = 'UC3'
+              ORDER BY action_date DESC
+            )
             DECLARE @NextBalance NUMERIC(9, 2) = @CurrentBalance
             DECLARE @CurrentTransactionRow INT = 1
             DECLARE @ArrearsStartDate SMALLDATETIME = GETDATE()
@@ -117,7 +144,11 @@ module Hackney
               @Payment3Value as payment_3_value,
               @Payment3Date as payment_3_date,
               @LastCommunicationAction as last_communication_action,
-              @LastCommunicationDate as last_communication_date
+              @LastCommunicationDate as last_communication_date,
+              @UniversalCredit as universal_credit,
+              @UCVerificationComplete as uc_verification_complete,
+              @UCDirectPaymentRequested as uc_direct_payment_requested,
+              @UCDirectPaymentReceived as uc_direct_payment_received
           SQL
 
           attributes = universal_housing_client[
@@ -148,6 +179,22 @@ module Hackney
           return nil if date_not_valid?(attributes[:nosp_served_date])
 
           attributes[:nosp_served_date].to_date
+        end
+
+        def universal_credit
+          attributes[:universal_credit]
+        end
+
+        def uc_rent_verification
+          attributes[:uc_verification_complete]
+        end
+
+        def uc_direct_payment_requested
+          attributes[:uc_direct_payment_requested]
+        end
+
+        def uc_direct_payment_received
+          attributes[:uc_direct_payment_received]
         end
 
         def nosp_expiry_date

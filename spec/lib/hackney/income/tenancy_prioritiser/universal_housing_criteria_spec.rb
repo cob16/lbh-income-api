@@ -503,6 +503,74 @@ describe Hackney::Income::TenancyPrioritiser::UniversalHousingCriteria, universa
     end
   end
 
+  describe '#universal_credit' do
+    let(:tenancy_ref) { '100000/14' }
+    let(:universal_credit_code) { 'UCC' }
+    let(:date) { Date.today }
+
+    context 'when there is a action diary entry' do
+      it 'returns the date of entry' do
+        create_uh_action(tenancy_ref: tenancy_ref, code: universal_credit_code, date: date)
+        expect(subject.universal_credit).to eq(date)
+      end
+    end
+
+    it 'returns nil by default when an entry is not made' do
+      expect(subject.universal_credit).to eq(nil)
+    end
+  end
+
+  describe '#uc_rent_verification' do
+    let(:tenancy_ref) { '100000/15' }
+    let(:rent_verification_complete_code) { 'UC1' }
+    let(:date) { Date.today }
+
+    context 'when there is a action diary entry' do
+      it 'returns the date of entry' do
+        create_uh_action(tenancy_ref: tenancy_ref, code: rent_verification_complete_code, date: date)
+        expect(subject.uc_rent_verification).to eq(date)
+      end
+    end
+
+    it 'returns nil by default when an entry is not made' do
+      expect(subject.uc_rent_verification).to eq(nil)
+    end
+  end
+
+  describe '#uc_direct_payment_requested' do
+    let(:tenancy_ref) { '100000/16' }
+    let(:uc_direct_payment_requested_code) { 'UC2' }
+    let(:date) { Date.today }
+
+    context 'when there is a action diary entry' do
+      it 'returns the date of entry' do
+        create_uh_action(tenancy_ref: tenancy_ref, code: uc_direct_payment_requested_code, date: date)
+        expect(subject.uc_direct_payment_requested).to eq(date)
+      end
+    end
+
+    it 'returns nil by default when an entry is not made' do
+      expect(subject.uc_rent_verification).to eq(nil)
+    end
+  end
+
+  describe '#uc_direct_payment_recieved' do
+    let(:tenancy_ref) { '100000/17' }
+    let(:uc_direct_payment_recieved_code) { 'UC3' }
+    let(:date) { Date.today }
+
+    context 'when there is a action diary entry' do
+      it 'returns the date of entry' do
+        create_uh_action(tenancy_ref: tenancy_ref, code: uc_direct_payment_recieved_code, date: date)
+        expect(subject.uc_direct_payment_received).to eq(date)
+      end
+    end
+
+    it 'returns nil by default when an entry is not made' do
+      expect(subject.uc_rent_verification).to eq(nil)
+    end
+  end
+
   it 'has the same methods as the stub' do
     expect(criteria.methods).to match_array(Stubs::StubCriteria.new.methods)
   end
