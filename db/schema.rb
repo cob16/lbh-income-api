@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_11_06_142526) do
+ActiveRecord::Schema.define(version: 2019_12_02_104828) do
 
   create_table "case_priorities", force: :cascade do |t|
     t.string "tenancy_ref"
@@ -48,11 +48,15 @@ ActiveRecord::Schema.define(version: 2019_11_06_142526) do
     t.decimal "weekly_rent", precision: 10, scale: 2
     t.string "last_communication_action"
     t.datetime "last_communication_date"
-    t.string "patch_code"
     t.integer "classification"
+    t.string "patch_code"
     t.datetime "courtdate"
     t.string "court_outcome"
     t.datetime "eviction_date"
+    t.datetime "universal_credit"
+    t.datetime "uc_rent_verification"
+    t.datetime "uc_direct_payment_requested"
+    t.datetime "uc_direct_payment_received"
     t.index ["assigned_user_id"], name: "index_case_priorities_on_assigned_user_id"
     t.index ["case_id"], name: "index_case_priorities_on_case_id"
     t.index ["tenancy_ref"], name: "index_case_priorities_on_tenancy_ref", unique: true
