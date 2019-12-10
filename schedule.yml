@@ -7,8 +7,13 @@
 
   tenancy_sync:
     class: TenancySync
-    cron: '0 0 17 * * *' # 5pm everyday
+    cron: "0 0 17 * * *" # 5pm everyday
 
   request_all_precompiled_letter_states:
     class: RequestAllPrecompiledLetterStates
-    cron: '0 0 10,15 * * *' # 10am and 3pm utc every day
+    cron: "0 0 10,15 * * *" # 10am and 3pm utc every day
+
+  green_in_arrears_messages:
+    class: GreenInArrearsMessages
+    cron: "0 0 8 * * 5" #8am every friday
+

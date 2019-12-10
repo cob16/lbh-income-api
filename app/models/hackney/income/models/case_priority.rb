@@ -31,11 +31,7 @@ module Hackney
         end
 
         def self.criteria_for_green_in_arrears
-          where(priority_band: 'green')
-            .where('days_in_arrears >= ?', 5)
-            .where('balance >= ?', 10.00)
-            .where(active_agreement: false)
-            .not_paused
+          where(classification: 'send_first_SMS')
         end
       end
     end
