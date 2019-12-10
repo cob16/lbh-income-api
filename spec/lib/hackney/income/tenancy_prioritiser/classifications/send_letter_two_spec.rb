@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 describe 'Send Letter Two Rule', type: :feature do
-  letter_1_in_arrears_sent_code = 'IC1'.freeze
+  letter_1_in_arrears_sent_code = Hackney::Tenancy::ActionCodes::INCOME_COLLECTION_LETTER_1
 
   send_letter_two_condition_matrix = [
     {
