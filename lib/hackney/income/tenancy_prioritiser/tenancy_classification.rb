@@ -30,7 +30,7 @@ module Hackney
         private
 
         def validate_wanted_action(wanted_action)
-          return if Hackney::Income::Models::CasePriority.classifications.key?(wanted_action)
+          return false if Hackney::Income::Models::CasePriority.classifications.key?(wanted_action)
           raise ArgumentError, "Tried to classify a case as #{wanted_action}, but this is not on the list of valid classifications."
         end
 
@@ -73,9 +73,9 @@ module Hackney
         end
 
         def send_letter_one?
-          return if @case_priority.paused?
-          return if @criteria.nosp_served?
-          return if @criteria.active_agreement?
+          return false if @case_priority.paused?
+          return false if @criteria.nosp_served?
+          return false if @criteria.active_agreement?
 
           after_letter_one_actions = [
             Hackney::Tenancy::ActionCodes::INCOME_COLLECTION_LETTER_1,
@@ -84,8 +84,8 @@ module Hackney
             Hackney::Tenancy::ActionCodes::COURT_WARNING_LETTER_SENT
           ]
 
-          return if @criteria.last_communication_action.in?(after_letter_one_actions) &&
-                    last_communication_newer_than?(3.months.ago)
+          return false if @criteria.last_communication_action.in?(after_letter_one_actions) &&
+                          last_communication_newer_than?(3.months.ago)
 
           @criteria.balance >= @criteria.weekly_rent
         end
@@ -103,8 +103,8 @@ module Hackney
         end
 
         def send_nosp?
-          return if @criteria.active_agreement?
-          return if @case_priority.paused?
+          return false if @criteria.active_agreement?
+          return false if @case_priority.paused?
 
           valid_actions = [
             Hackney::Tenancy::ActionCodes::INCOME_COLLECTION_LETTER_2,
@@ -124,7 +124,7 @@ module Hackney
         end
 
         def last_communication_between_three_months_one_week?
-          return if @criteria.last_communication_date.nil?
+          return false if @criteria.last_communication_date.nil?
 
           last_communication_older_than?(1.week.ago) && last_communication_newer_than?(3.months.ago)
         end
