@@ -85,7 +85,7 @@ module Hackney
           ]
 
           return if @criteria.last_communication_action.in?(after_letter_one_actions) &&
-            last_communication_newer_than?(3.months.ago)
+                    last_communication_newer_than?(3.months.ago)
 
           @criteria.balance >= @criteria.weekly_rent
         end
