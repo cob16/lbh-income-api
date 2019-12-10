@@ -16,7 +16,6 @@ module Hackney
           wanted_action ||= :apply_for_court_date if apply_for_court_date?
           wanted_action ||= :send_court_warning_letter if send_court_warning_letter?
           wanted_action ||= :send_NOSP if send_nosp?
-          wanted_action ||= :send_warning_letter if send_warning_letter?
           wanted_action ||= :send_letter_two if send_letter_two?
           wanted_action ||= :send_letter_one if send_letter_one?
           wanted_action ||= :send_first_SMS if send_sms?
@@ -31,7 +30,7 @@ module Hackney
         private
 
         def validate_wanted_action(wanted_action)
-          return if Hackney::Income::Models::CasePriority.classifications.key?(wanted_action)
+          return false if Hackney::Income::Models::CasePriority.classifications.key?(wanted_action)
           raise ArgumentError, "Tried to classify a case as #{wanted_action}, but this is not on the list of valid classifications."
         end
 
@@ -53,7 +52,7 @@ module Hackney
 
           can_apply_for_court_date =
             @criteria.last_communication_action.in?(valid_actions) &&
-            last_communication_date_before?(2.weeks.ago) &&
+            last_communication_older_than?(2.weeks.ago) &&
             @criteria.balance >= arrear_accumulation_by_number_weeks(4) &&
             @criteria.nosp_served? == true &&
             @criteria.nosp_served_date <= 28.days.ago.to_date &&
@@ -67,41 +66,34 @@ module Hackney
         def send_sms?
           @criteria.last_communication_action.nil? &&
             @criteria.balance >= 5 &&
-            @criteria.balance < 10 &&
             @criteria.nosp_served? == false &&
             last_communication_between_three_months_one_week? &&
-            @case_priority.paused? == false
+            @case_priority.paused? == false &&
+            @criteria.active_agreement? == false
         end
 
         def send_letter_one?
-          valid_actions = [
-            Hackney::Tenancy::ActionCodes::AUTOMATED_SMS_ACTION_CODE,
-            Hackney::Tenancy::ActionCodes::MANUAL_SMS_ACTION_CODE
+          return false if @case_priority.paused?
+          return false if @criteria.nosp_served?
+          return false if @criteria.active_agreement?
+
+          after_letter_one_actions = [
+            Hackney::Tenancy::ActionCodes::INCOME_COLLECTION_LETTER_1,
+            Hackney::Tenancy::ActionCodes::INCOME_COLLECTION_LETTER_1_UH,
+            Hackney::Tenancy::ActionCodes::INCOME_COLLECTION_LETTER_2,
+            Hackney::Tenancy::ActionCodes::INCOME_COLLECTION_LETTER_2_UH,
+            Hackney::Tenancy::ActionCodes::COURT_WARNING_LETTER_SENT
           ]
 
-          @criteria.last_communication_action.in?(valid_actions) &&
-            @criteria.balance > 10 &&
-            @criteria.nosp_served? == false &&
-            last_communication_between_three_months_one_week? &&
-            @case_priority.paused? == false
+          return false if @criteria.last_communication_action.in?(after_letter_one_actions) &&
+                          last_communication_newer_than?(3.months.ago)
+
+          @criteria.balance >= @criteria.weekly_rent
         end
 
         def send_letter_two?
           valid_actions = [
             Hackney::Tenancy::ActionCodes::INCOME_COLLECTION_LETTER_1
-          ]
-
-          @criteria.last_communication_action.in?(valid_actions) &&
-            @criteria.balance >= @criteria.weekly_rent &&
-            @criteria.balance < arrear_accumulation_by_number_weeks(3) &&
-            @criteria.nosp_served? == false &&
-            last_communication_between_three_months_one_week? &&
-            @case_priority.paused? == false
-        end
-
-        def send_warning_letter?
-          valid_actions = [
-            Hackney::Tenancy::ActionCodes::INCOME_COLLECTION_LETTER_2
           ]
 
           @criteria.last_communication_action.in?(valid_actions) &&
@@ -112,11 +104,13 @@ module Hackney
         end
 
         def send_nosp?
-          valid_actions = [
-            Hackney::Tenancy::ActionCodes::PRE_NOSP_WARNING_LETTER_SENT
-          ]
+          return false if @criteria.active_agreement?
+          return false if @case_priority.paused?
 
-          can_send_nosp = false
+          valid_actions = [
+            Hackney::Tenancy::ActionCodes::INCOME_COLLECTION_LETTER_2,
+            Hackney::Tenancy::ActionCodes::INCOME_COLLECTION_LETTER_2_UH
+          ]
 
           if @criteria.nosp_expiry_date.present?
             can_send_nosp = @criteria.nosp_expiry_date < Time.zone.now
@@ -125,22 +119,22 @@ module Hackney
                             last_communication_between_three_months_one_week?
           end
 
-          can_send_nosp && @criteria.nosp_served? == false &&
-            @criteria.balance >= arrear_accumulation_by_number_weeks(4) &&
-            @case_priority.paused? == false
+          can_send_nosp &&
+            @criteria.nosp_served? == false &&
+            @criteria.balance >= arrear_accumulation_by_number_weeks(4)
         end
 
         def last_communication_between_three_months_one_week?
           return false if @criteria.last_communication_date.nil?
 
-          last_communication_date_before?(1.week.ago) && last_communication_date_after?(3.months.ago)
+          last_communication_older_than?(1.week.ago) && last_communication_newer_than?(3.months.ago)
         end
 
-        def last_communication_date_before?(date)
+        def last_communication_older_than?(date)
           @criteria.last_communication_date <= date.to_date
         end
 
-        def last_communication_date_after?(date)
+        def last_communication_newer_than?(date)
           @criteria.last_communication_date >= date.to_date
         end
 

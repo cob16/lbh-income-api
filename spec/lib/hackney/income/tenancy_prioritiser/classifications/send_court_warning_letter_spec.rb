@@ -6,42 +6,6 @@ describe 'Send Court Warning Letter Rule', type: :feature do
   send_court_warning_letter_condition_matrix = [
     {
       outcome: :no_action,
-      nosps_in_last_year: 0,
-      nosp_served_date: 60.weeks.ago.to_date,
-      weekly_rent: 5,
-      balance: 15.0, # 3 * weekly_rent
-      is_paused_until: nil,
-      active_agreement: false,
-      last_communication_action: nil,
-      eviction_date: nil,
-      courtdate: ''
-    },
-    {
-      outcome: :no_action,
-      nosps_in_last_year: 0,
-      nosp_served_date: '',
-      weekly_rent: 5,
-      balance: 15.0, # 3 * weekly_rent
-      is_paused_until: nil,
-      active_agreement: false,
-      last_communication_action: nil,
-      eviction_date: nil,
-      courtdate: ''
-    },
-    {
-      outcome: :no_action,
-      nosps_in_last_year: 0,
-      nosp_served_date: 60.weeks.ago.to_date,
-      weekly_rent: 5,
-      balance: 50.0, # 10 * 5 weekly_rent
-      is_paused_until: nil,
-      active_agreement: false,
-      last_communication_action: nil,
-      eviction_date: nil,
-      courtdate: ''
-    },
-    {
-      outcome: :no_action,
       nosps_in_last_year: 1,
       nosp_served_date: 1.day.ago.to_date,
       weekly_rent: 5,
