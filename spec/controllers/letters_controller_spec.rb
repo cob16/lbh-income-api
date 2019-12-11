@@ -4,6 +4,8 @@ describe LettersController, type: :controller do
   let(:template_path) { 'path/to/temp' }
   let(:template_id) { 'letter_1_in_arrears_FH' }
   let(:template_name) { 'Letter 1 In Arrears FH' }
+  let(:uuid) { '12345' }
+
   let(:user) {
     {
       name: Faker::Name.name,
@@ -30,6 +32,33 @@ describe LettersController, type: :controller do
           id: template_id,
           name: template_name
         }.to_json
+      )
+    end
+  end
+
+  describe '#send_letter' do
+    let(:send_letter_to_gov_notify) { double }
+    let(:find_document) { double }
+
+    let(:tenancy_ref) { Faker::Number.number(4) }
+    let(:document) { Hackney::Cloud::Document.new }
+
+    before do
+      allow(controller).to receive(:find_document).and_return(document)
+      allow(controller).to receive(:send_letter_to_gov_notify).and_return(send_letter_to_gov_notify)
+      allow(send_letter_to_gov_notify).to receive(:perform_later)
+    end
+
+    it 'calls the send_letter_to_gov_notify job' do
+      post :send_letter, params: {
+        uuid: uuid,
+        user: user,
+        tenancy_ref: tenancy_ref
+      }
+
+      expect(send_letter_to_gov_notify).to have_received(:perform_later).with(
+        document_id: document.id,
+        tenancy_ref: tenancy_ref
       )
     end
   end
