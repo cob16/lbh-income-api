@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe Hackney::Income::Jobs::SendGreenInArrearsMsgJob do
+describe Hackney::Income::Jobs::SendSMSJob do
   subject { described_class }
 
   let(:mock_automated_message) { instance_double(Hackney::Notification::SendAutomatedMessageToTenancy) }

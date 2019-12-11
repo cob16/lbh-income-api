@@ -2,8 +2,8 @@ module Hackney
   module Income
     class SqlTenanciesMatchingCriteriaGateway
       GatewayModel = Hackney::Income::Models::CasePriority
-      def criteria_for_green_in_arrears
-        GatewayModel.criteria_for_green_in_arrears
+      def send_sms_messages
+        GatewayModel.send_sms_tenancies
       end
     end
   end

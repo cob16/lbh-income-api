@@ -13,7 +13,7 @@
     class: RequestAllPrecompiledLetterStates
     cron: "0 0 10,15 * * *" # 10am and 3pm utc every day
 
-  green_in_arrears_messages:
-    class: GreenInArrearsMessages
+  send_sms:
+    class: SendSMSMessages
     cron: "0 0 8 * * 5" #8am every friday
 

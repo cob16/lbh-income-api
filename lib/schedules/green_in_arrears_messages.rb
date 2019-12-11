@@ -1,12 +1,12 @@
 require 'sidekiq-scheduler'
 
-class GreenInArrearsMessages
+class SendSMSMessages
   include Sidekiq::Worker
 
   def perform
-    puts '* Scheduling GreenInArrearsMessages *'
+    puts '* Scheduling SendSMSMessages *'
 
     use_case_factory = Hackney::Income::UseCaseFactory.new
-    use_case_factory.schedule_green_in_arrears_message.execute
+    use_case_factory.schedule_send_sms.execute
   end
 end

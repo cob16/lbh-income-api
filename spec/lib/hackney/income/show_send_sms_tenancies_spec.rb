@@ -1,11 +1,11 @@
 require 'rails_helper'
 
-describe Hackney::Income::ShowTenanciesForCriteriaGreenInArrears do
-  subject { show_green_in_arrears.execute }
+describe Hackney::Income::ShowSendSMSTenancies do
+  subject { show_send_sms_tenancies.execute }
 
   let(:sql_tenancies_for_messages_gateway) { instance_double(Hackney::Income::SqlTenanciesMatchingCriteriaGateway) }
 
-  let(:show_green_in_arrears) do
+  let(:show_send_sms_tenancies) do
     described_class.new(
       sql_tenancies_for_messages_gateway: sql_tenancies_for_messages_gateway
     )
@@ -13,13 +13,13 @@ describe Hackney::Income::ShowTenanciesForCriteriaGreenInArrears do
 
   context 'when asking for a list of tenancies to send messages to' do
     it 'calls its gateway' do
-      expect(sql_tenancies_for_messages_gateway).to receive(:criteria_for_green_in_arrears)
+      expect(sql_tenancies_for_messages_gateway).to receive(:send_sms_messages)
       subject
     end
 
     it 'returns results from the gateway' do
       expect(sql_tenancies_for_messages_gateway).to(
-        receive(:criteria_for_green_in_arrears)
+        receive(:send_sms_messages)
         .and_return(results: 'these')
       )
       expect(subject).to eq(results: 'these')
