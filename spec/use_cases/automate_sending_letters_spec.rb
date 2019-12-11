@@ -91,10 +91,6 @@ describe UseCases::AutomateSendingLetters do
   end
 
   context 'when the checking the classification of a case' do
-    before do
-      expect(automate_sending_letters).to receive(:enviornment_allow_to_send_automated_letters?).and_return(true)
-    end
-
     let(:case_classification_to_letter_type_map) { UseCases::CaseClassificationToLetterTypeMap.new }
     let(:classification) { :not_valid_classification }
 
@@ -104,6 +100,13 @@ describe UseCases::AutomateSendingLetters do
             classification: classification,
             patch_code: Faker::Number.number(4))
     }
+
+    before do
+      expect(automate_sending_letters).to receive(:enviornment_allow_to_send_automated_letters?).and_return(true)
+
+      allow(case_classification_to_letter_type_map).to receive(:env_allowed_to_send_letter_one?).and_return(true)
+      allow(case_classification_to_letter_type_map).to receive(:env_allowed_to_send_letter_two?).and_return(true)
+    end
 
     context 'when the classification is not send_letter_one or send_letter_two' do
       let(:classification) { :send_letter_one }
