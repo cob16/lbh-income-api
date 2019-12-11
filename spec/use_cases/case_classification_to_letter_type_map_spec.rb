@@ -12,8 +12,10 @@ describe UseCases::CaseClassificationToLetterTypeMap do
   let(:allow_letter_two) { false }
 
   before do
-    allow(use_case).to receive(:env_allowed_to_send_letter_one?).and_return(allow_letter_one)
-    allow(use_case).to receive(:env_allowed_to_send_letter_two?).and_return(allow_letter_two)
+    allow(App::Application).to receive(:feature_toggle).with('AUTOMATE_INCOME_COLLECTION_LETTER_ONE')
+                                                       .and_return(allow_letter_one)
+    allow(App::Application).to receive(:feature_toggle).with('AUTOMATE_INCOME_COLLECTION_LETTER_TWO')
+                                                       .and_return(allow_letter_two)
   end
 
   context 'when the environment allows letter 1 to be sent and not letter 2' do

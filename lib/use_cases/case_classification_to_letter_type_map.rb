@@ -17,11 +17,11 @@ module UseCases
     end
 
     def env_allowed_to_send_letter_one?
-      feature_toggle('AUTOMATE_INCOME_COLLECTION_LETTER_ONE')
+      App::Application.feature_toggle('AUTOMATE_INCOME_COLLECTION_LETTER_ONE')
     end
 
     def env_allowed_to_send_letter_two?
-      feature_toggle('AUTOMATE_INCOME_COLLECTION_LETTER_TWO')
+      App::Application.feature_toggle('AUTOMATE_INCOME_COLLECTION_LETTER_TWO')
     end
   end
 end
