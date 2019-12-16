@@ -138,6 +138,11 @@ module Hackney
           attributes.fetch(:patch_code)
         end
 
+        def self.format_action_codes_for_sql
+          Hackney::Tenancy::ActionCodes::FOR_UH_CRITERIA_SQL.map { |action_code| "('#{action_code}')" }
+                                                            .join(', ')
+        end
+
         def self.build_sql
           <<-SQL
             DECLARE @TenancyRef VARCHAR(60) = ?
@@ -147,7 +152,7 @@ module Hackney
             DECLARE @PaymentTypes table(payment_type varchar(3))
             INSERT INTO @PaymentTypes VALUES ('RBA'), ('RBP'), ('RBR'), ('RCI'), ('RCO'), ('RCP'), ('RDD'), ('RDN'), ('RDP'), ('RDR'), ('RDS'), ('RDT'), ('REF'), ('RHA'), ('RHB'), ('RIT'), ('RML'), ('RPD'), ('RPO'), ('RPY'), ('RQP'), ('RRC'), ('RRP'), ('RSO'), ('RTM'), ('RUC'), ('RWA')
             DECLARE @CommunicationTypes table(communication_types varchar(60))
-            INSERT INTO @CommunicationTypes VALUES ('C'), ('MML'), ('S0A'), ('REF'), ('ZW1'), ('ZW2'), ('ZW3'), ('MW1'), ('MW2'), ('MW3'), ('LF1'), ('LF2'), ('LL1'), ('LL2'), ('LS1'), ('LS2'), ('SMS'), ('GAT'), ('GAE'), ('GME'), ('GMS'), ('AMS'), ('ZR1'), ('ZR2'), ('ZR3'), ('IC3'), ('IC4')
+            INSERT INTO @CommunicationTypes VALUES #{format_action_codes_for_sql}
 
             DECLARE @CurrentBalance NUMERIC(9, 2) = (SELECT cur_bal FROM [dbo].[tenagree] WITH (NOLOCK) WHERE tag_ref = @TenancyRef)
             DECLARE @LastPaymentDate SMALLDATETIME = (
