@@ -571,7 +571,29 @@ describe Hackney::Income::TenancyPrioritiser::UniversalHousingCriteria, universa
     end
   end
 
-  it 'has the same methods as the stub' do
+  it 'has the same instance methods as the stub' do
     expect(criteria.methods).to match_array(Stubs::StubCriteria.new.methods)
+  end
+
+  describe '#format_action_codes_for_sql' do
+    let(:code_one) { 'AAC' }
+    let(:code_two) { 'DDE' }
+    let(:stubbed_codes) { [code_one, code_two] }
+
+    it 'formats the list of codes' do
+      stub_const('Hackney::Tenancy::ActionCodes::FOR_UH_CRITERIA_SQL', stubbed_codes)
+
+      expect(described_class.format_action_codes_for_sql).to eq("('#{code_one}'), ('#{code_two}')")
+    end
+  end
+
+  describe '#build_sql' do
+    let(:dummy_string) { "('SOME_STRING')" }
+
+    it 'contains a correct list of Actions Codes' do
+      expect(described_class).to receive(:format_action_codes_for_sql).and_return(dummy_string)
+
+      expect(described_class.build_sql).to include(dummy_string)
+    end
   end
 end
