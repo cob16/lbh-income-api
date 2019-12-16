@@ -3,7 +3,143 @@ module Hackney
     class TenancyPrioritiser
       class UniversalHousingCriteria
         def self.for_tenancy(universal_housing_client, tenancy_ref)
-          sql = <<-SQL
+          attributes = universal_housing_client[
+            build_sql,
+            tenancy_ref,
+            Hackney::Income::ACTIVE_ARREARS_AGREEMENT_STATUS,
+            Hackney::Income::BREACHED_ARREARS_AGREEMENT_STATUS,
+            Hackney::Income::NOSP_ACTION_DIARY_CODE
+          ]
+
+          new(tenancy_ref, attributes.first.symbolize_keys)
+        end
+
+        def initialize(tenancy_ref, attributes)
+          @tenancy_ref = tenancy_ref
+          @attributes = attributes
+        end
+
+        def balance
+          attributes.fetch(:current_balance).to_f
+        end
+
+        def weekly_rent
+          attributes.fetch(:weekly_rent).to_f
+        end
+
+        def nosp_served_date
+          return nil if date_not_valid?(attributes[:nosp_served_date])
+
+          attributes[:nosp_served_date].to_date
+        end
+
+        def universal_credit
+          attributes[:universal_credit]
+        end
+
+        def uc_rent_verification
+          attributes[:uc_verification_complete]
+        end
+
+        def uc_direct_payment_requested
+          attributes[:uc_direct_payment_requested]
+        end
+
+        def uc_direct_payment_received
+          attributes[:uc_direct_payment_received]
+        end
+
+        def nosp_expiry_date
+          return nil if date_not_valid?(attributes[:nosp_expiry_date])
+
+          attributes[:nosp_expiry_date].to_date
+        end
+
+        def courtdate
+          return nil if date_not_valid?(attributes[:courtdate])
+
+          attributes[:courtdate].to_date
+        end
+
+        def court_outcome
+          attributes[:court_outcome]
+        end
+
+        def eviction_date
+          return nil if date_not_valid?(attributes[:eviction_date])
+
+          attributes[:eviction_date]
+        end
+
+        def days_in_arrears
+          day_difference(Date.today, attributes.fetch(:arrears_start_date))
+        end
+
+        def days_since_last_payment
+          return nil if attributes.fetch(:last_payment_date).nil?
+
+          day_difference(Date.today, attributes.fetch(:last_payment_date))
+        end
+
+        def last_communication_action
+          attributes[:last_communication_action]
+        end
+
+        def last_communication_date
+          attributes[:last_communication_date]
+        end
+
+        def active_agreement?
+          attributes.fetch(:active_agreements_count) > 0
+        end
+
+        def number_of_broken_agreements
+          attributes.fetch(:breached_agreements_count)
+        end
+
+        def nosp_served?
+          attributes.fetch(:nosps_in_last_year) > 0
+        end
+
+        def active_nosp?
+          attributes.fetch(:nosps_in_last_month) > 0
+        end
+
+        def payment_amount_delta
+          payment_amounts = [
+            attributes.fetch(:payment_1_value),
+            attributes.fetch(:payment_2_value),
+            attributes.fetch(:payment_3_value)
+          ].compact.map(&:to_f)
+
+          return nil if payment_amounts.count < 3
+
+          (payment_amounts[0] - payment_amounts[1]) - (payment_amounts[1] - payment_amounts[2])
+        end
+
+        def payment_date_delta
+          payment_dates = [
+            attributes.fetch(:payment_1_date),
+            attributes.fetch(:payment_2_date),
+            attributes.fetch(:payment_3_date)
+          ].compact
+
+          return nil if payment_dates.count < 3
+
+          day_difference(payment_dates[0], payment_dates[1]) - day_difference(payment_dates[1], payment_dates[2])
+        end
+
+        # FIXME: implementation needs confirming, will return to later
+        def broken_court_order?
+          false
+        end
+
+        def patch_code
+          attributes.fetch(:patch_code)
+        end
+
+        def self.build_sql
+          <<-SQL
             DECLARE @TenancyRef VARCHAR(60) = ?
             DECLARE @ActiveArrearsAgreementStatus VARCHAR(60) = ?
             DECLARE @BreachedArrearsAgreementStatus VARCHAR(60) = ?
@@ -150,140 +286,6 @@ module Hackney
               @UCDirectPaymentRequested as uc_direct_payment_requested,
               @UCDirectPaymentReceived as uc_direct_payment_received
           SQL
-
-          attributes = universal_housing_client[
-            sql,
-            tenancy_ref,
-            Hackney::Income::ACTIVE_ARREARS_AGREEMENT_STATUS,
-            Hackney::Income::BREACHED_ARREARS_AGREEMENT_STATUS,
-            Hackney::Income::NOSP_ACTION_DIARY_CODE
-          ]
-
-          new(tenancy_ref, attributes.first.symbolize_keys)
-        end
-
-        def initialize(tenancy_ref, attributes)
-          @tenancy_ref = tenancy_ref
-          @attributes = attributes
-        end
-
-        def balance
-          attributes.fetch(:current_balance).to_f
-        end
-
-        def weekly_rent
-          attributes.fetch(:weekly_rent).to_f
-        end
-
-        def nosp_served_date
-          return nil if date_not_valid?(attributes[:nosp_served_date])
-
-          attributes[:nosp_served_date].to_date
-        end
-
-        def universal_credit
-          attributes[:universal_credit]
-        end
-
-        def uc_rent_verification
-          attributes[:uc_verification_complete]
-        end
-
-        def uc_direct_payment_requested
-          attributes[:uc_direct_payment_requested]
-        end
-
-        def uc_direct_payment_received
-          attributes[:uc_direct_payment_received]
-        end
-
-        def nosp_expiry_date
-          return nil if date_not_valid?(attributes[:nosp_expiry_date])
-
-          attributes[:nosp_expiry_date].to_date
-        end
-
-        def courtdate
-          return nil if date_not_valid?(attributes[:courtdate])
-
-          attributes[:courtdate].to_date
-        end
-
-        def court_outcome
-          attributes[:court_outcome]
-        end
-
-        def eviction_date
-          return nil if date_not_valid?(attributes[:eviction_date])
-
-          attributes[:eviction_date]
-        end
-
-        def days_in_arrears
-          day_difference(Date.today, attributes.fetch(:arrears_start_date))
-        end
-
-        def days_since_last_payment
-          return nil if attributes.fetch(:last_payment_date).nil?
-
-          day_difference(Date.today, attributes.fetch(:last_payment_date))
-        end
-
-        def last_communication_action
-          attributes[:last_communication_action]
-        end
-
-        def last_communication_date
-          attributes[:last_communication_date]
-        end
-
-        def active_agreement?
-          attributes.fetch(:active_agreements_count) > 0
-        end
-
-        def number_of_broken_agreements
-          attributes.fetch(:breached_agreements_count)
-        end
-
-        def nosp_served?
-          attributes.fetch(:nosps_in_last_year) > 0
-        end
-
-        def active_nosp?
-          attributes.fetch(:nosps_in_last_month) > 0
-        end
-
-        def payment_amount_delta
-          payment_amounts = [
-            attributes.fetch(:payment_1_value),
-            attributes.fetch(:payment_2_value),
-            attributes.fetch(:payment_3_value)
-          ].compact.map(&:to_f)
-
-          return nil if payment_amounts.count < 3
-
-          (payment_amounts[0] - payment_amounts[1]) - (payment_amounts[1] - payment_amounts[2])
-        end
-
-        def payment_date_delta
-          payment_dates = [
-            attributes.fetch(:payment_1_date),
-            attributes.fetch(:payment_2_date),
-            attributes.fetch(:payment_3_date)
-          ].compact
-
-          return nil if payment_dates.count < 3
-
-          day_difference(payment_dates[0], payment_dates[1]) - day_difference(payment_dates[1], payment_dates[2])
-        end
-
-        # FIXME: implementation needs confirming, will return to later
-        def broken_court_order?
-          false
-        end
-
-        def patch_code
-          attributes.fetch(:patch_code)
         end
 
         private
