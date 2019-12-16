@@ -47,14 +47,6 @@ module Hackney
           return false if @criteria.nosp_served?
           return false if @criteria.active_agreement?
 
-          after_letter_one_actions = [
-            Hackney::Tenancy::ActionCodes::INCOME_COLLECTION_LETTER_1,
-            Hackney::Tenancy::ActionCodes::INCOME_COLLECTION_LETTER_1_UH,
-            Hackney::Tenancy::ActionCodes::INCOME_COLLECTION_LETTER_2,
-            Hackney::Tenancy::ActionCodes::INCOME_COLLECTION_LETTER_2_UH,
-            Hackney::Tenancy::ActionCodes::COURT_WARNING_LETTER_SENT
-          ]
-
           return false if @criteria.last_communication_action.in?(after_letter_one_actions) &&
                           last_communication_newer_than?(3.months.ago)
 
@@ -65,12 +57,7 @@ module Hackney
           return false if @criteria.active_agreement?
           return false if @criteria.nosp_served?
 
-          valid_actions = [
-            Hackney::Tenancy::ActionCodes::INCOME_COLLECTION_LETTER_1,
-            Hackney::Tenancy::ActionCodes::INCOME_COLLECTION_LETTER_1_UH
-          ]
-
-          return false unless @criteria.last_communication_action.in?(valid_actions)
+          return false unless @criteria.last_communication_action.in?(valid_actions_for_letter_two_to_progress)
 
           return false if last_communication_newer_than?(1.week.ago)
           return false if last_communication_older_than?(3.months.ago)
@@ -82,15 +69,10 @@ module Hackney
           return false if @criteria.active_agreement?
           return false if @criteria.nosp_served?
 
-          valid_actions = [
-            Hackney::Tenancy::ActionCodes::INCOME_COLLECTION_LETTER_2,
-            Hackney::Tenancy::ActionCodes::INCOME_COLLECTION_LETTER_2_UH
-          ]
-
           if @criteria.nosp_expiry_date.present?
             return false if @criteria.nosp_expiry_date >= Time.zone.now
           else
-            return false unless @criteria.last_communication_action.in?(valid_actions)
+            return false unless @criteria.last_communication_action.in?(valid_actions_for_nosp_to_progress)
             return false if last_communication_older_than?(3.months.ago)
             return false if last_communication_newer_than?(1.week.ago)
           end
@@ -101,7 +83,7 @@ module Hackney
         def send_court_warning_letter?
           return false if @criteria.active_agreement?
 
-          return false if @criteria.last_communication_action == Hackney::Tenancy::ActionCodes::COURT_WARNING_LETTER_SENT
+          return false if @criteria.last_communication_action.in?(after_court_warning_letter_actions)
 
           return false unless @criteria.nosp_served?
           return false if @criteria.nosp_served_date.blank?
@@ -113,7 +95,7 @@ module Hackney
         def apply_for_court_date?
           return false unless @criteria.nosp_served?
 
-          return false unless @criteria.last_communication_action == Hackney::Tenancy::ActionCodes::COURT_WARNING_LETTER_SENT
+          return false unless @criteria.last_communication_action.in?(valid_actions_for_apply_for_court_date_to_progress)
           return false if last_communication_newer_than?(2.weeks.ago)
 
           return false if @criteria.nosp_served_date > 28.days.ago.to_date
@@ -131,6 +113,42 @@ module Hackney
 
         def arrear_accumulation_by_number_weeks(weeks)
           @criteria.weekly_rent * weeks
+        end
+
+        def after_letter_one_actions
+          [
+            Hackney::Tenancy::ActionCodes::INCOME_COLLECTION_LETTER_1,
+            Hackney::Tenancy::ActionCodes::INCOME_COLLECTION_LETTER_1_UH,
+            Hackney::Tenancy::ActionCodes::INCOME_COLLECTION_LETTER_2,
+            Hackney::Tenancy::ActionCodes::INCOME_COLLECTION_LETTER_2_UH,
+            Hackney::Tenancy::ActionCodes::COURT_WARNING_LETTER_SENT
+          ]
+        end
+
+        def valid_actions_for_letter_two_to_progress
+          [
+            Hackney::Tenancy::ActionCodes::INCOME_COLLECTION_LETTER_1,
+            Hackney::Tenancy::ActionCodes::INCOME_COLLECTION_LETTER_1_UH
+          ]
+        end
+
+        def valid_actions_for_nosp_to_progress
+          [
+            Hackney::Tenancy::ActionCodes::INCOME_COLLECTION_LETTER_2,
+            Hackney::Tenancy::ActionCodes::INCOME_COLLECTION_LETTER_2_UH
+          ]
+        end
+
+        def after_court_warning_letter_actions
+          [
+            Hackney::Tenancy::ActionCodes::COURT_WARNING_LETTER_SENT
+          ]
+        end
+
+        def valid_actions_for_apply_for_court_date_to_progress
+          [
+            Hackney::Tenancy::ActionCodes::COURT_WARNING_LETTER_SENT
+          ]
         end
       end
     end
