@@ -55,7 +55,6 @@ module Hackney
             DECLARE @BreachedAgreementsCount INT = (SELECT COUNT(tag_ref) FROM [dbo].[arag] WITH (NOLOCK) WHERE tag_ref = @TenancyRef AND arag_status = @BreachedArrearsAgreementStatus)
             DECLARE @NospsInLastYear INT = (SELECT COUNT(tag_ref) FROM araction WITH (NOLOCK) WHERE tag_ref = @TenancyRef AND action_code = @NospActionDiaryCode AND action_date >= CONVERT(date, DATEADD(year, -1, GETDATE())))
             DECLARE @NospsInLastMonth INT = (SELECT COUNT(tag_ref) FROM araction WITH (NOLOCK) WHERE tag_ref = @TenancyRef AND action_code = @NospActionDiaryCode AND action_date >= CONVERT(date, DATEADD(month, -1, GETDATE())))
-
             DECLARE @LastCommunicationAction VARCHAR(60) = (
               SELECT TOP 1 action_code
               FROM araction WITH (NOLOCK)
@@ -98,6 +97,20 @@ module Hackney
               AND action_code = 'UC3'
               ORDER BY action_date DESC
             )
+            DECLARE @LatestActiveAgreementDate SMALLDATETIME = (
+              SELECT TOP 1 arag_statusdate
+              FROM [dbo].[arag]
+              WHERE tag_ref = @TenancyRef
+              AND arag_status = @ActiveArrearsAgreementStatus
+              ORDER BY arag_statusdate DESC
+            )
+            DECLARE @BreachAgreementDate SMALLDATETIME = (
+              SELECT TOP 1 arag_statusdate
+              FROM [dbo].[arag]
+              WHERE tag_ref = @TenancyRef
+              AND arag_status = @BreachedArrearsAgreementStatus
+              ORDER BY arag_statusdate DESC
+            )
             DECLARE @NextBalance NUMERIC(9, 2) = @CurrentBalance
             DECLARE @CurrentTransactionRow INT = 1
             DECLARE @ArrearsStartDate SMALLDATETIME = GETDATE()
@@ -136,6 +149,7 @@ module Hackney
               @NospExpiryDate as nosp_expiry_date,
               @Courtdate as courtdate,
               @CourtOutcome as court_outcome,
+              @LatestActiveAgreementDate as latest_active_agreement_date,
               @EvictionDate as eviction_date,
               @Payment1Value as payment_1_value,
               @Payment1Date as payment_1_date,
@@ -148,7 +162,8 @@ module Hackney
               @UniversalCredit as universal_credit,
               @UCVerificationComplete as uc_verification_complete,
               @UCDirectPaymentRequested as uc_direct_payment_requested,
-              @UCDirectPaymentReceived as uc_direct_payment_received
+              @UCDirectPaymentReceived as uc_direct_payment_received,
+              @BreachAgreementDate as breach_agreement_date
           SQL
 
           attributes = universal_housing_client[
@@ -213,6 +228,10 @@ module Hackney
           attributes[:court_outcome]
         end
 
+        def latest_active_agreement_date
+          attributes[:latest_active_agreement_date]
+        end
+
         def eviction_date
           return nil if date_not_valid?(attributes[:eviction_date])
 
@@ -243,6 +262,10 @@ module Hackney
 
         def number_of_broken_agreements
           attributes.fetch(:breached_agreements_count)
+        end
+
+        def breach_agreement_date
+          attributes.fetch(:breach_agreement_date)
         end
 
         def nosp_served?
