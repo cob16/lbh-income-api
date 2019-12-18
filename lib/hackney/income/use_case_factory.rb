@@ -31,14 +31,14 @@ module Hackney
       def send_manual_sms
         Hackney::Notification::SendManualSms.new(
           notification_gateway: notifications_gateway,
-          add_action_diary_usecase: add_action_diary
+          add_action_diary_and_sync_case_usecase: add_action_diary_and_sync_case
         )
       end
 
       def send_manual_email
         Hackney::Notification::SendManualEmail.new(
           notification_gateway: notifications_gateway,
-          add_action_diary_usecase: add_action_diary
+          add_action_diary_and_sync_case_usecase: add_action_diary_and_sync_case
         )
       end
 
@@ -51,7 +51,7 @@ module Hackney
       def send_precompiled_letter
         Hackney::Notification::SendManualPrecompiledLetter.new(
           notification_gateway: notifications_gateway,
-          add_action_diary_usecase: add_action_diary,
+          add_action_diary_and_sync_case_usecase: add_action_diary_and_sync_case,
           leasehold_gateway: Hackney::Income::UniversalHousingLeaseholdGateway.new
         )
       end
@@ -66,7 +66,7 @@ module Hackney
         document_store = Hackney::Cloud::Document
         Hackney::Notification::RequestPrecompiledLetterState.new(
           notification_gateway: notifications_gateway,
-          add_action_diary_usecase: add_action_diary,
+          add_action_diary_and_sync_case_usecase: add_action_diary_and_sync_case,
           document_store: document_store
         )
       end
@@ -161,9 +161,9 @@ module Hackney
       end
 
       def sync_case_priority
-        ActiveSupport::Deprecation.warn(
-          "SyncCasePriorityJob is deprecated - use external scheduler via 'rake income:sync:enqueue'"
-        )
+        # ActiveSupport::Deprecation.warn(
+        #   "SyncCasePriorityJob is deprecated - use external scheduler via 'rake income:sync:enqueue'"
+        # )
         Hackney::Income::SyncCasePriority.new(
           automate_sending_letters: automate_sending_letters,
           prioritisation_gateway: prioritisation_gateway,
