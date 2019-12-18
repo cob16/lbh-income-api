@@ -3,12 +3,12 @@ require 'rails_helper'
 describe Hackney::Notification::RequestPrecompiledLetterState do
   let!(:message_id) { SecureRandom.uuid }
   let(:notification_gateway) { Hackney::Income::StubNotificationsGateway.new }
-  let(:add_action_diary_and_sync_case_usecase) { double(UseCases::AddActionDiaryAndSyncCase) }
+  let(:add_action_diary_usecase) { double(Hackney::Tenancy::AddActionDiaryEntry) }
   let(:document_store) { Hackney::Cloud::Document }
   let(:notification_response) do
     described_class.new(
       notification_gateway: notification_gateway,
-      add_action_diary_and_sync_case_usecase: add_action_diary_and_sync_case_usecase,
+      add_action_diary_usecase: add_action_diary_usecase,
       document_store: document_store
     )
   end

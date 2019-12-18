@@ -153,6 +153,7 @@ module Hackney
             INSERT INTO @PaymentTypes VALUES ('RBA'), ('RBP'), ('RBR'), ('RCI'), ('RCO'), ('RCP'), ('RDD'), ('RDN'), ('RDP'), ('RDR'), ('RDS'), ('RDT'), ('REF'), ('RHA'), ('RHB'), ('RIT'), ('RML'), ('RPD'), ('RPO'), ('RPY'), ('RQP'), ('RRC'), ('RRP'), ('RSO'), ('RTM'), ('RUC'), ('RWA')
             DECLARE @CommunicationTypes table(communication_types varchar(60))
             INSERT INTO @CommunicationTypes VALUES #{format_action_codes_for_sql}
+
             DECLARE @CurrentBalance NUMERIC(9, 2) = (SELECT cur_bal FROM [dbo].[tenagree] WITH (NOLOCK) WHERE tag_ref = @TenancyRef)
             DECLARE @LastPaymentDate SMALLDATETIME = (
               SELECT post_date FROM (
