@@ -118,6 +118,94 @@ describe "seeing letters' classification change after sync", type: :request do
         expect(case_priority.tenancy_ref).to eq(tenancy_ref)
         expect(case_priority).to be_no_action
       end
+
+      context 'when a case exists' do
+        let(:current_balance) { 0 }
+
+        before do
+          income_use_case_factory.sync_case_priority.execute(tenancy_ref: tenancy_ref)
+        end
+
+        it 'changes the classification' do
+          allowed_jobs = [Hackney::Income::Jobs::SyncCasePriorityJob, Hackney::Income::Jobs::SendLetterToGovNotifyJob]
+
+          # Have a case that has been sync'd with no action
+          expect(case_priority.tenancy_ref).to eq(tenancy_ref)
+          expect(case_priority).to be_no_action
+
+          # UH data gets updated
+          Hackney::UniversalHousing::Client.connection[:tenagree]
+                                           .where(tag_ref: tenancy_ref)
+                                           .update(cur_bal: 350)
+
+          # When the sync runs we should process it as `send_letter_one`
+          # and we should get a document generated and the case should
+          # become `no_action` again.
+          expect {
+            expect {
+              perform_enqueued_jobs(only: allowed_jobs) do
+                TenancySync.new.perform
+              end
+            }.to change { Hackney::Cloud::Document.count }.by(1)
+          }.to change { Hackney::Income::Models::CasePriority.count }.by(0)
+
+          document = Hackney::Cloud::Document.last
+          expect(JSON.parse(document.metadata)['payment_ref']).to eq(payment_ref)
+          expect(document).to be_queued
+
+          expect(case_priority.tenancy_ref).to eq(tenancy_ref)
+          expect(case_priority).to be_no_action
+        end
+      end
+
+      context 'when AUTOMATE_INCOME_COLLECTION_LETTER_ONE is false' do
+        before do
+          ENV['AUTOMATE_INCOME_COLLECTION_LETTER_ONE'] = 'false'
+        end
+
+        it 'changes the classification' do
+          allowed_jobs = [
+            Hackney::Income::Jobs::SyncCasePriorityJob,
+            Hackney::Income::Jobs::SendLetterToGovNotifyJob
+          ]
+
+          expect {
+            expect {
+              perform_enqueued_jobs(only: allowed_jobs) do
+                TenancySync.new.perform
+              end
+            }.to change { Hackney::Cloud::Document.count }.by(0)
+          }.to change { Hackney::Income::Models::CasePriority.count }.from(0).to(1)
+
+          expect(Hackney::Cloud::Document.count).to be_zero
+
+          expect(case_priority.tenancy_ref).to eq(tenancy_ref)
+          expect(case_priority).to be_send_letter_one
+        end
+      end
+
+      context 'when CAN_AUTOMATE_LETTERS is false' do
+        before do
+          ENV['CAN_AUTOMATE_LETTERS'] = 'false'
+        end
+
+        it 'changes the classification' do
+          allowed_jobs = [Hackney::Income::Jobs::SyncCasePriorityJob, Hackney::Income::Jobs::SendLetterToGovNotifyJob]
+
+          expect {
+            expect {
+              perform_enqueued_jobs(only: allowed_jobs) do
+                TenancySync.new.perform
+              end
+            }.to change { Hackney::Cloud::Document.count }.by(0)
+          }.to change { Hackney::Income::Models::CasePriority.count }.from(0).to(1)
+
+          expect(Hackney::Cloud::Document.count).to be_zero
+
+          expect(case_priority.tenancy_ref).to eq(tenancy_ref)
+          expect(case_priority).to be_send_letter_one
+        end
+      end
     end
   end
 
