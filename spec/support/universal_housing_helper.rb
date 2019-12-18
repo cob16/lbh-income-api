@@ -95,13 +95,12 @@ module UniversalHousingHelper
   end
 
   def create_uh_action(tenancy_ref:, code:, date:)
-    table = Hackney::UniversalHousing::Client.connection[:araction]
-    table.insert(
+    Hackney::UniversalHousing::Client.connection[:araction].insert(
       tag_ref: tenancy_ref,
       action_code: code,
       action_date: date,
       action_set: 1,
-      action_no: (table.max(:action_no) || 0) + 1,
+      action_no: 1,
       comm_only: false
     )
   end
