@@ -57,7 +57,7 @@ module Hackney
         # tenant address doesn't have full 5 lines, we need to add enough breaks
         # to make up for that otherwise the whole letter won't pass gov notify validation
         (5 - address_lines.length).times do
-          address_lines.push('<br>')
+          address_lines.push(' ')
         end
 
         address_lines.join('<br>')
