@@ -30,7 +30,6 @@ shared_examples 'TenancyClassification' do |condition_matrix|
   let(:criteria) { Stubs::StubCriteria.new(attributes) }
   let(:case_priority) { build(:case_priority, is_paused_until: is_paused_until) }
 
-  let(:is_paused_until) { nil }
   let(:attributes) do
     {
       balance: balance,
@@ -50,27 +49,11 @@ shared_examples 'TenancyClassification' do |condition_matrix|
     }
   end
 
-  let(:balance) { 5.00 }
-  let(:weekly_rent) { 5.0 }
-  let(:last_communication_date) { '' }
-  let(:last_communication_action) { nil }
-  let(:active_agreement) { nil }
-  let(:nosps_in_last_year) { nil }
-  let(:nosp_served_date) { '' }
-  let(:nosp_expiry_date) { '' }
-  let(:courtdate) { 10.years.from_now }
-  let(:eviction_date) { '' }
-  let(:court_outcome) { '' }
-  let(:latest_active_agreement_date) { 20.years.from_now }
-  let(:breach_agreement_date) { 10.years.from_now }
-  let(:number_of_broken_agreements) { 0 }
-
   condition_matrix.each do |options|
     message = build_context_message(options)
 
     context "when #{message}" do
       let(:is_paused_until) { options[:is_paused_until] }
-
       let(:balance) { options[:balance] }
       let(:weekly_rent) { options[:weekly_rent] }
       let(:last_communication_date) { options[:last_communication_date] }
@@ -84,6 +67,7 @@ shared_examples 'TenancyClassification' do |condition_matrix|
       let(:court_outcome) { options[:court_outcome] }
       let(:latest_active_agreement_date) { options[:latest_active_agreement_date] }
       let(:breach_agreement_date) { options[:breach_agreement_date] }
+      let(:number_of_broken_agreements) { options[:number_of_broken_agreements] }
 
       it "returns `#{options[:outcome]}`" do
         expect(subject).to eq(options[:outcome])
