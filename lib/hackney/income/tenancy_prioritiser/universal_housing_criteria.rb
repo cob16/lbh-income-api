@@ -146,6 +146,10 @@ module Hackney
           attributes[:latest_active_agreement_date]
         end
 
+        def expected_balance
+          attributes[:expected_balance]
+        end
+
         def self.format_action_codes_for_sql
           Hackney::Tenancy::ActionCodes::FOR_UH_CRITERIA_SQL.map { |action_code| "('#{action_code}')" }
                                                             .join(', ')
@@ -171,6 +175,12 @@ module Hackney
                 AND trans_type IN (SELECT payment_type FROM @PaymentTypes)
               ) t
               WHERE row = 1
+            )
+            DECLARE @ExpectedBalance NUMERIC(9, 2) = (
+              SELECT TOP 1 arag_lastexpectedbal
+              FROM [dbo].[arag]
+              WHERE tag_ref = @TenancyRef
+              ORDER BY arag_statusdate
             )
             DECLARE @NospServedDate SMALLDATETIME = (
               SELECT u_notice_served FROM [dbo].[tenagree] WHERE tag_ref = @TenancyRef
@@ -312,7 +322,8 @@ module Hackney
               @UCVerificationComplete as uc_verification_complete,
               @UCDirectPaymentRequested as uc_direct_payment_requested,
               @UCDirectPaymentReceived as uc_direct_payment_received,
-              @BreachAgreementDate as breach_agreement_date
+              @BreachAgreementDate as breach_agreement_date,
+              @ExpectedBalance as expected_balance
           SQL
         end
 

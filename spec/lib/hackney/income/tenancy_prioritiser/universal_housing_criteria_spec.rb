@@ -641,6 +641,18 @@ describe Hackney::Income::TenancyPrioritiser::UniversalHousingCriteria, universa
       end
     end
 
+    describe '#expected_balance' do
+      let(:expected_balance) { 30 }
+
+      before { create_uh_arrears_agreement(tenancy_ref: tenancy_ref, status: 200, expected_balance: expected_balance) }
+
+      context 'when there is an expected balance set in an agreement' do
+        it 'can retrun the expected balance of the account' do
+          expect(subject.expected_balance).to eq(expected_balance)
+        end
+      end
+    end
+
     it 'has the same instance methods as the stub' do
       expect(criteria.methods).to match_array(Stubs::StubCriteria.new.methods)
     end

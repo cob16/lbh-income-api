@@ -55,7 +55,8 @@ module Hackney
               uc_direct_payment_requested: criteria.uc_direct_payment_requested,
               uc_direct_payment_received: criteria.uc_direct_payment_received,
               latest_active_agreement_date: criteria.latest_active_agreement_date,
-              breach_agreement_date: criteria.breach_agreement_date
+              breach_agreement_date: criteria.breach_agreement_date,
+              expected_balance: criteria.expected_balance
             )
           end
         rescue ActiveRecord::RecordNotUnique
@@ -154,7 +155,8 @@ module Hackney
           court_outcome: model.court_outcome,
           eviction_date: model.eviction_date,
           latest_active_agreement_date: model.latest_active_agreement_date,
-          breach_agreement_date: model.breach_agreement_date
+          breach_agreement_date: model.breach_agreement_date,
+          expected_balance: model.expected_balance
         }
       end
     end

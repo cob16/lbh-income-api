@@ -84,6 +84,10 @@ module Stubs
       attributes[:active_agreement]
     end
 
+    def expected_balance
+      attributes[:expected_balance]
+    end
+
     def nosp_served?
       ((attributes[:nosps_in_last_year] || 0) > 0) ||
         attributes[:nosp_served] || false
