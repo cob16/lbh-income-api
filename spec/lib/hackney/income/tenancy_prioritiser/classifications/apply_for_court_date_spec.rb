@@ -13,7 +13,6 @@ describe 'Apply for Court Date Rule', type: :feature do
       is_paused_until: nil,
       active_agreement: false,
       last_communication_action: court_warning_letter_code,
-      courtdate: '',
       last_communication_date: 1.day.ago.to_date,
       eviction_date: nil
     },
@@ -26,7 +25,6 @@ describe 'Apply for Court Date Rule', type: :feature do
       is_paused_until: nil,
       active_agreement: false,
       last_communication_action: court_warning_letter_code,
-      courtdate: '',
       last_communication_date: 3.weeks.ago.to_date,
       eviction_date: nil
     },
@@ -39,7 +37,6 @@ describe 'Apply for Court Date Rule', type: :feature do
       is_paused_until: nil,
       active_agreement: true,
       last_communication_action: court_warning_letter_code,
-      courtdate: '',
       last_communication_date: 3.weeks.ago.to_date,
       eviction_date: nil
     },
@@ -52,7 +49,6 @@ describe 'Apply for Court Date Rule', type: :feature do
       is_paused_until: nil,
       active_agreement: true,
       last_communication_action: court_warning_letter_code,
-      courtdate: '',
       last_communication_date: 3.weeks.ago.to_date,
       eviction_date: nil
     },
@@ -65,7 +61,6 @@ describe 'Apply for Court Date Rule', type: :feature do
       is_paused_until: 1.day.from_now.to_date,
       active_agreement: true,
       last_communication_action: court_warning_letter_code,
-      courtdate: '',
       last_communication_date: 3.weeks.ago.to_date,
       eviction_date: nil
     },
@@ -78,7 +73,6 @@ describe 'Apply for Court Date Rule', type: :feature do
       is_paused_until: nil,
       active_agreement: true,
       last_communication_action: 'ZR3', # ZR3 is NOSP is served over 28 days ago.
-      courtdate: '',
       last_communication_date: 3.weeks.ago.to_date,
       eviction_date: nil
     },
@@ -91,7 +85,6 @@ describe 'Apply for Court Date Rule', type: :feature do
       is_paused_until: nil,
       active_agreement: true,
       last_communication_action: court_warning_letter_code,
-      courtdate: '',
       last_communication_date: 3.weeks.ago.to_date,
       eviction_date: nil
     },
@@ -104,7 +97,6 @@ describe 'Apply for Court Date Rule', type: :feature do
       is_paused_until: nil,
       active_agreement: false,
       last_communication_action: court_warning_letter_code,
-      courtdate: '',
       last_communication_date: 3.weeks.ago.to_date,
       eviction_date: nil
     },
