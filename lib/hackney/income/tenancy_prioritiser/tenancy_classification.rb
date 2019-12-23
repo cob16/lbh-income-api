@@ -41,8 +41,9 @@ module Hackney
           return false if @criteria.active_agreement? == true
           return false if @criteria.latest_active_agreement_date <= @criteria.courtdate
           return false if @criteria.breach_agreement_date + 3.days > Date.today
+          return false if @criteria.balance >= @criteria.expected_balance
           return false unless @criteria.court_outcome == 'AGR'
-          return false if @criteria.last_communication_action != Hackney::Tenancy::ActionCodes::COURT_WARNING_LETTER_SENT
+          return false unless @criteria.last_communication_action.in?(valid_actions_for_court_agreement_breach_letter_to_progress)
           true
         end
 
@@ -157,6 +158,12 @@ module Hackney
         end
 
         def valid_actions_for_apply_for_court_date_to_progress
+          [
+            Hackney::Tenancy::ActionCodes::COURT_WARNING_LETTER_SENT
+          ]
+        end
+
+        def valid_actions_for_court_agreement_breach_letter_to_progress
           [
             Hackney::Tenancy::ActionCodes::COURT_WARNING_LETTER_SENT
           ]

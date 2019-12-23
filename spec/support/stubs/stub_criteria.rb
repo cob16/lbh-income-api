@@ -48,6 +48,10 @@ module Stubs
       attributes[:balance] || 100.00
     end
 
+    def expected_balance
+      attributes[:expected_balance] || 100.00
+    end
+
     def weekly_rent
       attributes[:weekly_rent] || 5.0
     end
@@ -82,10 +86,6 @@ module Stubs
 
     def active_agreement?
       attributes[:active_agreement]
-    end
-
-    def expected_balance
-      attributes[:expected_balance]
     end
 
     def nosp_served?
