@@ -37,11 +37,11 @@ module Stubs
     end
 
     def latest_active_agreement_date
-      attributes[:latest_active_agreement_date] || 20.years.from_now.to_date
+      attributes[:latest_active_agreement_date]
     end
 
     def breach_agreement_date
-      attributes[:breach_agreement_date] || 10.years.from_now.to_date
+      attributes[:breach_agreement_date]
     end
 
     def balance
