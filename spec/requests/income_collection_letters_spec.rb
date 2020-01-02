@@ -49,17 +49,17 @@ RSpec.describe 'Income Collection Letters', type: :request do
           'case' => {
             'tenancy_ref' => tenancy_ref,
             'payment_ref' => payment_ref,
-            'address_line1' => 'Test Line 1',
-            'address_line2' => 'Test Line 2',
+            'address_line1' => 'Notareal Road',
+            'address_line2' => 'Locus',
             'address_line3' => '',
             'address_line4' => '',
             'address_name_number' => '',
             'address_post_code' => postcode,
             'address_preamble' => '',
             'property_ref' => property_ref,
-            'forename' => 'Test Forename',
-            'surname' => 'Test Surname',
-            'title' => 'Test Title',
+            'forename' => 'Frank',
+            'surname' => 'Enstein',
+            'title' => 'Mr',
             'total_collectable_arrears_balance' => current_balance.to_s
           },
           'template' => {
@@ -128,21 +128,21 @@ RSpec.describe 'Income Collection Letters', type: :request do
     create_uh_househ(
       house_ref: house_ref,
       prop_ref: property_ref,
-      corr_preamble: 'Test',
-      corr_desig: 'Test',
+      corr_preamble: 'Flat 13 Test House',
+      corr_desig: '29',
       corr_postcode: postcode,
-      house_desc: 'Test Name'
+      house_desc: ''
     )
     create_uh_postcode(
       post_code: postcode,
-      aline1: 'Test Line 1',
-      aline2: 'Test Line 2'
+      aline1: 'Notareal Road',
+      aline2: 'Locus'
     )
     create_uh_member(
       house_ref: house_ref,
-      title: 'Test Title',
-      forename: 'Test Forename',
-      surname: 'Test Surname'
+      title: 'Mr',
+      forename: 'Frank',
+      surname: 'Enstein'
     )
     create_uh_rent(prop_ref: property_ref, sc_leasedate: leasedate)
   end

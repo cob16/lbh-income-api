@@ -116,21 +116,21 @@ describe 'manually sending a letter causes case priority to sync', type: :reques
     create_uh_househ(
       house_ref: house_ref,
       prop_ref: property_ref,
-      corr_preamble: 'Test',
-      corr_desig: 'Test',
+      corr_preamble: '23 Mockery House',
+      corr_desig: '34',
       corr_postcode: postcode,
-      house_desc: 'Test Name'
+      house_desc: ''
     )
     create_uh_postcode(
       post_code: postcode,
-      aline1: 'Test Line 1',
-      aline2: 'Test Line 2'
+      aline1: '4 Fake Street',
+      aline2: 'Townt'
     )
     create_uh_member(
       house_ref: house_ref,
-      title: 'Test Title',
-      forename: 'Test Forename',
-      surname: 'Test Surname'
+      title: 'Mrs',
+      forename: 'Pauline',
+      surname: 'Derrick'
     )
     create_uh_rent(
       prop_ref: property_ref,

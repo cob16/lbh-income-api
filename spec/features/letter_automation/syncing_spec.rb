@@ -122,21 +122,21 @@ describe 'syncing triggers automatic sending of letters', type: :feature do
     create_uh_househ(
       house_ref: house_ref,
       prop_ref: property_ref,
-      corr_preamble: 'Test',
-      corr_desig: 'Test',
+      corr_preamble: 'Flat 5 Gingerbread House',
+      corr_desig: '98',
       corr_postcode: postcode,
-      house_desc: 'Test Name'
+      house_desc: 'Test House Name'
     )
     create_uh_postcode(
       post_code: postcode,
-      aline1: 'Test Line 1',
-      aline2: 'Test Line 2'
+      aline1: 'Fairytale Lane',
+      aline2: 'Faraway'
     )
     create_uh_member(
       house_ref: house_ref,
-      title: 'Test Title',
-      forename: 'Test Forename',
-      surname: 'Test Surname'
+      title: 'Ms',
+      forename: 'Fortuna',
+      surname: 'Curname'
     )
     create_uh_rent(
       prop_ref: property_ref,
