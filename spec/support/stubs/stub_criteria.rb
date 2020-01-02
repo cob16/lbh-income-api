@@ -65,7 +65,7 @@ module Stubs
     end
 
     def courtdate
-      attributes[:courtdate] || 10.years.ago.to_date
+      attributes[:courtdate]
     end
 
     def eviction_date
