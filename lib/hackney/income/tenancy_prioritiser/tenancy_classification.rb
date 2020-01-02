@@ -15,6 +15,7 @@ module Hackney
           wanted_action ||= :no_action if @case_priority.paused?
 
           wanted_action ||= :send_court_agreement_breach_letter if send_court_agreement_breach_letter?
+          wanted_action ||= :send_informal_agreement_breach_letter if send_informal_agreement_breach_letter?
           wanted_action ||= :apply_for_court_date if apply_for_court_date?
           wanted_action ||= :send_court_warning_letter if send_court_warning_letter?
           wanted_action ||= :send_NOSP if send_nosp?
@@ -36,13 +37,24 @@ module Hackney
           raise ArgumentError, "Tried to classify a case as #{wanted_action}, but this is not on the list of valid classifications."
         end
 
+        def send_informal_agreement_breach_letter?
+          return false if @criteria.number_of_broken_agreements < 1
+          return false if @criteria.active_agreement? == true
+          return false if @criteria.balance >= @criteria.expected_balance
+          return false if @criteria.courtdate.present? && @criteria.courtdate < Date.today
+          return false if @criteria.breach_agreement_date + 3.days > Date.today
+          return false unless @criteria.last_communication_action.in?(valid_actions_for_court_agreement_breach_letter_to_progress)
+          true
+        end
+
         def send_court_agreement_breach_letter?
           return false if @criteria.number_of_broken_agreements < 1
           return false if @criteria.active_agreement? == true
+          return false if @criteria.balance >= @criteria.expected_balance
           return false if @criteria.latest_active_agreement_date.blank?
+          return false if @criteria.courtdate.blank?
           return false if @criteria.latest_active_agreement_date <= @criteria.courtdate
           return false if @criteria.breach_agreement_date + 3.days > Date.today
-          return false if @criteria.balance >= @criteria.expected_balance
           return false unless @criteria.court_outcome == 'AGR'
           return false unless @criteria.last_communication_action.in?(valid_actions_for_court_agreement_breach_letter_to_progress)
           true
