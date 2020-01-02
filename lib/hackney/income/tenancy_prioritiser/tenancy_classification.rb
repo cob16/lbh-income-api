@@ -39,6 +39,7 @@ module Hackney
         def send_court_agreement_breach_letter?
           return false if @criteria.number_of_broken_agreements < 1
           return false if @criteria.active_agreement? == true
+          return false if @criteria.latest_active_agreement_date.blank?
           return false if @criteria.latest_active_agreement_date <= @criteria.courtdate
           return false if @criteria.breach_agreement_date + 3.days > Date.today
           return false if @criteria.balance >= @criteria.expected_balance
