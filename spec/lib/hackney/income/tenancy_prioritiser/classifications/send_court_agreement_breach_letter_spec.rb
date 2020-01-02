@@ -90,6 +90,20 @@ describe 'Send Court Agreement Breach Letter Rule', type: :feature do
       last_communication_action: Hackney::Tenancy::ActionCodes::COURT_WARNING_LETTER_SENT,
       last_communication_date: 1.month.ago,
       number_of_broken_agreements: 1
+    },
+    {
+      # when the latest agctive agreement date does not exist
+      outcome: :no_action,
+      active_agreement: false,
+      court_outcome: 'AGR',
+      courtdate: 8.days.ago,
+      latest_active_agreement_date: nil,
+      balance: 1234,
+      expected_balance: 10,
+      breach_agreement_date: 4.days.ago,
+      last_communication_action: Hackney::Tenancy::ActionCodes::COURT_WARNING_LETTER_SENT,
+      last_communication_date: 1.month.ago,
+      number_of_broken_agreements: 1
     }
     # {
     #   #last communicated action was not send court warning letter
