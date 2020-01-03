@@ -54,7 +54,8 @@ module Hackney
           return false if @criteria.latest_active_agreement_date.blank?
           return false if @criteria.courtdate.blank?
           return false if @criteria.latest_active_agreement_date <= @criteria.courtdate
-          return false if @criteria.breach_agreement_date + 3.days > Date.today
+          return false if @criteria.breach_agreement_date.present? && @criteria.breach_agreement_date + 3.days > Date.today
+          return false if @criteria.balance >= @criteria.expected_balance
           return false unless @criteria.court_outcome == 'AGR'
           return false unless @criteria.last_communication_action.in?(valid_actions_for_court_agreement_breach_letter_to_progress)
           true
