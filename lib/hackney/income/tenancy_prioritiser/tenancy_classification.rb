@@ -38,7 +38,7 @@ module Hackney
         end
 
         def send_informal_agreement_breach_letter?
-          return false if @criteria.number_of_broken_agreements < 1
+          return false if @criteria.number_of_broken_agreements.zero?
           return false if @criteria.active_agreement? == true
           return false if @criteria.balance >= @criteria.expected_balance
           return false if @criteria.courtdate.present? && @criteria.courtdate < Date.today
