@@ -11,11 +11,11 @@ module Hackney
           wanted_action = nil
 
           wanted_action ||= :no_action if @criteria.eviction_date.present?
-          wanted_action ||= :no_action if @criteria.courtdate.present? && @criteria.courtdate >= Time.zone.now
           wanted_action ||= :no_action if @case_priority.paused?
 
           wanted_action ||= :send_court_agreement_breach_letter if send_court_agreement_breach_letter?
           wanted_action ||= :send_informal_agreement_breach_letter if send_informal_agreement_breach_letter?
+          wanted_action ||= :update_court_outcome_action if update_court_outcome_action?
           wanted_action ||= :apply_for_court_date if apply_for_court_date?
           wanted_action ||= :send_court_warning_letter if send_court_warning_letter?
           wanted_action ||= :send_NOSP if send_nosp?
@@ -46,6 +46,13 @@ module Hackney
           return false unless @criteria.last_communication_action.in?(valid_actions_for_court_agreement_breach_letter_to_progress)
           true
         end
+        
+        def update_court_outcome_action?
+          return false if @criteria.courtdate.blank?
+          return false if @criteria.courtdate.future?
+
+          @criteria.court_outcome.blank?
+        end
 
         def send_court_agreement_breach_letter?
           return false if @criteria.number_of_broken_agreements < 1
@@ -56,7 +63,7 @@ module Hackney
           return false if @criteria.latest_active_agreement_date <= @criteria.courtdate
           return false if @criteria.breach_agreement_date.present? && @criteria.breach_agreement_date + 3.days > Date.today
           return false if @criteria.balance >= @criteria.expected_balance
-          return false unless @criteria.court_outcome == 'AGR'
+          return false unless @criteria.court_outcome.in?(active_agreement_court_outcomes)
           return false unless @criteria.last_communication_action.in?(valid_actions_for_court_agreement_breach_letter_to_progress)
           true
         end
@@ -180,6 +187,14 @@ module Hackney
         def valid_actions_for_court_agreement_breach_letter_to_progress
           [
             Hackney::Tenancy::ActionCodes::COURT_WARNING_LETTER_SENT
+          ]
+        end
+
+        def active_agreement_court_outcomes
+          [
+            Hackney::Tenancy::ActionCodes::ADJOURNED_ON_TERMS_COURT_OUTCOME,
+            Hackney::Tenancy::ActionCodes::POSTPONED_POSSESSIOON_COURT_OUTCOME,
+            Hackney::Tenancy::ActionCodes::SUSPENDED_POSSESSION_COURT_OUTCOME
           ]
         end
       end
