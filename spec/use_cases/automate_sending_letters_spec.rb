@@ -102,14 +102,14 @@ describe UseCases::AutomateSendingLetters do
       }
 
       it 'does not send a letter' do
-        # expect(send_letter_to_gov_notify)
-        #   .not_to receive(:perform_later)
-
-        automate_sending_letters.execute(case_priority: case_priority)
-
         expect(generate_and_store_letter)
           .to receive(:execute)
-          # .and_return("quid")
+          .and_return(validation_errors)
+
+        expect(send_letter_to_gov_notify)
+          .not_to receive(:perform_later)
+
+        automate_sending_letters.execute(case_priority: case_priority)
       end
     end
   end

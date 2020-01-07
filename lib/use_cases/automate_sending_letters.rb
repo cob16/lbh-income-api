@@ -22,13 +22,16 @@ module UseCases
 
       return false unless income_collection_letters.include?(letter_name)
 
-      generate_letter = @generate_and_store_letter.execute(
+      generated_letter = @generate_and_store_letter.execute(
         payment_ref: nil,
         tenancy_ref: case_priority.tenancy_ref,
         template_id: letter_name,
         user: generate_income_collection_user
       )
-      @send_letter_to_gov_notify.perform_later(document_id: generate_letter[:document_id], tenancy_ref: case_priority.tenancy_ref)
+
+      return false if generated_letter[:errors].present?
+
+      @send_letter_to_gov_notify.perform_later(document_id: generated_letter[:document_id], tenancy_ref: case_priority.tenancy_ref)
 
       true
     end

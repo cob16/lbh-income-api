@@ -39,6 +39,8 @@ describe 'syncing triggers automatic sending of letters', type: :feature do
     ENV['CAN_AUTOMATE_LETTERS'] = original_env_can_auto_letters
     ENV['PATCH_CODES_FOR_LETTER_AUTOMATION'] = original_env_patch_codes_letters
     ENV['AUTOMATE_INCOME_COLLECTION_LETTER_ONE'] = original_env_can_auto_letter_one
+
+    truncate_uh_tables
   end
 
   context 'when the cron job runs' do
