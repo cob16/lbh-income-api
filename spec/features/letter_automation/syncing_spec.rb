@@ -178,7 +178,15 @@ describe 'syncing triggers automatic sending of letters', type: :feature do
   def mock_gov_notify_client
     stub_const('Notifications::Client', gov_notify_client)
     allow(gov_notify_client).to receive(:new).and_return(gov_notify_client)
-    allow(gov_notify_client).to receive(:send_precompiled_letter).and_return(fake_response)
+    allow(gov_notify_client)
+      .to receive(:send_precompiled_letter)
+      .and_return(
+        OpenStruct.new(
+          id: Faker::Number.number,
+          reference: SecureRandom.uuid,
+          postage: 'second'
+        )  
+      )
   end
 
   def set_other_balances_to_zero
