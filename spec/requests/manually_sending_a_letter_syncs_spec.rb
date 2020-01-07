@@ -15,6 +15,7 @@ describe 'manually sending a letter causes case priority to sync', type: :reques
   let(:template_id) { 'income_collection_letter_1' }
   let(:user_group) { 'income-collection-group' }
   let(:current_balance) { BigDecimal('525.00') }
+  let(:gov_notify_client) { double(Notifications::Client) }
   let(:user) {
     {
       name: Faker::Name.name,
@@ -22,12 +23,6 @@ describe 'manually sending a letter causes case priority to sync', type: :reques
       groups: %w[leasehold-group income-group]
     }
   }
-  let!(:original_env_can_auto_letters) { ENV['CAN_AUTOMATE_LETTERS'] }
-  let!(:original_env_patch_codes_letters) { ENV['PATCH_CODES_FOR_LETTER_AUTOMATION'] }
-  let!(:original_env_can_auto_letter_one) { ENV['AUTOMATE_INCOME_COLLECTION_LETTER_ONE'] }
-  # set up a case that needs a letter one sent
-
-  let(:gov_notify_client) { double(Notifications::Client) }
   let(:fake_response) {
     OpenStruct.new(
       id: Faker::Number.number,
@@ -35,6 +30,10 @@ describe 'manually sending a letter causes case priority to sync', type: :reques
       postage: 'second'
     )
   }
+
+  let!(:original_env_can_auto_letters) { ENV['CAN_AUTOMATE_LETTERS'] }
+  let!(:original_env_patch_codes_letters) { ENV['PATCH_CODES_FOR_LETTER_AUTOMATION'] }
+  let!(:original_env_can_auto_letter_one) { ENV['AUTOMATE_INCOME_COLLECTION_LETTER_ONE'] }
 
   before do
     mock_aws_client

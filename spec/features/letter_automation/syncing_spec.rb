@@ -9,12 +9,10 @@ describe 'syncing triggers automatic sending of letters', type: :feature do
   let(:tenancy_ref) { "#{Faker::Number.number(6)}/#{Faker::Number.number(2)}" }
   let(:payment_ref) { Faker::Number.number(4) }
   let(:current_balance) { BigDecimal('525.00') }
-  let!(:original_env_can_auto_letters) { ENV['CAN_AUTOMATE_LETTERS'] }
-  let!(:original_env_patch_codes_letters) { ENV['PATCH_CODES_FOR_LETTER_AUTOMATION'] }
-  let!(:original_env_can_auto_letter_one) { ENV['AUTOMATE_INCOME_COLLECTION_LETTER_ONE'] }
   let(:income_use_case_factory) { Hackney::Income::UseCaseFactory.new }
   let(:case_priority) { Hackney::Income::Models::CasePriority.last }
   let(:gov_notify_client) { double(Notifications::Client) }
+  let(:allowed_jobs) { [Hackney::Income::Jobs::SyncCasePriorityJob, Hackney::Income::Jobs::SendLetterToGovNotifyJob] }
   let(:fake_response) {
     OpenStruct.new(
       id: Faker::Number.number,
@@ -23,7 +21,9 @@ describe 'syncing triggers automatic sending of letters', type: :feature do
     )
   }
 
-  let(:allowed_jobs) { [Hackney::Income::Jobs::SyncCasePriorityJob, Hackney::Income::Jobs::SendLetterToGovNotifyJob] }
+  let!(:original_env_can_auto_letters) { ENV['CAN_AUTOMATE_LETTERS'] }
+  let!(:original_env_patch_codes_letters) { ENV['PATCH_CODES_FOR_LETTER_AUTOMATION'] }
+  let!(:original_env_can_auto_letter_one) { ENV['AUTOMATE_INCOME_COLLECTION_LETTER_ONE'] }
 
   before do
     mock_aws_client
@@ -47,18 +47,12 @@ describe 'syncing triggers automatic sending of letters', type: :feature do
       set_other_balances_to_zero
     end
 
-    it 'will sync the case priority and send the letter automatically' do
-      when_the_sync_runs(document_count_changes_by: 1, case_priority_count_changes_by: 1)
-      then_a_document_is_queued
-      then_the_case_priority_is(:no_action)
-    end
-
     context 'when a tenant enters into arrears' do
       let(:current_balance) { 0 }
 
       it 'will automatically send letter one' do
         given_a_case_exists
-        given_a_case_priority_is(:no_action)
+        when_the_case_priority_is(:no_action)
         when_the_tenancy_balance_in_uh_is(balance: 350)
         when_the_sync_runs(document_count_changes_by: 1, case_priority_count_changes_by: 0)
         then_a_document_is_queued
@@ -86,6 +80,12 @@ describe 'syncing triggers automatic sending of letters', type: :feature do
         when_the_sync_runs(document_count_changes_by: 0, case_priority_count_changes_by: 1)
         then_the_case_priority_is(:send_letter_one)
       end
+    end
+
+    it 'will sync the case priority and send the letter automatically' do
+      when_the_sync_runs(document_count_changes_by: 1, case_priority_count_changes_by: 1)
+      then_a_document_is_queued
+      then_the_case_priority_is(:no_action)
     end
   end
 
@@ -190,6 +190,6 @@ describe 'syncing triggers automatic sending of letters', type: :feature do
                                      .update(cur_bal: 0)
   end
 
-  alias_method :given_a_case_priority_is, :expect_case_priority_to_be
+  alias_method :when_the_case_priority_is, :expect_case_priority_to_be
   alias_method :then_the_case_priority_is, :expect_case_priority_to_be
 end
