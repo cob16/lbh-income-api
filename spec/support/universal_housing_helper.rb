@@ -51,6 +51,47 @@ module UniversalHousingHelper
   end
   # rubocop:enable Metrics/ParameterLists
 
+  def create_valid_uh_records_for_an_income_letter(
+    property_ref:, house_ref:, postcode:, leasedate:
+  )
+
+    create_uh_property(
+      property_ref: property_ref,
+      post_code: postcode,
+      patch_code: 'W02'
+    )
+    create_uh_tenancy_agreement(
+      tenancy_ref: tenancy_ref,
+      u_saff_rentacc: payment_ref,
+      prop_ref: property_ref,
+      house_ref: house_ref,
+      current_balance: current_balance
+    )
+    create_uh_househ(
+      house_ref: house_ref,
+      prop_ref: property_ref,
+      corr_preamble: 'Flat 5 Gingerbread House',
+      corr_desig: '98',
+      corr_postcode: postcode,
+      house_desc: 'Test House Name'
+    )
+    create_uh_postcode(
+      post_code: postcode,
+      aline1: 'Fairytale Lane',
+      aline2: 'Faraway'
+    )
+    create_uh_member(
+      house_ref: house_ref,
+      title: 'Ms',
+      forename: 'Fortuna',
+      surname: 'Curname'
+    )
+    create_uh_rent(
+      prop_ref: property_ref,
+      sc_leasedate: leasedate
+    )
+  end
+
   def create_uh_tenancy_agreement_with_property(
     tenancy_ref:, current_balance: 0.0, prop_ref: '', arr_patch: '', terminated: false, tenure_type: 'SEC', high_action: '111'
   )

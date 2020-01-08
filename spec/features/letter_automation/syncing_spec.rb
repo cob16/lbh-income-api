@@ -27,7 +27,12 @@ describe 'syncing triggers automatic sending of letters', type: :feature do
 
   before do
     mock_aws_client
-    create_valid_uh_records_for_an_income_letter
+    create_valid_uh_records_for_an_income_letter(
+      property_ref: Faker::Number.number(4),
+      house_ref: Faker::Number.number(4),
+      postcode: Faker::Address.postcode,
+      leasedate: Time.zone.now.beginning_of_hour
+    )
     mock_gov_notify_client
 
     ENV['CAN_AUTOMATE_LETTERS'] = 'true'
@@ -101,49 +106,6 @@ describe 'syncing triggers automatic sending of letters', type: :feature do
     end)
   end
 
-  def create_valid_uh_records_for_an_income_letter
-    property_ref = Faker::Number.number(4)
-    house_ref = Faker::Number.number(4)
-    postcode = Faker::Address.postcode
-    leasedate = Time.zone.now.beginning_of_hour
-
-    create_uh_property(
-      property_ref: property_ref,
-      post_code: postcode,
-      patch_code: 'W02'
-    )
-    create_uh_tenancy_agreement(
-      tenancy_ref: tenancy_ref,
-      u_saff_rentacc: payment_ref,
-      prop_ref: property_ref,
-      house_ref: house_ref,
-      current_balance: current_balance
-    )
-    create_uh_househ(
-      house_ref: house_ref,
-      prop_ref: property_ref,
-      corr_preamble: 'Flat 5 Gingerbread House',
-      corr_desig: '98',
-      corr_postcode: postcode,
-      house_desc: 'Test House Name'
-    )
-    create_uh_postcode(
-      post_code: postcode,
-      aline1: 'Fairytale Lane',
-      aline2: 'Faraway'
-    )
-    create_uh_member(
-      house_ref: house_ref,
-      title: 'Ms',
-      forename: 'Fortuna',
-      surname: 'Curname'
-    )
-    create_uh_rent(
-      prop_ref: property_ref,
-      sc_leasedate: leasedate
-    )
-  end
-
   def given_a_case_exists
     income_use_case_factory.sync_case_priority.execute(tenancy_ref: tenancy_ref)
   end
@@ -164,7 +126,7 @@ describe 'syncing triggers automatic sending of letters', type: :feature do
                                      .update(cur_bal: balance)
   end
 
-  def expect_case_priority_to_be(classification)
+  def then_the_case_priority_is(classification)
     expect(case_priority.tenancy_ref).to eq(tenancy_ref)
     expect(case_priority).to send("be_#{classification}".to_sym)
   end
@@ -185,7 +147,7 @@ describe 'syncing triggers automatic sending of letters', type: :feature do
           id: Faker::Number.number,
           reference: SecureRandom.uuid,
           postage: 'second'
-        )  
+        )
       )
   end
 
@@ -198,6 +160,5 @@ describe 'syncing triggers automatic sending of letters', type: :feature do
                                      .update(cur_bal: 0)
   end
 
-  alias_method :when_the_case_priority_is, :expect_case_priority_to_be
-  alias_method :then_the_case_priority_is, :expect_case_priority_to_be
+  alias_method :when_the_case_priority_is, :then_the_case_priority_is
 end
