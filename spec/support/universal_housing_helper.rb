@@ -261,6 +261,18 @@ module UniversalHousingHelper
     )
   end
 
+  def stub_action_diary_write(tenancy_ref:, code:, date:)
+    stub_request(
+      :post,
+      'http://example.com/api/v2/tenancies/arrears-action-diary'
+    ).to_return(lambda do |_request|
+      # Mock the behaviour of the API by writing directly to UH
+      create_uh_action(tenancy_ref: tenancy_ref, code: code, date: date)
+
+      { status: 200, body: '', headers: {} }
+    end)
+  end
+
   def truncate_uh_tables
     Hackney::UniversalHousing::Client.connection[:tenagree].truncate
     Hackney::UniversalHousing::Client.connection[:rtrans].truncate
