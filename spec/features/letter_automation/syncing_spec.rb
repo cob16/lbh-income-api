@@ -13,13 +13,6 @@ describe 'syncing triggers automatic sending of letters', type: :feature do
   let(:case_priority) { Hackney::Income::Models::CasePriority.last }
   let(:gov_notify_client) { double(Notifications::Client) }
   let(:allowed_jobs) { [Hackney::Income::Jobs::SyncCasePriorityJob, Hackney::Income::Jobs::SendLetterToGovNotifyJob] }
-  let(:fake_response) {
-    OpenStruct.new(
-      id: Faker::Number.number,
-      reference: SecureRandom.uuid,
-      postage: 'second'
-    )
-  }
 
   let!(:original_env_can_auto_letters) { ENV['CAN_AUTOMATE_LETTERS'] }
   let!(:original_env_patch_codes_letters) { ENV['PATCH_CODES_FOR_LETTER_AUTOMATION'] }

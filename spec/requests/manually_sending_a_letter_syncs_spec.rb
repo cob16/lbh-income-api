@@ -37,7 +37,12 @@ describe 'manually sending a letter causes case priority to sync', type: :reques
 
   before do
     mock_aws_client
-    create_valid_uh_records_for_an_income_letter
+    create_valid_uh_records_for_an_income_letter(
+      property_ref: property_ref,
+      house_ref: house_ref,
+      postcode: postcode,
+      leasedate: leasedate
+    )
 
     stub_const('Notifications::Client', gov_notify_client)
     allow(gov_notify_client).to receive(:new).and_return(gov_notify_client)
@@ -97,44 +102,6 @@ describe 'manually sending a letter causes case priority to sync', type: :reques
 
       { status: 200, body: '', headers: {} }
     end)
-  end
-
-  def create_valid_uh_records_for_an_income_letter
-    create_uh_property(
-      property_ref: property_ref,
-      post_code: postcode,
-      patch_code: 'W02'
-    )
-    create_uh_tenancy_agreement(
-      tenancy_ref: tenancy_ref,
-      u_saff_rentacc: payment_ref,
-      prop_ref: property_ref,
-      house_ref: house_ref,
-      current_balance: current_balance
-    )
-    create_uh_househ(
-      house_ref: house_ref,
-      prop_ref: property_ref,
-      corr_preamble: '23 Mockery House',
-      corr_desig: '34',
-      corr_postcode: postcode,
-      house_desc: ''
-    )
-    create_uh_postcode(
-      post_code: postcode,
-      aline1: '4 Fake Street',
-      aline2: 'Townt'
-    )
-    create_uh_member(
-      house_ref: house_ref,
-      title: 'Mrs',
-      forename: 'Pauline',
-      surname: 'Derrick'
-    )
-    create_uh_rent(
-      prop_ref: property_ref,
-      sc_leasedate: leasedate
-    )
   end
 
   def generate_and_store_letter(tenancy_ref:, template_id:, user:)
