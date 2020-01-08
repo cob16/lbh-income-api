@@ -42,7 +42,6 @@ describe 'syncing triggers automatic sending of letters', type: :feature do
   context 'when the cron job runs' do
     before do
       stub_action_diary_write
-      set_other_balances_to_zero
     end
 
     context 'when a tenant enters into arrears' do
@@ -142,15 +141,6 @@ describe 'syncing triggers automatic sending of letters', type: :feature do
           postage: 'second'
         )
       )
-  end
-
-  def set_other_balances_to_zero
-    # UH Sim *may* have some data in it. Make sure any that is in it does
-    # not trigger the Sync process.
-    Hackney::UniversalHousing::Client.connection[:tenagree]
-                                     .where(Sequel[:tenagree][:cur_bal] > 0)
-                                     .exclude(tag_ref: tenancy_ref)
-                                     .update(cur_bal: 0)
   end
 
   alias_method :when_the_case_priority_is, :then_the_case_priority_is
