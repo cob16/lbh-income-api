@@ -41,7 +41,7 @@ describe 'syncing triggers automatic sending of letters', type: :feature do
 
   context 'when the cron job runs' do
     before do
-      stub_action_diary_write
+      stub_action_diary_write(tenancy_ref: tenancy_ref, code: 'IC1', date: Time.zone.now)
     end
 
     context 'when a tenant enters into arrears' do
@@ -84,18 +84,6 @@ describe 'syncing triggers automatic sending of letters', type: :feature do
       then_a_document_is_queued
       then_the_case_priority_is(:no_action)
     end
-  end
-
-  def stub_action_diary_write
-    stub_request(
-      :post,
-      'http://example.com/api/v2/tenancies/arrears-action-diary'
-    ).to_return(lambda do |_request|
-      # Mock the behaviour of the API by writing directly to UH
-      create_uh_action(tenancy_ref: tenancy_ref, code: 'IC1', date: Time.zone.now)
-
-      { status: 200, body: '', headers: {} }
-    end)
   end
 
   def given_a_case_exists

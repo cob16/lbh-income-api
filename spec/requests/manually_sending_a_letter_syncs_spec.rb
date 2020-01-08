@@ -72,7 +72,7 @@ describe 'manually sending a letter causes case priority to sync', type: :reques
         income_collection_letter
         income_use_case_factory.sync_case_priority.execute(tenancy_ref: tenancy_ref)
 
-        stub_action_diary_write
+        stub_action_diary_write(tenancy_ref: tenancy_ref, code: 'IC1', date: Time.zone.now)
       end
 
       it 'updates the the classification when a user sends a letter' do
@@ -90,18 +90,6 @@ describe 'manually sending a letter causes case priority to sync', type: :reques
         expect(case_priority).to be_no_action
       end
     end
-  end
-
-  def stub_action_diary_write
-    stub_request(
-      :post,
-      'http://example.com/api/v2/tenancies/arrears-action-diary'
-    ).to_return(lambda do |_request|
-      # Mock the behaviour of the API by writing directly to UH
-      create_uh_action(tenancy_ref: tenancy_ref, code: 'IC1', date: Time.zone.now)
-
-      { status: 200, body: '', headers: {} }
-    end)
   end
 
   def generate_and_store_letter(tenancy_ref:, template_id:, user:)
