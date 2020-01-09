@@ -131,6 +131,24 @@ module Hackney
                                                             .join(', ')
         end
 
+        def self.build_last_communication_sql_query(column:)
+          letter_2_sent_action_comment_text = 'Policy Generated'
+
+          <<-SQL
+            SELECT TOP 1 #{column}
+            FROM araction WITH (NOLOCK)
+            WHERE tag_ref = @TenancyRef
+            AND (
+              action_code IN (SELECT communication_types FROM @CommunicationTypes) OR
+              (
+                action_code = '#{Hackney::Tenancy::ActionCodes::INCOME_COLLECTION_LETTER_2_UH}' AND
+                action_comment LIKE '%#{letter_2_sent_action_comment_text}%'
+              )
+            )
+            ORDER BY action_date DESC
+          SQL
+        end
+
         def self.build_sql
           <<-SQL
             DECLARE @TenancyRef VARCHAR(60) = ?
@@ -190,20 +208,15 @@ module Hackney
             DECLARE @BreachedAgreementsCount INT = (SELECT COUNT(tag_ref) FROM [dbo].[arag] WITH (NOLOCK) WHERE tag_ref = @TenancyRef AND arag_status = @BreachedArrearsAgreementStatus)
             DECLARE @NospsInLastYear INT = (SELECT COUNT(tag_ref) FROM araction WITH (NOLOCK) WHERE tag_ref = @TenancyRef AND action_code = @NospActionDiaryCode AND action_date >= CONVERT(date, DATEADD(year, -1, GETDATE())))
             DECLARE @NospsInLastMonth INT = (SELECT COUNT(tag_ref) FROM araction WITH (NOLOCK) WHERE tag_ref = @TenancyRef AND action_code = @NospActionDiaryCode AND action_date >= CONVERT(date, DATEADD(month, -1, GETDATE())))
+
             DECLARE @LastCommunicationAction VARCHAR(60) = (
-              SELECT TOP 1 action_code
-              FROM araction WITH (NOLOCK)
-              WHERE tag_ref = @TenancyRef
-              AND action_code IN (SELECT communication_types FROM @CommunicationTypes)
-              ORDER BY action_date DESC
+              #{build_last_communication_sql_query(column: 'action_code')}
             )
+
             DECLARE @LastCommunicationDate SMALLDATETIME = (
-              SELECT TOP 1 action_date
-              FROM araction WITH (NOLOCK)
-              WHERE tag_ref = @TenancyRef
-              AND action_code IN (SELECT communication_types FROM @CommunicationTypes)
-              ORDER BY action_date DESC
+              #{build_last_communication_sql_query(column: 'action_date')}
             )
+
             DECLARE @UniversalCredit SMALLDATETIME = (
               SELECT TOP 1 action_date
               FROM araction
