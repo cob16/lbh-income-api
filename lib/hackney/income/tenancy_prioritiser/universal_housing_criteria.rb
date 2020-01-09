@@ -132,11 +132,19 @@ module Hackney
         end
 
         def self.build_last_communication_sql_query(column:)
+          letter_2_sent_action_comment_text = 'Policy Generated'
+
           <<-SQL
             SELECT TOP 1 #{column}
             FROM araction WITH (NOLOCK)
             WHERE tag_ref = @TenancyRef
-            AND action_code IN (SELECT communication_types FROM @CommunicationTypes)
+            AND (
+              action_code IN (SELECT communication_types FROM @CommunicationTypes) OR
+              (
+                action_code = '#{Hackney::Tenancy::ActionCodes::INCOME_COLLECTION_LETTER_2_UH}' AND
+                action_comment LIKE '%#{letter_2_sent_action_comment_text}%'
+              )
+            )
             ORDER BY action_date DESC
           SQL
         end

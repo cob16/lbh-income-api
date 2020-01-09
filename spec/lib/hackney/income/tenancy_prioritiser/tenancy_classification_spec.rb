@@ -82,12 +82,13 @@ describe Hackney::Income::TenancyPrioritiser::TenancyClassification do
 
   context 'when checking that Action Codes are used in UH Criteria SQL' do
     let(:action_codes) { Hackney::Tenancy::ActionCodes::FOR_UH_CRITERIA_SQL }
+    let(:unused_action_codes_required_for_uh_criteria_sql) { result - action_codes }
 
     describe '#after_letter_one_actions' do
       let(:result) { assign_classification.send(:after_letter_one_actions) }
 
-      it 'contains action codes within the UH Criteria Codes' do
-        expect(result - action_codes).to be_empty
+      it 'contains Letter 2 UH code that is used for an edge case in the UH Criteria SQL' do
+        expect(unused_action_codes_required_for_uh_criteria_sql).to eq([Hackney::Tenancy::ActionCodes::INCOME_COLLECTION_LETTER_2_UH])
       end
     end
 
@@ -95,15 +96,15 @@ describe Hackney::Income::TenancyPrioritiser::TenancyClassification do
       let(:result) { assign_classification.send(:valid_actions_for_letter_two_to_progress) }
 
       it 'contains action codes within the UH Criteria Codes' do
-        expect(result - action_codes).to be_empty
+        expect(unused_action_codes_required_for_uh_criteria_sql).to be_empty
       end
     end
 
     describe '#valid_actions_for_nosp_to_progress' do
       let(:result) { assign_classification.send(:valid_actions_for_nosp_to_progress) }
 
-      it 'contains action codes within the UH Criteria Codes' do
-        expect(result - action_codes).to be_empty
+      it 'contains Letter 2 UH code that is used for an edge case in the UH Criteria SQL' do
+        expect(unused_action_codes_required_for_uh_criteria_sql).to eq([Hackney::Tenancy::ActionCodes::INCOME_COLLECTION_LETTER_2_UH])
       end
     end
 
@@ -111,7 +112,7 @@ describe Hackney::Income::TenancyPrioritiser::TenancyClassification do
       let(:result) { assign_classification.send(:after_court_warning_letter_actions) }
 
       it 'contains action codes within the UH Criteria Codes' do
-        expect(result - action_codes).to be_empty
+        expect(unused_action_codes_required_for_uh_criteria_sql).to be_empty
       end
     end
 
@@ -119,7 +120,7 @@ describe Hackney::Income::TenancyPrioritiser::TenancyClassification do
       let(:result) { assign_classification.send(:valid_actions_for_apply_for_court_date_to_progress) }
 
       it 'contains action codes within the UH Criteria Codes' do
-        expect(result - action_codes).to be_empty
+        expect(unused_action_codes_required_for_uh_criteria_sql).to be_empty
       end
     end
   end

@@ -241,6 +241,40 @@ describe Hackney::Income::TenancyPrioritiser::UniversalHousingCriteria, universa
 
         it { is_expected.to be_nil }
       end
+
+      context 'with Stage 1 and Stage 2 letters' do
+        let(:comment) { '' }
+
+        before do
+          create_uh_action(
+            tenancy_ref: tenancy_ref,
+            code: Hackney::Tenancy::ActionCodes::INCOME_COLLECTION_LETTER_1_UH,
+            date: 14.days.ago
+          )
+          create_uh_action(
+            tenancy_ref: tenancy_ref,
+            code: Hackney::Tenancy::ActionCodes::INCOME_COLLECTION_LETTER_2_UH,
+            date: Date.today,
+            comment: comment
+          )
+        end
+
+        context 'when Letter 2 has been sent' do
+          let(:comment) { '    Policy Generated.    ' }
+
+          it 'returns the Letter 2 action' do
+            expect(subject).to eq(Hackney::Tenancy::ActionCodes::INCOME_COLLECTION_LETTER_2_UH)
+          end
+        end
+
+        context 'when Letter 2 has been suggested' do
+          let(:comment) { '     Suggested Action.    ' }
+
+          it 'returns the Letter 1 action' do
+            expect(subject).to eq(Hackney::Tenancy::ActionCodes::INCOME_COLLECTION_LETTER_1_UH)
+          end
+        end
+      end
     end
 
     describe '#last_communciation_date' do
