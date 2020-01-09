@@ -15,6 +15,9 @@ module Hackney
 
           wanted_action ||= :send_court_agreement_breach_letter if send_court_agreement_breach_letter?
           wanted_action ||= :send_informal_agreement_breach_letter if send_informal_agreement_breach_letter?
+
+          wanted_action ||= :no_action if @criteria.courtdate&.future?
+
           wanted_action ||= :update_court_outcome_action if update_court_outcome_action?
           wanted_action ||= :apply_for_court_date if apply_for_court_date?
           wanted_action ||= :send_court_warning_letter if send_court_warning_letter?

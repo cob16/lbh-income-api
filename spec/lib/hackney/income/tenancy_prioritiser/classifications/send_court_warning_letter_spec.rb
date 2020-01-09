@@ -123,7 +123,7 @@ describe 'Send Court Warning Letter Rule', type: :feature do
       courtdate: nil
     },
     {
-      outcome: :send_court_warning_letter,
+      outcome: :no_action,
       nosps_in_last_year: 1,
       nosp_served_date: 29.days.ago.to_date,
       weekly_rent: 5,
