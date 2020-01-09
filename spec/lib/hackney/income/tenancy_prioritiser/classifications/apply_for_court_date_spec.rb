@@ -60,9 +60,14 @@ describe '"Apply for Court Date" examples' do
       active_agreement: true
     ),
     base_example.merge(
-      description: 'with a past court date',
+      description: 'with a past court date and the last communication action is a court warning letter that happened before the court date',
+      outcome: :update_court_outcome_action,
+      courtdate: 7.days.ago
+    ),
+    base_example.merge(
+      description: 'with a past court date and the last communication action is a court warning letter that happened after the court date',
       outcome: :apply_for_court_date,
-      courtdate: nil
+      courtdate: 5.months.ago
     ),
     base_example.merge(
       description: 'with an evicition date',
