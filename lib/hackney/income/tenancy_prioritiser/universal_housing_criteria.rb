@@ -132,7 +132,7 @@ module Hackney
         end
 
         def self.build_last_communication_sql_query(column:)
-          letter_2_sent_action_comment_text = 'Policy Generated'
+          letter_2_sent_action_comment_text = 'Policy generated'
 
           <<-SQL
             SELECT TOP 1 #{column}
@@ -142,7 +142,7 @@ module Hackney
               action_code IN (SELECT communication_types FROM @CommunicationTypes) OR
               (
                 action_code = '#{Hackney::Tenancy::ActionCodes::INCOME_COLLECTION_LETTER_2_UH}' AND
-                action_comment LIKE '%#{letter_2_sent_action_comment_text}%'
+                action_comment collate SQL_Latin1_General_CP1_CI_AS LIKE '%#{letter_2_sent_action_comment_text}%'
               )
             )
             ORDER BY action_date DESC
