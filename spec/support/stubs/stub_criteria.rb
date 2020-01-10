@@ -45,7 +45,7 @@ module Stubs
     end
 
     def balance
-      attributes[:balance] || 100.00
+      attributes[:balance]
     end
 
     def expected_balance
@@ -53,7 +53,7 @@ module Stubs
     end
 
     def weekly_rent
-      attributes[:weekly_rent] || 5.0
+      attributes[:weekly_rent]
     end
 
     def nosp_served_date

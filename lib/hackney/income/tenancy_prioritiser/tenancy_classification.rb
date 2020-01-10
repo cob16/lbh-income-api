@@ -41,6 +41,7 @@ module Hackney
         end
 
         def send_informal_agreement_breach_letter?
+          return false if @criteria.balance.blank?
           return false if @criteria.number_of_broken_agreements.zero?
           return false if @criteria.active_agreement? == true
           return false if @criteria.balance >= @criteria.expected_balance
@@ -58,6 +59,7 @@ module Hackney
         end
 
         def send_court_agreement_breach_letter?
+          return false if @criteria.balance.blank?
           return false if @criteria.number_of_broken_agreements < 1
           return false if @criteria.active_agreement? == true
           return false if @criteria.balance >= @criteria.expected_balance
@@ -72,6 +74,7 @@ module Hackney
         end
 
         def send_sms?
+          return false if @criteria.balance.blank?
           return false if @criteria.last_communication_action.present?
           return false if @criteria.nosp_served?
           return false if @criteria.active_agreement?
@@ -80,6 +83,9 @@ module Hackney
         end
 
         def send_letter_one?
+          return false if @criteria.balance.blank?
+          return false if @criteria.weekly_rent.blank?
+
           return false if @criteria.nosp_served?
           return false if @criteria.active_agreement?
 
@@ -90,6 +96,9 @@ module Hackney
         end
 
         def send_letter_two?
+          return false if @criteria.balance.blank?
+          return false if @criteria.weekly_rent.blank?
+
           return false if @criteria.active_agreement?
           return false if @criteria.nosp_served?
 
@@ -102,6 +111,9 @@ module Hackney
         end
 
         def send_nosp?
+          return false if @criteria.balance.blank?
+          return false if @criteria.weekly_rent.blank?
+
           return false if @criteria.active_agreement?
           return false if @criteria.nosp_served?
 
@@ -117,6 +129,9 @@ module Hackney
         end
 
         def send_court_warning_letter?
+          return false if @criteria.balance.blank?
+          return false if @criteria.weekly_rent.blank?
+
           return false if @criteria.active_agreement?
 
           return false if @criteria.last_communication_action.in?(after_court_warning_letter_actions)
@@ -129,6 +144,9 @@ module Hackney
         end
 
         def apply_for_court_date?
+          return false if @criteria.balance.blank?
+          return false if @criteria.weekly_rent.blank?
+
           return false unless @criteria.nosp_served?
 
           return false unless @criteria.last_communication_action.in?(valid_actions_for_apply_for_court_date_to_progress)
