@@ -277,6 +277,14 @@ describe Hackney::Income::TenancyPrioritiser::UniversalHousingCriteria, universa
       end
     end
 
+    describe '#build_last_communication_sql_query' do
+      it 'contains a Case Insensitive flag' do
+        expect(
+          described_class.build_last_communication_sql_query(column: 'action_code')
+        ).to match(/collate SQL_Latin1_General_CP1_CI_AS LIKE/)
+      end
+    end
+
     describe '#last_communciation_date' do
       subject { criteria.last_communication_date }
 
