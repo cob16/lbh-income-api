@@ -14,6 +14,8 @@ module Hackney
           wanted_action ||= :no_action if @criteria.courtdate&.future?
           wanted_action ||= :no_action if @case_priority.paused?
 
+          wanted_action ||= :apply_for_outright_possession_warrant if apply_for_outright_possession_warrant?
+
           wanted_action ||= :send_court_agreement_breach_letter if send_court_agreement_breach_letter?
           wanted_action ||= :send_informal_agreement_breach_letter if send_informal_agreement_breach_letter?
 
@@ -38,6 +40,14 @@ module Hackney
         def validate_wanted_action(wanted_action)
           return false if Hackney::Income::Models::CasePriority.classifications.key?(wanted_action)
           raise ArgumentError, "Tried to classify a case as #{wanted_action}, but this is not on the list of valid classifications."
+        end
+
+        def apply_for_outright_possession_warrant?
+          return false if @criteria.active_agreement?
+          return false if @criteria.courtdate.blank?
+          return false if @criteria.courtdate.future?
+          return false if @criteria.courtdate < 3.months.ago
+          @criteria.court_outcome == 'OUT'
         end
 
         def send_informal_agreement_breach_letter?
@@ -139,7 +149,6 @@ module Hackney
           return false unless @criteria.nosp_served?
           return false if @criteria.nosp_served_date.blank?
           return false if @criteria.nosp_served_date > 28.days.ago.to_date
-
           @criteria.balance >= arrear_accumulation_by_number_weeks(4)
         end
 
