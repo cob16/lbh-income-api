@@ -2,13 +2,16 @@ module Hackney
   module Income
     class TenancyPrioritiser
       class TenancyClassification
-        def initialize(case_priority, criteria)
+        def initialize(case_priority, criteria, documents)
           @criteria = criteria
           @case_priority = case_priority
+          @documents = documents
         end
 
         def execute
           wanted_action = nil
+
+          wanted_action ||= :review_failed_letter if review_failed_letter?
 
           wanted_action ||= :no_action if @criteria.eviction_date.present?
           wanted_action ||= :no_action if @criteria.courtdate&.future?
@@ -38,6 +41,11 @@ module Hackney
         def validate_wanted_action(wanted_action)
           return false if Hackney::Income::Models::CasePriority.classifications.key?(wanted_action)
           raise ArgumentError, "Tried to classify a case as #{wanted_action}, but this is not on the list of valid classifications."
+        end
+
+        def review_failed_letter?
+          return false if @documents.empty?
+          @documents.most_recent.failed? && @documents.most_recent.income_collection?
         end
 
         def send_informal_agreement_breach_letter?
