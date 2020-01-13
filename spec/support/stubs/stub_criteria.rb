@@ -105,6 +105,10 @@ module Stubs
       attributes[:payment_ref]
     end
 
+    def most_recent_agreement
+      attributes[:most_recent_agreement]
+    end
+
     private
 
     attr_reader :attributes
