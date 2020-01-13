@@ -17,6 +17,7 @@ module Hackney
           wanted_action ||= :no_action if @criteria.courtdate&.future?
           wanted_action ||= :no_action if @case_priority.paused?
 
+          wanted_action ||= :court_breach_visit if court_breach_visit?
           wanted_action ||= :send_court_agreement_breach_letter if send_court_agreement_breach_letter?
           wanted_action ||= :send_informal_agreement_breach_letter if send_informal_agreement_breach_letter?
 
@@ -41,6 +42,10 @@ module Hackney
         def validate_wanted_action(wanted_action)
           return false if Hackney::Income::Models::CasePriority.classifications.key?(wanted_action)
           raise ArgumentError, "Tried to classify a case as #{wanted_action}, but this is not on the list of valid classifications."
+        end
+
+        def court_breach_visit?
+          @criteria.last_communication_action.in?(court_breach_letter_actions) && last_communication_newer_than?(3.months.ago)
         end
 
         def review_failed_letter?
@@ -159,6 +164,12 @@ module Hackney
 
         def arrear_accumulation_by_number_weeks(weeks)
           @criteria.weekly_rent * weeks
+        end
+
+        def court_breach_letter_actions
+          [
+            Hackney::Tenancy::ActionCodes::COURT_BREACH_LETTER_SENT
+          ]
         end
 
         def after_letter_one_actions
