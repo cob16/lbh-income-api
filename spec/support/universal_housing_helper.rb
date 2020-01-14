@@ -4,7 +4,7 @@ module UniversalHousingHelper
                                   tenure_type: 'SEC', high_action: '111', u_saff_rentacc: '', house_ref: '',
                                   nosp_notice_served_date: '1900-01-01 00:00:00 +0000', nosp_notice_expiry_date: '1900-01-01 00:00:00 +0000',
                                   money_judgement: 0.0, charging_order: 0.0, bal_dispute: 0.0, courtdate: '1900-01-01 00:00:00 +0000',
-                                  court_outcome: nil, eviction_date: '1900-01-01 00:00:00 +0000')
+                                  court_outcome: nil, eviction_date: '1900-01-01 00:00:00 +0000', agreement_type: 'M')
     Hackney::UniversalHousing::Client.connection[:tenagree].insert(
       tag_ref: tenancy_ref,
       cur_bal: current_balance,
@@ -46,7 +46,8 @@ module UniversalHousingHelper
       cot: cot,
       u_money_judgement: money_judgement,
       u_charging_order: charging_order,
-      u_bal_dispute: bal_dispute
+      u_bal_dispute: bal_dispute,
+      agr_type: agreement_type
     )
   end
   # rubocop:enable Metrics/ParameterLists
@@ -126,24 +127,26 @@ module UniversalHousingHelper
     )
   end
 
-  def create_uh_arrears_agreement(tenancy_ref:, status:)
+  def create_uh_arrears_agreement(tenancy_ref:, status:, status_entry_date: Date.today, expected_balance: nil)
     Hackney::UniversalHousing::Client.connection[:arag].insert(
       arag_ref: Faker::IDNumber.valid,
       tag_ref: tenancy_ref,
       arag_status: status,
-      arag_breached: false
+      arag_breached: false,
+      arag_statusdate: status_entry_date,
+      arag_lastexpectedbal: expected_balance
     )
   end
 
-  def create_uh_action(tenancy_ref:, code:, date:)
-    table = Hackney::UniversalHousing::Client.connection[:araction]
-    table.insert(
+  def create_uh_action(tenancy_ref:, code:, date:, comment: '')
+    Hackney::UniversalHousing::Client.connection[:araction].insert(
       tag_ref: tenancy_ref,
       action_code: code,
       action_date: date,
       action_set: 1,
       action_no: (table.max(:action_no) || 0) + 1,
-      comm_only: false
+      comm_only: false,
+      action_comment: comment
     )
   end
 

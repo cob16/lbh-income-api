@@ -49,9 +49,9 @@ RSpec.describe 'Income Collection Letters', type: :request do
           'case' => {
             'tenancy_ref' => tenancy_ref,
             'payment_ref' => payment_ref,
-            'address_line1' => 'Notareal Road',
-            'address_line2' => 'Locus',
-            'address_line3' => '',
+            'address_line1' => '12 Acacia House',
+            'address_line2' => 'Lordship Road',
+            'address_line3' => 'London',
             'address_line4' => '',
             'address_name_number' => '',
             'address_post_code' => postcode,
@@ -135,8 +135,8 @@ RSpec.describe 'Income Collection Letters', type: :request do
     )
     create_uh_postcode(
       post_code: postcode,
-      aline1: 'Notareal Road',
-      aline2: 'Locus'
+      aline1: 'Lordship Road',
+      aline2: 'London'
     )
     create_uh_member(
       house_ref: house_ref,
