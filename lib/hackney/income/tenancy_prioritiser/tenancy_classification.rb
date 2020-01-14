@@ -19,8 +19,6 @@ module Hackney
 
           wanted_action ||= :apply_for_outright_possession_warrant if apply_for_outright_possession_warrant?
 
-          wanted_action ||= :send_court_agreement_breach_letter if send_court_agreement_breach_letter?
-          wanted_action ||= :send_informal_agreement_breach_letter if send_informal_agreement_breach_letter?
           wanted_action ||= :court_breach_visit if court_breach_visit?
 
           wanted_action ||= breach_letter_action
@@ -56,17 +54,6 @@ module Hackney
           @criteria.court_outcome == Hackney::Tenancy::ActionCodes::OUTRIGHT_POSSESSION_ORDER
         end
 
-        def send_informal_agreement_breach_letter?
-          return false if @criteria.balance.blank?
-          return false if @criteria.number_of_broken_agreements.zero?
-          return false if @criteria.active_agreement? == true
-          return false if @criteria.balance >= @criteria.expected_balance
-          return false if @criteria.courtdate.present? && @criteria.courtdate < Date.today
-          return false if @criteria.breach_agreement_date + 3.days > Date.today
-          return false unless @criteria.last_communication_action.in?(valid_actions_for_court_agreement_breach_letter_to_progress)
-          true
-        end
-
         def court_breach_visit?
           @criteria.last_communication_action.in?(court_breach_letter_actions) && last_communication_newer_than?(3.months.ago)
         end
@@ -81,21 +68,6 @@ module Hackney
           return false if @criteria.courtdate.future?
 
           @criteria.court_outcome.blank?
-        end
-
-        def send_court_agreement_breach_letter?
-          return false if @criteria.balance.blank?
-          return false if @criteria.number_of_broken_agreements < 1
-          return false if @criteria.active_agreement? == true
-          return false if @criteria.balance >= @criteria.expected_balance
-          return false if @criteria.latest_active_agreement_date.blank?
-          return false if @criteria.courtdate.blank?
-          return false if @criteria.latest_active_agreement_date <= @criteria.courtdate
-          return false if @criteria.breach_agreement_date.present? && @criteria.breach_agreement_date + 3.days > Date.today
-          return false if @criteria.balance >= @criteria.expected_balance
-          return false unless @criteria.court_outcome.in?(active_agreement_court_outcomes)
-          return false unless @criteria.last_communication_action.in?(valid_actions_for_court_agreement_breach_letter_to_progress)
-          true
         end
 
         def breach_letter_action
