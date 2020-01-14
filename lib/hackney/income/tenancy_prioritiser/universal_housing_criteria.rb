@@ -89,12 +89,6 @@ module Hackney
           attributes[:last_communication_date]
         end
 
-        def active_agreement?
-          return false if attributes[:most_recent_agreement_status].blank?
-
-          attributes[:most_recent_agreement_status].squish != Hackney::Income::BREACHED_ARREARS_AGREEMENT_STATUS
-        end
-
         def number_of_broken_agreements
           attributes.fetch(:breached_agreements_count)
         end
@@ -132,9 +126,17 @@ module Hackney
           attributes[:payment_ref]
         end
 
+        def active_agreement?
+          return false if most_recent_agreement[:breached]
+
+          most_recent_agreement[:start_date].present?
+        end
+
         def most_recent_agreement
+          status = attributes[:most_recent_agreement_status] || ''
+
           {
-            breached: !active_agreement?,
+            breached: status.squish == Hackney::Income::BREACHED_ARREARS_AGREEMENT_STATUS,
             start_date: attributes[:most_recent_agreement_date]
           }
         end

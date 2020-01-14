@@ -304,50 +304,6 @@ describe Hackney::Income::TenancyPrioritiser::UniversalHousingCriteria, universa
       end
     end
 
-    describe '#active_agreement?' do
-      subject { criteria.active_agreement? }
-
-      context 'when the tenant has no arrears agreements' do
-        it { is_expected.to be(false) }
-      end
-
-      context 'when the tenant has a "first check" arrears agreement' do
-        before do
-          create_uh_arrears_agreement(
-            tenancy_ref: tenancy_ref,
-            status: '100',
-            agreement_start_date: Time.zone.now
-          )
-        end
-
-        it { is_expected.to be(true) }
-      end
-
-      context 'when the tenant has an active arrears agreement' do
-        before do
-          create_uh_arrears_agreement(
-            tenancy_ref: tenancy_ref,
-            status: '200',
-            agreement_start_date: Time.zone.now
-          )
-        end
-
-        it { is_expected.to be(true) }
-      end
-
-      context 'when the tenant has a breached arrears agreement' do
-        before do
-          create_uh_arrears_agreement(
-            tenancy_ref: tenancy_ref,
-            status: '300',
-            agreement_start_date: Time.zone.now
-          )
-        end
-
-        it { is_expected.to be(false) }
-      end
-    end
-
     describe '#number_of_broken_agreements' do
       subject { criteria.number_of_broken_agreements }
 

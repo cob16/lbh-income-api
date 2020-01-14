@@ -40,7 +40,6 @@ shared_examples 'TenancyClassification' do |condition_matrix|
       weekly_rent: weekly_rent,
       last_communication_date: last_communication_date,
       last_communication_action: last_communication_action,
-      active_agreement: active_agreement,
       nosps_in_last_year: nosps_in_last_year,
       nosp_served_date: nosp_served_date,
       nosp_expiry_date: nosp_expiry_date,
@@ -62,7 +61,6 @@ shared_examples 'TenancyClassification' do |condition_matrix|
       let(:weekly_rent) { options[:weekly_rent] }
       let(:last_communication_date) { options[:last_communication_date] }
       let(:last_communication_action) { options[:last_communication_action] }
-      let(:active_agreement) { options[:active_agreement] }
       let(:nosps_in_last_year) { options[:nosps_in_last_year] }
       let(:nosp_served_date) { options[:nosp_served_date] }
       let(:nosp_expiry_date) { options[:nosp_expiry_date] }

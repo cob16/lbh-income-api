@@ -84,8 +84,9 @@ module Stubs
       attributes[:days_in_arrears] || 7
     end
 
+    # This reimplements the actual method, which isn't right
     def active_agreement?
-      attributes[:most_recent_agreement] || attributes[:active_agreement]
+
     end
 
     def nosp_served?

@@ -23,7 +23,6 @@ module Hackney
               days_in_arrears: criteria.days_in_arrears,
               days_since_last_payment: criteria.days_since_last_payment,
               number_of_broken_agreements: criteria.number_of_broken_agreements,
-              active_agreement: criteria.active_agreement?,
               broken_court_order: criteria.broken_court_order?,
               nosp_served: criteria.nosp_served?,
               nosp_served_date: criteria.nosp_served_date,
