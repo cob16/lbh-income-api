@@ -171,6 +171,7 @@ module Hackney
             Hackney::Tenancy::ActionCodes::INCOME_COLLECTION_LETTER_1_UH,
             Hackney::Tenancy::ActionCodes::INCOME_COLLECTION_LETTER_2,
             Hackney::Tenancy::ActionCodes::INCOME_COLLECTION_LETTER_2_UH,
+            Hackney::Tenancy::ActionCodes::INCOME_COLLECTION_LETTER_2_UH_ALT,
             Hackney::Tenancy::ActionCodes::COURT_WARNING_LETTER_SENT
           ]
         end
@@ -185,7 +186,8 @@ module Hackney
         def valid_actions_for_nosp_to_progress
           [
             Hackney::Tenancy::ActionCodes::INCOME_COLLECTION_LETTER_2,
-            Hackney::Tenancy::ActionCodes::INCOME_COLLECTION_LETTER_2_UH
+            Hackney::Tenancy::ActionCodes::INCOME_COLLECTION_LETTER_2_UH,
+            Hackney::Tenancy::ActionCodes::INCOME_COLLECTION_LETTER_2_UH_ALT
           ]
         end
 
