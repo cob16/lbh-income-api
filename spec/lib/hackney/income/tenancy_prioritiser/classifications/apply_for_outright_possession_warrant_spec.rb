@@ -2,7 +2,7 @@ require 'rails_helper'
 
 describe 'Apply for Outright Possession Warrant Rule examples' do
   base_example = {
-    outcome: :apply_for_outright_possession_warrent,
+    outcome: :apply_for_outright_possession_warrant,
     active_agreement: false,
     courtdate: 1.month.ago,
     court_outcome: 'OUT'
