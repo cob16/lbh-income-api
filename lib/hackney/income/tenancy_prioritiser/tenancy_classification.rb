@@ -47,7 +47,7 @@ module Hackney
           return false if @criteria.courtdate.blank?
           return false if @criteria.courtdate.future?
           return false if @criteria.courtdate < 3.months.ago
-          @criteria.court_outcome == 'OUT'
+          @criteria.court_outcome == Hackney::Tenancy::ActionCodes::OUTRIGHT_POSSESSION_ORDER
         end
 
         def send_informal_agreement_breach_letter?

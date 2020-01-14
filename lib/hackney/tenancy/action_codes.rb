@@ -27,6 +27,8 @@ module Hackney
       PRE_NOSP_WARNING_LETTER_SENT = 'IC3'.freeze
       COURT_WARNING_LETTER_SENT = 'IC4'.freeze
 
+      OUTRIGHT_POSSESSION_ORDER = 'OUT'.freeze
+
       FIRST_FTA_LETTER_SENT = 'C'.freeze
       ARREARS_MAIL_MERGE_LETTER_SENT = 'MML'.freeze
       S0A_ALTERNATIVE_LETTER = 'S0A'.freeze
