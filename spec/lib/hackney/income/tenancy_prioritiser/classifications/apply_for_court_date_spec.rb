@@ -19,7 +19,7 @@ describe '"Apply for Court Date" examples' do
     base_example.merge(
       description: 'with an active agreement',
       outcome: :apply_for_court_date,
-      active_agreement: true
+      most_recent_agreement: { start_date: 1.week.ago }
     ),
     base_example.merge(
       description: 'with a recent court warning letter',
@@ -38,11 +38,6 @@ describe '"Apply for Court Date" examples' do
       nosps_in_last_year: 0
     ),
     base_example.merge(
-      description: 'with an active agreement',
-      outcome: :apply_for_court_date,
-      active_agreement: true
-    ),
-    base_example.merge(
       description: 'with arrears lower than four weeks rent',
       outcome: :no_action,
       weekly_rent: 5,
@@ -57,7 +52,7 @@ describe '"Apply for Court Date" examples' do
       description: 'with a ZR3 (old NOSP) last communication and an active agreement',
       outcome: :no_action,
       last_communication_action: 'ZR3', # ZR3 is NOSP is served over 28 days ago.
-      active_agreement: true
+      most_recent_agreement: { start_date: 1.week.ago }
     ),
     base_example.merge(
       description: 'that only had court warning letters before the last court date',

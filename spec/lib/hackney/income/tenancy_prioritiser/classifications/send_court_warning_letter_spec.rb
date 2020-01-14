@@ -11,7 +11,6 @@ describe 'Send Court Warning Letter Rule', type: :feature do
       weekly_rent: 5,
       balance: 15.0, # 3 * weekly_rent
       is_paused_until: nil,
-      active_agreement: false,
       last_communication_action: nil,
       eviction_date: nil,
       courtdate: nil
@@ -23,7 +22,6 @@ describe 'Send Court Warning Letter Rule', type: :feature do
       weekly_rent: 5,
       balance: 50.0, # 10 * weekly_rent
       is_paused_until: nil,
-      active_agreement: false,
       last_communication_action: nil,
       eviction_date: nil,
       courtdate: nil
@@ -35,7 +33,6 @@ describe 'Send Court Warning Letter Rule', type: :feature do
       weekly_rent: 5,
       balance: 15.0, # 3 * weekly_rent
       is_paused_until: nil,
-      active_agreement: false,
       last_communication_action: nil,
       eviction_date: nil,
       courtdate: nil
@@ -47,7 +44,6 @@ describe 'Send Court Warning Letter Rule', type: :feature do
       weekly_rent: 5,
       balance: 25.0, # 5 * weekly_rent
       is_paused_until: 1.month.from_now.to_date,
-      active_agreement: false,
       last_communication_action: nil,
       eviction_date: nil
     },
@@ -58,7 +54,7 @@ describe 'Send Court Warning Letter Rule', type: :feature do
       weekly_rent: 5,
       balance: 25.0, # 5 * weekly_rent
       is_paused_until: nil,
-      active_agreement: true,
+      most_recent_agreement: { start_date: 1.week.ago },
       last_communication_action: nil,
       eviction_date: nil,
       courtdate: nil
@@ -70,7 +66,6 @@ describe 'Send Court Warning Letter Rule', type: :feature do
       weekly_rent: 5,
       balance: 25.0, # 5 * weekly_rent
       is_paused_until: nil,
-      active_agreement: false,
       last_communication_action: court_warning_letter_code,
       last_communication_date: 3.weeks.ago.to_date,
       eviction_date: nil,
@@ -83,7 +78,6 @@ describe 'Send Court Warning Letter Rule', type: :feature do
       weekly_rent: 5,
       balance: 25.0, # 5 * weekly_rent
       is_paused_until: nil,
-      active_agreement: false,
       last_communication_action: nil,
       eviction_date: 10.days.from_now
     },
@@ -94,7 +88,6 @@ describe 'Send Court Warning Letter Rule', type: :feature do
       weekly_rent: 5,
       balance: 25.0, # 5 * weekly_rent
       is_paused_until: nil,
-      active_agreement: false,
       last_communication_action: nil,
       eviction_date: 2.weeks.ago
     },
@@ -105,7 +98,6 @@ describe 'Send Court Warning Letter Rule', type: :feature do
       weekly_rent: 5,
       balance: 25.0, # 5 * weekly_rent
       is_paused_until: nil,
-      active_agreement: false,
       last_communication_action: nil,
       eviction_date: 10.days.from_now,
       courtdate: 10.days.from_now
@@ -117,7 +109,6 @@ describe 'Send Court Warning Letter Rule', type: :feature do
       weekly_rent: 5,
       balance: 25.0, # 5 * weekly_rent
       is_paused_until: nil,
-      active_agreement: false,
       last_communication_action: nil,
       eviction_date: nil,
       courtdate: nil
@@ -129,7 +120,6 @@ describe 'Send Court Warning Letter Rule', type: :feature do
       weekly_rent: 5,
       balance: 25.0, # 5 * weekly_rent
       is_paused_until: nil,
-      active_agreement: false,
       last_communication_action: nil,
       eviction_date: nil,
       court_outcome: nil,

@@ -10,7 +10,6 @@ describe 'Send Court Breach Letter Rule', type: :feature do
     weekly_rent: 5,
     is_paused_until: nil,
     balance: 15.0, # 3 * weekly_rent
-    active_agreement: false,
     last_communication_action: court_breach_letter_code,
     last_communication_date: Date.today + 21
   }

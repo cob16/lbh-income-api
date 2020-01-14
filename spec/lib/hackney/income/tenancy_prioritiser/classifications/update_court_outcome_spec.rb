@@ -8,7 +8,7 @@ describe '"Update court outcome" examples' do
     weekly_rent: 10,
     balance: 6,
     is_paused_until: '',
-    active_agreement: true,
+    most_recent_agreement: { start_date: 1.week.ago },
     last_communication_date: 2.weeks.ago.to_date,
     last_communication_action: '',
     eviction_date: '',

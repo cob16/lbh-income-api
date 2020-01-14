@@ -10,7 +10,6 @@ describe 'Send NOSP Rule', type: :feature do
       weekly_rent: 5,
       balance: 0,
       is_paused_until: nil,
-      active_agreement: false,
       last_communication_action: nil,
       eviction_date: 1.month.from_now
     },
@@ -23,7 +22,6 @@ describe 'Send NOSP Rule', type: :feature do
       weekly_rent: 5,
       balance: 50.0,
       is_paused_until: nil,
-      active_agreement: false,
       last_communication_action: nil,
       court_outcome: 'Jail'
     },
@@ -35,7 +33,6 @@ describe 'Send NOSP Rule', type: :feature do
       weekly_rent: 5,
       balance: 50.0,
       is_paused_until: nil,
-      active_agreement: false,
       last_communication_date: 2.months.ago.to_date,
       last_communication_action: Hackney::Tenancy::ActionCodes::INCOME_COLLECTION_LETTER_2,
       court_outcome: 'Jail'
@@ -47,7 +44,6 @@ describe 'Send NOSP Rule', type: :feature do
       weekly_rent: 5,
       balance: 25.0, # 5 * weekly_rent
       is_paused_until: nil,
-      active_agreement: false,
       last_communication_date: 2.months.ago.to_date,
       last_communication_action: Hackney::Tenancy::ActionCodes::INCOME_COLLECTION_LETTER_2,
       eviction_date: nil,
@@ -60,7 +56,6 @@ describe 'Send NOSP Rule', type: :feature do
       weekly_rent: 5,
       balance: 10.0, # 2 * weekly_rent
       is_paused_until: nil,
-      active_agreement: false,
       last_communication_date: 2.months.ago.to_date,
       last_communication_action: Hackney::Tenancy::ActionCodes::INCOME_COLLECTION_LETTER_2,
       eviction_date: nil,
@@ -73,7 +68,6 @@ describe 'Send NOSP Rule', type: :feature do
       weekly_rent: 5,
       balance: 25.0, # 5 * weekly_rent
       is_paused_until: 1.month.from_now,
-      active_agreement: false,
       last_communication_date: 2.months.ago.to_date,
       last_communication_action: Hackney::Tenancy::ActionCodes::INCOME_COLLECTION_LETTER_2,
       eviction_date: nil
@@ -85,7 +79,6 @@ describe 'Send NOSP Rule', type: :feature do
       weekly_rent: 5,
       balance: 25.0, # 5 * weekly_rent
       is_paused_until: nil,
-      active_agreement: false,
       last_communication_date: 5.days.ago.to_date,
       last_communication_action: Hackney::Tenancy::ActionCodes::INCOME_COLLECTION_LETTER_2,
       eviction_date: nil,
@@ -98,7 +91,6 @@ describe 'Send NOSP Rule', type: :feature do
       weekly_rent: 5,
       balance: 25.0, # 5 * weekly_rent
       is_paused_until: nil,
-      active_agreement: false,
       last_communication_date: 8.days.ago.to_date,
       last_communication_action: Hackney::Tenancy::ActionCodes::INCOME_COLLECTION_LETTER_2,
       eviction_date: 2.weeks.ago
@@ -110,7 +102,6 @@ describe 'Send NOSP Rule', type: :feature do
       weekly_rent: 5,
       balance: 25.0, # 5 * weekly_rent
       is_paused_until: nil,
-      active_agreement: false,
       last_communication_date: 8.days.ago.to_date,
       last_communication_action: Hackney::Tenancy::ActionCodes::INCOME_COLLECTION_LETTER_2,
       eviction_date: 1.week.from_now
@@ -122,7 +113,6 @@ describe 'Send NOSP Rule', type: :feature do
       weekly_rent: 5,
       balance: 25.0, # 5 * weekly_rent
       is_paused_until: nil,
-      active_agreement: false,
       last_communication_date: 8.days.ago.to_date,
       last_communication_action: Hackney::Tenancy::ActionCodes::INCOME_COLLECTION_LETTER_2,
       eviction_date: 5.weeks.from_now,
@@ -135,7 +125,7 @@ describe 'Send NOSP Rule', type: :feature do
       weekly_rent: 5,
       balance: 25.0, # 5 * weekly_rent
       is_paused_until: nil,
-      active_agreement: true,
+      most_recent_agreement: { start_date: 1.week.ago },
       last_communication_date: 8.days.ago.to_date,
       last_communication_action: Hackney::Tenancy::ActionCodes::INCOME_COLLECTION_LETTER_2,
       eviction_date: nil,
@@ -148,7 +138,6 @@ describe 'Send NOSP Rule', type: :feature do
       weekly_rent: 5,
       balance: 25.0, # 5 * weekly_rent
       is_paused_until: nil,
-      active_agreement: false,
       last_communication_date: 8.days.ago.to_date,
       last_communication_action: Hackney::Tenancy::ActionCodes::INCOME_COLLECTION_LETTER_2,
       eviction_date: nil,
@@ -161,7 +150,6 @@ describe 'Send NOSP Rule', type: :feature do
       weekly_rent: 5,
       balance: 25.0, # 5 * weekly_rent
       is_paused_until: nil,
-      active_agreement: false,
       last_communication_date: 8.days.ago.to_date,
       last_communication_action: Hackney::Tenancy::ActionCodes::INCOME_COLLECTION_LETTER_2_UH,
       eviction_date: nil,
@@ -174,7 +162,6 @@ describe 'Send NOSP Rule', type: :feature do
       weekly_rent: 5,
       balance: 25.0, # 5 * weekly_rent
       is_paused_until: nil,
-      active_agreement: false,
       last_communication_date: 7.months.ago.to_date,
       last_communication_action: 'ANYTHING',
       eviction_date: nil,
@@ -187,7 +174,6 @@ describe 'Send NOSP Rule', type: :feature do
       weekly_rent: 5,
       balance: 25.0, # 5 * weekly_rent
       is_paused_until: nil,
-      active_agreement: false,
       last_communication_date: 8.days.ago.to_date,
       last_communication_action: Hackney::Tenancy::ActionCodes::INCOME_COLLECTION_LETTER_2,
       eviction_date: nil,
@@ -200,7 +186,6 @@ describe 'Send NOSP Rule', type: :feature do
       weekly_rent: 5,
       balance: 25.0, # 5 * weekly_rent
       is_paused_until: nil,
-      active_agreement: false,
       last_communication_date: 8.days.ago.to_date,
       last_communication_action: Hackney::Tenancy::ActionCodes::INCOME_COLLECTION_LETTER_2_UH,
       eviction_date: nil,
@@ -213,7 +198,6 @@ describe 'Send NOSP Rule', type: :feature do
       weekly_rent: 5,
       balance: 25.0, # 5 * weekly_rent
       is_paused_until: nil,
-      active_agreement: false,
       last_communication_date: 8.days.ago.to_date,
       last_communication_action: Hackney::Tenancy::ActionCodes::INCOME_COLLECTION_LETTER_2,
       eviction_date: nil,
@@ -226,7 +210,6 @@ describe 'Send NOSP Rule', type: :feature do
       weekly_rent: 5,
       balance: 25.0, # 5 * weekly_rent
       is_paused_until: nil,
-      active_agreement: false,
       last_communication_date: 8.days.ago.to_date,
       last_communication_action: Hackney::Tenancy::ActionCodes::INCOME_COLLECTION_LETTER_2_UH,
       eviction_date: nil,
@@ -239,7 +222,6 @@ describe 'Send NOSP Rule', type: :feature do
       weekly_rent: 5,
       balance: 25.0, # 5 * weekly_rent
       is_paused_until: nil,
-      active_agreement: false,
       last_communication_date: 8.days.ago.to_date,
       last_communication_action: Hackney::Tenancy::ActionCodes::INCOME_COLLECTION_LETTER_2,
       eviction_date: nil,
@@ -253,7 +235,6 @@ describe 'Send NOSP Rule', type: :feature do
       weekly_rent: 5,
       balance: 25.0, # 5 * weekly_rent
       is_paused_until: nil,
-      active_agreement: false,
       last_communication_date: 8.days.ago.to_date,
       last_communication_action: Hackney::Tenancy::ActionCodes::INCOME_COLLECTION_LETTER_2,
       eviction_date: nil,
@@ -267,7 +248,6 @@ describe 'Send NOSP Rule', type: :feature do
       weekly_rent: 5,
       balance: 25.0, # 5 * weekly_rent
       is_paused_until: nil,
-      active_agreement: false,
       last_communication_date: 8.days.ago.to_date,
       last_communication_action: Hackney::Tenancy::ActionCodes::INCOME_COLLECTION_LETTER_2_UH,
       eviction_date: nil,
