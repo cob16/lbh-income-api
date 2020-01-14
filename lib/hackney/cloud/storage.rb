@@ -1,6 +1,8 @@
 module Hackney
   module Cloud
     class Storage
+      attr_reader :document_model
+
       HACKNEY_BUCKET_DOCS = Rails.application.config_for('cloud_storage')['bucket_docs']
       UPLOADING_CLOUD_STATUS = :uploading
 
@@ -44,9 +46,9 @@ module Hackney
 
       def all_documents(payment_ref: nil)
         if payment_ref.present?
-          document_model.where("JSON_EXTRACT(metadata, '$.payment_ref') = ?", payment_ref).order(created_at: :DESC)
+          document_model.by_payment_ref(payment_ref).exclude_uploaded.order(created_at: :DESC)
         else
-          document_model.where.not(status: :uploaded).order(created_at: :DESC)
+          document_model.exclude_uploaded.order(created_at: :DESC)
         end
       end
 
@@ -63,9 +65,20 @@ module Hackney
         @storage_adapter.upload(bucket_name: bucket_name, content: content, filename: filename)
       end
 
-      private
+      def update_document_status(document:, status:)
+        raise "Invalid document status: #{status}" unless document_model.statuses.include?(status)
 
-      attr_reader :document_model
+        Rails.logger.info "Document ext_message_id #{document.ext_message_id} found with status #{status}"
+        document.status = status
+        document.save!
+
+        message = "Document has been set to #{document.status} - id: #{document.id}, uuid: #{document.uuid}"
+        Rails.logger.info message
+
+        evt = Raven::Event.new(message: message)
+        Raven.send_event(evt) if document.failed?
+        document
+      end
     end
   end
 end

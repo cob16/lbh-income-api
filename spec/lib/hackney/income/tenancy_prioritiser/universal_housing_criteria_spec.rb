@@ -241,6 +241,48 @@ describe Hackney::Income::TenancyPrioritiser::UniversalHousingCriteria, universa
 
         it { is_expected.to be_nil }
       end
+
+      context 'with Stage 1 and Stage 2 letters' do
+        let(:comment) { '' }
+
+        before do
+          create_uh_action(
+            tenancy_ref: tenancy_ref,
+            code: Hackney::Tenancy::ActionCodes::INCOME_COLLECTION_LETTER_1_UH,
+            date: 14.days.ago
+          )
+          create_uh_action(
+            tenancy_ref: tenancy_ref,
+            code: Hackney::Tenancy::ActionCodes::INCOME_COLLECTION_LETTER_2_UH,
+            date: Date.today,
+            comment: comment
+          )
+        end
+
+        context 'when Letter 2 has been sent' do
+          let(:comment) { '    Policy Generated.    ' }
+
+          it 'returns the Letter 2 action' do
+            expect(subject).to eq(Hackney::Tenancy::ActionCodes::INCOME_COLLECTION_LETTER_2_UH)
+          end
+        end
+
+        context 'when Letter 2 has been suggested' do
+          let(:comment) { '     Suggested Action.    ' }
+
+          it 'returns the Letter 1 action' do
+            expect(subject).to eq(Hackney::Tenancy::ActionCodes::INCOME_COLLECTION_LETTER_1_UH)
+          end
+        end
+      end
+    end
+
+    describe '#build_last_communication_sql_query' do
+      it 'contains a Case Insensitive flag' do
+        expect(
+          described_class.build_last_communication_sql_query(column: 'action_code')
+        ).to match(/collate SQL_Latin1_General_CP1_CI_AS LIKE/)
+      end
     end
 
     describe '#last_communciation_date' do
@@ -269,14 +311,38 @@ describe Hackney::Income::TenancyPrioritiser::UniversalHousingCriteria, universa
         it { is_expected.to be(false) }
       end
 
+      context 'when the tenant has a "first check" arrears agreement' do
+        before do
+          create_uh_arrears_agreement(
+            tenancy_ref: tenancy_ref,
+            status: '100',
+            agreement_start_date: Time.zone.now
+          )
+        end
+
+        it { is_expected.to be(true) }
+      end
+
       context 'when the tenant has an active arrears agreement' do
-        before { create_uh_arrears_agreement(tenancy_ref: tenancy_ref, status: '200') }
+        before do
+          create_uh_arrears_agreement(
+            tenancy_ref: tenancy_ref,
+            status: '200',
+            agreement_start_date: Time.zone.now
+          )
+        end
 
         it { is_expected.to be(true) }
       end
 
       context 'when the tenant has a breached arrears agreement' do
-        before { create_uh_arrears_agreement(tenancy_ref: tenancy_ref, status: '300') }
+        before do
+          create_uh_arrears_agreement(
+            tenancy_ref: tenancy_ref,
+            status: '300',
+            agreement_start_date: Time.zone.now
+          )
+        end
 
         it { is_expected.to be(false) }
       end
@@ -359,100 +425,6 @@ describe Hackney::Income::TenancyPrioritiser::UniversalHousingCriteria, universa
         before { create_uh_action(tenancy_ref: tenancy_ref, code: 'NTS', date: Date.today - 32.days) }
 
         it { is_expected.to be(false) }
-      end
-    end
-
-    describe '#payment_amount_delta' do
-      subject { criteria.payment_amount_delta }
-
-      context 'when a tenant has made no payments' do
-        it { is_expected.to be(nil) }
-      end
-
-      context 'when a tenant has made one payment' do
-        before { create_uh_transaction(tenancy_ref: tenancy_ref, type: 'RPY') }
-
-        it { is_expected.to be(nil) }
-      end
-
-      context 'when a tenant has made two payments' do
-        before do
-          create_uh_transaction(tenancy_ref: tenancy_ref, type: 'RPY')
-          create_uh_transaction(tenancy_ref: tenancy_ref, type: 'RPY')
-        end
-
-        it { is_expected.to be(nil) }
-      end
-
-      context 'when a tenant has made three payments of fluctuating amounts' do
-        before do
-          create_uh_transaction(tenancy_ref: tenancy_ref, amount: -25.0, date: Date.today - 1.day, type: 'RPY')
-          create_uh_transaction(tenancy_ref: tenancy_ref, amount: -75.0, date: Date.today - 2.days, type: 'RPY')
-          create_uh_transaction(tenancy_ref: tenancy_ref, amount: -75.0, date: Date.today - 3.days, type: 'RPY')
-        end
-
-        it 'returns the delta between payments' do
-          expect(subject).to eq(50.0)
-        end
-      end
-
-      context 'when a tenant has made three payments of the same amount' do
-        before do
-          create_uh_transaction(tenancy_ref: tenancy_ref, amount: -50.0, date: Date.today - 1.day, type: 'RPY')
-          create_uh_transaction(tenancy_ref: tenancy_ref, amount: -50.0, date: Date.today - 2.days, type: 'RPY')
-          create_uh_transaction(tenancy_ref: tenancy_ref, amount: -50.0, date: Date.today - 3.days, type: 'RPY')
-        end
-
-        it 'returns the delta between payments' do
-          expect(subject).to eq(0.0)
-        end
-      end
-    end
-
-    describe '#payment_date_delta' do
-      subject { criteria.payment_date_delta }
-
-      context 'when a tenant has made no payments' do
-        it { is_expected.to be(nil) }
-      end
-
-      context 'when a tenant has made one payment' do
-        before { create_uh_transaction(tenancy_ref: tenancy_ref, type: 'RPY') }
-
-        it { is_expected.to be(nil) }
-      end
-
-      context 'when a tenant has made two payments' do
-        before do
-          create_uh_transaction(tenancy_ref: tenancy_ref, type: 'RPY')
-          create_uh_transaction(tenancy_ref: tenancy_ref, type: 'RPY')
-        end
-
-        it { is_expected.to be(nil) }
-      end
-
-      context 'when a tenant has made three payments on fluctuating days' do
-        before do
-          create_uh_transaction(tenancy_ref: tenancy_ref, date: Date.today, type: 'RPY')
-          create_uh_transaction(tenancy_ref: tenancy_ref, date: Date.today - 15.days, type: 'RPY')
-          create_uh_transaction(tenancy_ref: tenancy_ref, date: Date.today - 25.days, type: 'RPY')
-        end
-
-        it 'returns the delta between payment dates' do
-          expect(subject).to eq(5)
-        end
-      end
-
-      context 'when a tenant has made three payments an equal amount of time apart' do
-        before do
-          create_uh_transaction(tenancy_ref: tenancy_ref, date: Date.today - 10.days, type: 'RPY')
-          create_uh_transaction(tenancy_ref: tenancy_ref, date: Date.today - 20.days, type: 'RPY')
-          create_uh_transaction(tenancy_ref: tenancy_ref, date: Date.today - 30.days, type: 'RPY')
-        end
-
-        it 'returns the delta between payment dates' do
-          expect(subject).to be_zero
-        end
       end
     end
 
@@ -580,16 +552,17 @@ describe Hackney::Income::TenancyPrioritiser::UniversalHousingCriteria, universa
           create_uh_arrears_agreement(
             tenancy_ref: tenancy_ref,
             status: '200',
-            status_entry_date: 2.days.ago
+            agreement_start_date: 2.days.ago
           )
           create_uh_arrears_agreement(
             tenancy_ref: tenancy_ref,
             status: '200',
-            status_entry_date: yesterday
+            agreement_start_date: yesterday
           )
           create_uh_arrears_agreement(
             tenancy_ref: tenancy_ref,
-            status: '300'
+            status: '300',
+            agreement_start_date: Date.today
           )
         end
 
@@ -621,7 +594,7 @@ describe Hackney::Income::TenancyPrioritiser::UniversalHousingCriteria, universa
         end
       end
 
-      context 'when there is a breache of agreement' do
+      context 'when there is a breach of agreement' do
         before do
           create_uh_arrears_agreement(
             tenancy_ref: tenancy_ref,
@@ -649,6 +622,45 @@ describe Hackney::Income::TenancyPrioritiser::UniversalHousingCriteria, universa
       context 'when there is an expected balance set in an agreement' do
         it 'can retrun the expected balance of the account' do
           expect(subject.expected_balance).to eq(expected_balance)
+        end
+      end
+    end
+
+    describe '#most_recent_agreement' do
+      let(:start_date) { Date.new(2020, 1, 1) }
+
+      context 'when a breached agreement exists' do
+        before do
+          create_uh_arrears_agreement(tenancy_ref: tenancy_ref, status: 300, agreement_start_date: start_date)
+        end
+
+        it 'can return the breach status' do
+          expect(subject.most_recent_agreement[:breached]).to eq(true)
+        end
+
+        it 'can return the agreement start date' do
+          expect(subject.most_recent_agreement[:start_date]).to eq(start_date)
+        end
+      end
+
+      context 'when a first check agreement exists' do
+        before do
+          create_uh_arrears_agreement(tenancy_ref: tenancy_ref, status: 100, agreement_start_date: start_date)
+        end
+
+        it 'is not in breach' do
+          expect(subject.most_recent_agreement[:breached]).to eq(false)
+        end
+      end
+
+      context 'when there are two agreements' do
+        before do
+          create_uh_arrears_agreement(tenancy_ref: tenancy_ref, status: 300, agreement_start_date: 2.months.ago)
+          create_uh_arrears_agreement(tenancy_ref: tenancy_ref, status: 200, agreement_start_date: 1.month.ago)
+        end
+
+        it 'returns the most recent agreement' do
+          expect(subject.most_recent_agreement[:breached]).to eq(false)
         end
       end
     end

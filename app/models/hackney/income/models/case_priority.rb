@@ -4,7 +4,9 @@ module Hackney
       class CasePriority < ApplicationRecord
         enum classification: {
           no_action: 0, send_letter_two: 1, send_letter_one: 2, send_first_SMS: 3, send_NOSP: 4,
-          apply_for_court_date: 6, send_court_warning_letter: 7, send_court_agreement_breach_letter: 8
+          apply_for_court_date: 6, send_court_warning_letter: 7, update_court_outcome_action: 8,
+          send_court_agreement_breach_letter: 9, send_informal_agreement_breach_letter: 10,
+          court_breach_visit: 11, review_failed_letter: 13, apply_for_outright_possession_warrant: 14
         }
 
         validates :case_id, presence: true, uniqueness: true
@@ -12,6 +14,8 @@ module Hackney
         before_validation :create_case_with_tenancy_ref
 
         belongs_to :case, class_name: 'Hackney::Income::Models::Case', optional: true
+
+        scope :by_payment_ref, ->(payment_ref) { where(payment_ref: payment_ref) }
 
         def tenancy_ref
           # TODO: please do not use tenancy_ref has been moved to Hackney::Income::Models::Case'
@@ -28,14 +32,6 @@ module Hackney
 
         def self.not_paused
           where('is_paused_until < ? OR is_paused_until is null', Date.today)
-        end
-
-        def self.criteria_for_green_in_arrears
-          where(priority_band: 'green')
-            .where('days_in_arrears >= ?', 5)
-            .where('balance >= ?', 10.00)
-            .where(active_agreement: false)
-            .not_paused
         end
       end
     end

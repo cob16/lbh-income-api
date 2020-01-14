@@ -10,29 +10,15 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_12_20_135058) do
+ActiveRecord::Schema.define(version: 2020_01_06_154443) do
 
   create_table "case_priorities", force: :cascade do |t|
     t.string "tenancy_ref"
-    t.string "priority_band"
-    t.integer "priority_score"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.decimal "balance_contribution"
-    t.decimal "days_in_arrears_contribution"
-    t.decimal "days_since_last_payment_contribution"
-    t.decimal "payment_amount_delta_contribution"
-    t.decimal "payment_date_delta_contribution"
-    t.decimal "number_of_broken_agreements_contribution"
-    t.decimal "active_agreement_contribution"
-    t.decimal "broken_court_order_contribution"
-    t.decimal "nosp_served_contribution"
-    t.decimal "active_nosp_contribution"
     t.decimal "balance", precision: 10, scale: 2
     t.integer "days_in_arrears"
     t.integer "days_since_last_payment"
-    t.decimal "payment_amount_delta"
-    t.integer "payment_date_delta"
     t.integer "number_of_broken_agreements"
     t.boolean "active_agreement"
     t.boolean "broken_court_order"
@@ -60,6 +46,7 @@ ActiveRecord::Schema.define(version: 2019_12_20_135058) do
     t.datetime "latest_active_agreement_date"
     t.datetime "breach_agreement_date"
     t.decimal "expected_balance"
+    t.string "payment_ref"
     t.index ["assigned_user_id"], name: "index_case_priorities_on_assigned_user_id"
     t.index ["case_id"], name: "index_case_priorities_on_case_id"
     t.index ["tenancy_ref"], name: "index_case_priorities_on_tenancy_ref", unique: true

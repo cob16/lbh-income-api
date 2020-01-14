@@ -37,15 +37,15 @@ module Stubs
     end
 
     def latest_active_agreement_date
-      attributes[:latest_active_agreement_date] || 20.years.from_now.to_date
+      attributes[:latest_active_agreement_date]
     end
 
     def breach_agreement_date
-      attributes[:breach_agreement_date] || 10.years.from_now.to_date
+      attributes[:breach_agreement_date]
     end
 
     def balance
-      attributes[:balance] || 100.00
+      attributes[:balance]
     end
 
     def expected_balance
@@ -53,7 +53,7 @@ module Stubs
     end
 
     def weekly_rent
-      attributes[:weekly_rent] || 5.0
+      attributes[:weekly_rent]
     end
 
     def nosp_served_date
@@ -65,7 +65,7 @@ module Stubs
     end
 
     def courtdate
-      attributes[:courtdate] || 10.years.ago.to_date
+      attributes[:courtdate]
     end
 
     def eviction_date
@@ -85,7 +85,7 @@ module Stubs
     end
 
     def active_agreement?
-      attributes[:active_agreement]
+      attributes[:most_recent_agreement] || attributes[:active_agreement]
     end
 
     def nosp_served?
@@ -101,12 +101,12 @@ module Stubs
       attributes[:number_of_broken_agreements] || 0
     end
 
-    def payment_amount_delta
-      attributes[:payment_amount_delta]
+    def payment_ref
+      attributes[:payment_ref]
     end
 
-    def payment_date_delta
-      attributes[:payment_date_delta]
+    def most_recent_agreement
+      attributes[:most_recent_agreement]
     end
 
     private

@@ -90,7 +90,9 @@ module Hackney
         end
 
         def active_agreement?
-          attributes.fetch(:active_agreements_count) > 0
+          return false if attributes[:most_recent_agreement_status].blank?
+
+          attributes[:most_recent_agreement_status].squish != Hackney::Income::BREACHED_ARREARS_AGREEMENT_STATUS
         end
 
         def number_of_broken_agreements
@@ -103,30 +105,6 @@ module Hackney
 
         def active_nosp?
           attributes.fetch(:nosps_in_last_month) > 0
-        end
-
-        def payment_amount_delta
-          payment_amounts = [
-            attributes.fetch(:payment_1_value),
-            attributes.fetch(:payment_2_value),
-            attributes.fetch(:payment_3_value)
-          ].compact.map(&:to_f)
-
-          return nil if payment_amounts.count < 3
-
-          (payment_amounts[0] - payment_amounts[1]) - (payment_amounts[1] - payment_amounts[2])
-        end
-
-        def payment_date_delta
-          payment_dates = [
-            attributes.fetch(:payment_1_date),
-            attributes.fetch(:payment_2_date),
-            attributes.fetch(:payment_3_date)
-          ].compact
-
-          return nil if payment_dates.count < 3
-
-          day_difference(payment_dates[0], payment_dates[1]) - day_difference(payment_dates[1], payment_dates[2])
         end
 
         # FIXME: implementation needs confirming, will return to later
@@ -150,9 +128,38 @@ module Hackney
           attributes[:expected_balance]
         end
 
+        def payment_ref
+          attributes[:payment_ref]
+        end
+
+        def most_recent_agreement
+          {
+            breached: !active_agreement?,
+            start_date: attributes[:most_recent_agreement_date]
+          }
+        end
+
         def self.format_action_codes_for_sql
           Hackney::Tenancy::ActionCodes::FOR_UH_CRITERIA_SQL.map { |action_code| "('#{action_code}')" }
                                                             .join(', ')
+        end
+
+        def self.build_last_communication_sql_query(column:)
+          letter_2_sent_action_comment_text = 'Policy generated'
+
+          <<-SQL
+            SELECT TOP 1 #{column}
+            FROM araction WITH (NOLOCK)
+            WHERE tag_ref = @TenancyRef
+            AND (
+              action_code IN (SELECT communication_types FROM @CommunicationTypes) OR
+              (
+                action_code = '#{Hackney::Tenancy::ActionCodes::INCOME_COLLECTION_LETTER_2_UH}' AND
+                action_comment collate SQL_Latin1_General_CP1_CI_AS LIKE '%#{letter_2_sent_action_comment_text}%'
+              )
+            )
+            ORDER BY action_date DESC
+          SQL
         end
 
         def self.build_sql
@@ -201,7 +208,9 @@ module Hackney
             DECLARE @WeeklyRent NUMERIC(9, 2) = (
               SELECT rent FROM [dbo].[tenagree] WHERE tag_ref = @TenancyRef
             )
-
+            DECLARE @PaymentRef VARCHAR(20) = (
+              SELECT u_saff_rentacc FROM [dbo].[tenagree] WHERE tag_ref = @TenancyRef
+            )
             DECLARE @PatchCode VARCHAR(3) = (
               SELECT arr_patch
               FROM [dbo].[property]
@@ -214,20 +223,15 @@ module Hackney
             DECLARE @BreachedAgreementsCount INT = (SELECT COUNT(tag_ref) FROM [dbo].[arag] WITH (NOLOCK) WHERE tag_ref = @TenancyRef AND arag_status = @BreachedArrearsAgreementStatus)
             DECLARE @NospsInLastYear INT = (SELECT COUNT(tag_ref) FROM araction WITH (NOLOCK) WHERE tag_ref = @TenancyRef AND action_code = @NospActionDiaryCode AND action_date >= CONVERT(date, DATEADD(year, -1, GETDATE())))
             DECLARE @NospsInLastMonth INT = (SELECT COUNT(tag_ref) FROM araction WITH (NOLOCK) WHERE tag_ref = @TenancyRef AND action_code = @NospActionDiaryCode AND action_date >= CONVERT(date, DATEADD(month, -1, GETDATE())))
+
             DECLARE @LastCommunicationAction VARCHAR(60) = (
-              SELECT TOP 1 action_code
-              FROM araction WITH (NOLOCK)
-              WHERE tag_ref = @TenancyRef
-              AND action_code IN (SELECT communication_types FROM @CommunicationTypes)
-              ORDER BY action_date DESC
+              #{build_last_communication_sql_query(column: 'action_code')}
             )
+
             DECLARE @LastCommunicationDate SMALLDATETIME = (
-              SELECT TOP 1 action_date
-              FROM araction WITH (NOLOCK)
-              WHERE tag_ref = @TenancyRef
-              AND action_code IN (SELECT communication_types FROM @CommunicationTypes)
-              ORDER BY action_date DESC
+              #{build_last_communication_sql_query(column: 'action_date')}
             )
+
             DECLARE @UniversalCredit SMALLDATETIME = (
               SELECT TOP 1 action_date
               FROM araction
@@ -257,12 +261,25 @@ module Hackney
               ORDER BY action_date DESC
             )
             DECLARE @LatestActiveAgreementDate SMALLDATETIME = (
-              SELECT TOP 1 arag_statusdate
+              SELECT TOP 1 arag_startdate
               FROM [dbo].[arag]
               WHERE tag_ref = @TenancyRef
               AND arag_status = @ActiveArrearsAgreementStatus
-              ORDER BY arag_statusdate DESC
+              ORDER BY arag_startdate DESC
             )
+            DECLARE @MostRecentAgreementDate SMALLDATETIME = (
+              SELECT TOP 1 arag_startdate
+              FROM [dbo].[arag]
+              WHERE tag_ref = @TenancyRef
+              ORDER BY arag_startdate DESC
+            )
+            DECLARE @MostRecentAgreementStatus CHAR(10) = (
+              SELECT TOP 1 arag_status
+              FROM [dbo].[arag]
+              WHERE tag_ref = @TenancyRef
+              ORDER BY arag_startdate DESC
+            )
+
             DECLARE @BreachAgreementDate SMALLDATETIME = (
               SELECT TOP 1 arag_statusdate
               FROM [dbo].[arag]
@@ -287,13 +304,6 @@ module Hackney
               SET @CurrentTransactionRow = @CurrentTransactionRow + 1
             END
 
-            DECLARE @Payment1Value NUMERIC(9, 2) = (SELECT real_value FROM (SELECT ROW_NUMBER() OVER(ORDER BY post_date DESC) as row, real_value FROM rtrans WITH (NOLOCK) WHERE tag_ref = @TenancyRef AND trans_type IN (SELECT * FROM @PaymentTypes)) t WHERE row = 1)
-            DECLARE @Payment1Date SMALLDATETIME = (SELECT post_date FROM (SELECT ROW_NUMBER() OVER(ORDER BY post_date DESC) as row, post_date FROM rtrans WITH (NOLOCK) WHERE tag_ref = @TenancyRef AND trans_type IN (SELECT * FROM @PaymentTypes)) t WHERE row = 1)
-            DECLARE @Payment2Value NUMERIC(9, 2) = (SELECT real_value FROM (SELECT ROW_NUMBER() OVER(ORDER BY post_date DESC) as row, real_value FROM rtrans WITH (NOLOCK) WHERE tag_ref = @TenancyRef AND trans_type IN (SELECT * FROM @PaymentTypes)) t WHERE row = 2)
-            DECLARE @Payment2Date SMALLDATETIME = (SELECT post_date FROM (SELECT ROW_NUMBER() OVER(ORDER BY post_date DESC) as row, post_date FROM rtrans WITH (NOLOCK) WHERE tag_ref = @TenancyRef AND trans_type IN (SELECT * FROM @PaymentTypes)) t WHERE row = 2)
-            DECLARE @Payment3Value NUMERIC(9, 2) = (SELECT real_value FROM (SELECT ROW_NUMBER() OVER(ORDER BY post_date DESC) as row, real_value FROM rtrans WITH (NOLOCK) WHERE tag_ref = @TenancyRef AND trans_type IN (SELECT * FROM @PaymentTypes)) t WHERE row = 3)
-            DECLARE @Payment3Date SMALLDATETIME = (SELECT post_date FROM (SELECT ROW_NUMBER() OVER(ORDER BY post_date DESC) as row, post_date FROM rtrans WITH (NOLOCK) WHERE tag_ref = @TenancyRef AND trans_type IN (SELECT * FROM @PaymentTypes)) t WHERE row = 3)
-
             SELECT
               @CurrentBalance as current_balance,
               @WeeklyRent as weekly_rent,
@@ -310,12 +320,6 @@ module Hackney
               @CourtOutcome as court_outcome,
               @LatestActiveAgreementDate as latest_active_agreement_date,
               @EvictionDate as eviction_date,
-              @Payment1Value as payment_1_value,
-              @Payment1Date as payment_1_date,
-              @Payment2Value as payment_2_value,
-              @Payment2Date as payment_2_date,
-              @Payment3Value as payment_3_value,
-              @Payment3Date as payment_3_date,
               @LastCommunicationAction as last_communication_action,
               @LastCommunicationDate as last_communication_date,
               @UniversalCredit as universal_credit,
@@ -323,7 +327,10 @@ module Hackney
               @UCDirectPaymentRequested as uc_direct_payment_requested,
               @UCDirectPaymentReceived as uc_direct_payment_received,
               @BreachAgreementDate as breach_agreement_date,
-              @ExpectedBalance as expected_balance
+              @ExpectedBalance as expected_balance,
+              @PaymentRef as payment_ref,
+              @MostRecentAgreementDate as most_recent_agreement_date,
+              @MostRecentAgreementStatus as most_recent_agreement_status
           SQL
         end
 

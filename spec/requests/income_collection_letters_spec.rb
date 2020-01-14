@@ -53,9 +53,7 @@ RSpec.describe 'Income Collection Letters', type: :request do
             'address_line2' => 'Lordship Road',
             'address_line3' => 'London',
             'address_line4' => '',
-            'address_name_number' => '',
             'address_post_code' => postcode,
-            'address_preamble' => '',
             'property_ref' => property_ref,
             'forename' => 'Frank',
             'surname' => 'Enstein',
@@ -116,7 +114,9 @@ RSpec.describe 'Income Collection Letters', type: :request do
   def create_valid_uh_records_for_an_income_letter
     create_uh_property(
       property_ref: property_ref,
-      post_code: postcode
+      post_code: postcode,
+      post_preamble: '12 Acacia House',
+      post_desig: ''
     )
     create_uh_tenancy_agreement(
       tenancy_ref: tenancy_ref,

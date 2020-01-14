@@ -63,7 +63,7 @@ module Hackney
       end
 
       def request_precompiled_letter_state
-        document_store = Hackney::Cloud::Document
+        case_priority_store = Hackney::Income::Models
         Hackney::Notification::RequestPrecompiledLetterState.new(
           notification_gateway: notifications_gateway,
           add_action_diary_and_sync_case_usecase: add_action_diary_and_sync_case,
@@ -73,11 +73,10 @@ module Hackney
 
       def enqueue_request_all_precompiled_letter_states
         enqueue_job = Hackney::Income::Jobs::RequestPrecompiledLetterStateJob
-        document_store = Hackney::Cloud::Document
 
         Hackney::Notification::EnqueueRequestAllPrecompiledLetterStates.new(
           enqueue_job: enqueue_job,
-          document_store: document_store
+          document_store: cloud_storage
         )
       end
 
@@ -168,13 +167,6 @@ module Hackney
           automate_sending_letters: automate_sending_letters,
           prioritisation_gateway: prioritisation_gateway,
           stored_tenancies_gateway: stored_tenancies_gateway
-        )
-      end
-
-      # intended to only be used for rake task please delete when no longer required
-      def show_green_in_arrears
-        Hackney::Income::ShowTenanciesForCriteriaGreenInArrears.new(
-          sql_tenancies_for_messages_gateway: sql_tenancies_matching_criteria_gateway
         )
       end
 
