@@ -17,6 +17,10 @@ module Hackney
           wanted_action ||= :no_action if @criteria.courtdate&.future?
           wanted_action ||= :no_action if @case_priority.paused?
 
+          wanted_action ||= :apply_for_outright_possession_warrant if apply_for_outright_possession_warrant?
+
+          wanted_action ||= :send_court_agreement_breach_letter if send_court_agreement_breach_letter?
+          wanted_action ||= :send_informal_agreement_breach_letter if send_informal_agreement_breach_letter?
           wanted_action ||= :court_breach_visit if court_breach_visit?
 
           wanted_action ||= breach_letter_action
@@ -44,6 +48,25 @@ module Hackney
           raise ArgumentError, "Tried to classify a case as #{wanted_action}, but this is not on the list of valid classifications."
         end
 
+        def apply_for_outright_possession_warrant?
+          return false if @criteria.active_agreement?
+          return false if @criteria.courtdate.blank?
+          return false if @criteria.courtdate.future?
+          return false if @criteria.courtdate < 3.months.ago
+          @criteria.court_outcome == Hackney::Tenancy::ActionCodes::OUTRIGHT_POSSESSION_ORDER
+        end
+
+        def send_informal_agreement_breach_letter?
+          return false if @criteria.balance.blank?
+          return false if @criteria.number_of_broken_agreements.zero?
+          return false if @criteria.active_agreement? == true
+          return false if @criteria.balance >= @criteria.expected_balance
+          return false if @criteria.courtdate.present? && @criteria.courtdate < Date.today
+          return false if @criteria.breach_agreement_date + 3.days > Date.today
+          return false unless @criteria.last_communication_action.in?(valid_actions_for_court_agreement_breach_letter_to_progress)
+          true
+        end
+
         def court_breach_visit?
           @criteria.last_communication_action.in?(court_breach_letter_actions) && last_communication_newer_than?(3.months.ago)
         end
@@ -58,6 +81,21 @@ module Hackney
           return false if @criteria.courtdate.future?
 
           @criteria.court_outcome.blank?
+        end
+
+        def send_court_agreement_breach_letter?
+          return false if @criteria.balance.blank?
+          return false if @criteria.number_of_broken_agreements < 1
+          return false if @criteria.active_agreement? == true
+          return false if @criteria.balance >= @criteria.expected_balance
+          return false if @criteria.latest_active_agreement_date.blank?
+          return false if @criteria.courtdate.blank?
+          return false if @criteria.latest_active_agreement_date <= @criteria.courtdate
+          return false if @criteria.breach_agreement_date.present? && @criteria.breach_agreement_date + 3.days > Date.today
+          return false if @criteria.balance >= @criteria.expected_balance
+          return false unless @criteria.court_outcome.in?(active_agreement_court_outcomes)
+          return false unless @criteria.last_communication_action.in?(valid_actions_for_court_agreement_breach_letter_to_progress)
+          true
         end
 
         def breach_letter_action
@@ -78,6 +116,7 @@ module Hackney
         end
 
         def send_sms?
+          return false if @criteria.balance.blank?
           return false if @criteria.last_communication_action.present?
           return false if @criteria.nosp_served?
           return false if @criteria.active_agreement?
@@ -86,6 +125,9 @@ module Hackney
         end
 
         def send_letter_one?
+          return false if @criteria.balance.blank?
+          return false if @criteria.weekly_rent.blank?
+
           return false if @criteria.nosp_served?
           return false if @criteria.active_agreement?
 
@@ -96,6 +138,9 @@ module Hackney
         end
 
         def send_letter_two?
+          return false if @criteria.balance.blank?
+          return false if @criteria.weekly_rent.blank?
+
           return false if @criteria.active_agreement?
           return false if @criteria.nosp_served?
 
@@ -108,6 +153,9 @@ module Hackney
         end
 
         def send_nosp?
+          return false if @criteria.balance.blank?
+          return false if @criteria.weekly_rent.blank?
+
           return false if @criteria.active_agreement?
           return false if @criteria.nosp_served?
 
@@ -123,6 +171,9 @@ module Hackney
         end
 
         def send_court_warning_letter?
+          return false if @criteria.balance.blank?
+          return false if @criteria.weekly_rent.blank?
+
           return false if @criteria.active_agreement?
 
           return false if @criteria.last_communication_action.in?(after_court_warning_letter_actions)
@@ -130,11 +181,13 @@ module Hackney
           return false unless @criteria.nosp_served?
           return false if @criteria.nosp_served_date.blank?
           return false if @criteria.nosp_served_date > 28.days.ago.to_date
-
           @criteria.balance >= arrear_accumulation_by_number_weeks(4)
         end
 
         def apply_for_court_date?
+          return false if @criteria.balance.blank?
+          return false if @criteria.weekly_rent.blank?
+
           return false unless @criteria.nosp_served?
 
           return false unless @criteria.last_communication_action.in?(valid_actions_for_apply_for_court_date_to_progress)
