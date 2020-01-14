@@ -141,7 +141,7 @@ module Hackney
         end
 
         def payment_ref
-          attributes[:payment_ref]
+          attributes[:payment_ref].strip
         end
 
         def most_recent_agreement
