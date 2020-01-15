@@ -72,6 +72,20 @@ describe 'Send Letter One Rule', type: :feature do
       eviction_date: '',
       courtdate: nil
     },
+    # send alt letter , four days ago
+    {
+      outcome: :no_action,
+      nosps_in_last_year: 0,
+      nosp_expiry_date: '',
+      weekly_rent: 5,
+      balance: 6.0,
+      is_paused_until: '',
+      active_agreement: false,
+      last_communication_date: 4.days.ago.to_date,
+      last_communication_action: Hackney::Tenancy::ActionCodes::S0A_ALTERNATIVE_LETTER,
+      eviction_date: '',
+      courtdate: nil
+    },
     # active_agreement test
     {
       outcome: :no_action,
