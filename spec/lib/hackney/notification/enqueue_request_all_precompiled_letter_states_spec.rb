@@ -4,7 +4,8 @@ describe Hackney::Notification::EnqueueRequestAllPrecompiledLetterStates do
   subject { described_class.new(enqueue_job: enqueue_job, document_store: document_store) }
 
   let(:enqueue_job) { Hackney::Income::Jobs::RequestPrecompiledLetterStateJob }
-  let(:document_store) { Hackney::Cloud::Document }
+  let(:document_store) { Hackney::Cloud::Storage.new(double('Cloud Adapter'), document_model) }
+  let(:document_model) { Hackney::Cloud::Document }
 
   before do
     Timecop.freeze(Time.local(1999))
@@ -62,8 +63,8 @@ describe Hackney::Notification::EnqueueRequestAllPrecompiledLetterStates do
       it { expect(subject.documents).to include(queued) }
 
       it 'all statuses should be checked' do
-        document_store.statuses.each do |status|
-          expect(document_store.find_by!(status: status)).to be_a document_store
+        document_model.statuses.each do |status|
+          expect(document_model.find_by!(status: status)).to be_a document_model
         end
       end
     end

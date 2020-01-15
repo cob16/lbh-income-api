@@ -10,9 +10,7 @@ module Hackney
       def initialize(enqueue_job: Hackney::Income::Jobs::RequestPrecompiledLetterStateJob, document_store: Hackney::Cloud::Document)
         self.enqueue_job = enqueue_job
         self.document_store = document_store
-        self.documents =
-          document_store.where('updated_at >= ?', Time.now - 7.days)
-                        .where.not(status: %i[nil validation-failed received])
+        self.documents = document_store.documents_to_update_status(time: 7.days.ago)
       end
 
       def execute

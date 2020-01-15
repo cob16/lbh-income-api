@@ -52,6 +52,11 @@ module Hackney
         end
       end
 
+      def documents_to_update_status(time:)
+        document_model.where('updated_at >= ?', time)
+                      .where.not(status: %i[nil validation-failed received])
+      end
+
       def upload(bucket_name, content, filename)
         if content.is_a? StringIO
           sio = Tempfile.open(filename, 'tmp/')
