@@ -106,7 +106,7 @@ module Hackney
           return false if @criteria.last_communication_action.in?(after_letter_one_actions) &&
                           last_communication_newer_than?(3.months.ago)
 
-          @criteria.balance >= arrear_accumulation_by_number_weeks(1)
+          balance_is_in_arrears_by_number_of_weeks?(1)
         end
 
         def send_letter_two?
@@ -121,7 +121,7 @@ module Hackney
           return false if last_communication_newer_than?(1.week.ago)
           return false if last_communication_older_than?(3.months.ago)
 
-          @criteria.balance >= arrear_accumulation_by_number_weeks(3)
+          balance_is_in_arrears_by_number_of_weeks?(3)
         end
 
         def send_nosp?
@@ -139,7 +139,7 @@ module Hackney
             return false if last_communication_newer_than?(1.week.ago)
           end
 
-          @criteria.balance >= arrear_accumulation_by_number_weeks(4)
+          balance_is_in_arrears_by_number_of_weeks?(4)
         end
 
         def send_court_warning_letter?
@@ -153,7 +153,7 @@ module Hackney
           return false unless @criteria.nosp_served?
           return false if @criteria.nosp_served_date.blank?
           return false if @criteria.nosp_served_date > 28.days.ago.to_date
-          @criteria.balance >= arrear_accumulation_by_number_weeks(4)
+          balance_is_in_arrears_by_number_of_weeks?(4)
         end
 
         def apply_for_court_date?
@@ -169,7 +169,7 @@ module Hackney
 
           return false if @criteria.courtdate.present? && @criteria.courtdate > @criteria.last_communication_date
 
-          @criteria.balance >= arrear_accumulation_by_number_weeks(4)
+          balance_is_in_arrears_by_number_of_weeks?(4)
         end
 
         def last_communication_older_than?(date)
@@ -178,6 +178,10 @@ module Hackney
 
         def last_communication_newer_than?(date)
           @criteria.last_communication_date >= date.to_date
+        end
+
+        def balance_is_in_arrears_by_number_of_weeks?(weeks)
+          @criteria.balance > arrear_accumulation_by_number_weeks(weeks)
         end
 
         def arrear_accumulation_by_number_weeks(weeks)
