@@ -67,7 +67,8 @@ module Hackney
         Hackney::Notification::RequestPrecompiledLetterState.new(
           notification_gateway: notifications_gateway,
           add_action_diary_and_sync_case_usecase: add_action_diary_and_sync_case,
-          document_store: document_store
+          case_priority_store: case_priority_store,
+          document_store: cloud_storage
         )
       end
 

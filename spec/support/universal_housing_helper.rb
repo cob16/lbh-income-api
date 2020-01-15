@@ -140,7 +140,8 @@ module UniversalHousingHelper
   end
 
   def create_uh_action(tenancy_ref:, code:, date:, comment: '')
-    Hackney::UniversalHousing::Client.connection[:araction].insert(
+    table = Hackney::UniversalHousing::Client.connection[:araction]
+    table.insert(
       tag_ref: tenancy_ref,
       action_code: code,
       action_date: date,
