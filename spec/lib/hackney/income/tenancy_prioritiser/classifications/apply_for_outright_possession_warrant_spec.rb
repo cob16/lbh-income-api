@@ -5,10 +5,14 @@ describe 'Apply for Outright Possession Warrant Rule examples' do
     outcome: :apply_for_outright_possession_warrant,
     active_agreement: false,
     courtdate: 1.month.ago,
-    court_outcome: 'OUT'
+    court_outcome: 'OPD'
   }
   examples = [
     base_example,
+    base_example.merge(
+      desription: 'when the court outcome is outright possession forthright',
+      court_outcome: 'OPF'
+    ),
     base_example.merge(
       desription: 'when the court date is in the future',
       outcome: :no_action,

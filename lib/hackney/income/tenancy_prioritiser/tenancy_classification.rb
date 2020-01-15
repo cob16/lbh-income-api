@@ -51,7 +51,7 @@ module Hackney
           return false if @criteria.courtdate.blank?
           return false if @criteria.courtdate.future?
           return false if @criteria.courtdate < 3.months.ago
-          @criteria.court_outcome == Hackney::Tenancy::ActionCodes::OUTRIGHT_POSSESSION_ORDER
+          @criteria.court_outcome.in?(outright_possession_court_outcome_codes)
         end
 
         def court_breach_visit?
@@ -248,6 +248,13 @@ module Hackney
             Hackney::Tenancy::ActionCodes::ADJOURNED_ON_TERMS_COURT_OUTCOME,
             Hackney::Tenancy::ActionCodes::POSTPONED_POSSESSIOON_COURT_OUTCOME,
             Hackney::Tenancy::ActionCodes::SUSPENDED_POSSESSION_COURT_OUTCOME
+          ]
+        end
+
+        def outright_possession_court_outcome_codes
+          [
+            Hackney::Tenancy::CourtOutcomeCodes::OUTRIGHT_POSSESSION_WITH_DATE,
+            Hackney::Tenancy::CourtOutcomeCodes::OUTRIGHT_POSSESSION_FORTHWITH
           ]
         end
       end
