@@ -30,6 +30,7 @@ module Hackney
 
       PRE_NOSP_WARNING_LETTER_SENT = 'IC3'.freeze
       COURT_WARNING_LETTER_SENT = 'IC4'.freeze
+
       COURT_BREACH_LETTER_SENT = 'CBL'.freeze
 
       FIRST_FTA_LETTER_SENT = 'C'.freeze

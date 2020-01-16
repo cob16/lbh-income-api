@@ -20,14 +20,16 @@ module Hackney
           wanted_action ||= :apply_for_outright_possession_warrant if apply_for_outright_possession_warrant?
 
           wanted_action ||= :court_breach_visit if court_breach_visit?
+          wanted_action ||= :court_breach_no_payment if court_breach_no_payment?
 
-          wanted_action ||= breach_letter_action
+          wanted_action ||= :send_court_agreement_breach_letter if court_agreement_letter_action?
 
           wanted_action ||= :send_court_warning_letter if send_court_warning_letter?
           wanted_action ||= :apply_for_court_date if apply_for_court_date?
           wanted_action ||= :update_court_outcome_action if update_court_outcome_action?
 
           wanted_action ||= :send_NOSP if send_nosp?
+
           wanted_action ||= :send_letter_two if send_letter_two?
           wanted_action ||= :send_letter_one if send_letter_one?
           wanted_action ||= :send_first_SMS if send_sms?
@@ -51,16 +53,31 @@ module Hackney
           return false if @criteria.courtdate.blank?
           return false if @criteria.courtdate.future?
           return false if @criteria.courtdate < 3.months.ago
-          @criteria.court_outcome.in?(outright_possession_court_outcome_codes)
-        end
 
-        def court_breach_visit?
-          @criteria.last_communication_action.in?(court_breach_letter_actions) && last_communication_newer_than?(3.months.ago)
+          @criteria.court_outcome.in?(outright_possession_court_outcome_codes)
         end
 
         def review_failed_letter?
           return false if @documents.empty?
           @documents.most_recent.failed? && @documents.most_recent.income_collection?
+        end
+
+        def court_breach_visit?
+          return false if @criteria.courtdate.blank?
+          return false unless court_breach_agreement?
+
+          @criteria.last_communication_action.in?(court_breach_letter_actions) &&
+            last_communication_older_than?(7.days.ago) &&
+            last_communication_newer_than?(3.months.ago)
+        end
+
+        def court_breach_no_payment?
+          return false if @criteria.courtdate.blank?
+          return false unless court_breach_agreement?
+          return false if @criteria.days_since_last_payment.to_i < 8
+
+          @criteria.last_communication_action.in?(valid_actions_for_court_breach_no_payment) &&
+            last_communication_older_than?(1.week.ago)
         end
 
         def update_court_outcome_action?
@@ -70,21 +87,27 @@ module Hackney
           @criteria.court_outcome.blank?
         end
 
-        def breach_letter_action
-          return if @criteria.most_recent_agreement.blank?
-          return if @criteria.most_recent_agreement[:start_date].blank?
-          return unless @criteria.most_recent_agreement[:breached]
+        def court_agreement_letter_action?
+          return false if @criteria.last_communication_action.in?([
+            Hackney::Tenancy::ActionCodes::COURT_BREACH_LETTER_SENT,
+            Hackney::Tenancy::ActionCodes::VISIT_MADE
+          ])
 
-          return :send_informal_agreement_breach_letter if @criteria.courtdate.blank?
+          court_breach_agreement?
+        end
 
-          court_date_after_agreement = @criteria.courtdate > @criteria.most_recent_agreement[:start_date]
-          agreement_months_after_court_date = @criteria.courtdate + 3.months < @criteria.most_recent_agreement[:start_date]
+        def breached_agreement?
+          return false if @criteria.most_recent_agreement.blank?
+          return false if @criteria.most_recent_agreement[:start_date].blank?
 
-          if court_date_after_agreement || agreement_months_after_court_date
-            :send_informal_agreement_breach_letter
-          else
-            :send_court_agreement_breach_letter
-          end
+          @criteria.most_recent_agreement[:breached]
+        end
+
+        def court_breach_agreement?
+          return false unless breached_agreement?
+          return false if @criteria.courtdate.blank?
+
+          @criteria.most_recent_agreement[:start_date] > @criteria.courtdate
         end
 
         def send_sms?
@@ -194,6 +217,12 @@ module Hackney
           ]
         end
 
+        def valid_actions_for_court_breach_no_payment
+          [
+            Hackney::Tenancy::ActionCodes::VISIT_MADE
+          ]
+        end
+
         def after_letter_one_actions
           [
             Hackney::Tenancy::ActionCodes::INCOME_COLLECTION_LETTER_1,
@@ -232,12 +261,6 @@ module Hackney
         end
 
         def valid_actions_for_apply_for_court_date_to_progress
-          [
-            Hackney::Tenancy::ActionCodes::COURT_WARNING_LETTER_SENT
-          ]
-        end
-
-        def valid_actions_for_court_agreement_breach_letter_to_progress
           [
             Hackney::Tenancy::ActionCodes::COURT_WARNING_LETTER_SENT
           ]
