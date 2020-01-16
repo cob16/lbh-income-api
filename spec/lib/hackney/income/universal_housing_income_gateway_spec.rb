@@ -33,8 +33,6 @@ describe Hackney::Income::UniversalHousingIncomeGateway, universal: true do
 
   let(:prop_ref) { Random.rand(100).to_s }
 
-  after { truncate_uh_tables }
-
   describe 'get_income_info collects all the info to populate the letter' do
     context 'when payment_ref does not exist' do
       it 'raises an exception' do

@@ -51,8 +51,6 @@ describe Hackney::Income::UniversalHousingLeaseholdGateway, universal: true do
   let(:sc_leasedate) { Faker::Date.forward(10) }
   let(:commencement_of_tenancy) { Faker::Date.backward(10) }
 
-  after { truncate_uh_tables }
-
   describe 'get_tenancy_ref returns a tenancy_ref in exchange for a payment_ref' do
     context 'when payment_ref does not exist' do
       it 'raises an exception' do
