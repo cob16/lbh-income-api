@@ -181,7 +181,9 @@ module Hackney
         end
 
         def balance_is_in_arrears_by_number_of_weeks?(weeks)
-          @criteria.balance > arrear_accumulation_by_number_weeks(weeks)
+          balance_with_1_week_grace = @criteria.balance - @criteria.weekly_gross_rent
+
+          balance_with_1_week_grace >= arrear_accumulation_by_number_weeks(weeks)
         end
 
         def arrear_accumulation_by_number_weeks(weeks)
