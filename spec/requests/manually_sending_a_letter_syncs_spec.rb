@@ -64,12 +64,12 @@ describe 'manually sending a letter causes case priority to sync', type: :reques
     let(:case_priority) { Hackney::Income::Models::CasePriority.last }
 
     context 'with existing income collection letter' do
-      let(:income_collection_letter) {
+      let(:generate_and_store_income_collection_letter) {
         generate_and_store_letter(tenancy_ref: tenancy_ref, template_id: template_id, user: user)
       }
 
       before do
-        income_collection_letter
+        generate_and_store_income_collection_letter
         income_use_case_factory.sync_case_priority.execute(tenancy_ref: tenancy_ref)
 
         stub_action_diary_write(tenancy_ref: tenancy_ref, code: 'IC1', date: Time.zone.now)
@@ -79,10 +79,10 @@ describe 'manually sending a letter causes case priority to sync', type: :reques
         expect(case_priority).to be_send_letter_one
 
         perform_enqueued_jobs(only: Hackney::Income::Jobs::SendLetterToGovNotifyJob) do
-          post messages_letters_send_path, params: { uuid: income_collection_letter[:uuid] }
+          post messages_letters_send_path, params: { uuid: generate_and_store_income_collection_letter[:uuid] }
         end
 
-        document = Hackney::Cloud::Document.find_by(uuid: income_collection_letter[:uuid])
+        document = Hackney::Cloud::Document.find_by(uuid: generate_and_store_income_collection_letter[:uuid])
 
         expect(document).to be_queued
 
