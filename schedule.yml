@@ -7,7 +7,7 @@
 
   tenancy_sync:
     class: TenancySync
-    cron: '0 0 17 * * *' # 5pm everyday
+    cron: '0 30 20 * * *' # 8:30pm everyday
 
   request_all_precompiled_letter_states:
     class: RequestAllPrecompiledLetterStates
