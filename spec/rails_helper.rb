@@ -33,6 +33,11 @@ ActiveRecord::Migration.maintain_test_schema!
 RSpec.configure do |config|
   config.include UniversalHousingHelper, type: :controller
   config.include UniversalHousingHelper, type: :request
+  config.include UniversalHousingHelper, type: :feature
+  config.after(:each, type: :controller) { truncate_uh_tables }
+  config.after(:each, type: :request) { truncate_uh_tables }
+  config.after(:each, type: :feature) { truncate_uh_tables }
+  config.after(:each, type: :universal) { truncate_uh_tables }
   config.include UniversalHousingHelper, universal: true
 
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures

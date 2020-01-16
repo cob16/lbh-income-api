@@ -55,6 +55,47 @@ module UniversalHousingHelper
   end
   # rubocop:enable Metrics/ParameterLists
 
+  def create_valid_uh_records_for_an_income_letter(
+    property_ref:, house_ref:, postcode:, leasedate:
+  )
+
+    create_uh_property(
+      property_ref: property_ref,
+      post_code: postcode,
+      patch_code: 'W02'
+    )
+    create_uh_tenancy_agreement(
+      tenancy_ref: tenancy_ref,
+      u_saff_rentacc: payment_ref,
+      prop_ref: property_ref,
+      house_ref: house_ref,
+      current_balance: current_balance
+    )
+    create_uh_househ(
+      house_ref: house_ref,
+      prop_ref: property_ref,
+      corr_preamble: 'Flat 5 Gingerbread House',
+      corr_desig: '98',
+      corr_postcode: postcode,
+      house_desc: 'Test House Name'
+    )
+    create_uh_postcode(
+      post_code: postcode,
+      aline1: 'Fairytale Lane',
+      aline2: 'Faraway'
+    )
+    create_uh_member(
+      house_ref: house_ref,
+      title: 'Ms',
+      forename: 'Fortuna',
+      surname: 'Curname'
+    )
+    create_uh_rent(
+      prop_ref: property_ref,
+      sc_leasedate: leasedate
+    )
+  end
+
   def create_uh_tenancy_agreement_with_property(
     tenancy_ref:, current_balance: 0.0, prop_ref: '', arr_patch: '', terminated: false, tenure_type: 'SEC', high_action: '111'
   )
@@ -102,12 +143,13 @@ module UniversalHousingHelper
   end
 
   def create_uh_action(tenancy_ref:, code:, date:, comment: '')
-    Hackney::UniversalHousing::Client.connection[:araction].insert(
+    table = Hackney::UniversalHousing::Client.connection[:araction]
+    table.insert(
       tag_ref: tenancy_ref,
       action_code: code,
       action_date: date,
       action_set: 1,
-      action_no: 1,
+      action_no: (table.max(:action_no) || 0) + 1,
       comm_only: false,
       action_comment: comment
     )
@@ -225,6 +267,18 @@ module UniversalHousingHelper
       dob: DateTime.now,
       bank_acc_type: 'BANK'
     )
+  end
+
+  def stub_action_diary_write(tenancy_ref:, code:, date:)
+    stub_request(
+      :post,
+      'http://example.com/api/v2/tenancies/arrears-action-diary'
+    ).to_return(lambda do |_request|
+      # Mock the behaviour of the API by writing directly to UH
+      create_uh_action(tenancy_ref: tenancy_ref, code: code, date: date)
+
+      { status: 200, body: '', headers: {} }
+    end)
   end
 
   def truncate_uh_tables

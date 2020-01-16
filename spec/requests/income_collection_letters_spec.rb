@@ -55,9 +55,9 @@ RSpec.describe 'Income Collection Letters', type: :request do
             'address_line4' => '',
             'address_post_code' => postcode,
             'property_ref' => property_ref,
-            'forename' => 'Test Forename',
-            'surname' => 'Test Surname',
-            'title' => 'Test Title',
+            'forename' => 'Frank',
+            'surname' => 'Enstein',
+            'title' => 'Mr',
             'total_collectable_arrears_balance' => current_balance.to_s
           },
           'template' => {
@@ -128,10 +128,10 @@ RSpec.describe 'Income Collection Letters', type: :request do
     create_uh_househ(
       house_ref: house_ref,
       prop_ref: property_ref,
-      corr_preamble: 'Test',
-      corr_desig: 'Test',
+      corr_preamble: 'Flat 13 Test House',
+      corr_desig: '29',
       corr_postcode: postcode,
-      house_desc: 'Test Name'
+      house_desc: ''
     )
     create_uh_postcode(
       post_code: postcode,
@@ -140,9 +140,9 @@ RSpec.describe 'Income Collection Letters', type: :request do
     )
     create_uh_member(
       house_ref: house_ref,
-      title: 'Test Title',
-      forename: 'Test Forename',
-      surname: 'Test Surname'
+      title: 'Mr',
+      forename: 'Frank',
+      surname: 'Enstein'
     )
     create_uh_rent(prop_ref: property_ref, sc_leasedate: leasedate)
   end
