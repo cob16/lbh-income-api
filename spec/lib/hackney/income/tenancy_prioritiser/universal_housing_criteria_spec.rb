@@ -115,6 +115,7 @@ describe Hackney::Income::TenancyPrioritiser::UniversalHousingCriteria, universa
 
       context 'when UH returns no nosp expiry date (1900-01-01 00:00:00 +0000)' do
         before do
+          truncate_uh_tables
           create_uh_tenancy_agreement(
             tenancy_ref: tenancy_ref,
             current_balance: current_balance
@@ -136,6 +137,7 @@ describe Hackney::Income::TenancyPrioritiser::UniversalHousingCriteria, universa
 
       context 'when UH returns no nosp expiry date (1900-01-01 00:00:00 +0000)' do
         before do
+          truncate_uh_tables
           create_uh_tenancy_agreement(
             tenancy_ref: tenancy_ref,
             current_balance: current_balance
@@ -157,6 +159,7 @@ describe Hackney::Income::TenancyPrioritiser::UniversalHousingCriteria, universa
 
       context 'when UH returns no nosp expiry date (1900-01-01 00:00:00 +0000)' do
         before do
+          truncate_uh_tables
           create_uh_tenancy_agreement(
             tenancy_ref: tenancy_ref,
             current_balance: current_balance
