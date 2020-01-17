@@ -40,6 +40,11 @@ describe 'Apply for Outright Possession Warrant Rule examples' do
       outcome: :no_action,
       courtdate: 1.month.ago,
       court_outcome: 'OUT'
+    ),
+    base_example.merge(
+      description: 'when they have already applied for a warrent of possession',
+      outcome: :no_action,
+      last_communication_action: Hackney::Tenancy::ActionCodes::WARRANT_OF_POSSESSION
     )
   ]
   it_behaves_like 'TenancyClassification', examples
