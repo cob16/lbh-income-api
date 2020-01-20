@@ -3,8 +3,6 @@ require 'rails_helper'
 describe Hackney::Income::SqlLegalCasesGateway, universal: true do
   subject { described_class.new }
 
-  after { truncate_uh_tables }
-
   let(:high_actions_above_stage_4) { %w[4RS 5RP 6RC 6RO 7RE] }
 
   let(:tenancy_ref_array) do

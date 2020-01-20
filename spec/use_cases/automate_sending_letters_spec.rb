@@ -88,6 +88,30 @@ describe UseCases::AutomateSendingLetters do
         automate_sending_letters.execute(case_priority: case_priority)
       end
     end
+
+    context 'when generate_and_store_letter returns errors' do
+      let(:validation_errors) {
+        {
+          errors: [
+            { name: 'forename', message: 'missing mandatory field' },
+            { name: 'surname', message: 'missing mandatory field' },
+            { name: 'address_line2', message: 'missing mandatory field' },
+            { name: 'address_post_code', message: 'missing mandatory field' }
+          ]
+        }
+      }
+
+      it 'does not send a letter' do
+        expect(generate_and_store_letter)
+          .to receive(:execute)
+          .and_return(validation_errors)
+
+        expect(send_letter_to_gov_notify)
+          .not_to receive(:perform_later)
+
+        automate_sending_letters.execute(case_priority: case_priority)
+      end
+    end
   end
 
   context 'when the checking the classification of a case' do

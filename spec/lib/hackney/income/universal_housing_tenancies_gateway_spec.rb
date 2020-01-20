@@ -3,8 +3,6 @@ require 'rails_helper'
 describe Hackney::Income::UniversalHousingTenanciesGateway, universal: true do
   let(:gateway) { described_class.new }
 
-  after { truncate_uh_tables }
-
   context 'when retrieving tenancy refs for cases in arrears' do
     subject { gateway.tenancies_in_arrears }
 

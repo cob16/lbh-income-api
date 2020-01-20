@@ -38,8 +38,6 @@ describe Hackney::Income::TenancyPrioritiser::UniversalHousingCriteria, universa
       )
     }
 
-    after { truncate_uh_tables }
-
     it { is_expected.to be_instance_of(described_class) }
 
     describe '#balance' do
