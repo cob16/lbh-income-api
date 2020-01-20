@@ -49,6 +49,8 @@ module Hackney
 
       VISIT_MADE = 'VIM'.freeze
 
+      WARRANT_OF_POSSESSION = 'WPA'.freeze
+
       ADJOURNED_ON_TERMS_COURT_OUTCOME = 'ADT'.freeze
       POSTPONED_POSSESSIOON_COURT_OUTCOME = 'PPO'.freeze
       SUSPENDED_POSSESSION_COURT_OUTCOME = 'SPO'.freeze

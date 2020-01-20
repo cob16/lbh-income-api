@@ -53,6 +53,7 @@ module Hackney
           return false if @criteria.courtdate.blank?
           return false if @criteria.courtdate.future?
           return false if @criteria.courtdate < 3.months.ago
+          return false if @criteria.last_communication_action.in?(after_apply_for_outright_possession_actions)
 
           @criteria.court_outcome.in?(outright_possession_court_outcome_codes)
         end
@@ -280,6 +281,12 @@ module Hackney
           [
             Hackney::Tenancy::CourtOutcomeCodes::OUTRIGHT_POSSESSION_WITH_DATE,
             Hackney::Tenancy::CourtOutcomeCodes::OUTRIGHT_POSSESSION_FORTHWITH
+          ]
+        end
+
+        def after_apply_for_outright_possession_actions
+          [
+            Hackney::Tenancy::ActionCodes::WARRANT_OF_POSSESSION
           ]
         end
       end
