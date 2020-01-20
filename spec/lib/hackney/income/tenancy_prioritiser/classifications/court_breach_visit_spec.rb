@@ -11,8 +11,7 @@ describe 'Send Court Breach Letter Rule', type: :feature do
     last_communication_action: Hackney::Tenancy::ActionCodes::COURT_BREACH_LETTER_SENT,
     last_communication_date: 2.weeks.ago,
     courtdate: 14.days.ago.to_date,
-    nosps_in_last_year: 1,
-    nosp_expiry_date: 2.months.from_now,
+    nosp_served_date: 8.months.ago.to_date,
     most_recent_agreement: {
       start_date: 1.week.ago,
       breached: true

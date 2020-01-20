@@ -73,7 +73,7 @@ module Stubs
     end
 
     def nosp_expiry_date
-      attributes[:nosp_expiry_date]
+      nosp[:expires_date]
     end
 
     def courtdate
@@ -101,12 +101,36 @@ module Stubs
     end
 
     def nosp_served?
-      ((attributes[:nosps_in_last_year] || 0) > 0) ||
-        attributes[:nosp_served] || false
+      nosp[:served_date].present?
+    end
+
+    def nosp
+      expires_date = nil
+      valid_until_date = nil
+      active = false
+      in_cool_off_period = false
+      valid = false
+
+      if nosp_served_date.present?
+        expires_date = nosp_served_date + 28.days
+        valid_until_date = expires_date + 52.weeks
+        active = expires_date < Time.zone.now
+        in_cool_off_period = expires_date > Time.zone.now
+        valid = valid_until_date > Time.zone.now
+      end
+
+      {
+        served_date: nosp_served_date,
+        expires_date: expires_date,
+        valid_until_date: valid_until_date,
+        active: valid && active,
+        in_cool_off_period: in_cool_off_period,
+        valid: valid
+      }
     end
 
     def active_nosp?
-      attributes[:active_nosp]
+      nosp[:active]
     end
 
     def number_of_broken_agreements

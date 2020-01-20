@@ -5,7 +5,6 @@ describe '"Apply for Court Date" examples' do
 
   base_example = {
     outcome: :apply_for_court_date,
-    nosps_in_last_year: 1,
     nosp_served_date: 29.days.ago.to_date,
     weekly_rent: 5,
     balance: 25.0,
@@ -35,7 +34,7 @@ describe '"Apply for Court Date" examples' do
     base_example.merge(
       description: 'with no nosps served in the last year',
       outcome: :no_action,
-      nosps_in_last_year: 0
+      nosp_served_date: nil
     ),
     base_example.merge(
       description: 'with an active agreement',

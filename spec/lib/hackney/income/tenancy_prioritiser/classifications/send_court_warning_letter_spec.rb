@@ -6,7 +6,6 @@ describe 'Send Court Warning Letter Rule', type: :feature do
   send_court_warning_letter_condition_matrix = [
     {
       outcome: :no_action,
-      nosps_in_last_year: 1,
       nosp_served_date: 1.day.ago.to_date,
       weekly_rent: 5,
       balance: 15.0, # 3 * weekly_rent
@@ -18,7 +17,6 @@ describe 'Send Court Warning Letter Rule', type: :feature do
     },
     {
       outcome: :no_action,
-      nosps_in_last_year: 1,
       nosp_served_date: 1.day.ago.to_date,
       weekly_rent: 5,
       balance: 50.0, # 10 * weekly_rent
@@ -30,7 +28,6 @@ describe 'Send Court Warning Letter Rule', type: :feature do
     },
     {
       outcome: :no_action,
-      nosps_in_last_year: 1,
       nosp_served_date: 29.days.ago.to_date,
       weekly_rent: 5,
       balance: 15.0, # 3 * weekly_rent
@@ -42,7 +39,6 @@ describe 'Send Court Warning Letter Rule', type: :feature do
     },
     {
       outcome: :no_action,
-      nosps_in_last_year: 1,
       nosp_served_date: 29.days.ago.to_date,
       weekly_rent: 5,
       balance: 25.0, # 5 * weekly_rent
@@ -53,7 +49,6 @@ describe 'Send Court Warning Letter Rule', type: :feature do
     },
     {
       outcome: :no_action,
-      nosps_in_last_year: 1,
       nosp_served_date: 29.days.ago.to_date,
       weekly_rent: 5,
       balance: 25.0, # 5 * weekly_rent
@@ -65,7 +60,6 @@ describe 'Send Court Warning Letter Rule', type: :feature do
     },
     {
       outcome: :apply_for_court_date,
-      nosps_in_last_year: 1,
       nosp_served_date: 29.days.ago.to_date,
       weekly_rent: 5,
       balance: 25.0, # 5 * weekly_rent
@@ -78,7 +72,6 @@ describe 'Send Court Warning Letter Rule', type: :feature do
     },
     {
       outcome: :no_action,
-      nosps_in_last_year: 1,
       nosp_served_date: 29.days.ago.to_date,
       weekly_rent: 5,
       balance: 25.0, # 5 * weekly_rent
@@ -89,7 +82,6 @@ describe 'Send Court Warning Letter Rule', type: :feature do
     },
     {
       outcome: :no_action,
-      nosps_in_last_year: 1,
       nosp_served_date: 29.days.ago.to_date,
       weekly_rent: 5,
       balance: 25.0, # 5 * weekly_rent
@@ -100,7 +92,6 @@ describe 'Send Court Warning Letter Rule', type: :feature do
     },
     {
       outcome: :no_action,
-      nosps_in_last_year: 1,
       nosp_served_date: 29.days.ago.to_date,
       weekly_rent: 5,
       balance: 25.0, # 5 * weekly_rent
@@ -112,7 +103,6 @@ describe 'Send Court Warning Letter Rule', type: :feature do
     },
     {
       outcome: :send_court_warning_letter,
-      nosps_in_last_year: 1,
       nosp_served_date: 29.days.ago.to_date,
       weekly_rent: 5,
       balance: 25.0, # 5 * weekly_rent
@@ -124,7 +114,6 @@ describe 'Send Court Warning Letter Rule', type: :feature do
     },
     {
       outcome: :no_action,
-      nosps_in_last_year: 1,
       nosp_served_date: 29.days.ago.to_date,
       weekly_rent: 5,
       balance: 25.0, # 5 * weekly_rent
@@ -137,8 +126,8 @@ describe 'Send Court Warning Letter Rule', type: :feature do
     },
     # missing served date
     {
-      outcome: :no_action,
-      nosps_in_last_year: 1,
+      outcome: :send_letter_one,
+      nosp_served_date: nil,
       weekly_rent: 5,
       balance: 25.0, # 5 * weekly_rent
       courtdate: nil

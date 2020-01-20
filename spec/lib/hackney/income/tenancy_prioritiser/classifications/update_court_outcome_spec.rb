@@ -3,8 +3,7 @@ require 'rails_helper'
 describe '"Update court outcome" examples' do
   base_example = {
     outcome: :update_court_outcome_action,
-    nosps_in_last_year: 0,
-    nosp_expiry_date: '',
+    nosp_served_date: nil,
     weekly_rent: 10,
     balance: 6,
     is_paused_until: '',

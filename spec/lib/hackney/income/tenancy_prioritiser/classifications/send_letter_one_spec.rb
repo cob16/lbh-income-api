@@ -5,8 +5,7 @@ describe 'Send Letter One Rule', type: :feature do
     # a valid letter one case
     {
       outcome: :send_letter_one,
-      nosps_in_last_year: 0,
-      nosp_expiry_date: '',
+      nosp_served_date: nil,
       weekly_rent: 10,
       balance: 20.0,
       is_paused_until: '',
@@ -19,8 +18,7 @@ describe 'Send Letter One Rule', type: :feature do
     # no previous communication
     {
       outcome: :send_letter_one,
-      nosps_in_last_year: 0,
-      nosp_expiry_date: '',
+      nosp_served_date: nil,
       weekly_rent: 5,
       balance: 10.0,
       is_paused_until: '',
@@ -33,8 +31,7 @@ describe 'Send Letter One Rule', type: :feature do
     # no previous communication, arrears not high enough
     {
       outcome: :no_action,
-      nosps_in_last_year: 0,
-      nosp_expiry_date: '',
+      nosp_served_date: nil,
       weekly_rent: 5,
       balance: 0.0,
       is_paused_until: '',
@@ -47,8 +44,7 @@ describe 'Send Letter One Rule', type: :feature do
     # send letter one, four days ago
     {
       outcome: :no_action,
-      nosps_in_last_year: 0,
-      nosp_expiry_date: '',
+      nosp_served_date: nil,
       weekly_rent: 5,
       balance: 10.0,
       is_paused_until: '',
@@ -61,8 +57,7 @@ describe 'Send Letter One Rule', type: :feature do
     # send letter one, four days ago, with the UH code
     {
       outcome: :no_action,
-      nosps_in_last_year: 0,
-      nosp_expiry_date: '',
+      nosp_served_date: nil,
       weekly_rent: 5,
       balance: 10.0,
       is_paused_until: '',
@@ -75,8 +70,7 @@ describe 'Send Letter One Rule', type: :feature do
     # send alt letter , four days ago
     {
       outcome: :no_action,
-      nosps_in_last_year: 0,
-      nosp_expiry_date: '',
+      nosp_served_date: nil,
       weekly_rent: 5,
       balance: 10.0,
       is_paused_until: '',
@@ -89,8 +83,7 @@ describe 'Send Letter One Rule', type: :feature do
     # active_agreement test
     {
       outcome: :no_action,
-      nosps_in_last_year: 0,
-      nosp_expiry_date: '',
+      nosp_served_date: nil,
       weekly_rent: 5,
       balance: 10.0,
       is_paused_until: '',
@@ -103,8 +96,7 @@ describe 'Send Letter One Rule', type: :feature do
     # balance test
     {
       outcome: :send_first_SMS,
-      nosps_in_last_year: 0,
-      nosp_expiry_date: '',
+      nosp_served_date: nil,
       weekly_rent: 20,
       balance: 20.0,
       is_paused_until: '',
@@ -117,8 +109,7 @@ describe 'Send Letter One Rule', type: :feature do
     # last action was send letter two, falls back into send letter one and no action is carried out for  over 3 months
     {
       outcome: :send_letter_one,
-      nosps_in_last_year: 0,
-      nosp_expiry_date: '',
+      nosp_served_date: nil,
       weekly_rent: 5,
       balance: 10,
       is_paused_until: '',
@@ -131,8 +122,7 @@ describe 'Send Letter One Rule', type: :feature do
     # when the communication is old, but <something else isn't valid>
     {
       outcome: :send_letter_one,
-      nosps_in_last_year: 0,
-      nosp_expiry_date: '',
+      nosp_served_date: nil,
       weekly_rent: 5,
       balance: 1000,
       is_paused_until: '',
@@ -144,8 +134,7 @@ describe 'Send Letter One Rule', type: :feature do
     },
     {
       outcome: :send_letter_one,
-      nosps_in_last_year: 0,
-      nosp_expiry_date: '',
+      nosp_served_date: nil,
       weekly_rent: 5,
       balance: 1000,
       is_paused_until: '',
@@ -157,8 +146,7 @@ describe 'Send Letter One Rule', type: :feature do
     },
     {
       outcome: :no_action,
-      nosps_in_last_year: 1,
-      nosp_expiry_date: '',
+      nosp_served_date: 8.months.ago.to_date,
       weekly_rent: 5,
       balance: 10,
       is_paused_until: '',
@@ -170,8 +158,7 @@ describe 'Send Letter One Rule', type: :feature do
     },
     {
       outcome: :no_action,
-      nosps_in_last_year: 0,
-      nosp_expiry_date: '',
+      nosp_served_date: nil,
       weekly_rent: 5,
       balance: 10,
       is_paused_until: '',
@@ -183,8 +170,7 @@ describe 'Send Letter One Rule', type: :feature do
     },
     {
       outcome: :no_action,
-      nosps_in_last_year: 0,
-      nosp_expiry_date: '',
+      nosp_served_date: nil,
       weekly_rent: 5,
       balance: 10,
       is_paused_until: '',

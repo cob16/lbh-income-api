@@ -153,8 +153,10 @@ describe Hackney::Income::TenancyPrioritiser::UniversalHousingCriteria, universa
     describe '#nosp_expiry_date' do
       subject { criteria.nosp_expiry_date }
 
+      let(:nosp_notice_served_date) { 2.days.ago }
+
       it 'returns the nosp expiry date' do
-        expect(subject).to eq(nosp_notice_expiry_date.to_date)
+        expect(subject).to eq(26.days.from_now.to_date)
       end
 
       context 'when UH returns no nosp expiry date (1900-01-01 00:00:00 +0000)' do
@@ -416,25 +418,27 @@ describe Hackney::Income::TenancyPrioritiser::UniversalHousingCriteria, universa
       subject { criteria.nosp_served? }
 
       context 'when a tenant does not have a nosp' do
+        let(:nosp_notice_served_date) { nil }
+
         it { is_expected.to be(false) }
       end
 
       context 'when a tenant had a nosp served recently' do
-        before { create_uh_action(tenancy_ref: tenancy_ref, code: 'NTS', date: Date.today) }
+        let(:nosp_notice_served_date) { 1.day.ago }
 
         it { is_expected.to be(true) }
       end
 
       context 'when a tenant had a nosp served a year ago' do
-        before { create_uh_action(tenancy_ref: tenancy_ref, code: 'NTS', date: Date.today - 1.year) }
+        let(:nosp_notice_served_date) { 1.year.ago }
 
         it { is_expected.to be(true) }
       end
 
       context 'when a tenant had a nosp served over a year ago' do
-        before { create_uh_action(tenancy_ref: tenancy_ref, code: 'NTS', date: Date.today - 1.year - 1.day) }
+        let(:nosp_notice_served_date) { 14.months.ago }
 
-        it { is_expected.to be(false) }
+        it { is_expected.to be(true) }
       end
     end
 
@@ -442,25 +446,27 @@ describe Hackney::Income::TenancyPrioritiser::UniversalHousingCriteria, universa
       subject { criteria.active_nosp? }
 
       context 'when a tenant does not have a nosp' do
+        let(:nosp_notice_served_date) { nil }
+
         it { is_expected.to be(false) }
       end
 
       context 'when a tenant had a nosp served recently' do
-        before { create_uh_action(tenancy_ref: tenancy_ref, code: 'NTS', date: Date.today) }
+        let(:nosp_notice_served_date) { 2.days.ago }
 
-        it { is_expected.to be(true) }
+        it { is_expected.to be(false) }
       end
 
       context 'when a tenant had a nosp served a month ago' do
-        before { create_uh_action(tenancy_ref: tenancy_ref, code: 'NTS', date: Date.today - 20.days) }
+        let(:nosp_notice_served_date) { 1.month.ago }
 
         it { is_expected.to be(true) }
       end
 
       context 'when a tenant had a nosp served over a month ago' do
-        before { create_uh_action(tenancy_ref: tenancy_ref, code: 'NTS', date: Date.today - 32.days) }
+        let(:nosp_notice_served_date) { 2.months.ago }
 
-        it { is_expected.to be(false) }
+        it { is_expected.to be(true) }
       end
     end
 
@@ -697,6 +703,70 @@ describe Hackney::Income::TenancyPrioritiser::UniversalHousingCriteria, universa
 
         it 'returns the most recent agreement' do
           expect(subject.most_recent_agreement[:breached]).to eq(false)
+        end
+      end
+    end
+
+    describe '#nosp' do
+      context 'when there is no NOSP served date' do
+        let(:nosp_notice_served_date) { nil }
+
+        it 'contains sensible defaults' do
+          expect(criteria.nosp).to eq(
+            served_date: nil,
+            expires_date: nil,
+            valid_until_date: nil,
+            active: false,
+            in_cool_off_period: false,
+            valid: false
+          )
+        end
+      end
+
+      context 'when there is a NOSP' do
+        context 'with a served date that is in cooling off' do
+          let(:nosp_notice_served_date) { 27.days.ago }
+
+          it 'has correct values' do
+            expect(criteria.nosp).to eq(
+              served_date: nosp_notice_served_date.to_date,
+              expires_date: 1.day.from_now.to_date,
+              valid_until_date: (1.day.from_now + 52.weeks).to_date,
+              active: false,
+              in_cool_off_period: true,
+              valid: true
+            )
+          end
+        end
+
+        context 'with a served date that is over 28 days ago' do
+          let(:nosp_notice_served_date) { 29.days.ago }
+
+          it 'has correct values' do
+            expect(criteria.nosp).to eq(
+              served_date: nosp_notice_served_date.to_date,
+              expires_date: 1.day.ago.to_date,
+              valid_until_date: (1.day.ago + 52.weeks).to_date,
+              active: true,
+              in_cool_off_period: false,
+              valid: true
+            )
+          end
+        end
+
+        context 'with a served date that is over 13 months ago' do
+          let(:nosp_notice_served_date) { 57.weeks.ago }
+
+          it 'has correct values' do
+            expect(criteria.nosp).to eq(
+              served_date: nosp_notice_served_date.to_date,
+              expires_date: 53.weeks.ago.to_date,
+              valid_until_date: 1.week.ago.to_date,
+              active: false,
+              in_cool_off_period: false,
+              valid: false
+            )
+          end
         end
       end
     end

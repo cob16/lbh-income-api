@@ -6,8 +6,7 @@ describe 'Send Letter Two Rule', type: :feature do
   send_letter_two_condition_matrix = [
     {
       outcome: :send_letter_two,
-      nosps_in_last_year: 0,
-      nosp_expiry_date: '',
+      nosp_served_date: nil,
       weekly_rent: 5,
       balance: 20,
       is_paused_until: '',
@@ -20,8 +19,7 @@ describe 'Send Letter Two Rule', type: :feature do
     # balance test
     {
       outcome: :no_action,
-      nosps_in_last_year: 0,
-      nosp_expiry_date: '',
+      nosp_served_date: nil,
       weekly_rent: 5,
       balance: 19.0,
       is_paused_until: '',
@@ -34,8 +32,7 @@ describe 'Send Letter Two Rule', type: :feature do
     # nosps in last year test
     {
       outcome: :no_action,
-      nosps_in_last_year: 1,
-      nosp_expiry_date: '',
+      nosp_served_date: 8.months.ago,
       weekly_rent: 5,
       balance: 20.0,
       is_paused_until: '',
@@ -48,8 +45,7 @@ describe 'Send Letter Two Rule', type: :feature do
     # last communication date tests
     {
       outcome: :no_action,
-      nosps_in_last_year: 0,
-      nosp_expiry_date: '',
+      nosp_served_date: nil,
       weekly_rent: 5,
       balance: 20.0,
       is_paused_until: '',
@@ -61,8 +57,7 @@ describe 'Send Letter Two Rule', type: :feature do
     },
     {
       outcome: :no_action,
-      nosps_in_last_year: 0,
-      nosp_expiry_date: '',
+      nosp_served_date: nil,
       weekly_rent: 5,
       balance: 20.0,
       is_paused_until: '',
@@ -75,8 +70,7 @@ describe 'Send Letter Two Rule', type: :feature do
     # last communication action test
     {
       outcome: :no_action,
-      nosps_in_last_year: 0,
-      nosp_expiry_date: '',
+      nosp_served_date: nil,
       weekly_rent: 5,
       balance: 20.0,
       is_paused_until: '',
@@ -88,8 +82,7 @@ describe 'Send Letter Two Rule', type: :feature do
     },
     {
       outcome: :send_letter_two,
-      nosps_in_last_year: 0,
-      nosp_expiry_date: '',
+      nosp_served_date: nil,
       weekly_rent: 5,
       balance: 20.0,
       is_paused_until: '',
@@ -101,8 +94,7 @@ describe 'Send Letter Two Rule', type: :feature do
     },
     {
       outcome: :send_letter_two,
-      nosps_in_last_year: 0,
-      nosp_expiry_date: '',
+      nosp_served_date: nil,
       weekly_rent: 5,
       balance: 20.0,
       is_paused_until: '',
@@ -115,8 +107,7 @@ describe 'Send Letter Two Rule', type: :feature do
     # eviction date test
     {
       outcome: :no_action,
-      nosps_in_last_year: 0,
-      nosp_expiry_date: '',
+      nosp_served_date: nil,
       weekly_rent: 5,
       balance: 20.0,
       is_paused_until: '',

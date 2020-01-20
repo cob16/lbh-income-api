@@ -153,11 +153,10 @@ module Hackney
           return false if @criteria.weekly_gross_rent.blank?
 
           return false if @criteria.active_agreement?
-          return false if @criteria.nosp_served?
 
-          if @criteria.nosp_expiry_date.present?
-            return false if @criteria.nosp_expiry_date >= Time.zone.now
-          else
+          return false if @criteria.nosp[:valid]
+
+          if @criteria.nosp[:served_date].blank?
             return false unless @criteria.last_communication_action.in?(valid_actions_for_nosp_to_progress)
             return false if last_communication_older_than?(3.months.ago)
             return false if last_communication_newer_than?(1.week.ago)
@@ -174,9 +173,9 @@ module Hackney
 
           return false if @criteria.last_communication_action.in?(after_court_warning_letter_actions)
 
-          return false unless @criteria.nosp_served?
-          return false if @criteria.nosp_served_date.blank?
-          return false if @criteria.nosp_served_date > 28.days.ago.to_date
+          return false unless @criteria.nosp[:valid]
+          return false unless @criteria.nosp[:active]
+
           balance_is_in_arrears_by_number_of_weeks?(4)
         end
 
@@ -189,7 +188,7 @@ module Hackney
           return false unless @criteria.last_communication_action.in?(valid_actions_for_apply_for_court_date_to_progress)
           return false if last_communication_newer_than?(2.weeks.ago)
 
-          return false if @criteria.nosp_served_date > 28.days.ago.to_date
+          return false unless @criteria.nosp[:active]
 
           return false if @criteria.courtdate.present? && @criteria.courtdate > @criteria.last_communication_date
 

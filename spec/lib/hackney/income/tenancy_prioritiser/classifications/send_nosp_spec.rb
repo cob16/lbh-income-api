@@ -5,8 +5,7 @@ describe 'Send NOSP Rule', type: :feature do
     # out of date nosp, out of arrears, no recent activity
     {
       outcome: :no_action,
-      nosps_in_last_year: 0,
-      nosp_expiry_date: 1.month.ago.to_date,
+      nosp_served_date: 14.months.ago.to_date,
       weekly_rent: 5,
       balance: 0,
       is_paused_until: nil,
@@ -18,8 +17,7 @@ describe 'Send NOSP Rule', type: :feature do
     # out of date nosp, heavily in arrears, no recent activity
     {
       outcome: :send_NOSP,
-      nosps_in_last_year: 0,
-      nosp_expiry_date: 1.month.ago.to_date,
+      nosp_served_date: 14.months.ago.to_date,
       weekly_rent: 5,
       balance: 50.0,
       is_paused_until: nil,
@@ -30,8 +28,7 @@ describe 'Send NOSP Rule', type: :feature do
     # out of date nosp, heavily in arrears, recent letter 2
     {
       outcome: :send_NOSP,
-      nosps_in_last_year: 0,
-      nosp_expiry_date: 1.month.ago.to_date,
+      nosp_served_date: 14.months.ago.to_date,
       weekly_rent: 5,
       balance: 50.0,
       is_paused_until: nil,
@@ -41,9 +38,33 @@ describe 'Send NOSP Rule', type: :feature do
       court_outcome: 'Jail'
     },
     {
+      outcome: :apply_for_court_date,
+      nosp_served_date: 6.months.ago.to_date,
+      weekly_rent: 5,
+      balance: 25.0, # 5 * weekly_rent
+      is_paused_until: nil,
+      active_agreement: false,
+      last_communication_date: 2.months.ago.to_date,
+      last_communication_action: Hackney::Tenancy::ActionCodes::COURT_WARNING_LETTER_SENT,
+      eviction_date: nil,
+      court_outcome: 'Jail'
+    },
+    {
+      outcome: :send_court_warning_letter,
+      nosp_served_date: 6.months.ago.to_date,
+      weekly_rent: 5,
+      balance: 25.0, # 5 * weekly_rent
+      is_paused_until: nil,
+      active_agreement: false,
+      last_communication_date: 2.months.ago.to_date,
+      last_communication_action: Hackney::Tenancy::ActionCodes::INCOME_COLLECTION_LETTER_2,
+      eviction_date: nil,
+      court_outcome: 'Jail'
+    },
+    # With a recent NOSP
+    {
       outcome: :no_action,
-      nosps_in_last_year: 1,
-      nosp_expiry_date: 8.months.from_now.to_date,
+      nosp_served_date: 1.week.ago.to_date,
       weekly_rent: 5,
       balance: 25.0, # 5 * weekly_rent
       is_paused_until: nil,
@@ -55,8 +76,7 @@ describe 'Send NOSP Rule', type: :feature do
     },
     {
       outcome: :no_action,
-      nosps_in_last_year: 0,
-      nosp_expiry_date: 1.month.ago.to_date,
+      nosp_served_date: 14.months.ago.to_date,
       weekly_rent: 5,
       balance: 10.0, # 2 * weekly_rent
       is_paused_until: nil,
@@ -68,8 +88,7 @@ describe 'Send NOSP Rule', type: :feature do
     },
     {
       outcome: :no_action,
-      nosps_in_last_year: 0,
-      nosp_expiry_date: 1.month.ago.to_date,
+      nosp_served_date: 14.months.ago.to_date,
       weekly_rent: 5,
       balance: 25.0, # 5 * weekly_rent
       is_paused_until: 1.month.from_now,
@@ -80,8 +99,7 @@ describe 'Send NOSP Rule', type: :feature do
     },
     {
       outcome: :no_action,
-      nosps_in_last_year: 0,
-      nosp_expiry_date: '',
+      nosp_served_date: nil,
       weekly_rent: 5,
       balance: 25.0, # 5 * weekly_rent
       is_paused_until: nil,
@@ -93,8 +111,7 @@ describe 'Send NOSP Rule', type: :feature do
     },
     {
       outcome: :no_action,
-      nosps_in_last_year: 0,
-      nosp_expiry_date: '',
+      nosp_served_date: nil,
       weekly_rent: 5,
       balance: 25.0, # 5 * weekly_rent
       is_paused_until: nil,
@@ -105,8 +122,7 @@ describe 'Send NOSP Rule', type: :feature do
     },
     {
       outcome: :no_action,
-      nosps_in_last_year: 0,
-      nosp_expiry_date: '',
+      nosp_served_date: nil,
       weekly_rent: 5,
       balance: 25.0, # 5 * weekly_rent
       is_paused_until: nil,
@@ -117,8 +133,7 @@ describe 'Send NOSP Rule', type: :feature do
     },
     {
       outcome: :no_action,
-      nosps_in_last_year: 0,
-      nosp_expiry_date: '',
+      nosp_served_date: nil,
       weekly_rent: 5,
       balance: 25.0, # 5 * weekly_rent
       is_paused_until: nil,
@@ -130,8 +145,7 @@ describe 'Send NOSP Rule', type: :feature do
     },
     {
       outcome: :no_action,
-      nosps_in_last_year: 0,
-      nosp_expiry_date: '',
+      nosp_served_date: nil,
       weekly_rent: 5,
       balance: 25.0, # 5 * weekly_rent
       is_paused_until: nil,
@@ -143,8 +157,7 @@ describe 'Send NOSP Rule', type: :feature do
     },
     {
       outcome: :send_NOSP,
-      nosps_in_last_year: 0,
-      nosp_expiry_date: '',
+      nosp_served_date: nil,
       weekly_rent: 5,
       balance: 25.0, # 5 * weekly_rent
       is_paused_until: nil,
@@ -156,8 +169,7 @@ describe 'Send NOSP Rule', type: :feature do
     },
     {
       outcome: :send_NOSP,
-      nosps_in_last_year: 0,
-      nosp_expiry_date: '',
+      nosp_served_date: nil,
       weekly_rent: 5,
       balance: 25.0, # 5 * weekly_rent
       is_paused_until: nil,
@@ -169,8 +181,7 @@ describe 'Send NOSP Rule', type: :feature do
     },
     {
       outcome: :send_NOSP,
-      nosps_in_last_year: 0,
-      nosp_expiry_date: '',
+      nosp_served_date: nil,
       weekly_rent: 5,
       balance: 25.0, # 5 * weekly_rent
       is_paused_until: nil,
@@ -182,8 +193,7 @@ describe 'Send NOSP Rule', type: :feature do
     },
     {
       outcome: :send_NOSP,
-      nosps_in_last_year: 0,
-      nosp_expiry_date: 1.month.ago.to_date,
+      nosp_served_date: 14.months.ago.to_date,
       weekly_rent: 5,
       balance: 25.0, # 5 * weekly_rent
       is_paused_until: nil,
@@ -195,8 +205,7 @@ describe 'Send NOSP Rule', type: :feature do
     },
     {
       outcome: :send_NOSP,
-      nosps_in_last_year: 0,
-      nosp_expiry_date: '',
+      nosp_served_date: nil,
       weekly_rent: 5,
       balance: 25.0, # 5 * weekly_rent
       is_paused_until: nil,
@@ -208,8 +217,7 @@ describe 'Send NOSP Rule', type: :feature do
     },
     {
       outcome: :send_NOSP,
-      nosps_in_last_year: 0,
-      nosp_expiry_date: '',
+      nosp_served_date: nil,
       weekly_rent: 5,
       balance: 25.0, # 5 * weekly_rent
       is_paused_until: nil,
@@ -221,8 +229,7 @@ describe 'Send NOSP Rule', type: :feature do
     },
     {
       outcome: :send_NOSP,
-      nosps_in_last_year: 0,
-      nosp_expiry_date: '',
+      nosp_served_date: nil,
       weekly_rent: 5,
       balance: 25.0, # 5 * weekly_rent
       is_paused_until: nil,
@@ -234,8 +241,7 @@ describe 'Send NOSP Rule', type: :feature do
     },
     {
       outcome: :send_NOSP,
-      nosps_in_last_year: 0,
-      nosp_expiry_date: '',
+      nosp_served_date: nil,
       weekly_rent: 5,
       balance: 25.0, # 5 * weekly_rent
       is_paused_until: nil,
@@ -247,8 +253,7 @@ describe 'Send NOSP Rule', type: :feature do
     },
     {
       outcome: :update_court_outcome_action,
-      nosps_in_last_year: 0,
-      nosp_expiry_date: '',
+      nosp_served_date: nil,
       weekly_rent: 5,
       balance: 25.0, # 5 * weekly_rent
       is_paused_until: nil,
@@ -261,8 +266,7 @@ describe 'Send NOSP Rule', type: :feature do
     },
     {
       outcome: :send_NOSP,
-      nosps_in_last_year: 0,
-      nosp_expiry_date: '',
+      nosp_served_date: nil,
       weekly_rent: 5,
       balance: 25.0, # 5 * weekly_rent
       is_paused_until: nil,
@@ -275,8 +279,7 @@ describe 'Send NOSP Rule', type: :feature do
     },
     {
       outcome: :send_NOSP,
-      nosps_in_last_year: 0,
-      nosp_expiry_date: '',
+      nosp_served_date: nil,
       weekly_rent: 5,
       balance: 25.0, # 5 * weekly_rent
       is_paused_until: nil,
