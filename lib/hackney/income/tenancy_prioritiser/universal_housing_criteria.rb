@@ -157,6 +157,11 @@ module Hackney
           valid = false
 
           if nosp_served_date.present?
+            # Expires Date is when the NOSP can now be actioned upon.
+            # The Tenant has 28 days to pay the arrears before Court action can take place.
+            # This is the "cooling off period".
+            # Active - This when the Tenant can be taken to court if the arrears are "high" enough.
+            # Valid - This is during the cooling off period and when the NOSP is "active".
             expires_date = nosp_served_date + 28.days
             valid_until_date = expires_date + 52.weeks
             active = expires_date < Time.zone.now
