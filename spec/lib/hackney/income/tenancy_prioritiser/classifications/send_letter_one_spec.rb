@@ -193,6 +193,21 @@ describe 'Send Letter One Rule', type: :feature do
       last_communication_action: Hackney::Tenancy::ActionCodes::INCOME_COLLECTION_LETTER_2,
       eviction_date: '',
       courtdate: nil
+    },
+    # when a court date is in the past
+    {
+      outcome: :no_action,
+      nosps_in_last_year: 0,
+      nosp_expiry_date: '',
+      weekly_rent: 10,
+      balance: 20.0,
+      is_paused_until: '',
+      active_agreement: false,
+      last_communication_date: 2.weeks.ago.to_date,
+      last_communication_action: '',
+      eviction_date: '',
+      courtdate: 1.year.ago,
+      court_outcome: 'SOMETHING'
     }
   ]
 
