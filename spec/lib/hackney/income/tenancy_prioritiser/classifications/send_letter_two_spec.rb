@@ -11,7 +11,7 @@ describe 'Send Letter Two Rule', type: :feature do
       balance: 20,
       is_paused_until: '',
       active_agreement: false,
-      last_communication_date: 2.weeks.ago.to_date,
+      last_communication_date: 14.days.ago.to_date,
       last_communication_action: letter_1_in_arrears_sent_code,
       eviction_date: '',
       courtdate: nil
@@ -20,11 +20,11 @@ describe 'Send Letter Two Rule', type: :feature do
     {
       outcome: :no_action,
       nosp_served_date: nil,
-      weekly_rent: 5,
+      weekly_rent: 10,
       balance: 19.0,
       is_paused_until: '',
       active_agreement: false,
-      last_communication_date: 2.weeks.ago.to_date,
+      last_communication_date: 15.days.ago.to_date,
       last_communication_action: letter_1_in_arrears_sent_code,
       eviction_date: '',
       courtdate: nil
@@ -50,7 +50,7 @@ describe 'Send Letter Two Rule', type: :feature do
       balance: 20.0,
       is_paused_until: '',
       active_agreement: false,
-      last_communication_date: 5.days.ago.to_date,
+      last_communication_date: 13.days.ago.to_date,
       last_communication_action: letter_1_in_arrears_sent_code,
       eviction_date: '',
       courtdate: nil

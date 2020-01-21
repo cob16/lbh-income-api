@@ -144,10 +144,10 @@ module Hackney
 
           return false unless @criteria.last_communication_action.in?(valid_actions_for_letter_two_to_progress)
 
-          return false if last_communication_newer_than?(1.week.ago)
+          return false if last_communication_newer_than?(14.days.ago)
           return false if last_communication_older_than?(3.months.ago)
 
-          balance_is_in_arrears_by_number_of_weeks?(3)
+          balance_is_in_arrears_by_amount?(10)
         end
 
         def send_nosp?
