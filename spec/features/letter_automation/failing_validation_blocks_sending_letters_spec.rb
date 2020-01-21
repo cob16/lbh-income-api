@@ -84,12 +84,6 @@ describe 'syncing triggers automatic sending of letters', type: :feature do
     expect(case_priority).to send("be_#{classification}".to_sym)
   end
 
-  def then_a_document_is_queued
-    document = Hackney::Cloud::Document.last
-    expect(JSON.parse(document.metadata)['payment_ref']).to eq(payment_ref)
-    expect(document).to be_queued
-  end
-
   def mock_gov_notify_client
     stub_const('Notifications::Client', gov_notify_client)
     allow(gov_notify_client).to receive(:new).and_return(gov_notify_client)
