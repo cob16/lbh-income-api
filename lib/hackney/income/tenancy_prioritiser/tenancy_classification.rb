@@ -30,6 +30,8 @@ module Hackney
 
           wanted_action ||= :send_NOSP if send_nosp?
 
+          wanted_action ||= :no_action if @criteria.courtdate.present?
+
           wanted_action ||= :send_letter_two if send_letter_two?
           wanted_action ||= :send_letter_one if send_letter_one?
           wanted_action ||= :send_first_SMS if send_sms?
