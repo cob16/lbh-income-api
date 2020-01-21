@@ -4,8 +4,7 @@ describe 'Send SMS Rule', type: :feature do
   send_sms_condition_matrix = [
     {
       outcome: :send_first_SMS,
-      nosps_in_last_year: 0,
-      nosp_expiry_date: '',
+      nosp_served_date: nil,
       weekly_rent: 10,
       balance: 5,
       is_paused_until: '',
@@ -18,8 +17,7 @@ describe 'Send SMS Rule', type: :feature do
     # active_agreement test
     {
       outcome: :no_action,
-      nosps_in_last_year: 0,
-      nosp_expiry_date: '',
+      nosp_served_date: nil,
       weekly_rent: 10,
       balance: 6,
       is_paused_until: '',
@@ -32,8 +30,7 @@ describe 'Send SMS Rule', type: :feature do
     # balance test
     {
       outcome: :no_action,
-      nosps_in_last_year: 0,
-      nosp_expiry_date: '',
+      nosp_served_date: nil,
       weekly_rent: 10,
       balance: 4.0,
       is_paused_until: '',

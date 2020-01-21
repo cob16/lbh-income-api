@@ -37,7 +37,7 @@ module UniversalHousingHelper
       potentialenddate: DateTime.now,
       u_payment_expected: '?',
       dtstamp: DateTime.now,
-      u_notice_served: nosp_notice_served_date.to_date,
+      u_notice_served: nosp_notice_served_date&.to_date,
       u_notice_expiry: nosp_notice_expiry_date.to_date,
       courtdate: courtdate.to_date,
       u_court_outcome: court_outcome,
