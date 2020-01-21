@@ -132,7 +132,7 @@ module Hackney
           return false if @criteria.last_communication_action.in?(after_letter_one_actions) &&
                           last_communication_newer_than?(3.months.ago)
 
-          balance_is_in_arrears_by_number_of_weeks?(1)
+          balance_is_in_arrears_by_amount?(10)
         end
 
         def send_letter_two?
@@ -144,10 +144,10 @@ module Hackney
 
           return false unless @criteria.last_communication_action.in?(valid_actions_for_letter_two_to_progress)
 
-          return false if last_communication_newer_than?(1.week.ago)
+          return false if last_communication_newer_than?(14.days.ago)
           return false if last_communication_older_than?(3.months.ago)
 
-          balance_is_in_arrears_by_number_of_weeks?(3)
+          balance_is_in_arrears_by_amount?(10)
         end
 
         def send_nosp?
@@ -202,13 +202,19 @@ module Hackney
         end
 
         def last_communication_newer_than?(date)
-          @criteria.last_communication_date >= date.to_date
+          @criteria.last_communication_date > date.to_date
         end
 
         def balance_is_in_arrears_by_number_of_weeks?(weeks)
-          balance_with_1_week_grace = @criteria.balance - @criteria.weekly_gross_rent
-
           balance_with_1_week_grace >= arrear_accumulation_by_number_weeks(weeks)
+        end
+
+        def balance_is_in_arrears_by_amount?(amount)
+          balance_with_1_week_grace >= amount
+        end
+
+        def balance_with_1_week_grace
+          @criteria.balance - @criteria.weekly_gross_rent
         end
 
         def arrear_accumulation_by_number_weeks(weeks)
