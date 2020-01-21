@@ -4,16 +4,20 @@ describe UseCases::AutomateSendingLetters do
   include MockAwsHelper
 
   let(:automate_sending_letters) {
-    described_class.new(case_ready_for_automation: case_ready_for_automation,
-                        case_classification_to_letter_type_map: case_classification_to_letter_type_map,
-                        generate_and_store_letter: generate_and_store_letter,
-                        send_letter_to_gov_notify: send_letter_to_gov_notify)
+    described_class.new(
+      case_ready_for_automation: case_ready_for_automation,
+      case_classification_to_letter_type_map: case_classification_to_letter_type_map,
+      generate_and_store_letter: generate_and_store_letter,
+      send_letter_to_gov_notify: send_letter_to_gov_notify,
+      set_tenancy_paused_status: set_tenancy_paused_status
+    )
   }
 
   let(:case_ready_for_automation) { spy }
   let(:case_classification_to_letter_type_map) { spy }
   let(:generate_and_store_letter) { spy }
   let(:send_letter_to_gov_notify) { spy }
+  let(:set_tenancy_paused_status) { spy }
 
   let(:case_priority) {
     build(:case_priority,
@@ -101,13 +105,31 @@ describe UseCases::AutomateSendingLetters do
         }
       }
 
-      it 'does not send a letter' do
+      before do
         expect(generate_and_store_letter)
           .to receive(:execute)
           .and_return(validation_errors)
+      end
 
+      it 'does not send a letter' do
         expect(send_letter_to_gov_notify)
           .not_to receive(:perform_later)
+
+        automate_sending_letters.execute(case_priority: case_priority)
+      end
+
+      it 'writes to the action diary' do
+        expect(set_tenancy_paused_status).to receive(:execute)
+          .with(
+            username: 'MANAGE ARREARS SYSTEM',
+            tenancy_ref: case_priority.tenancy_ref,
+            until_date: 1.week.from_now.iso8601,
+            action_code: 'RMD',
+            pause_reason: 'Missing Data',
+            pause_comment: 'Errors when generating Letter income_collection_letter_1: ' \
+              "'forename: missing mandatory field; surname: missing mandatory field; " \
+              "address_line2: missing mandatory field; address_post_code: missing mandatory field'"
+          )
 
         automate_sending_letters.execute(case_priority: case_priority)
       end

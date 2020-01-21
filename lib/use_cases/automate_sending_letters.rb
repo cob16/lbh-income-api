@@ -1,10 +1,15 @@
 module UseCases
   class AutomateSendingLetters
-    def initialize(case_ready_for_automation:, case_classification_to_letter_type_map:, generate_and_store_letter:, send_letter_to_gov_notify:)
+    def initialize(case_ready_for_automation:,
+                   case_classification_to_letter_type_map:, generate_and_store_letter:,
+                   send_letter_to_gov_notify:,
+                   set_tenancy_paused_status:)
+
       @case_ready_for_automation = case_ready_for_automation
       @case_classification_to_letter_type_map = case_classification_to_letter_type_map
       @generate_and_store_letter = generate_and_store_letter
       @send_letter_to_gov_notify = send_letter_to_gov_notify
+      @set_tenancy_paused_status = set_tenancy_paused_status
     end
 
     def execute(case_priority:)
@@ -29,11 +34,23 @@ module UseCases
         user: generate_income_collection_user
       )
 
-      return false if generate_letter[:errors].present?
+      if generate_letter[:errors].present?
+        errors = generate_letter[:errors].map { |error| "#{error[:name]}: #{error[:message]}" }.join('; ')
 
-      @send_letter_to_gov_notify.perform_later(document_id: generate_letter[:document_id], tenancy_ref: case_priority.tenancy_ref)
+        @set_tenancy_paused_status.execute(
+          username: generate_income_collection_user.name,
+          tenancy_ref: case_priority.tenancy_ref,
+          until_date: 1.week.from_now.iso8601,
+          pause_reason: 'Missing Data',
+          pause_comment: "Errors when generating Letter #{letter_name}: '#{errors}'",
+          action_code: Hackney::Tenancy::ActionCodes::PAUSED_MISSING_DATA
+        )
 
-      true
+        return false
+      else
+        @send_letter_to_gov_notify.perform_later(document_id: generate_letter[:document_id], tenancy_ref: case_priority.tenancy_ref)
+        return true
+      end
     end
 
     def enviornment_allow_to_send_automated_letters?

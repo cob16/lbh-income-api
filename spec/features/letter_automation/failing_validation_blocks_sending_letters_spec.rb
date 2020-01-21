@@ -55,6 +55,8 @@ describe 'syncing triggers automatic sending of letters', type: :feature do
       it 'will not send the letter' do
         when_the_sync_runs(document_count_changes_by: 0, case_priority_count_changes_by: 1)
         then_the_case_priority_is(:send_letter_one)
+        then_the_case_priority_is(:paused)
+        then_there_is_a_paused_action_diary_entry
       end
     end
   end
@@ -84,16 +86,20 @@ describe 'syncing triggers automatic sending of letters', type: :feature do
     expect(case_priority).to send("be_#{classification}".to_sym)
   end
 
-  def then_a_document_is_queued
-    document = Hackney::Cloud::Document.last
-    expect(JSON.parse(document.metadata)['payment_ref']).to eq(payment_ref)
-    expect(document).to be_queued
-  end
-
   def mock_gov_notify_client
     stub_const('Notifications::Client', gov_notify_client)
     allow(gov_notify_client).to receive(:new).and_return(gov_notify_client)
     allow(gov_notify_client).to receive(:send_precompiled_letter).and_return(fake_response)
+  end
+
+  def then_there_is_a_paused_action_diary_entry
+    expect(Hackney::UniversalHousing::Client.connection[:araction].count).to eq(1)
+    action = Hackney::UniversalHousing::Client.connection[:araction].first
+    expect(action[:action_code]).to eq(Hackney::Tenancy::ActionCodes::PAUSED_MISSING_DATA)
+    errors = "'forename: missing mandatory field; surname: missing mandatory field'"
+    expect(action[:action_comment]).to match(
+      /Missing Data: Paused to \d{4}-\d{2}-\d{2}. Errors when generating Letter income_collection_letter_1: #{errors}/
+    )
   end
 
   alias_method :given_a_case_priority_is, :expect_case_priority_to_be
