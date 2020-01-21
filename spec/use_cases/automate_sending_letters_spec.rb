@@ -119,8 +119,6 @@ describe UseCases::AutomateSendingLetters do
       end
 
       it 'writes to the action diary' do
-        errors = validation_errors[:errors].map { |error| "#{error[:name]}: #{error[:message]}" }.join('; ')
-
         expect(set_tenancy_paused_status).to receive(:execute)
           .with(
             username: 'MANAGE ARREARS SYSTEM',
@@ -128,7 +126,9 @@ describe UseCases::AutomateSendingLetters do
             until_date: 1.week.from_now.iso8601,
             action_code: 'RMD',
             pause_reason: 'Missing Data',
-            pause_comment: match(/#{errors}/)
+            pause_comment: 'Errors when generating Letter income_collection_letter_1: ' \
+              "'forename: missing mandatory field; surname: missing mandatory field; " \
+              "address_line2: missing mandatory field; address_post_code: missing mandatory field'"
           )
 
         automate_sending_letters.execute(case_priority: case_priority)
