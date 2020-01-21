@@ -314,9 +314,16 @@ module UniversalHousingHelper
     stub_request(
       :post,
       'http://example.com/api/v2/tenancies/arrears-action-diary'
-    ).to_return(lambda do |_request|
+    ).to_return(lambda do |request|
+      json_body = JSON.parse(request.body)
+
       # Mock the behaviour of the API by writing directly to UH
-      create_uh_action(tenancy_ref: tenancy_ref, code: code, date: date)
+      create_uh_action(
+        tenancy_ref: json_body['tenancyAgreementRef'],
+        code: json_body['actionCode'],
+        date: Time.zone.parse(json_body['createdDate']),
+        comment: json_body['comment']
+      )
 
       { status: 200, body: '', headers: {} }
     end)
