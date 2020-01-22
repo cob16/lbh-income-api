@@ -116,7 +116,7 @@ module Hackney
         def send_sms?
           return false if @criteria.balance.blank?
           return false if @criteria.last_communication_action.present?
-          return false if @criteria.nosp_served?
+          return false if @criteria.nosp.served?
           return false if @criteria.active_agreement?
 
           @criteria.balance >= 5
@@ -126,7 +126,7 @@ module Hackney
           return false if @criteria.balance.blank?
           return false if @criteria.weekly_gross_rent.blank?
 
-          return false if @criteria.nosp_served?
+          return false if @criteria.nosp.served?
           return false if @criteria.active_agreement?
 
           return false if @criteria.last_communication_action.in?(after_letter_one_actions) &&
@@ -140,7 +140,7 @@ module Hackney
           return false if @criteria.weekly_gross_rent.blank?
 
           return false if @criteria.active_agreement?
-          return false if @criteria.nosp_served?
+          return false if @criteria.nosp.served?
 
           return false unless @criteria.last_communication_action.in?(valid_actions_for_letter_two_to_progress)
 
@@ -156,9 +156,9 @@ module Hackney
 
           return false if @criteria.active_agreement?
 
-          return false if @criteria.nosp[:valid]
+          return false if @criteria.nosp.valid?
 
-          if @criteria.nosp[:served_date].blank?
+          unless @criteria.nosp.served?
             return false unless @criteria.last_communication_action.in?(valid_actions_for_nosp_to_progress)
             return false if last_communication_older_than?(3.months.ago)
             return false if last_communication_newer_than?(1.week.ago)
@@ -175,8 +175,8 @@ module Hackney
 
           return false if @criteria.last_communication_action.in?(after_court_warning_letter_actions)
 
-          return false unless @criteria.nosp[:valid]
-          return false unless @criteria.nosp[:active]
+          return false unless @criteria.nosp.valid?
+          return false unless @criteria.nosp.active?
 
           balance_is_in_arrears_by_number_of_weeks?(4)
         end
@@ -185,12 +185,12 @@ module Hackney
           return false if @criteria.balance.blank?
           return false if @criteria.weekly_gross_rent.blank?
 
-          return false unless @criteria.nosp_served?
+          return false unless @criteria.nosp.served?
 
           return false unless @criteria.last_communication_action.in?(valid_actions_for_apply_for_court_date_to_progress)
           return false if last_communication_newer_than?(2.weeks.ago)
 
-          return false unless @criteria.nosp[:active]
+          return false unless @criteria.nosp.active?
 
           return false if @criteria.courtdate.present? && @criteria.courtdate > @criteria.last_communication_date
 

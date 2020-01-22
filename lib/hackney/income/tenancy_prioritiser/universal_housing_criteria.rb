@@ -38,12 +38,6 @@ module Hackney
           weekly_rent + weekly_service + weekly_other_charge
         end
 
-        def nosp_served_date
-          return nil if date_not_valid?(attributes[:nosp_served_date])
-
-          attributes[:nosp_served_date].to_date
-        end
-
         def universal_credit
           attributes[:universal_credit]
         end
@@ -58,10 +52,6 @@ module Hackney
 
         def uc_direct_payment_received
           attributes[:uc_direct_payment_received]
-        end
-
-        def nosp_expiry_date
-          nosp[:expires_date]
         end
 
         def courtdate
@@ -108,14 +98,6 @@ module Hackney
           attributes.fetch(:breached_agreements_count)
         end
 
-        def nosp_served?
-          nosp[:served_date].present?
-        end
-
-        def active_nosp?
-          nosp[:active]
-        end
-
         # FIXME: implementation needs confirming, will return to later
         def broken_court_order?
           false
@@ -148,34 +130,26 @@ module Hackney
           }
         end
 
+        def nosp_served_date
+          return nil if date_not_valid?(attributes[:nosp_served_date])
+
+          attributes[:nosp_served_date].to_date
+        end
+
+        def nosp_expiry_date
+          nosp.expires_date
+        end
+
+        def nosp_served?
+          nosp.served?
+        end
+
+        def active_nosp?
+          nosp.active?
+        end
+
         def nosp
-          expires_date = nil
-          valid_until_date = nil
-          active = false
-          in_cool_off_period = false
-          valid = false
-
-          if nosp_served_date.present?
-            # Expires Date is when the NOSP can now be actioned upon.
-            # The Tenant has 28 days to pay the arrears before Court action can take place.
-            # This is the "cooling off period".
-            # Active - This when the Tenant can be taken to court if the arrears are "high" enough.
-            # Valid - This is during the cooling off period and when the NOSP is "active".
-            expires_date = nosp_served_date + 28.days
-            valid_until_date = expires_date + 52.weeks
-            active = expires_date < Time.zone.now
-            in_cool_off_period = expires_date > Time.zone.now
-            valid = valid_until_date > Time.zone.now
-          end
-
-          {
-            served_date: nosp_served_date,
-            expires_date: expires_date,
-            valid_until_date: valid_until_date,
-            active: valid && active,
-            in_cool_off_period: in_cool_off_period,
-            valid: valid
-          }
+          @nosp ||= Hackney::Domain::Nosp.new(served_date: nosp_served_date)
         end
 
         def self.format_action_codes_for_sql
