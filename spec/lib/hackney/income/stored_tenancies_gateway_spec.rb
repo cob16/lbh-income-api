@@ -56,9 +56,7 @@ describe Hackney::Income::StoredTenanciesGateway do
 
           balance: attributes.fetch(:criteria).balance,
           weekly_rent: attributes.fetch(:criteria).weekly_rent,
-          days_in_arrears: attributes.fetch(:criteria).days_in_arrears,
           days_since_last_payment: attributes.fetch(:criteria).days_since_last_payment,
-          number_of_broken_agreements: attributes.fetch(:criteria).number_of_broken_agreements,
           active_agreement: attributes.fetch(:criteria).active_agreement?,
           broken_court_order: attributes.fetch(:criteria).broken_court_order?,
           nosp_served: attributes.fetch(:criteria).nosp_served?,
@@ -71,10 +69,7 @@ describe Hackney::Income::StoredTenanciesGateway do
           uc_rent_verification: attributes.fetch(:criteria).uc_rent_verification,
           uc_direct_payment_requested: attributes.fetch(:criteria).uc_direct_payment_requested,
           uc_direct_payment_received: attributes.fetch(:criteria).uc_direct_payment_received,
-          classification: classification,
-          latest_active_agreement_date: attributes.fetch(:criteria).latest_active_agreement_date,
-          breach_agreement_date: attributes.fetch(:criteria).latest_active_agreement_date,
-          expected_balance: attributes.fetch(:criteria).expected_balance
+          classification: classification
         )
       end
 
@@ -582,11 +577,8 @@ describe Hackney::Income::StoredTenanciesGateway do
   def expected_serialised_tenancy(attributes)
     {
       tenancy_ref: attributes.fetch(:tenancy_ref),
-
       balance: attributes.fetch(:criteria).balance,
-      days_in_arrears: attributes.fetch(:criteria).days_in_arrears,
       days_since_last_payment: attributes.fetch(:criteria).days_since_last_payment,
-      number_of_broken_agreements: attributes.fetch(:criteria).number_of_broken_agreements,
       active_agreement: attributes.fetch(:criteria).active_agreement?,
       broken_court_order: attributes.fetch(:criteria).broken_court_order?,
       nosp_served: attributes.fetch(:criteria).nosp_served?,
@@ -599,10 +591,7 @@ describe Hackney::Income::StoredTenanciesGateway do
       uc_rent_verification: attributes.fetch(:criteria).uc_rent_verification,
       uc_direct_payment_requested: attributes.fetch(:criteria).uc_direct_payment_requested,
       uc_direct_payment_received: attributes.fetch(:criteria).uc_direct_payment_received,
-      classification: classification,
-      latest_active_agreement_date: attributes.fetch(:criteria).latest_active_agreement_date,
-      breach_agreement_date: attributes.fetch(:criteria).breach_agreement_date,
-      expected_balance: attributes.fetch(:criteria).expected_balance
+      classification: classification
     }
   end
 end
