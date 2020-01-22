@@ -68,14 +68,6 @@ module Stubs
       weekly_rent.to_i + weekly_service.to_i + weekly_other_charge.to_i
     end
 
-    def nosp_served_date
-      attributes[:nosp_served_date]
-    end
-
-    def nosp_expiry_date
-      nosp[:expires_date]
-    end
-
     def courtdate
       attributes[:courtdate]
     end
@@ -100,37 +92,24 @@ module Stubs
       attributes[:most_recent_agreement] || attributes[:active_agreement]
     end
 
-    def nosp_served?
-      nosp[:served_date].present?
+    def nosp
+      @nosp ||= Hackney::Domain::Nosp.new(served_date: nosp_served_date)
     end
 
-    def nosp
-      expires_date = nil
-      valid_until_date = nil
-      active = false
-      in_cool_off_period = false
-      valid = false
+    def nosp_served_date
+      attributes[:nosp_served_date]
+    end
 
-      if nosp_served_date.present?
-        expires_date = nosp_served_date + 28.days
-        valid_until_date = expires_date + 52.weeks
-        active = expires_date < Time.zone.now
-        in_cool_off_period = expires_date > Time.zone.now
-        valid = valid_until_date > Time.zone.now
-      end
-
-      {
-        served_date: nosp_served_date,
-        expires_date: expires_date,
-        valid_until_date: valid_until_date,
-        active: valid && active,
-        in_cool_off_period: in_cool_off_period,
-        valid: valid
-      }
+    def nosp_served?
+      nosp.served?
     end
 
     def active_nosp?
-      nosp[:active]
+      nosp.active?
+    end
+
+    def nosp_expiry_date
+      nosp.expires_date
     end
 
     def number_of_broken_agreements

@@ -711,15 +711,20 @@ describe Hackney::Income::TenancyPrioritiser::UniversalHousingCriteria, universa
       context 'when there is no NOSP served date' do
         let(:nosp_notice_served_date) { nil }
 
-        it 'contains sensible defaults' do
-          expect(criteria.nosp).to eq(
-            served_date: nil,
-            expires_date: nil,
-            valid_until_date: nil,
-            active: false,
-            in_cool_off_period: false,
-            valid: false
-          )
+        it 'is not cooling off' do
+          expect(criteria.nosp.in_cool_off_period?).to eq(false)
+        end
+
+        it 'is not valid' do
+          expect(criteria.nosp.valid?).to eq(false)
+        end
+
+        it 'is not active' do
+          expect(criteria.nosp.active?).to eq(false)
+        end
+
+        it 'has not been served' do
+          expect(criteria.nosp.served?).to eq(false)
         end
       end
 
@@ -727,45 +732,60 @@ describe Hackney::Income::TenancyPrioritiser::UniversalHousingCriteria, universa
         context 'with a served date that is in cooling off' do
           let(:nosp_notice_served_date) { 27.days.ago }
 
-          it 'has correct values' do
-            expect(criteria.nosp).to eq(
-              served_date: nosp_notice_served_date.to_date,
-              expires_date: 1.day.from_now.to_date,
-              valid_until_date: (1.day.from_now + 52.weeks).to_date,
-              active: false,
-              in_cool_off_period: true,
-              valid: true
-            )
+          it 'is cooling off' do
+            expect(criteria.nosp.in_cool_off_period?).to eq(true)
+          end
+
+          it 'is valid' do
+            expect(criteria.nosp.valid?).to eq(true)
+          end
+
+          it 'is not active' do
+            expect(criteria.nosp.active?).to eq(false)
+          end
+
+          it 'has been served' do
+            expect(criteria.nosp.served?).to eq(true)
           end
         end
 
         context 'with a served date that is over 28 days ago' do
           let(:nosp_notice_served_date) { 29.days.ago }
 
-          it 'has correct values' do
-            expect(criteria.nosp).to eq(
-              served_date: nosp_notice_served_date.to_date,
-              expires_date: 1.day.ago.to_date,
-              valid_until_date: (1.day.ago + 52.weeks).to_date,
-              active: true,
-              in_cool_off_period: false,
-              valid: true
-            )
+          it 'is not cooling off' do
+            expect(criteria.nosp.in_cool_off_period?).to eq(false)
+          end
+
+          it 'is valid' do
+            expect(criteria.nosp.valid?).to eq(true)
+          end
+
+          it 'is active' do
+            expect(criteria.nosp.active?).to eq(true)
+          end
+
+          it 'has been served' do
+            expect(criteria.nosp.served?).to eq(true)
           end
         end
 
         context 'with a served date that is over 13 months ago' do
           let(:nosp_notice_served_date) { 57.weeks.ago }
 
-          it 'has correct values' do
-            expect(criteria.nosp).to eq(
-              served_date: nosp_notice_served_date.to_date,
-              expires_date: 53.weeks.ago.to_date,
-              valid_until_date: 1.week.ago.to_date,
-              active: false,
-              in_cool_off_period: false,
-              valid: false
-            )
+          it 'is not cooling off' do
+            expect(criteria.nosp.in_cool_off_period?).to eq(false)
+          end
+
+          it 'is not valid' do
+            expect(criteria.nosp.valid?).to eq(false)
+          end
+
+          it 'is not active' do
+            expect(criteria.nosp.active?).to eq(false)
+          end
+
+          it 'has been served' do
+            expect(criteria.nosp.served?).to eq(true)
           end
         end
       end
