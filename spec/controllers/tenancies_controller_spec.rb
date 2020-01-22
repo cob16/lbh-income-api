@@ -36,7 +36,7 @@ describe TenanciesController, type: :controller do
   end
 
   context 'when fetching a tenancy' do
-    let(:tenancy_1) { create_tenancy_model }
+    let(:tenancy_1) { create(:case_priority, tenancy_ref: 1234) }
 
     before do
       tenancy_1.save
@@ -54,8 +54,88 @@ describe TenanciesController, type: :controller do
       get :show, params: { tenancy_ref: tenancy_1.tenancy_ref }
 
       expect(response.status).to eq(200)
-      expect(response.body).to eq(tenancy_1.to_json)
+
+      tenancy_hash = JSON.parse(response.body, symbolize_names: true)
+
+      expect(tenancy_hash).to match(
+        a_hash_including(
+          id: tenancy_1.id,
+          tenancy_ref: tenancy_1.tenancy_ref,
+          active_agreement: false,
+          active_nosp: nil,
+          assigned_user_id: nil,
+          balance: tenancy_1.balance.to_s,
+          breach_agreement_date: nil,
+          broken_court_order: nil,
+          case_id: 1,
+          classification: nil,
+          court_outcome: nil,
+          courtdate: nil,
+          days_in_arrears: tenancy_1.days_in_arrears,
+          days_since_last_payment: nil,
+          eviction_date: nil,
+          expected_balance: nil,
+          is_paused_until: nil,
+          last_communication_action: nil,
+          last_communication_date: nil,
+          latest_active_agreement_date: nil,
+          nosp: { served_date: nil },
+          nosp_expiry_date: nil,
+          nosp_served: nil,
+          nosp_served_date: nil,
+          number_of_broken_agreements: nil,
+          patch_code: nil,
+          pause_comment: nil,
+          pause_reason: nil,
+          payment_ref: nil,
+          uc_direct_payment_received: nil,
+          uc_direct_payment_requested: nil,
+          uc_rent_verification: nil,
+          universal_credit: nil,
+          weekly_rent: nil,
+          created_at: tenancy_1.created_at.iso8601(3),
+          updated_at: tenancy_1.updated_at.iso8601(3)
+        )
+      )
     end
+
+    context 'when the tenancy has a NOSP' do
+      let(:nosp_served_date) { 1.month.ago }
+      let(:tenancy_1) { create(:case_priority, tenancy_ref: 1234, nosp_served_date: nosp_served_date) }
+
+      it 'returns a tenancy' do
+        expect_any_instance_of(Hackney::Income::GetTenancy).to receive(:execute).with(
+          tenancy_ref: tenancy_1.tenancy_ref
+        ).and_call_original
+
+        get :show, params: { tenancy_ref: tenancy_1.tenancy_ref }
+
+        expect(response.status).to eq(200)
+
+        tenancy_hash = JSON.parse(response.body, symbolize_names: true)
+
+        expect(tenancy_hash).to match(
+          a_hash_including(
+            id: tenancy_1.id,
+            tenancy_ref: tenancy_1.tenancy_ref,
+            nosp: {
+              active: true,
+              expires_date: (nosp_served_date + 28.days).iso8601(3),
+              in_cool_off_period: false,
+              served_date: nosp_served_date.iso8601(3),
+              valid_until_date: (nosp_served_date + 28.days + 52.weeks).iso8601(3),
+              valid: true
+            },
+            nosp_served_date: nosp_served_date.iso8601(3),
+            # The follwoing attributes are stored on the Case Pirority Model
+            active_nosp: nil,
+            nosp_expiry_date: nil,
+            nosp_served: nil
+          )
+        )
+      end
+    end
+
     context 'when tenancy is not found' do
       it 'returns 404' do
         get :show, params: { tenancy_ref: 'not a tenancy ref' }

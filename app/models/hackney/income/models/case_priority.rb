@@ -30,6 +30,10 @@ module Hackney
           is_paused_until ? is_paused_until.future? : false
         end
 
+        def nosp
+          @nosp ||= Hackney::Domain::Nosp.new(served_date: nosp_served_date)
+        end
+
         def self.not_paused
           where('is_paused_until < ? OR is_paused_until is null', Date.today)
         end

@@ -4,7 +4,7 @@ class TenanciesController < ApplicationController
       tenancy_ref: params.fetch(:tenancy_ref)
     )
 
-    render json: @tenancy.as_json,
+    render json: @tenancy.as_json(methods: :nosp),
            status: @tenancy.nil? ? :not_found : :ok
   end
 
