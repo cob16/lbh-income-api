@@ -7,8 +7,7 @@ module Hackney
             build_sql,
             tenancy_ref,
             Hackney::Income::ACTIVE_ARREARS_AGREEMENT_STATUS,
-            Hackney::Income::BREACHED_ARREARS_AGREEMENT_STATUS,
-            Hackney::Income::NOSP_ACTION_DIARY_CODE
+            Hackney::Income::BREACHED_ARREARS_AGREEMENT_STATUS
           ]
 
           new(tenancy_ref, attributes.first.symbolize_keys)
@@ -207,7 +206,6 @@ module Hackney
             DECLARE @TenancyRef VARCHAR(60) = ?
             DECLARE @ActiveArrearsAgreementStatus VARCHAR(60) = ?
             DECLARE @BreachedArrearsAgreementStatus VARCHAR(60) = ?
-            DECLARE @NospActionDiaryCode VARCHAR(60) = ?
             DECLARE @PaymentTypes table(payment_type varchar(3))
             INSERT INTO @PaymentTypes VALUES ('RBA'), ('RBP'), ('RBR'), ('RCI'), ('RCO'), ('RCP'), ('RDD'), ('RDN'), ('RDP'), ('RDR'), ('RDS'), ('RDT'), ('REF'), ('RHA'), ('RHB'), ('RIT'), ('RML'), ('RPD'), ('RPO'), ('RPY'), ('RQP'), ('RRC'), ('RRP'), ('RSO'), ('RTM'), ('RUC'), ('RWA')
             DECLARE @CommunicationTypes table(communication_types varchar(60))
@@ -231,9 +229,6 @@ module Hackney
             )
             DECLARE @NospServedDate SMALLDATETIME = (
               SELECT u_notice_served FROM [dbo].[tenagree] WHERE tag_ref = @TenancyRef
-            )
-            DECLARE @NospExpiryDate SMALLDATETIME = (
-              SELECT u_notice_expiry FROM [dbo].[tenagree] WHERE tag_ref = @TenancyRef
             )
             DECLARE @Courtdate SMALLDATETIME = (
               SELECT courtdate FROM [dbo].[tenagree] WHERE tag_ref = @TenancyRef
@@ -268,8 +263,6 @@ module Hackney
             DECLARE @RemainingTransactions INT = (SELECT COUNT(tag_ref) FROM [dbo].[rtrans] WITH (NOLOCK) WHERE tag_ref = @TenancyRef)
             DECLARE @ActiveAgreementsCount INT = (SELECT COUNT(tag_ref) FROM [dbo].[arag] WITH (NOLOCK) WHERE tag_ref = @TenancyRef AND arag_status = @ActiveArrearsAgreementStatus)
             DECLARE @BreachedAgreementsCount INT = (SELECT COUNT(tag_ref) FROM [dbo].[arag] WITH (NOLOCK) WHERE tag_ref = @TenancyRef AND arag_status = @BreachedArrearsAgreementStatus)
-            DECLARE @NospsInLastYear INT = (SELECT COUNT(tag_ref) FROM araction WITH (NOLOCK) WHERE tag_ref = @TenancyRef AND action_code = @NospActionDiaryCode AND action_date >= CONVERT(date, DATEADD(year, -1, GETDATE())))
-            DECLARE @NospsInLastMonth INT = (SELECT COUNT(tag_ref) FROM araction WITH (NOLOCK) WHERE tag_ref = @TenancyRef AND action_code = @NospActionDiaryCode AND action_date >= CONVERT(date, DATEADD(month, -1, GETDATE())))
 
             DECLARE @LastCommunicationAction VARCHAR(60) = (
               #{build_last_communication_sql_query(column: 'action_code')}
@@ -361,10 +354,7 @@ module Hackney
               @ArrearsStartDate as arrears_start_date,
               @ActiveAgreementsCount as active_agreements_count,
               @BreachedAgreementsCount as breached_agreements_count,
-              @NospsInLastYear as nosps_in_last_year,
-              @NospsInLastMonth as nosps_in_last_month,
               @NospServedDate as nosp_served_date,
-              @NospExpiryDate as nosp_expiry_date,
               @Courtdate as courtdate,
               @CourtOutcome as court_outcome,
               @LatestActiveAgreementDate as latest_active_agreement_date,
