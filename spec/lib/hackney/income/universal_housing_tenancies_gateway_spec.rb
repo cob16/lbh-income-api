@@ -120,6 +120,19 @@ describe Hackney::Income::UniversalHousingTenanciesGateway, universal: true do
             expect(subject).to eq(%w[00001/01])
           end
         end
+
+        context 'when a tenancy is does not have a patch and when one has an accepted patch' do
+          before do
+            create_uh_tenancy_agreement(tenancy_ref: '00001/01', current_balance: 10.0, prop_ref: 'PROP1')
+            create_uh_property(property_ref: 'PROP1', patch_code: 'Z01')
+            create_uh_tenancy_agreement(tenancy_ref: '00002/01', current_balance: 10.0, prop_ref: 'PROP2')
+            create_uh_property(property_ref: 'PROP2', patch_code: nil)
+          end
+
+          it 'includes the tenancy' do
+            expect(subject).to eq(%w[00001/01 00002/01])
+          end
+        end
       end
 
       context 'without a list of acceptable patches given' do
