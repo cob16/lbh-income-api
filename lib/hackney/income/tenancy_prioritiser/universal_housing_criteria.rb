@@ -3,14 +3,10 @@ module Hackney
     class TenancyPrioritiser
       class UniversalHousingCriteria
         def self.for_tenancy(universal_housing_client, tenancy_ref)
-          attributes = universal_housing_client[
-            build_sql,
-            tenancy_ref,
-            Hackney::Income::ACTIVE_ARREARS_AGREEMENT_STATUS,
-            Hackney::Income::BREACHED_ARREARS_AGREEMENT_STATUS
-          ]
+          attributes = universal_housing_client[build_sql, tenancy_ref].first
+          attributes ||= {}
 
-          new(tenancy_ref, attributes.first.symbolize_keys)
+          new(tenancy_ref, attributes.symbolize_keys)
         end
 
         def initialize(tenancy_ref, attributes)
@@ -70,10 +66,6 @@ module Hackney
           attributes[:eviction_date]
         end
 
-        def days_in_arrears
-          day_difference(Date.today, attributes.fetch(:arrears_start_date))
-        end
-
         def days_since_last_payment
           return nil if attributes.fetch(:last_payment_date).nil?
 
@@ -94,10 +86,6 @@ module Hackney
           attributes[:most_recent_agreement_status].squish != Hackney::Income::BREACHED_ARREARS_AGREEMENT_STATUS
         end
 
-        def number_of_broken_agreements
-          attributes.fetch(:breached_agreements_count)
-        end
-
         # FIXME: implementation needs confirming, will return to later
         def broken_court_order?
           false
@@ -105,18 +93,6 @@ module Hackney
 
         def patch_code
           attributes.fetch(:patch_code)
-        end
-
-        def breach_agreement_date
-          attributes.fetch(:breach_agreement_date)
-        end
-
-        def latest_active_agreement_date
-          attributes[:latest_active_agreement_date]
-        end
-
-        def expected_balance
-          attributes[:expected_balance]
         end
 
         def payment_ref
@@ -178,14 +154,11 @@ module Hackney
         def self.build_sql
           <<-SQL
             DECLARE @TenancyRef VARCHAR(60) = ?
-            DECLARE @ActiveArrearsAgreementStatus VARCHAR(60) = ?
-            DECLARE @BreachedArrearsAgreementStatus VARCHAR(60) = ?
             DECLARE @PaymentTypes table(payment_type varchar(3))
             INSERT INTO @PaymentTypes VALUES ('RBA'), ('RBP'), ('RBR'), ('RCI'), ('RCO'), ('RCP'), ('RDD'), ('RDN'), ('RDP'), ('RDR'), ('RDS'), ('RDT'), ('REF'), ('RHA'), ('RHB'), ('RIT'), ('RML'), ('RPD'), ('RPO'), ('RPY'), ('RQP'), ('RRC'), ('RRP'), ('RSO'), ('RTM'), ('RUC'), ('RWA')
             DECLARE @CommunicationTypes table(communication_types varchar(60))
             INSERT INTO @CommunicationTypes VALUES #{format_action_codes_for_sql}
 
-            DECLARE @CurrentBalance NUMERIC(9, 2) = (SELECT cur_bal FROM [dbo].[tenagree] WITH (NOLOCK) WHERE tag_ref = @TenancyRef)
             DECLARE @LastPaymentDate SMALLDATETIME = (
               SELECT post_date FROM (
                 SELECT ROW_NUMBER() OVER (ORDER BY post_date DESC) AS row, post_date
@@ -195,48 +168,6 @@ module Hackney
               ) t
               WHERE row = 1
             )
-            DECLARE @ExpectedBalance NUMERIC(9, 2) = (
-              SELECT TOP 1 arag_lastexpectedbal
-              FROM [dbo].[arag]
-              WHERE tag_ref = @TenancyRef
-              ORDER BY arag_statusdate
-            )
-            DECLARE @NospServedDate SMALLDATETIME = (
-              SELECT u_notice_served FROM [dbo].[tenagree] WHERE tag_ref = @TenancyRef
-            )
-            DECLARE @Courtdate SMALLDATETIME = (
-              SELECT courtdate FROM [dbo].[tenagree] WHERE tag_ref = @TenancyRef
-            )
-            DECLARE @CourtOutcome VARCHAR(3) = (
-              SELECT u_court_outcome FROM [dbo].[tenagree] WHERE tag_ref = @TenancyRef
-            )
-            DECLARE @EvictionDate SMALLDATETIME = (
-              SELECT evictdate FROM [dbo].[tenagree] WHERE tag_ref = @TenancyRef
-            )
-
-            DECLARE @WeeklyRent NUMERIC(9, 2) = (
-              SELECT rent FROM [dbo].[tenagree] WHERE tag_ref = @TenancyRef
-            )
-            DECLARE @WeeklyService NUMERIC(9, 2) = (
-              SELECT service FROM [dbo].[tenagree] WHERE tag_ref = @TenancyRef
-            )
-            DECLARE @WeeklyOtherCharge NUMERIC(9, 2) = (
-              SELECT other_charge FROM [dbo].[tenagree] WHERE tag_ref = @TenancyRef
-            )
-
-            DECLARE @PaymentRef VARCHAR(20) = (
-              SELECT u_saff_rentacc FROM [dbo].[tenagree] WHERE tag_ref = @TenancyRef
-            )
-            DECLARE @PatchCode VARCHAR(3) = (
-              SELECT arr_patch
-              FROM [dbo].[property]
-              INNER JOIN [dbo].[tenagree] ON [dbo].[property].prop_ref = [dbo].[tenagree].prop_ref
-              WHERE tag_ref = @TenancyRef
-            )
-
-            DECLARE @RemainingTransactions INT = (SELECT COUNT(tag_ref) FROM [dbo].[rtrans] WITH (NOLOCK) WHERE tag_ref = @TenancyRef)
-            DECLARE @ActiveAgreementsCount INT = (SELECT COUNT(tag_ref) FROM [dbo].[arag] WITH (NOLOCK) WHERE tag_ref = @TenancyRef AND arag_status = @ActiveArrearsAgreementStatus)
-            DECLARE @BreachedAgreementsCount INT = (SELECT COUNT(tag_ref) FROM [dbo].[arag] WITH (NOLOCK) WHERE tag_ref = @TenancyRef AND arag_status = @BreachedArrearsAgreementStatus)
 
             DECLARE @LastCommunicationAction VARCHAR(60) = (
               #{build_last_communication_sql_query(column: 'action_code')}
@@ -274,13 +205,6 @@ module Hackney
               AND action_code = 'UC3'
               ORDER BY action_date DESC
             )
-            DECLARE @LatestActiveAgreementDate SMALLDATETIME = (
-              SELECT TOP 1 arag_startdate
-              FROM [dbo].[arag]
-              WHERE tag_ref = @TenancyRef
-              AND arag_status = @ActiveArrearsAgreementStatus
-              ORDER BY arag_startdate DESC
-            )
             DECLARE @MostRecentAgreementDate SMALLDATETIME = (
               SELECT TOP 1 arag_startdate
               FROM [dbo].[arag]
@@ -294,56 +218,29 @@ module Hackney
               ORDER BY arag_startdate DESC
             )
 
-            DECLARE @BreachAgreementDate SMALLDATETIME = (
-              SELECT TOP 1 arag_statusdate
-              FROM [dbo].[arag]
-              WHERE tag_ref = @TenancyRef
-              AND arag_status = @BreachedArrearsAgreementStatus
-              ORDER BY arag_statusdate DESC
-            )
-            DECLARE @NextBalance NUMERIC(9, 2) = @CurrentBalance
-            DECLARE @CurrentTransactionRow INT = 1
-            DECLARE @ArrearsStartDate SMALLDATETIME = GETDATE()
-            WHILE (@NextBalance > 0 AND @RemainingTransactions > 0)
-            BEGIN
-              SELECT @NextBalance = @NextBalance - real_value, @ArrearsStartDate = post_date
-              FROM (
-                SELECT ROW_NUMBER() OVER (ORDER BY post_date DESC) as row, real_value, post_date
-                FROM rtrans WITH (NOLOCK)
-                WHERE tag_ref = @TenancyRef
-              ) t
-              WHERE row = @CurrentTransactionRow
-
-              SET @RemainingTransactions = @RemainingTransactions - 1
-              SET @CurrentTransactionRow = @CurrentTransactionRow + 1
-            END
-
             SELECT
-              @CurrentBalance as current_balance,
-              @WeeklyRent as weekly_rent,
-              @WeeklyService as weekly_service,
-              @WeeklyOtherCharge as weekly_other_charge,
-              @PatchCode as patch_code,
+              tenagree.cur_bal as current_balance,
+              tenagree.rent as weekly_rent,
+              tenagree.service as weekly_service,
+              tenagree.other_charge as weekly_other_charge,
+              tenagree.u_notice_served as nosp_served_date,
+              tenagree.courtdate as courtdate,
+              tenagree.u_court_outcome as court_outcome,
+              tenagree.evictdate as eviction_date,
+              tenagree.u_saff_rentacc as payment_ref,
+              property.arr_patch as patch_code,
               @LastPaymentDate as last_payment_date,
-              @ArrearsStartDate as arrears_start_date,
-              @ActiveAgreementsCount as active_agreements_count,
-              @BreachedAgreementsCount as breached_agreements_count,
-              @NospServedDate as nosp_served_date,
-              @Courtdate as courtdate,
-              @CourtOutcome as court_outcome,
-              @LatestActiveAgreementDate as latest_active_agreement_date,
-              @EvictionDate as eviction_date,
               @LastCommunicationAction as last_communication_action,
               @LastCommunicationDate as last_communication_date,
               @UniversalCredit as universal_credit,
               @UCVerificationComplete as uc_verification_complete,
               @UCDirectPaymentRequested as uc_direct_payment_requested,
               @UCDirectPaymentReceived as uc_direct_payment_received,
-              @BreachAgreementDate as breach_agreement_date,
-              @ExpectedBalance as expected_balance,
-              @PaymentRef as payment_ref,
               @MostRecentAgreementDate as most_recent_agreement_date,
               @MostRecentAgreementStatus as most_recent_agreement_status
+            FROM [dbo].[tenagree]
+            LEFT OUTER JOIN [dbo].[property] ON [dbo].[property].prop_ref = [dbo].[tenagree].prop_ref
+            WHERE tag_ref = @TenancyRef
           SQL
         end
 

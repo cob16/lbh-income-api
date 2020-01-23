@@ -4,8 +4,13 @@ class TenanciesController < ApplicationController
       tenancy_ref: params.fetch(:tenancy_ref)
     )
 
-    render json: @tenancy.as_json(methods: :nosp),
-           status: @tenancy.nil? ? :not_found : :ok
+    render json: @tenancy.as_json(
+      methods: :nosp,
+      except: %i[
+        days_in_arrears number_of_broken_agreements nosp_expiry_date latest_active_agreement_date
+        breach_agreement_date expected_balance
+      ]
+    ), status: @tenancy.nil? ? :not_found : :ok
   end
 
   def update

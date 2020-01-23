@@ -65,25 +65,19 @@ describe TenanciesController, type: :controller do
           active_nosp: nil,
           assigned_user_id: nil,
           balance: tenancy_1.balance.to_s,
-          breach_agreement_date: nil,
           broken_court_order: nil,
           case_id: 1,
           classification: nil,
           court_outcome: nil,
           courtdate: nil,
-          days_in_arrears: tenancy_1.days_in_arrears,
           days_since_last_payment: nil,
           eviction_date: nil,
-          expected_balance: nil,
           is_paused_until: nil,
           last_communication_action: nil,
           last_communication_date: nil,
-          latest_active_agreement_date: nil,
           nosp: { served_date: nil },
-          nosp_expiry_date: nil,
           nosp_served: nil,
           nosp_served_date: nil,
-          number_of_broken_agreements: nil,
           patch_code: nil,
           pause_comment: nil,
           pause_reason: nil,
@@ -129,7 +123,6 @@ describe TenanciesController, type: :controller do
             nosp_served_date: nosp_served_date.iso8601(3),
             # The follwoing attributes are stored on the Case Pirority Model
             active_nosp: nil,
-            nosp_expiry_date: nil,
             nosp_served: nil
           )
         )

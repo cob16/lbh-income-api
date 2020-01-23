@@ -17,17 +17,14 @@ module Hackney
 
         begin
           gateway_model_instance.tap do |tenancy|
-            tenancy.update(
+            tenancy.assign_attributes(
               balance: criteria.balance,
               weekly_rent: criteria.weekly_rent,
-              days_in_arrears: criteria.days_in_arrears,
               days_since_last_payment: criteria.days_since_last_payment,
-              number_of_broken_agreements: criteria.number_of_broken_agreements,
               active_agreement: criteria.active_agreement?,
               broken_court_order: criteria.broken_court_order?,
               nosp_served: criteria.nosp_served?,
               nosp_served_date: criteria.nosp_served_date,
-              nosp_expiry_date: criteria.nosp_expiry_date,
               last_communication_action: criteria.last_communication_action,
               last_communication_date: criteria.last_communication_date,
               active_nosp: criteria.active_nosp?,
@@ -40,11 +37,10 @@ module Hackney
               uc_rent_verification: criteria. uc_rent_verification,
               uc_direct_payment_requested: criteria.uc_direct_payment_requested,
               uc_direct_payment_received: criteria.uc_direct_payment_received,
-              latest_active_agreement_date: criteria.latest_active_agreement_date,
-              breach_agreement_date: criteria.breach_agreement_date,
-              expected_balance: criteria.expected_balance,
               payment_ref: criteria.payment_ref
             )
+
+            tenancy.save! if tenancy.changed?
           end
         rescue ActiveRecord::RecordNotUnique
           Rails.logger.error("A Tenancy with tenancy_ref: '#{tenancy_ref}' was inserted during find_or_create_by create operation, retrying...")
@@ -112,7 +108,6 @@ module Hackney
       def build_tenancy_list_item(model)
         {
           tenancy_ref: model.tenancy_ref,
-
           balance: model.balance,
           days_in_arrears: model.days_in_arrears,
           days_since_last_payment: model.days_since_last_payment,

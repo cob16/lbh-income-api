@@ -36,20 +36,8 @@ module Stubs
       attributes[:court_outcome]
     end
 
-    def latest_active_agreement_date
-      attributes[:latest_active_agreement_date]
-    end
-
-    def breach_agreement_date
-      attributes[:breach_agreement_date]
-    end
-
     def balance
       attributes[:balance]
-    end
-
-    def expected_balance
-      attributes[:expected_balance] || 100.00
     end
 
     def weekly_rent
@@ -84,10 +72,6 @@ module Stubs
       attributes[:broken_court_order]
     end
 
-    def days_in_arrears
-      attributes[:days_in_arrears] || 7
-    end
-
     def active_agreement?
       attributes[:most_recent_agreement] || attributes[:active_agreement]
     end
@@ -110,10 +94,6 @@ module Stubs
 
     def nosp_expiry_date
       nosp.expires_date
-    end
-
-    def number_of_broken_agreements
-      attributes[:number_of_broken_agreements] || 0
     end
 
     def payment_ref

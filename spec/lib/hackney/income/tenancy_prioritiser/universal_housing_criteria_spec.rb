@@ -174,63 +174,6 @@ describe Hackney::Income::TenancyPrioritiser::UniversalHousingCriteria, universa
       end
     end
 
-    describe '#days_in_arrears' do
-      subject { criteria.days_in_arrears }
-
-      context 'when the tenancy is not in arrears' do
-        let(:current_balance) { -50.00 }
-
-        it { is_expected.to be_zero }
-      end
-
-      context 'when the tenancy has paid off their balance perfectly' do
-        let(:current_balance) { 0.0 }
-
-        it { is_expected.to be_zero }
-      end
-
-      context 'when the tenancy has been in arrears for a week' do
-        let(:current_balance) { 100.00 }
-
-        before do
-          create_uh_transaction(tenancy_ref: tenancy_ref, amount: 75.0, date: Date.today - 3.days)
-          create_uh_transaction(tenancy_ref: tenancy_ref, amount: 50.0, date: Date.today - 7.days)
-        end
-
-        it 'returns the difference between now and the first date it was in arrears' do
-          expect(subject).to eq(7)
-        end
-      end
-
-      context 'when the tenancy has been in arrears for two weeks' do
-        let(:current_balance) { 100.00 }
-
-        before do
-          create_uh_transaction(tenancy_ref: tenancy_ref, amount: 75.0, date: Date.today - 7.days)
-          create_uh_transaction(tenancy_ref: tenancy_ref, amount: 25.0, date: Date.today - 14.days)
-        end
-
-        it 'returns the difference between now and the first date it was in arrears' do
-          expect(subject).to eq(14)
-        end
-      end
-
-      context 'when the tenancy was previously not in arrears'
-
-      context 'when the tenancy has always been in arrears' do
-        let(:current_balance) { 100.00 }
-
-        before do
-          create_uh_transaction(tenancy_ref: tenancy_ref, amount: 10.0, date: Date.today - 2.days)
-          create_uh_transaction(tenancy_ref: tenancy_ref, amount: 10.0, date: Date.today - 30.days)
-        end
-
-        it 'returns the first date' do
-          expect(subject).to eq(30)
-        end
-      end
-    end
-
     describe '#days_since_last_payment' do
       subject { criteria.days_since_last_payment }
 
@@ -383,34 +326,6 @@ describe Hackney::Income::TenancyPrioritiser::UniversalHousingCriteria, universa
         end
 
         it { is_expected.to be(false) }
-      end
-    end
-
-    describe '#number_of_broken_agreements' do
-      subject { criteria.number_of_broken_agreements }
-
-      context 'when the tenant has no arrears agreements' do
-        it { is_expected.to be_zero }
-      end
-
-      context 'when the tenant has an active arrears agreement' do
-        before { create_uh_arrears_agreement(tenancy_ref: tenancy_ref, status: '200') }
-
-        it { is_expected.to be_zero }
-      end
-
-      context 'when the tenant has a number of broken arrears agreement' do
-        let(:broken_agreements_count) { Faker::Number.number(2).to_i }
-
-        before do
-          broken_agreements_count.times do
-            create_uh_arrears_agreement(tenancy_ref: tenancy_ref, status: '300')
-          end
-        end
-
-        it 'is equal the number of broken agreements' do
-          expect(subject).to eq(broken_agreements_count)
-        end
       end
     end
 
@@ -583,88 +498,6 @@ describe Hackney::Income::TenancyPrioritiser::UniversalHousingCriteria, universa
 
       it 'returns nil by default when an entry is not made' do
         expect(subject.uc_rent_verification).to eq(nil)
-      end
-    end
-
-    describe '#latest_active_agreement_date' do
-      let(:yesterday) { Date.yesterday }
-
-      context 'when the tenant breaches their active arrears agreement' do
-        before do
-          create_uh_arrears_agreement(
-            tenancy_ref: tenancy_ref,
-            status: '200',
-            agreement_start_date: 2.days.ago
-          )
-          create_uh_arrears_agreement(
-            tenancy_ref: tenancy_ref,
-            status: '200',
-            agreement_start_date: yesterday
-          )
-          create_uh_arrears_agreement(
-            tenancy_ref: tenancy_ref,
-            status: '300',
-            agreement_start_date: Date.today
-          )
-        end
-
-        it 'can retrieve the latest date where the agreement was active' do
-          expect(subject.latest_active_agreement_date).to eq(yesterday)
-        end
-      end
-    end
-
-    describe '#breach_agreement_date' do
-      let(:today) { Date.today }
-
-      context 'when there is no breach of agreement' do
-        before do
-          create_uh_arrears_agreement(
-            tenancy_ref: tenancy_ref,
-            status: '200',
-            status_entry_date: 2.days.ago
-          )
-          create_uh_arrears_agreement(
-            tenancy_ref: tenancy_ref,
-            status: 'anything',
-            status_entry_date: 2.days.ago
-          )
-        end
-
-        it 'will not retrive a date' do
-          expect(subject.breach_agreement_date).to eq(nil)
-        end
-      end
-
-      context 'when there is a breach of agreement' do
-        before do
-          create_uh_arrears_agreement(
-            tenancy_ref: tenancy_ref,
-            status: '200',
-            status_entry_date: Date.yesterday
-          )
-          create_uh_arrears_agreement(
-            tenancy_ref: tenancy_ref,
-            status: '300',
-            status_entry_date: today
-          )
-        end
-
-        it 'can retrieve the breach date' do
-          expect(subject.breach_agreement_date).to eq(today)
-        end
-      end
-    end
-
-    describe '#expected_balance' do
-      let(:expected_balance) { 30 }
-
-      before { create_uh_arrears_agreement(tenancy_ref: tenancy_ref, status: 200, expected_balance: expected_balance) }
-
-      context 'when there is an expected balance set in an agreement' do
-        it 'can retrun the expected balance of the account' do
-          expect(subject.expected_balance).to eq(expected_balance)
-        end
       end
     end
 
