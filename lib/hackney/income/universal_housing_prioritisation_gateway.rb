@@ -2,9 +2,30 @@ module Hackney
   module Income
     class UniversalHousingPrioritisationGateway
       def priorities_for_tenancy(tenancy_ref)
-        Hackney::UniversalHousing::Client.with_connection do |database|
+        logger("> About to connect to UH for #{tenancy_ref}")
+        overall_start_time = Time.zone.now
+
+        response = Hackney::UniversalHousing::Client.with_connection do |database|
+          logger(">> About to start getting Criteria (overall time taken so far): #{Time.zone.now - overall_start_time}ms")
+          criteria_start_time = Time.zone.now
+
           criteria = Hackney::Income::TenancyPrioritiser::UniversalHousingCriteria.for_tenancy(database, tenancy_ref)
+
+          logger(">> Time taken for Criteria from UH: #{Time.zone.now - criteria_start_time}ms")
+
           { criteria: criteria }
+        end
+
+        logger("> Overall time taken loading from UH: #{Time.zone.now - overall_start_time}ms")
+
+        response
+      end
+
+      private
+
+      def logger(message)
+        Rails.logger.tagged('UH-PrioritisationGateway') do
+          Rails.logger.info(message)
         end
       end
     end
