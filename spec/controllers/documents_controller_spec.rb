@@ -1,10 +1,17 @@
 require 'rails_helper'
 
 describe DocumentsController do
+  let(:page_number) { 1 }
+  let(:documents_per_page) { 10 }
+
   describe '#index' do
     it 'returns all documents' do
       expect_any_instance_of(Hackney::Letter::AllDocumentsUseCase)
-        .to receive(:execute)
+        .to receive(:execute).with(
+          payment_ref: nil,
+          page_number: 1,
+          documents_per_page: 20
+        )
 
       get :index
     end
@@ -14,9 +21,9 @@ describe DocumentsController do
 
       it 'returns all documents filtered by payment_ref' do
         expect_any_instance_of(Hackney::Letter::AllDocumentsUseCase)
-          .to receive(:execute).with(payment_ref: payment_ref)
+          .to receive(:execute).with(payment_ref: payment_ref, page_number: page_number, documents_per_page: documents_per_page)
 
-        get :index, params: { payment_ref: payment_ref }
+        get :index, params: { payment_ref: payment_ref, page_number: page_number, documents_per_page: documents_per_page }
       end
     end
   end
