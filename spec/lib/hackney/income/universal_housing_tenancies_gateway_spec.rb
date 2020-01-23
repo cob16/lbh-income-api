@@ -121,7 +121,7 @@ describe Hackney::Income::UniversalHousingTenanciesGateway, universal: true do
           end
         end
 
-        context 'when a tenancy is does not have a patch and when one has an accepted patch' do
+        context 'when a tenancy either has no patch or has an accepted patch' do
           before do
             create_uh_tenancy_agreement(tenancy_ref: '00001/01', current_balance: 10.0, prop_ref: 'PROP1')
             create_uh_property(property_ref: 'PROP1', patch_code: 'Z01')
@@ -135,7 +135,7 @@ describe Hackney::Income::UniversalHousingTenanciesGateway, universal: true do
         end
       end
 
-      context 'without a list of acceptable patches given' do
+      context 'without being given a list of acceptable patches' do
         let(:gateway) { described_class.new(restrict_patches: true) }
 
         before do
