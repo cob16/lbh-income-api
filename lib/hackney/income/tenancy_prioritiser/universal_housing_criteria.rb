@@ -179,41 +179,41 @@ module Hackney
 
             DECLARE @UniversalCredit SMALLDATETIME = (
               SELECT TOP 1 action_date
-              FROM araction
+              FROM araction WITH (NOLOCK)
               WHERE tag_ref = @TenancyRef
               AND action_code = 'UCC'
               ORDER BY action_date DESC
             )
             DECLARE @UCVerificationComplete SMALLDATETIME = (
               SELECT TOP 1 action_date
-              FROM araction
+              FROM araction WITH (NOLOCK)
               WHERE tag_ref = @TenancyRef
               AND action_code = 'UC1'
               ORDER BY action_date DESC
             )
             DECLARE @UCDirectPaymentRequested SMALLDATETIME = (
               SELECT TOP 1 action_date
-              FROM araction
+              FROM araction WITH (NOLOCK)
               WHERE tag_ref = @TenancyRef
               AND action_code = 'UC2'
               ORDER BY action_date DESC
             )
             DECLARE @UCDirectPaymentReceived SMALLDATETIME = (
               SELECT TOP 1 action_date
-              FROM araction
+              FROM araction WITH (NOLOCK)
               WHERE tag_ref = @TenancyRef
               AND action_code = 'UC3'
               ORDER BY action_date DESC
             )
             DECLARE @MostRecentAgreementDate SMALLDATETIME = (
               SELECT TOP 1 arag_startdate
-              FROM [dbo].[arag]
+              FROM [dbo].[arag] WITH (NOLOCK)
               WHERE tag_ref = @TenancyRef
               ORDER BY arag_startdate DESC
             )
             DECLARE @MostRecentAgreementStatus CHAR(10) = (
               SELECT TOP 1 arag_status
-              FROM [dbo].[arag]
+              FROM [dbo].[arag] WITH (NOLOCK)
               WHERE tag_ref = @TenancyRef
               ORDER BY arag_startdate DESC
             )
@@ -238,8 +238,8 @@ module Hackney
               @UCDirectPaymentReceived as uc_direct_payment_received,
               @MostRecentAgreementDate as most_recent_agreement_date,
               @MostRecentAgreementStatus as most_recent_agreement_status
-            FROM [dbo].[tenagree]
-            LEFT OUTER JOIN [dbo].[property] ON [dbo].[property].prop_ref = [dbo].[tenagree].prop_ref
+            FROM [dbo].[tenagree] WITH (NOLOCK)
+            LEFT OUTER JOIN [dbo].[property] WITH (NOLOCK) ON [dbo].[property].prop_ref = [dbo].[tenagree].prop_ref
             WHERE tag_ref = @TenancyRef
           SQL
         end
