@@ -5,9 +5,12 @@
     every: 55s
     class: HelloHealthcheck
 
+  # We need to run the sync after the Data Warehouse is refreshed. That task starts at 9pm and takes
+  # around 9 hours to complete. However, the first couple of hours is where the data we care about
+  # is imported and then reports are the remaing time.
   tenancy_sync:
     class: TenancySync
-    cron: '0 30 20 * * *' # 8:30pm everyday
+    cron: '0 0 2 * * *' # 2am everyday
 
   request_all_precompiled_letter_states:
     class: RequestAllPrecompiledLetterStates
