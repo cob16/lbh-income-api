@@ -115,9 +115,17 @@ module Hackney
 
         def send_sms?
           return false if @criteria.balance.blank?
-          return false if @criteria.last_communication_action.present?
+          return false if @criteria.courtdate.present?
           return false if @criteria.nosp.served?
           return false if @criteria.active_agreement?
+
+          if @criteria.last_communication_action.present?
+            return false if @criteria.last_communication_action.in?(sms_action_codes) &&
+                            last_communication_newer_than?(7.days.ago)
+
+            return false if !@criteria.last_communication_action.in?(sms_action_codes) &&
+                            last_communication_newer_than?(3.months.ago)
+          end
 
           @criteria.balance >= 5
         end
@@ -294,6 +302,16 @@ module Hackney
         def after_apply_for_outright_possession_actions
           [
             Hackney::Tenancy::ActionCodes::WARRANT_OF_POSSESSION
+          ]
+        end
+
+        def sms_action_codes
+          [
+            Hackney::Tenancy::ActionCodes::AUTOMATED_SMS_ACTION_CODE,
+            Hackney::Tenancy::ActionCodes::MANUAL_SMS_ACTION_CODE,
+            Hackney::Tenancy::ActionCodes::MANUAL_GREEN_SMS_ACTION_CODE,
+            Hackney::Tenancy::ActionCodes::MANUAL_AMBER_SMS_ACTION_CODE,
+            Hackney::Tenancy::ActionCodes::TEXT_MESSAGE_SENT
           ]
         end
       end
