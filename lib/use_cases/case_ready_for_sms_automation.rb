@@ -1,5 +1,5 @@
 module UseCases
-  class CaseReadyForAutomation
+  class CaseReadyForSmsAutomation
     def execute(patch_code:)
       patch_codes_allowed_for_automation.include?(patch_code)
     end
@@ -11,7 +11,7 @@ module UseCases
     end
 
     def patch_codes_allowed_for_automation_env
-      ENV.fetch('PATCH_CODES_FOR_LETTER_AUTOMATION')
+      ENV.fetch('PATCH_CODES_FOR_SMS_AUTOMATION', '')
     end
   end
 end
