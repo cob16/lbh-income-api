@@ -15,7 +15,13 @@ module Hackney
         end
 
         def perform(case_id:)
+          return unless env_allowed_to_send_automated_sms?
+
           case_priority = Hackney::Income::Models::CasePriority.find_by!(case_id: case_id)
+          case_ready_for_sms_automation = income_use_case_factory.case_ready_for_sms_automation
+
+          return unless case_ready_for_sms_automation.execute(patch_code: case_priority.patch_code)
+
           Rails.logger.info("Starting SendSMSJob for case id #{case_priority.case_id}")
           income_use_case_factory.send_automated_message_to_tenancy.execute(
             tenancy_ref: case_priority.tenancy_ref,
@@ -41,6 +47,10 @@ module Hackney
 
         def check_expiration
           raise 'Error: Job expired!' if created_at <= Time.now - EXPIRATION_DAYS
+        end
+
+        def env_allowed_to_send_automated_sms?
+          App::Application.feature_toggle('AUTOMATE_INCOME_COLLECTION_SMS')
         end
       end
     end
