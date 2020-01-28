@@ -37,10 +37,6 @@ module Hackney
         def self.not_paused
           where('is_paused_until < ? OR is_paused_until is null', Date.today)
         end
-
-        def self.send_sms_tenancies
-          where(classification: 'send_first_SMS')
-        end
       end
     end
   end
