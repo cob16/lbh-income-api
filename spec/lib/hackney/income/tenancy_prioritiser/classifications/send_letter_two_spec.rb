@@ -9,6 +9,7 @@ describe 'Send Letter Two Rule', type: :feature do
       nosp_served_date: nil,
       weekly_rent: 5,
       balance: 20,
+      total_payment_amount_in_week: 0,
       is_paused_until: '',
       active_agreement: false,
       last_communication_date: 14.days.ago.to_date,
@@ -140,6 +141,76 @@ describe 'Send Letter Two Rule', type: :feature do
       eviction_date: '',
       courtdate: 1.year.ago,
       court_outcome: 'SOMETHING'
+    },
+    # partial payment in week; arrears not high enough
+    {
+      outcome: :no_action,
+      nosp_served_date: nil,
+      weekly_rent: 10,
+      balance: 4.0,
+      total_payment_amount_in_week: -6,
+      is_paused_until: '',
+      active_agreement: false,
+      last_communication_date: 14.days.ago.to_date,
+      last_communication_action: letter_1_in_arrears_sent_code,
+      eviction_date: '',
+      courtdate: nil
+    },
+    # partial payment in week + missed one week of rent
+    {
+      outcome: :send_letter_two,
+      nosp_served_date: nil,
+      weekly_rent: 10,
+      balance: 14.0,
+      total_payment_amount_in_week: -6,
+      is_paused_until: '',
+      active_agreement: false,
+      last_communication_date: 14.days.ago.to_date,
+      last_communication_action: letter_1_in_arrears_sent_code,
+      eviction_date: '',
+      courtdate: nil
+    },
+    # full payment in week
+    {
+      outcome: :send_letter_two,
+      nosp_served_date: nil,
+      weekly_rent: 10,
+      balance: 10.0,
+      total_payment_amount_in_week: -10,
+      is_paused_until: '',
+      active_agreement: false,
+      last_communication_date: 14.days.ago.to_date,
+      last_communication_action: letter_1_in_arrears_sent_code,
+      eviction_date: '',
+      courtdate: nil
+    },
+    # full payment in week but Arrears over 10
+    {
+      outcome: :send_letter_two,
+      nosp_served_date: nil,
+      weekly_rent: 10,
+      balance: 20.0,
+      total_payment_amount_in_week: -10,
+      is_paused_until: '',
+      active_agreement: false,
+      last_communication_date: 14.days.ago.to_date,
+      last_communication_action: letter_1_in_arrears_sent_code,
+      eviction_date: '',
+      courtdate: nil
+    },
+    # over payment in week but Arrears over 10
+    {
+      outcome: :send_letter_two,
+      nosp_served_date: nil,
+      weekly_rent: 10,
+      balance: 20.0,
+      total_payment_amount_in_week: -20,
+      is_paused_until: '',
+      active_agreement: false,
+      last_communication_date: 14.days.ago.to_date,
+      last_communication_action: letter_1_in_arrears_sent_code,
+      eviction_date: '',
+      courtdate: nil
     }
   ]
 
