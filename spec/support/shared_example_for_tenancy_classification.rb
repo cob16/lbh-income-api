@@ -50,7 +50,8 @@ shared_examples 'TenancyClassification' do |condition_matrix|
       number_of_broken_agreements: number_of_broken_agreements,
       expected_balance: expected_balance,
       most_recent_agreement: most_recent_agreement,
-      days_since_last_payment: days_since_last_payment
+      days_since_last_payment: days_since_last_payment,
+      total_payment_amount_in_week: total_payment_amount_in_week
     }
   end
 
@@ -72,6 +73,7 @@ shared_examples 'TenancyClassification' do |condition_matrix|
       let(:expected_balance) { options[:expected_balance] }
       let(:most_recent_agreement) { options[:most_recent_agreement] }
       let(:days_since_last_payment) { options[:days_since_last_payment] }
+      let(:total_payment_amount_in_week) { options[:total_payment_amount_in_week] }
 
       it "returns `#{options[:outcome]}`" do
         expect(subject).to eq(options[:outcome])
