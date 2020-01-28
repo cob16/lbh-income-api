@@ -1,6 +1,6 @@
 require 'sidekiq-scheduler'
 
-class SendSMSMessages
+class SendSmsMessages
   include Sidekiq::Worker
 
   def perform
