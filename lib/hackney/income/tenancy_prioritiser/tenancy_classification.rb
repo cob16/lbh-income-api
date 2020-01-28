@@ -222,7 +222,15 @@ module Hackney
         end
 
         def balance_with_1_week_grace
-          @criteria.balance - @criteria.weekly_gross_rent
+          @criteria.balance - calculate_grace_amount
+        end
+
+        def calculate_grace_amount
+          grace_amount = @criteria.weekly_gross_rent + @criteria.total_payment_amount_in_week
+
+          return 0 if grace_amount.negative?
+
+          grace_amount
         end
 
         def arrear_accumulation_by_number_weeks(weeks)
