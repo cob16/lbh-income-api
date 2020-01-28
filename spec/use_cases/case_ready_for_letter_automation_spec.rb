@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe UseCases::CaseReadyForAutomation do
+describe UseCases::CaseReadyForLetterAutomation do
   let(:use_case) { described_class.new }
 
   let(:patch_code_1) { 'W02' }

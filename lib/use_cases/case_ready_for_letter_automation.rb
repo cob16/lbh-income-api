@@ -1,5 +1,5 @@
 module UseCases
-  class CaseReadyForAutomation
+  class CaseReadyForLetterAutomation
     def execute(patch_code:)
       patch_codes_allowed_for_automation.include?(patch_code)
     end

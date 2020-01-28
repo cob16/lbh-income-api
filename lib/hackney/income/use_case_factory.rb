@@ -137,7 +137,7 @@ module Hackney
 
       def automate_sending_letters
         UseCases::AutomateSendingLetters.new(
-          case_ready_for_automation: case_ready_for_automation,
+          case_ready_for_automation: case_ready_for_letter_automation,
           case_classification_to_letter_type_map: case_classification_to_letter_type_map,
           generate_and_store_letter: generate_and_store_letter,
           send_letter_to_gov_notify: send_letter_to_gov_notify,
@@ -157,8 +157,8 @@ module Hackney
         UseCases::CaseClassificationToLetterTypeMap.new
       end
 
-      def case_ready_for_automation
-        UseCases::CaseReadyForAutomation.new
+      def case_ready_for_letter_automation
+        UseCases::CaseReadyForLetterAutomation.new
       end
 
       def sync_case_priority
