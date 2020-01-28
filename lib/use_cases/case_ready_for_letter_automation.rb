@@ -11,7 +11,7 @@ module UseCases
     end
 
     def patch_codes_allowed_for_automation_env
-      ENV.fetch('PATCH_CODES_FOR_LETTER_AUTOMATION')
+      ENV.fetch('PATCH_CODES_FOR_LETTER_AUTOMATION', '')
     end
   end
 end
