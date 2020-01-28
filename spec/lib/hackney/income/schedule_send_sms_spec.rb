@@ -44,7 +44,6 @@ describe Hackney::Income::ScheduleSendSMS do
     end
   end
 
-
   context 'when not allowed to send SMS' do
     context 'with no cases found' do
       before do
