@@ -165,23 +165,23 @@ describe Hackney::Income::TenancyPrioritiser::TenancyClassification do
     end
   end
 
-  describe '#calculate_grace_amount' do
+  describe '#calculated_grace_amount' do
     it 'uses #weekly_gross_rent' do
       expect(criteria).to receive(:weekly_gross_rent).and_return(0)
 
-      assign_classification.send(:calculate_grace_amount)
+      assign_classification.send(:calculated_grace_amount)
     end
 
     it 'uses #total_payment_amount_in_week' do
       expect(criteria).to receive(:total_payment_amount_in_week).and_return(0)
 
-      assign_classification.send(:calculate_grace_amount)
+      assign_classification.send(:calculated_grace_amount)
     end
 
     context 'when there is no payment in the week' do
       it 'returns the total weekly gross rent' do
-        calculate_grace_amount = assign_classification.send(:calculate_grace_amount)
-        expect(calculate_grace_amount).to eq(weekly_rent)
+        calculated_grace_amount = assign_classification.send(:calculated_grace_amount)
+        expect(calculated_grace_amount).to eq(weekly_rent)
       end
     end
 
@@ -190,8 +190,8 @@ describe Hackney::Income::TenancyPrioritiser::TenancyClassification do
         let(:total_payment_amount_in_week) { -2 }
 
         it 'returns not the total weekly rent' do
-          calculate_grace_amount = assign_classification.send(:calculate_grace_amount)
-          expect(calculate_grace_amount).to eq(weekly_rent + total_payment_amount_in_week)
+          calculated_grace_amount = assign_classification.send(:calculated_grace_amount)
+          expect(calculated_grace_amount).to eq(weekly_rent + total_payment_amount_in_week)
         end
       end
 
@@ -199,8 +199,8 @@ describe Hackney::Income::TenancyPrioritiser::TenancyClassification do
         let(:total_payment_amount_in_week) { -5 }
 
         it 'returns not the total weekly rent' do
-          calculate_grace_amount = assign_classification.send(:calculate_grace_amount)
-          expect(calculate_grace_amount).to eq(0)
+          calculated_grace_amount = assign_classification.send(:calculated_grace_amount)
+          expect(calculated_grace_amount).to eq(0)
         end
       end
 
@@ -208,8 +208,8 @@ describe Hackney::Income::TenancyPrioritiser::TenancyClassification do
         let(:total_payment_amount_in_week) { -10 }
 
         it 'returns not the total weekly rent' do
-          calculate_grace_amount = assign_classification.send(:calculate_grace_amount)
-          expect(calculate_grace_amount).to eq(0)
+          calculated_grace_amount = assign_classification.send(:calculated_grace_amount)
+          expect(calculated_grace_amount).to eq(0)
         end
       end
     end

@@ -222,10 +222,10 @@ module Hackney
         end
 
         def balance_with_1_week_grace
-          @criteria.balance - calculate_grace_amount
+          @criteria.balance - calculated_grace_amount
         end
 
-        def calculate_grace_amount
+        def calculated_grace_amount
           grace_amount = @criteria.weekly_gross_rent + @criteria.total_payment_amount_in_week
 
           return 0 if grace_amount.negative?
