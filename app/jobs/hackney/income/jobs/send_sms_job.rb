@@ -1,7 +1,7 @@
 module Hackney
   module Income
     module Jobs
-      class SendGreenInArrearsMsgJob < ApplicationJob
+      class SendSMSJob < ApplicationJob
         attr_accessor :created_at
         EXPIRATION_DAYS = 5.days.freeze
 
@@ -16,17 +16,17 @@ module Hackney
 
         def perform(case_id:)
           case_priority = Hackney::Income::Models::CasePriority.find_by!(case_id: case_id)
-          Rails.logger.info("Starting SendGreenInArrearsMsgJob for case id #{case_priority.case_id}")
+          Rails.logger.info("Starting SendSMSJob for case id #{case_priority.case_id}")
           income_use_case_factory.send_automated_message_to_tenancy.execute(
             tenancy_ref: case_priority.tenancy_ref,
             sms_template_id: green_in_arrears_sms_template_id,
             email_template_id: green_in_arrears_email_template_id,
-            batch_id: "SendGreenInArrearsMsgJob-#{case_priority.tenancy_ref}-#{SecureRandom.uuid}",
+            batch_id: "SendSMSJob-#{case_priority.tenancy_ref}-#{SecureRandom.uuid}",
             variables: {
               balance: case_priority.balance
             }
           )
-          Rails.logger.info("Finished SendGreenInArrearsMsgJob for case id #{case_priority.case_id}")
+          Rails.logger.info("Finished SendSMSJob for case id #{case_priority.case_id}")
         end
 
         private

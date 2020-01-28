@@ -15,8 +15,8 @@ module Hackney
         )
       end
 
-      def schedule_green_in_arrears_message
-        Hackney::Income::ScheduleGreenInArrearsMessage.new(
+      def schedule_send_sms
+        Hackney::Income::ScheduleSendSMS.new(
           matching_criteria_gateway: sql_tenancies_matching_criteria_gateway,
           background_job_gateway: background_job_gateway
         )
@@ -169,6 +169,13 @@ module Hackney
           automate_sending_letters: automate_sending_letters,
           prioritisation_gateway: prioritisation_gateway,
           stored_tenancies_gateway: stored_tenancies_gateway
+        )
+      end
+
+      # intended to only be used for rake task please delete when no longer required
+      def show_send_sms_tenancies
+        Hackney::Income::ShowSendSMSTenancies.new(
+          sql_tenancies_for_messages_gateway: sql_tenancies_matching_criteria_gateway
         )
       end
 

@@ -7,7 +7,7 @@ namespace :bau do
     tenancy_ref_regex = '\\d+/\\d+'
     uuid_regex = '[\\da-f\\-]{32,36}'
     matches = [
-      # SendGreenInArrearsMsgJob-#{case_priority.tenancy_ref}-#{SecureRandom.uuid}
+      # SendSMSJob-#{case_priority.tenancy_ref}-#{SecureRandom.uuid}
       Regexp.new("^\\S+-(#{tenancy_ref_regex})-#{uuid_regex}$"),
       # manual_#{tenancy.ref}
       Regexp.new("^\\S+_(#{tenancy_ref_regex})$")
