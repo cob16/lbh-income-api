@@ -101,8 +101,6 @@ describe Hackney::Income::StoredTenanciesGateway do
         Faker::Number.number(1).to_i.times do
           multiple_attributes.append(
             tenancy_ref: Faker::Internet.slug,
-            priority_band: Faker::Internet.slug,
-            priority_score: Faker::Number.number(5).to_i,
             balance: Faker::Number.number(3).to_i
           )
         end
@@ -228,10 +226,13 @@ describe Hackney::Income::StoredTenanciesGateway do
     let(:num_paused_cases) { Faker::Number.between(2, 10) }
     let(:num_active_cases) { Faker::Number.between(2, 20) }
     let(:num_pages) { Faker::Number.between(1, 5) }
+    let(:pause_reason) { Faker::Lorem.word }
+    let(:pause_comment) { Faker::Lorem.paragraph }
+    let(:is_paused_until_date) { Faker::Date.forward(3) }
 
     before do
       num_paused_cases.times do
-        create(:case_priority, balance: 40, is_paused_until: Faker::Date.forward(1))
+        create(:case_priority, balance: 40, is_paused_until: is_paused_until_date, pause_reason: pause_reason, pause_comment: pause_comment)
       end
 
       (num_active_cases - 2).times do
@@ -263,6 +264,12 @@ describe Hackney::Income::StoredTenanciesGateway do
 
         it 'only return only paused tenancies' do
           expect(subject.count).to eq(num_paused_cases)
+        end
+
+        it 'results contain pause attributes' do
+          expect(subject).to all(include(pause_reason: pause_reason))
+          expect(subject).to all(include(pause_comment: pause_comment))
+          expect(subject).to all(include(is_paused_until: is_paused_until_date))
         end
       end
 

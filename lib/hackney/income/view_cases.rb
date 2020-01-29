@@ -21,14 +21,14 @@ module Hackney
           filters: filters
         )
 
-        assigned_tenancy_refs = tenancies.map { |t| t.fetch(:tenancy_ref) }
-        full_tenancies = @tenancy_api_gateway.get_tenancies_by_refs(assigned_tenancy_refs)
+        case_priority_refs = tenancies.map { |t| t.fetch(:tenancy_ref) }
+        full_tenancies = @tenancy_api_gateway.get_tenancies_by_refs(case_priority_refs)
 
-        cases = tenancies.map do |assigned_tenancy|
-          tenancy = full_tenancies.find { |t| t.fetch(:ref) == assigned_tenancy.fetch(:tenancy_ref) }
+        cases = tenancies.map do |case_priority|
+          tenancy = full_tenancies.find { |t| t.fetch(:ref) == case_priority.fetch(:tenancy_ref) }
           next if tenancy.nil?
 
-          build_tenancy_list_item(tenancy, assigned_tenancy)
+          build_tenancy_list_item(tenancy, case_priority)
         end.compact
 
         Response.new(cases, number_of_pages)
@@ -36,7 +36,7 @@ module Hackney
 
       private
 
-      def build_tenancy_list_item(tenancy, assigned_tenancy)
+      def build_tenancy_list_item(tenancy, case_priority)
         {
           ref: tenancy.fetch(:ref),
           current_balance: tenancy.fetch(:current_balance),
@@ -51,22 +51,27 @@ module Hackney
             postcode: tenancy.dig(:primary_contact, :postcode)
           },
 
-          balance: assigned_tenancy.fetch(:balance),
-          days_in_arrears: assigned_tenancy.fetch(:days_in_arrears),
-          days_since_last_payment: assigned_tenancy.fetch(:days_since_last_payment),
-          number_of_broken_agreements: assigned_tenancy.fetch(:number_of_broken_agreements),
-          active_agreement: assigned_tenancy.fetch(:active_agreement),
-          broken_court_order: assigned_tenancy.fetch(:broken_court_order),
-          nosp_served: assigned_tenancy.fetch(:nosp_served),
-          active_nosp: assigned_tenancy.fetch(:active_nosp),
-          courtdate: assigned_tenancy.fetch(:courtdate),
-          court_outcome: assigned_tenancy.fetch(:court_outcome),
-          eviction_date: assigned_tenancy.fetch(:eviction_date),
-          classification: assigned_tenancy.fetch(:classification),
-          patch_code: assigned_tenancy.fetch(:patch_code),
-          latest_active_agreement_date: assigned_tenancy.fetch(:latest_active_agreement_date),
-          breach_agreement_date: assigned_tenancy.fetch(:latest_active_agreement_date),
-          expected_balance: assigned_tenancy.fetch(:expected_balance)
+          balance: case_priority.fetch(:balance),
+          days_in_arrears: case_priority.fetch(:days_in_arrears),
+          days_since_last_payment: case_priority.fetch(:days_since_last_payment),
+          number_of_broken_agreements: case_priority.fetch(:number_of_broken_agreements),
+          active_agreement: case_priority.fetch(:active_agreement),
+          broken_court_order: case_priority.fetch(:broken_court_order),
+          nosp_served: case_priority.fetch(:nosp_served),
+          active_nosp: case_priority.fetch(:active_nosp),
+          courtdate: case_priority.fetch(:courtdate),
+          court_outcome: case_priority.fetch(:court_outcome),
+          eviction_date: case_priority.fetch(:eviction_date),
+          classification: case_priority.fetch(:classification),
+          patch_code: case_priority.fetch(:patch_code),
+          latest_active_agreement_date: case_priority.fetch(:latest_active_agreement_date),
+          breach_agreement_date: case_priority.fetch(:latest_active_agreement_date),
+          expected_balance: case_priority.fetch(:expected_balance),
+          pause: {
+            reason: case_priority.fetch(:pause_reason),
+            comment: case_priority.fetch(:pause_comment),
+            until: case_priority.fetch(:is_paused_until)
+          }
         }
       end
     end
