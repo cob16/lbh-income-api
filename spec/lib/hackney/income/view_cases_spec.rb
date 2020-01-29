@@ -110,7 +110,12 @@ describe Hackney::Income::ViewCases do
 
                                            latest_active_agreement_date: tenancy_priority_factors.fetch(:latest_active_agreement_date),
                                            breach_agreement_date: tenancy_priority_factors.fetch(:latest_active_agreement_date),
-                                           expected_balance: tenancy_priority_factors.fetch(:expected_balance)
+                                           expected_balance: tenancy_priority_factors.fetch(:expected_balance),
+                                           pause: {
+                                             reason: tenancy_priority_factors.fetch(:pause_reason),
+                                             comment: tenancy_priority_factors.fetch(:pause_comment),
+                                             until: tenancy_priority_factors.fetch(:is_paused_until)
+                                           }
                                          ))
       end
 
@@ -232,7 +237,10 @@ describe Hackney::Income::ViewCases do
       classification: 'no_action',
       latest_active_agreement_date: 1.week.ago,
       breach_agreement_date: 5.days.ago,
-      expected_balance: Faker::Commerce.price
+      expected_balance: Faker::Commerce.price,
+      pause_reason: Faker::Lorem.characters(3),
+      pause_comment: Faker::Lorem.characters(3),
+      is_paused_until: Date.today + 1.day
     }
   end
 
