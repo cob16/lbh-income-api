@@ -44,9 +44,18 @@ describe 'syncing triggers automatic sending of letters', type: :feature do
       stub_action_diary_write(tenancy_ref: tenancy_ref, code: 'IC1', date: Time.zone.now)
     end
 
-    it 'will sync the case priority and send the letter automatically' do
+    it 'will sync the case priority, send the letter automatically and pause case until next sync' do
+      Timecop.freeze(Date.yesterday)
+
       when_the_sync_runs(document_count_changes_by: 1, case_priority_count_changes_by: 1)
       then_a_document_is_queued
+      then_the_case_priority_is_paused_until_tomorrow
+      then_the_case_priority_is(:send_letter_one)
+
+      Timecop.return
+
+      when_the_sync_runs(document_count_changes_by: 0, case_priority_count_changes_by: 0)
+      case_priority.reload
       then_the_case_priority_is(:no_action)
     end
 
@@ -109,6 +118,11 @@ describe 'syncing triggers automatic sending of letters', type: :feature do
   def then_the_case_priority_is(classification)
     expect(case_priority.tenancy_ref).to eq(tenancy_ref)
     expect(case_priority).to send("be_#{classification}".to_sym)
+  end
+
+  def then_the_case_priority_is_paused_until_tomorrow
+    expect(case_priority.paused?).to eq(true)
+    expect(case_priority.is_paused_until).to eq(Date.tomorrow)
   end
 
   def then_a_document_is_queued
