@@ -57,7 +57,8 @@ describe Hackney::Notification::SendAutomatedEmail do
       expect(background_job_gateway).to receive(:add_action_diary_entry).with(
         tenancy_ref: tenancy_1.tenancy_ref,
         action_code: Hackney::Tenancy::ActionCodes::AUTOMATED_SMS_ACTION_CODE,
-        comment: "'Quick Template' email sent to '#{recipient}'"
+        comment: "'Quick Template' email sent to '#{recipient}'",
+        username: 'MANAGE ARREARS SYSTEM'
       )
       subject
     end

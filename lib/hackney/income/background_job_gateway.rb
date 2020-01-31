@@ -9,8 +9,13 @@ module Hackney
         Hackney::Income::Jobs::SendSMSJob.perform_later(case_id: case_id)
       end
 
-      def add_action_diary_entry(tenancy_ref:, action_code:, comment:)
-        Hackney::Income::Jobs::AddActionDiaryEntryJob.perform_later(tenancy_ref: tenancy_ref, action_code: action_code, comment: comment)
+      def add_action_diary_entry(tenancy_ref:, action_code:, comment:, username:)
+        Hackney::Income::Jobs::AddActionDiaryEntryJob.perform_later(
+          tenancy_ref: tenancy_ref,
+          action_code: action_code,
+          comment: comment,
+          username: username
+        )
       end
     end
   end

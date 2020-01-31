@@ -26,17 +26,26 @@ describe Hackney::Income::BackgroundJobGateway do
   end
 
   context 'when scheduling a job to sync priority for a case' do
-    subject { described_class.new.add_action_diary_entry(tenancy_ref: tenancy_ref, action_code: action_code, comment: comment) }
+    subject {
+      described_class.new.add_action_diary_entry(
+        tenancy_ref: tenancy_ref,
+        action_code: action_code,
+        comment: comment,
+        username: username
+      )
+    }
 
     let(:tenancy_ref) { Faker::IDNumber.valid }
     let(:action_code) { Faker::Internet.slug }
     let(:comment) { Faker::Lorem.paragraph }
+    let(:username) { Faker::Name.name }
 
     it 'enqueues the job to run as soon as possible' do
       expect { subject }.to have_enqueued_job(Hackney::Income::Jobs::AddActionDiaryEntryJob).with(
         tenancy_ref: tenancy_ref,
         action_code: action_code,
-        comment: comment
+        comment: comment,
+        username: username
       )
     end
   end

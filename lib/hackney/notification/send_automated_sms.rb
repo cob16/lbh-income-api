@@ -23,7 +23,8 @@ module Hackney
           @background_job_gateway.add_action_diary_entry(
             tenancy_ref: tenancy_ref,
             action_code: Hackney::Tenancy::ActionCodes::AUTOMATED_SMS_ACTION_CODE,
-            comment: "'#{template_name}' SMS sent to '#{phone.full_e164}' with content '#{notification_receipt.body_without_newlines}'"
+            comment: "'#{template_name}' SMS sent to '#{phone.full_e164}' with content '#{notification_receipt.body_without_newlines}'",
+            username: 'MANAGE ARREARS SYSTEM'
           )
         else
           # don't log the phone number to keep our logs free from personal data
