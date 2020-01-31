@@ -17,5 +17,5 @@
     cron: "0 0 10,15 * * *" # 10am and 3pm utc every day
 
   send_sms:
-    class: SendSMSMessages
+    class: SendSmsMessages
     cron: "0 0 8 * * 5" #8am every friday
