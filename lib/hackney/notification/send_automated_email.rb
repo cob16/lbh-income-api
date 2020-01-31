@@ -17,7 +17,8 @@ module Hackney
         @background_job_gateway.add_action_diary_entry(
           tenancy_ref: tenancy_ref,
           action_code: Hackney::Tenancy::ActionCodes::AUTOMATED_SMS_ACTION_CODE,
-          comment: "'#{template_name}' email sent to '#{recipient}'"
+          comment: "'#{template_name}' email sent to '#{recipient}'",
+          username: 'MANAGE ARREARS SYSTEM'
         )
       end
     end
