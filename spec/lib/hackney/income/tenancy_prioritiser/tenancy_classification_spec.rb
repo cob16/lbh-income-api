@@ -15,7 +15,8 @@ describe Hackney::Income::TenancyPrioritiser::TenancyClassification do
       last_communication_date: last_communication_date,
       last_communication_action: last_communication_action,
       eviction_date: eviction_date,
-      payment_ref: Faker::Number.number(10)
+      payment_ref: Faker::Number.number(10),
+      total_payment_amount_in_week: total_payment_amount_in_week
     }
   end
 
@@ -27,6 +28,7 @@ describe Hackney::Income::TenancyPrioritiser::TenancyClassification do
   let(:last_communication_date) { 8.days.ago.to_date }
   let(:last_communication_action) { nil }
   let(:eviction_date) { 6.days.ago.to_date }
+  let(:total_payment_amount_in_week) { 0 }
 
   context 'when there are no arrears' do
     context 'with difference balances' do
@@ -159,6 +161,56 @@ describe Hackney::Income::TenancyPrioritiser::TenancyClassification do
 
       it 'contains action codes within the UH Criteria Codes' do
         expect(unused_action_codes_required_for_uh_criteria_sql).to be_empty
+      end
+    end
+  end
+
+  describe '#calculated_grace_amount' do
+    it 'uses #weekly_gross_rent' do
+      expect(criteria).to receive(:weekly_gross_rent).and_return(0)
+
+      assign_classification.send(:calculated_grace_amount)
+    end
+
+    it 'uses #total_payment_amount_in_week' do
+      expect(criteria).to receive(:total_payment_amount_in_week).and_return(0)
+
+      assign_classification.send(:calculated_grace_amount)
+    end
+
+    context 'when there is no payment in the week' do
+      it 'returns the total weekly gross rent' do
+        calculated_grace_amount = assign_classification.send(:calculated_grace_amount)
+        expect(calculated_grace_amount).to eq(weekly_rent)
+      end
+    end
+
+    context 'when there is a payment in the week' do
+      context 'with the total payment amount not being above the weekly rent' do
+        let(:total_payment_amount_in_week) { -2 }
+
+        it 'returns not the total weekly rent' do
+          calculated_grace_amount = assign_classification.send(:calculated_grace_amount)
+          expect(calculated_grace_amount).to eq(weekly_rent + total_payment_amount_in_week)
+        end
+      end
+
+      context 'with the total payment amount equals the weekly rent' do
+        let(:total_payment_amount_in_week) { -5 }
+
+        it 'returns not the total weekly rent' do
+          calculated_grace_amount = assign_classification.send(:calculated_grace_amount)
+          expect(calculated_grace_amount).to eq(0)
+        end
+      end
+
+      context 'with the total payment amount is more than the weekly rent' do
+        let(:total_payment_amount_in_week) { -10 }
+
+        it 'returns not the total weekly rent' do
+          calculated_grace_amount = assign_classification.send(:calculated_grace_amount)
+          expect(calculated_grace_amount).to eq(0)
+        end
       end
     end
   end

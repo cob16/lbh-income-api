@@ -15,8 +15,8 @@ module Hackney
         )
       end
 
-      def schedule_green_in_arrears_message
-        Hackney::Income::ScheduleGreenInArrearsMessage.new(
+      def schedule_send_sms
+        Hackney::Income::ScheduleSendSMS.new(
           matching_criteria_gateway: sql_tenancies_matching_criteria_gateway,
           background_job_gateway: background_job_gateway
         )
@@ -31,14 +31,14 @@ module Hackney
       def send_manual_sms
         Hackney::Notification::SendManualSms.new(
           notification_gateway: notifications_gateway,
-          add_action_diary_and_sync_case_usecase: add_action_diary_and_sync_case
+          add_action_diary_and_pause_case_usecase: add_action_diary_and_pause_case
         )
       end
 
       def send_manual_email
         Hackney::Notification::SendManualEmail.new(
           notification_gateway: notifications_gateway,
-          add_action_diary_and_sync_case_usecase: add_action_diary_and_sync_case
+          add_action_diary_and_pause_case_usecase: add_action_diary_and_pause_case
         )
       end
 
@@ -51,7 +51,7 @@ module Hackney
       def send_precompiled_letter
         Hackney::Notification::SendManualPrecompiledLetter.new(
           notification_gateway: notifications_gateway,
-          add_action_diary_and_sync_case_usecase: add_action_diary_and_sync_case,
+          add_action_diary_and_pause_case_usecase: add_action_diary_and_pause_case,
           leasehold_gateway: Hackney::Income::UniversalHousingLeaseholdGateway.new
         )
       end
@@ -66,7 +66,7 @@ module Hackney
         case_priority_store = Hackney::Income::Models
         Hackney::Notification::RequestPrecompiledLetterState.new(
           notification_gateway: notifications_gateway,
-          add_action_diary_and_sync_case_usecase: add_action_diary_and_sync_case,
+          add_action_diary_and_pause_case_usecase: add_action_diary_and_pause_case,
           case_priority_store: case_priority_store,
           document_store: cloud_storage
         )
@@ -128,16 +128,16 @@ module Hackney
         )
       end
 
-      def add_action_diary_and_sync_case
-        UseCases::AddActionDiaryAndSyncCase.new(
-          sync_case_priority: sync_case_priority,
+      def add_action_diary_and_pause_case
+        UseCases::AddActionDiaryAndPauseCase.new(
+          sql_pause_tenancy_gateway: sql_pause_tenancy_gateway,
           add_action_diary: add_action_diary
         )
       end
 
       def automate_sending_letters
         UseCases::AutomateSendingLetters.new(
-          case_ready_for_automation: case_ready_for_automation,
+          case_ready_for_automation: case_ready_for_letter_automation,
           case_classification_to_letter_type_map: case_classification_to_letter_type_map,
           generate_and_store_letter: generate_and_store_letter,
           send_letter_to_gov_notify: send_letter_to_gov_notify,
@@ -157,8 +157,12 @@ module Hackney
         UseCases::CaseClassificationToLetterTypeMap.new
       end
 
-      def case_ready_for_automation
-        UseCases::CaseReadyForAutomation.new
+      def case_ready_for_letter_automation
+        UseCases::CaseReadyForLetterAutomation.new
+      end
+
+      def case_ready_for_sms_automation
+        UseCases::CaseReadyForSmsAutomation.new
       end
 
       def sync_case_priority
@@ -169,6 +173,13 @@ module Hackney
           automate_sending_letters: automate_sending_letters,
           prioritisation_gateway: prioritisation_gateway,
           stored_tenancies_gateway: stored_tenancies_gateway
+        )
+      end
+
+      # intended to only be used for rake task please delete when no longer required
+      def show_send_sms_tenancies
+        Hackney::Income::ShowSendSMSTenancies.new(
+          sql_tenancies_for_messages_gateway: sql_tenancies_matching_criteria_gateway
         )
       end
 

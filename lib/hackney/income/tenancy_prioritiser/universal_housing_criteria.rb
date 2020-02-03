@@ -106,6 +106,10 @@ module Hackney
           }
         end
 
+        def total_payment_amount_in_week
+          attributes[:total_payment_amount_in_week].to_f
+        end
+
         def nosp_served_date
           return nil if date_not_valid?(attributes[:nosp_served_date])
 
@@ -167,6 +171,16 @@ module Hackney
                 AND trans_type IN (SELECT payment_type FROM @PaymentTypes)
               ) t
               WHERE row = 1
+            )
+
+            DECLARE @TotalPaymentAmountInWeek NUMERIC(9,2) = (
+              SELECT total_amount_in_week FROM (
+                SELECT SUM(real_value) as total_amount_in_week
+                FROM [dbo].[rtrans] WITH (NOLOCK)
+                WHERE tag_ref = @TenancyRef
+                AND trans_type IN (SELECT payment_type FROM @PaymentTypes)
+                AND post_date >= '#{beginning_of_week}'
+              ) a
             )
 
             DECLARE @LastCommunicationAction VARCHAR(60) = (
@@ -237,11 +251,16 @@ module Hackney
               @UCDirectPaymentRequested as uc_direct_payment_requested,
               @UCDirectPaymentReceived as uc_direct_payment_received,
               @MostRecentAgreementDate as most_recent_agreement_date,
-              @MostRecentAgreementStatus as most_recent_agreement_status
+              @MostRecentAgreementStatus as most_recent_agreement_status,
+              @TotalPaymentAmountInWeek as total_payment_amount_in_week
             FROM [dbo].[tenagree] WITH (NOLOCK)
             LEFT OUTER JOIN [dbo].[property] WITH (NOLOCK) ON [dbo].[property].prop_ref = [dbo].[tenagree].prop_ref
             WHERE tag_ref = @TenancyRef
           SQL
+        end
+
+        def self.beginning_of_week
+          Time.zone.now.beginning_of_week.to_date.iso8601
         end
 
         private

@@ -104,6 +104,10 @@ module Stubs
       attributes[:most_recent_agreement]
     end
 
+    def total_payment_amount_in_week
+      attributes[:total_payment_amount_in_week] || 0
+    end
+
     private
 
     attr_reader :attributes
