@@ -192,6 +192,7 @@ module Hackney
         def apply_for_court_date?
           return false if @criteria.balance.blank?
           return false if @criteria.weekly_gross_rent.blank?
+          return false if @criteria.active_agreement?
 
           return false unless @criteria.nosp.served?
 
