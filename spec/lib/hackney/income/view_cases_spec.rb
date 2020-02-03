@@ -154,6 +154,48 @@ describe Hackney::Income::ViewCases do
 
           expect(subject.cases.count).to eq(1)
         end
+
+        context 'when filtering paused cases by pause reason' do
+          subject {
+            view_cases.execute(
+              page_number: page_number,
+              number_per_page: number_per_page,
+              filters: {
+                is_paused: true,
+                pause_reason: pause_reason
+              }
+            )
+          }
+
+          let(:pause_reason) { Faker::Lorem.word }
+
+          it 'returns only paused cases filtered by pause reason' do
+            expect(stored_tenancies_gateway)
+              .to receive(:get_tenancies)
+              .with(a_hash_including(
+                      page_number: page_number,
+                      number_per_page: number_per_page,
+                      filters: {
+                        is_paused: true,
+                        pause_reason: pause_reason
+                      }
+                    ))
+              .and_call_original
+
+            expect(stored_tenancies_gateway)
+              .to receive(:number_of_pages)
+              .with(a_hash_including(
+                      number_per_page: number_per_page,
+                      filters: {
+                        is_paused: true,
+                        pause_reason: pause_reason
+                      }
+                    ))
+              .and_call_original
+
+            expect(subject.cases.count).to eq(1)
+          end
+        end
       end
 
       context 'when filtering cases by patch' do
