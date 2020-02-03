@@ -222,8 +222,11 @@ describe Hackney::Income::StoredTenanciesGateway do
 
   context 'when there are paused and not paused tenancies' do
     let(:is_paused) { nil }
+    let(:pause_reason_filter) { nil }
 
-    let(:num_paused_cases) { Faker::Number.between(2, 10) }
+    let(:num_paused_cases_without_reason) { Faker::Number.between(2, 10) }
+    let(:num_paused_cases_with_reason) { Faker::Number.between(2, 10) }
+    let(:num_paused_cases) { num_paused_cases_with_reason + num_paused_cases_without_reason }
     let(:num_active_cases) { Faker::Number.between(2, 20) }
     let(:num_pages) { Faker::Number.between(1, 5) }
     let(:pause_reason) { Faker::Lorem.word }
@@ -231,8 +234,12 @@ describe Hackney::Income::StoredTenanciesGateway do
     let(:is_paused_until_date) { Faker::Date.forward(3) }
 
     before do
-      num_paused_cases.times do
+      num_paused_cases_with_reason.times do
         create(:case_priority, balance: 40, is_paused_until: is_paused_until_date, pause_reason: pause_reason, pause_comment: pause_comment)
+      end
+
+      num_paused_cases_without_reason.times do
+        create(:case_priority, balance: 40, is_paused_until: is_paused_until_date)
       end
 
       (num_active_cases - 2).times do
@@ -248,7 +255,8 @@ describe Hackney::Income::StoredTenanciesGateway do
           page_number: 1,
           number_per_page: 50,
           filters: {
-            is_paused: is_paused
+            is_paused: is_paused,
+            pause_reason: pause_reason_filter
           }
         )
       end
@@ -266,10 +274,24 @@ describe Hackney::Income::StoredTenanciesGateway do
           expect(subject.count).to eq(num_paused_cases)
         end
 
-        it 'results contain pause attributes' do
-          expect(subject).to all(include(pause_reason: pause_reason))
-          expect(subject).to all(include(pause_comment: pause_comment))
-          expect(subject).to all(include(is_paused_until: is_paused_until_date))
+        context 'when pause_reason is set to a real pause reason' do
+          let(:pause_reason_filter) { pause_reason }
+
+          it 'onlies return cases with the specific reason' do
+            expect(subject.count).to eq(num_paused_cases_with_reason)
+
+            expect(subject).to all(include(pause_reason: pause_reason))
+            expect(subject).to all(include(pause_comment: pause_comment))
+            expect(subject).to all(include(is_paused_until: is_paused_until_date))
+          end
+        end
+
+        context 'when pause_reason is set to not a real pause reason' do
+          let(:pause_reason_filter) { 'not a real pause reason' }
+
+          it 'nothing is returned' do
+            expect(subject.count).to eq(0)
+          end
         end
       end
 

@@ -21,6 +21,7 @@ describe CasesController do
           .to receive(:execute)
           .with(page_number: 1, number_per_page: 1, filters: {
             is_paused: nil,
+            pause_reason: nil,
             classification: nil,
             patch: nil,
             full_patch: nil,
@@ -29,6 +30,26 @@ describe CasesController do
           })
 
         get :index, params: { page_number: 0, number_per_page: 0 }
+      end
+    end
+
+    context 'when retrieving paused cases filtered by paused reason' do
+      let(:pause_reason) { Faker::Lorem.word }
+
+      it 'pause reason should be passed to the use case' do
+        allow(view_my_cases_instance)
+          .to receive(:execute)
+          .with(page_number: 1, number_per_page: 1, filters: {
+            classification: nil,
+            patch: nil,
+            full_patch: nil,
+            upcoming_evictions: nil,
+            upcoming_court_dates: nil,
+            is_paused: true,
+            pause_reason: pause_reason
+          })
+
+        get :index, params: { is_paused: true, pause_reason: pause_reason, number_per_page: 1, page_number: 1 }
       end
     end
 
@@ -54,7 +75,8 @@ describe CasesController do
             patch: nil,
             full_patch: nil,
             upcoming_evictions: nil,
-            upcoming_court_dates: nil
+            upcoming_court_dates: nil,
+            pause_reason: nil
           })
           .and_return(cases: [], number_per_page: 1)
 
@@ -86,6 +108,7 @@ describe CasesController do
           .to receive(:execute)
           .with(page_number: page_number, number_per_page: number_per_page, filters: {
             is_paused: false,
+            pause_reason: nil,
             classification: nil,
             patch: nil,
             full_patch: nil,
@@ -109,6 +132,7 @@ describe CasesController do
           .to receive(:execute)
           .with(page_number: page_number, number_per_page: number_per_page, filters: {
             is_paused: nil,
+            pause_reason: nil,
             classification: nil,
             patch: patch,
             full_patch: nil,

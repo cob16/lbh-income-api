@@ -7,6 +7,7 @@ class CasesController < ApplicationController
       number_per_page: cases_params[:number_per_page],
       filters: {
         is_paused: cases_params[:is_paused],
+        pause_reason: cases_params[:pause_reason],
         classification: cases_params[:recommended_actions],
         patch: cases_params[:patch],
         full_patch: cases_params[:full_patch],
@@ -20,7 +21,10 @@ class CasesController < ApplicationController
 
   def cases_params
     params.require(REQUIRED_INDEX_PARAMS)
-    allowed_params = params.permit(REQUIRED_INDEX_PARAMS + %i[is_paused patch recommended_actions full_patch upcoming_evictions upcoming_court_dates])
+    allowed_params = params.permit(REQUIRED_INDEX_PARAMS + %i[
+      is_paused patch recommended_actions full_patch
+      upcoming_evictions upcoming_court_dates pause_reason
+    ])
 
     allowed_params[:is_paused] = ActiveModel::Type::Boolean.new.cast(allowed_params[:is_paused])
     allowed_params[:full_patch] = ActiveModel::Type::Boolean.new.cast(allowed_params[:full_patch])
@@ -29,6 +33,8 @@ class CasesController < ApplicationController
 
     allowed_params[:page_number] = min_1(allowed_params[:page_number].to_i)
     allowed_params[:number_per_page] = min_1(allowed_params[:number_per_page].to_i)
+
+    allowed_params[:pause_reason] = allowed_params.fetch(:pause_reason, nil)
 
     allowed_params
   end
