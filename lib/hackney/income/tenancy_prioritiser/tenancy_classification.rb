@@ -28,6 +28,9 @@ module Hackney
           wanted_action ||= :apply_for_court_date if apply_for_court_date?
           wanted_action ||= :update_court_outcome_action if update_court_outcome_action?
 
+          wanted_action ||= :send_informal_agreement_breach_letter if informal_agreement_breach_letter?
+          wanted_action ||= :informal_breached_after_letter if informal_breached_after_letter?
+
           wanted_action ||= :send_NOSP if send_nosp?
 
           wanted_action ||= :no_action if @criteria.courtdate.present?
@@ -104,6 +107,33 @@ module Hackney
           return false if @criteria.most_recent_agreement[:start_date].blank?
 
           @criteria.most_recent_agreement[:breached]
+        end
+
+        def informal_breached_agreement?
+          breached_agreement? && !court_breach_agreement?
+        end
+
+        def informal_agreement_breach_letter?
+          return false if @criteria.nosp.served?
+          return false if @criteria.last_communication_action.in?([
+            Hackney::Tenancy::ActionCodes::INFORMAL_BREACH_LETTER_SENT,
+            Hackney::Tenancy::ActionCodes::COURT_BREACH_LETTER_SENT,
+            Hackney::Tenancy::ActionCodes::VISIT_MADE
+          ])
+
+          if @criteria.last_communication_date.present?
+            return false if last_communication_newer_than?(7.days.ago)
+          end
+
+          informal_breached_agreement?
+        end
+
+        def informal_breached_after_letter?
+          return false if @criteria.nosp.served?
+          return false if @criteria.last_communication_action != Hackney::Tenancy::ActionCodes::INFORMAL_BREACH_LETTER_SENT
+          return false if last_communication_newer_than?(7.days.ago)
+
+          informal_breached_agreement?
         end
 
         def court_breach_agreement?
