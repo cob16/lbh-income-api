@@ -35,7 +35,7 @@ module Hackney
         end
 
         def self.not_paused
-          where('is_paused_until < ? OR is_paused_until is null', Date.today)
+          where('is_paused_until <= ? OR is_paused_until IS NULL', Time.zone.now.beginning_of_day)
         end
       end
     end

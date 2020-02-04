@@ -92,7 +92,7 @@ module Hackney
         return query if filters[:is_paused].nil?
 
         if filters[:is_paused]
-          query = query.where('is_paused_until >= ?', Date.today)
+          query = query.where('is_paused_until > ?', Time.zone.now.beginning_of_day)
         else
           query = query.not_paused
         end

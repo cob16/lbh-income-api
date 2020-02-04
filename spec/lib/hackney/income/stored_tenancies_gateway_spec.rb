@@ -274,6 +274,30 @@ describe Hackney::Income::StoredTenanciesGateway do
           expect(subject.count).to eq(num_paused_cases)
         end
 
+        context 'when the is_paused_until_date is yesterday' do
+          let(:is_paused_until_date) { 1.day.ago.to_date }
+
+          it 'does not find any paused cases' do
+            expect(subject.count).to eq(0)
+          end
+        end
+
+        context 'when the is_paused_until_date is today' do
+          let(:is_paused_until_date) { Time.zone.now.to_date }
+
+          it 'does not find any paused cases' do
+            expect(subject.count).to eq(0)
+          end
+        end
+
+        context 'when the is_paused_until_date is tomorrow' do
+          let(:is_paused_until_date) { 1.day.from_now.to_date }
+
+          it 'does find any paused cases' do
+            expect(subject.count).to eq(num_paused_cases)
+          end
+        end
+
         context 'when pause_reason is set to a real pause reason' do
           let(:pause_reason_filter) { pause_reason }
 
@@ -300,6 +324,30 @@ describe Hackney::Income::StoredTenanciesGateway do
 
         it 'only return unpaused tenancies' do
           expect(subject.count).to eq(num_active_cases)
+        end
+
+        context 'when the is_paused_until_date is yesterday' do
+          let(:is_paused_until_date) { 1.day.ago.to_date }
+
+          it 'does not find any paused cases' do
+            expect(subject.count).to eq(num_active_cases + num_paused_cases)
+          end
+        end
+
+        context 'when the is_paused_until_date is today' do
+          let(:is_paused_until_date) { Time.zone.now.to_date }
+
+          it 'does not find any paused cases' do
+            expect(subject.count).to eq(num_active_cases + num_paused_cases)
+          end
+        end
+
+        context 'when the is_paused_until_date is tomorrow' do
+          let(:is_paused_until_date) { 1.day.from_now.to_date }
+
+          it 'does filter any paused cases' do
+            expect(subject.count).to eq(num_active_cases)
+          end
         end
       end
     end
