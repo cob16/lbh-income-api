@@ -16,7 +16,7 @@ module Hackney
         template_name = @notification_gateway.get_template_name(template_id)
         @background_job_gateway.add_action_diary_entry(
           tenancy_ref: tenancy_ref,
-          action_code: Hackney::Tenancy::ActionCodes::AUTOMATED_SMS_ACTION_CODE,
+          action_code: Hackney::Tenancy::ActionCodes::AUTOMATED_EMAIL_ACTION_CODE,
           comment: "'#{template_name}' email sent to '#{recipient}'",
           username: 'MANAGE ARREARS SYSTEM'
         )
