@@ -163,10 +163,13 @@ In order to change any of these variables you will need to:
 7. Click **Create new revision**
 8. Locate 'Container definitions' and select the `income-api-production-worker` container.
 9. Locate the 'ENVIRONMENT' section of the slide-out.
-10. Add/Modify the relevant Environment Variables.
+10. Add/Modify the relevant Environment Variables.  
 11. Click **Update** at the bottom of the slide-out when you have finished making changes/additions.
-12. Click **Create** at the bottom of the 'Create new revision' page.
-13. There is a new Task Definition, but it has not been applied yet.  
+12. Click **Create** at the bottom of the 'Create new revision' page.  
+13. Verify that the Environment Variables have been inputted correctly, to check this click on the **JSON** tab of the newly created task definition 
+14. Check that all the Environment Variables are correct, look for issues such as trailing whitespace e.g ``AUTOMATE_INCOME_COLLECTION_LETTER_ONE\t``  or special characters.
+15. If you find any issues with any of the Envrionment Variables follow the above steps to create a new Task Defintion with the corrected Environment Variables.
+16. There is now a new Task Definition, but it has not been applied yet.  
 **You must ENSURE YOU REDEPLOY to have your changes be applied**
 
 **IMPORTANT: IF YOU UPDATE THE TASK DEFINITION BY CHANGING ANY OF THE ABOVE YOU NEED TO REDEPLOY IN ORDER FOR THE NEW INSTANCE TO USE THE NEW TASK DEFINITION**
