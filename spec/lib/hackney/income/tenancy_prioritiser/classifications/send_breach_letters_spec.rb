@@ -2,7 +2,7 @@ require 'rails_helper'
 
 describe 'Various "Send breach letter" examples (new)' do
   base_example = {
-    outcome: :no_action,
+    outcome: :send_informal_agreement_breach_letter,
     most_recent_agreement: {
       start_date: 1.week.ago,
       breached: true
@@ -23,7 +23,7 @@ describe 'Various "Send breach letter" examples (new)' do
     ),
     base_example.merge(
       description: 'with a court date after the agreement',
-      outcome: :no_action,
+      outcome: :send_informal_agreement_breach_letter,
       courtdate: 1.day.ago,
       court_outcome: 'something'
     ),
