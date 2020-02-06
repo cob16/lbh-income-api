@@ -197,7 +197,9 @@ $ echo $CAN_AUTOMATE_LETTERS
 ```
 $ bundle exec rake income:sync:enqueue
 ```
-2. Next, you need to 
+5. Verify that the sync is running.
+
+
 ## Contacts
 
 ### Active Maintainers
