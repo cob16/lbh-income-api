@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe Hackney::Income::TenancyPrioritiser::UniversalHousingCriteria, universal: true do
+describe Hackney::Income::UniversalHousingCriteria, universal: true do
   subject(:criteria) { described_class.for_tenancy(universal_housing_client, tenancy_ref) }
 
   context 'when there is a tenancy agreement' do

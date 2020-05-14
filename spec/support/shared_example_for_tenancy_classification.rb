@@ -27,7 +27,7 @@ shared_examples 'TenancyClassification' do |condition_matrix|
   subject { assign_classification.execute }
 
   let(:assign_classification) {
-    Hackney::Income::TenancyPrioritiser::TenancyClassification.new(
+    Hackney::Income::TenancyClassification.new(
       case_priority, criteria, []
     )
   }

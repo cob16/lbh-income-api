@@ -10,12 +10,12 @@ describe Hackney::Income::UniversalHousingPrioritisationGateway, universal: true
 
     it 'returns the priority scores and criteria of that tenancy' do
       expect(subject.priorities_for_tenancy(tenancy_ref)).to include(
-        criteria: an_instance_of(Hackney::Income::TenancyPrioritiser::UniversalHousingCriteria)
+        criteria: an_instance_of(Hackney::Income::UniversalHousingCriteria)
       )
     end
 
     it 'determines universal housing criteria' do
-      expect(Hackney::Income::TenancyPrioritiser::UniversalHousingCriteria)
+      expect(Hackney::Income::UniversalHousingCriteria)
         .to receive(:for_tenancy)
         .with(an_instance_of(Sequel::TinyTDS::Database), tenancy_ref)
 

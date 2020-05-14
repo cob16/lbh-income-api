@@ -9,7 +9,7 @@ module Hackney
 
         documents = DocumentModel.exclude_uploaded.by_payment_ref(criteria.payment_ref)
 
-        classification_usecase = Hackney::Income::TenancyPrioritiser::TenancyClassification.new(
+        classification_usecase = Hackney::Income::TenancyClassification.new(
           gateway_model_instance,
           criteria,
           documents
