@@ -30,7 +30,7 @@ describe Hackney::Income::StoredTenanciesGateway do
 
       expect(document_model).to receive(:by_payment_ref).with(stubbed_criteria.payment_ref).and_return([])
 
-      expect(Hackney::Income::TenancyPrioritiser::TenancyClassification).to receive(:new)
+      expect(Hackney::Income::TenancyClassification).to receive(:new)
         .with(instance_of(tenancy_model), stubbed_criteria, [])
         .and_return(tenancy_classification_stub)
     end

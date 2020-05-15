@@ -9,7 +9,7 @@ module Hackney
           logger(">> About to start getting Criteria (overall time taken so far): #{Time.zone.now - overall_start_time}ms")
           criteria_start_time = Time.zone.now
 
-          criteria = Hackney::Income::TenancyPrioritiser::UniversalHousingCriteria.for_tenancy(database, tenancy_ref)
+          criteria = Hackney::Income::UniversalHousingCriteria.for_tenancy(database, tenancy_ref)
 
           logger(">> Time taken for Criteria from UH: #{Time.zone.now - criteria_start_time}ms")
 
