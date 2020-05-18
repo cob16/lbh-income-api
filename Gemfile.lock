@@ -318,6 +318,9 @@ GEM
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.3)
     wkhtmltopdf-binary (0.12.4)
+    yaml_db (0.7.0)
+      rails (>= 3.0)
+      rake (>= 0.8.7)
 
 PLATFORMS
   ruby
@@ -366,6 +369,7 @@ DEPENDENCIES
   uk_postcode
   webmock
   wkhtmltopdf-binary
+  yaml_db
 
 BUNDLED WITH
    1.17.3

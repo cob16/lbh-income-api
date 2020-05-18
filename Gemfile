@@ -62,6 +62,7 @@ group :development, :test do
   gem 'sqlite3'
   gem 'timecop'
   gem 'webmock'
+  gem 'yaml_db'
 end
 
 group :development do
